@@ -1,0 +1,332 @@
+{% extends 'cmbase.html' %}
+{% block content %}
+<div class="container py-5 fade-in">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card main-card">
+        <div class="card-header bg-gradient text-white">
+          <h2 class="text-center mb-0 fw-bold card-title-animation">Update Concierge Request</h2>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-4 subtitle-animation">
+            <p class="text-muted">Manage your concierge request details below</p>
+          </div>
+          
+          <form method="post" class="needs-validation form-animation" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-floating mb-4 input-animation">
+              <select name="status" id="status" class="form-select custom-select" required>
+                {% for value, label in request_obj.STATUS_CHOICES %}
+                <option value="{{ value }}" {% if value == request_obj.status %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <label for="status">Request Status</label>
+              <div class="icon-container">
+                <div class="icon-circle">
+                  <i class="bi bi-check-circle-fill"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-floating mb-4 input-animation" style="animation-delay: 0.2s">
+              <select name="vendor" id="vendor" class="form-select custom-select" required>
+                <option value="">-- Select Vendor --</option>
+                {% for vendor in vendors %}
+                <option value="{{ vendor.id }}" {% if vendor == request_obj.vendor %}selected{% endif %}>
+                  {{ vendor.company_name }}
+                </option>
+                {% endfor %}
+              </select>
+              <label for="vendor">Assign Vendor</label>
+              <div class="icon-container">
+                <div class="icon-circle">
+                  <i class="bi bi-building-fill"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-5 button-animation w-100">
+                <!-- Left Button -->
+                <button type="button" class="btn custom-btn px-5 py-3"  onclick="window.location.href='{% url 'clientmanager:concierge_pending_requests' %}'">
+                    <i class="bi bi-arrow-left-circle-fill me-2"></i>
+                    <span>Go Back</span>
+                </button>
+            
+                <!-- Right Button -->
+                <button type="submit" class="btn custom-btn px-5 py-3">
+                    <span>Update Request</span>
+                    <i class="bi bi-arrow-right-circle-fill ms-2"></i>
+                </button>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Required CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<style>
+  :root {
+    --primary: #4361ee;
+    --primary-light: #4895ef;
+    --primary-dark: #3f37c9;
+    --success: #4cc9f0;
+    --white: #ffffff;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --gray: #6c757d;
+  }
+
+  body {
+    background-color: var(--light);
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Card Styling */
+  .main-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .main-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(67, 97, 238, 0.2);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    padding: 1.5rem;
+    border-bottom: none;
+  }
+
+  /* Form Elements */
+  .form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .custom-select {
+    height: 60px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    padding-left: 60px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .custom-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+  }
+
+  .form-floating > label {
+    padding-left: 60px;
+    font-weight: 500;
+    color: var(--gray);
+  }
+
+  .icon-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .icon-circle {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+  }
+
+  .custom-select:focus + label + .icon-container .icon-circle {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+  }
+
+  /* Button Styling */
+  .custom-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  .custom-btn:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    transition: all 0.5s ease;
+    z-index: -1;
+    border-radius: 50px;
+  }
+
+  .custom-btn:hover:before {
+    width: 100%;
+  }
+
+  .custom-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+  }
+
+  .custom-btn:active {
+    transform: translateY(0);
+  }
+
+  .custom-btn span, .custom-btn i {
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+
+  .custom-btn:hover span {
+    transform: translateX(-5px);
+  }
+
+  .custom-btn:hover i {
+    transform: translateX(5px);
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes slideInRight {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  .card-title-animation {
+    animation: scaleIn 0.6s ease 0.2s forwards;
+    opacity: 0;
+  }
+
+  .subtitle-animation {
+    animation: fadeIn 0.6s ease 0.4s forwards;
+    opacity: 0;
+  }
+
+  .input-animation {
+    animation: slideInRight 0.6s ease forwards;
+    opacity: 0;
+  }
+
+  .input-animation:nth-child(2) {
+    animation-delay: 0.6s;
+  }
+
+  .button-animation {
+    animation: fadeIn 0.6s ease 0.8s forwards;
+    opacity: 0;
+  }
+
+  .main-card:hover .custom-btn {
+    animation: pulse 1.5s infinite;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .custom-select {
+      height: 55px;
+    }
+    .custom-btn {
+      padding: 0.6rem 1.5rem !important;
+    }
+  }
+  .card-title-animation {
+    animation: scaleIn 0.6s ease 0.2s forwards;
+    color: rgb(0, 0, 0);
+    opacity: 0;
+}
+</style>
+
+<script>
+  // Form validation
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      var forms = document.getElementsByClassName('needs-validation');
+      Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+
+  // Add hover animation to select fields
+  $(document).ready(function() {
+    $('.custom-select').on('change', function() {
+      if ($(this).val() !== '') {
+        $(this).addClass('is-filled');
+      } else {
+        $(this).removeClass('is-filled');
+      }
+    });
+    
+    // Check initial values
+    $('.custom-select').each(function() {
+      if ($(this).val() !== '') {
+        $(this).addClass('is-filled');
+      }
+    });
+    
+    // Add animation when page loads
+    setTimeout(function() {
+      $('.main-card').addClass('loaded');
+    }, 200);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  
+    .container {
+        width: 100%;
+        max-width: 1400px;
+        background: black;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+    .left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .left h2 {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .left img {
+        width: 80%;
+        max-width: 350px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        font-weight: bold;
+    }
+    .right input, .right textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid white;
+        border-radius: 5px;
+        background: white;
+        color: black;
+        font-size: 16px;
+    }
+    .right .row .col-md-4, .right .row .col-md-6, .right .row .col-md-12 {
+        padding: 5px;
+    }
+    .right button {
+        padding: 12px;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+        width: 100%;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .right button:hover {
+        background: linear-gradient(135deg, #a777e3, #6e8efb);
+    }
+    #formid {
+        border: 2px solid #e0a96d;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    color: white;
+    padding-top: 20px; /* Adjust padding if necessary */
+}
+
+.left h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 20px; /* Space between text and image */
+}
+
+.left img {
+    width: 350px; /* Make the image bigger */
+    height: 350px; /* Ensure the image is square */
+    border-radius: 50%; /* Make the image circular */
+    object-fit: cover; /* Ensures the image fits within the circle */
+    border: 5px solid white; /* Optional: Add a white border around the circle */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add some shadow effect */
+    animation: float 3s ease-in-out infinite; /* Animation to make the image float */
+}
+
+/* Floating animation */
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px); /* Upward movement */
+    }
+    100% {
+        transform: translateY(0); /* Back to the original position */
+    }
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 3rem;
+    font-weight: 700;
+    font-style: italic;
+}
+</style>
+<div class="container-fluid d-flex justify-content-center align-items-center">
+    <div class="container row align-items-center">
+        <div class="col-lg-5 col-md-10 left">
+            <p>Let's get Connected</p>
+            <img src="{% static 'img/a.jpg' %}" alt="Profile">
+        </div>
+        <div class="col-lg-7 col-md-12 right" id="formid">
+            <form>
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label>First Name</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>Last Name</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>Email</label>
+                        <input type="email" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Phone</label>
+                        <input type="tel" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Country</label>
+                        <input type="text" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Address</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>City</label>
+                        <input type="text" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label>State</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>Zip Code</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>Size of Home</label>
+                        <input type="text" required>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label>Your Message</label>
+                        <textarea rows="5" required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Send Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

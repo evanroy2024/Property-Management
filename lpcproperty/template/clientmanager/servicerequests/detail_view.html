@@ -1,0 +1,257 @@
+{% extends "cmbase.html" %}
+{% block content %}
+<style>
+    body {
+        background-color: #f3f4f8;
+        font-family: 'Inter', sans-serif;
+    }
+    .page-container {
+        padding: 40px 20px;
+    }
+    .detail-wrapper {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(31, 43, 97, 0.08);
+        overflow: hidden;
+        position: relative;
+    }
+    .detail-header {
+        padding: 30px 35px;
+        background: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .detail-header h2 {
+        font-weight: 700;
+        font-size: 22px;
+        color: #1e293b;
+        margin: 0;
+    }
+    .detail-body {
+        padding: 25px 35px;
+    }
+    .detail-row {
+        display: flex;
+        margin-bottom: 24px;
+        align-items: flex-start;
+    }
+    .detail-label {
+        width: 25%;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+        padding-top: 4px;
+    }
+    .detail-value {
+        width: 75%;
+        color: #1e293b;
+        font-size: 15px;
+        font-weight: 500;
+    }
+    .request-id {
+        font-size: 14px;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+    .status-pending {
+        background-color: #fff7ed;
+        color: #c2410c;
+    }
+    .status-progress {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+    }
+    .status-completed {
+        background-color: #ecfdf5;
+        color: #047857;
+    }
+    .status-cancelled {
+        background-color: #fef2f2;
+        color: #b91c1c;
+    }
+    .approval-pending {
+        background-color: #fef9c3;
+        color: #854d0e;
+    }
+    .approval-approved {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+    .approval-declined {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+    .cost-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .vendor-tag {
+        display: inline-flex;
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 6px 12px;
+        border-radius: 6px;
+    }
+    .vendor-icon {
+        margin-right: 8px;
+        color: #64748b;
+    }
+    .timestamp {
+        color: #64748b;
+        font-size: 14px;
+    }
+    .divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 20px 0 30px;
+    }
+    .btn-update {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+    }
+    .btn-update:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+    .btn-icon {
+        margin-right: 8px;
+    }
+    .not-assigned {
+        font-style: italic;
+        color: #94a3b8;
+    }
+    .description-text {
+        line-height: 1.6;
+    }
+    .detail-footer {
+        padding: 25px 35px;
+        background: #f8fafc;
+        border-top: 1px solid #f1f5f9;
+    }
+    .pin-tag {
+        background: #f1f5f9;
+        color: #475569;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<div class="page-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-9">
+                <div class="detail-wrapper">
+                    <div class="detail-header">
+                        <div class="d-flex align-items-center">
+                            <h2>Property Improvement Request <span class="request-id">#{{ request_obj.id }}</span></h2>
+                        </div>
+                        <div>
+                            <span class="status-badge 
+                                {% if request_obj.get_status_display == 'Pending' %}status-pending
+                                {% elif request_obj.get_status_display == 'In Progress' %}status-progress
+                                {% elif request_obj.get_status_display == 'Completed' %}status-completed
+                                {% elif request_obj.get_status_display == 'Cancelled' %}status-cancelled
+                                {% else %}bg-secondary text-white{% endif %}">
+                                {{ request_obj.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="detail-body">
+                        <div class="detail-row">
+                            <div class="detail-label">Client</div>
+                            <div class="detail-value">{{ request_obj.user.username }}</div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">Type</div>
+                            <div class="detail-value">
+                                <span class="pin-tag">{{ request_obj.get_request_type_display }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value description-text">{{ request_obj.description }}</div>
+                        </div>
+                        
+                        <tr><th>Vendor</th>
+                            <td>
+                                {% if request_obj.vendor %}
+                                    {{ request_obj.vendor.company_name }}
+                                {% else %}
+                                    Not Assigned
+                                {% endif %}
+                            </td>
+                        </tr>
+                        
+                        <tr><th>Created At</th><td>{{ request_obj.created_at }}</td></tr>
+
+                        
+                        
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="timestamp">
+                                    <small>Created: {{ request_obj.created_at }}</small>
+                                </div>
+                                <div class="timestamp mt-1">
+                                    <small>Last Updated: {{ request_obj.created_at }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-footer" style="display: flex; justify-content: space-between;">
+                        <a href="{% url 'clientmanager:clientmanager_pending_requests' %}" class="btn-update" style="background-color: gray; color: white; padding: 10px 20px; border-radius: 5px; display: inline-flex; align-items: center; text-decoration: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="btn-icon me-2" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                            Back
+                        </a>
+                        
+                        <a href="{% url 'clientmanager:clientmanager_update_request' request_obj.id %}" class="btn-update">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                            Update Request
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

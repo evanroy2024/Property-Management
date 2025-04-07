@@ -1,0 +1,288 @@
+{% extends 'cmbase.html' %}
+
+{% block title %}Property Detail{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* Custom Styles */
+    .content-wrapper {
+        padding: 1.5rem;
+        background-color: #f8f9fc;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .card-header h6 {
+        font-weight: 700;
+        margin: 0;
+        color: #4e73df;
+    }
+    
+    .property-info {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .info-item {
+        margin-bottom: 1rem;
+        padding-right: 2rem;
+        width: 50%;
+    }
+    
+    @media (max-width: 768px) {
+        .info-item {
+            width: 100%;
+        }
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #5a5c69;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+    
+    .info-value {
+        font-size: 1rem;
+        color: #3a3b45;
+    }
+    
+    .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+    }
+    
+    .btn-back {
+        background-color: #f8f9fc;
+        border-color: #d1d3e2;
+        color: #6e707e;
+    }
+    
+    .btn-back:hover {
+        background-color: #e2e6f3;
+        border-color: #d1d3e2;
+        color: #6e707e;
+    }
+    
+    .file-item {
+        background-color: #f8f9fc;
+        border: 1px solid #e3e6f0;
+        border-radius: 0.35rem;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .file-name {
+        display: flex;
+        align-items: center;
+    }
+    
+    .file-icon {
+        color: #4e73df;
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+    }
+    
+    .badge {
+        font-weight: 600;
+        padding: 0.25em 0.6em;
+    }
+    
+    .property-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 0.35rem;
+    }
+    
+    .property-address {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-buttons {
+        margin-top: 1.5rem;
+    }
+    
+    .action-buttons .btn {
+        margin-right: 0.5rem;
+    }
+</style>
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="h3 mb-0 text-gray-800">Property Detail</h1>
+        <a href="{% url 'clientmanager:property_list' %}" class="btn btn-back">
+            <i class="fas fa-arrow-left fa-sm mr-2"></i> Back to Properties
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Property Overview Card -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Property Information</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Property Image Placeholder -->
+                    <img src="/api/placeholder/800/250" alt="Property Image" class="property-image mb-4">
+                    
+                    <h4 class="property-address">{{ property.address }}</h4>
+                    <span class="badge bg-success mb-3">Active</span>
+                    
+                    <div class="property-info">
+                        <div class="info-item">
+                            <span class="info-label">Size</span>
+                            <div class="info-value">{{ property.size_of_home }} sq ft</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Stories</span>
+                            <div class="info-value">{{ property.number_of_stories }}</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Year Built</span>
+                            <div class="info-value">{{ property.year_built }}</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Construction Type</span>
+                            <div class="info-value">{{ property.construction_type }}</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Preferred Contact Method</span>
+                            <div class="info-value">{{ property.preferred_contact_method }}</div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="{% url 'clientmanager:property_edit' property.pk %}" class="btn btn-info">
+                            <i class="fas fa-edit fa-sm mr-2"></i> Edit Property
+                        </a>
+                        <a href="{% url 'clientmanager:property_delete' property.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash fa-sm mr-2"></i> Delete Property
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floor Plans Card -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Floor Plans</h6>
+                </div>
+                <div class="card-body">
+                    {% if property.floor_plan_1_file or property.floor_plan_2_file or property.floor_plan_3_file or property.floor_plan_4_file %}
+                        {% if property.floor_plan_1_file %}
+                        <div class="file-item">
+                            <div class="file-name">
+                                <i class="fas fa-file-pdf file-icon"></i>
+                                <span>{{ property.floor_plan_1_name }}</span>
+                            </div>
+                            <a href="{{ property.floor_plan_1_file.url }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download mr-1"></i> Download
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if property.floor_plan_2_file %}
+                        <div class="file-item">
+                            <div class="file-name">
+                                <i class="fas fa-file-pdf file-icon"></i>
+                                <span>{{ property.floor_plan_2_name }}</span>
+                            </div>
+                            <a href="{{ property.floor_plan_2_file.url }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download mr-1"></i> Download
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if property.floor_plan_3_file %}
+                        <div class="file-item">
+                            <div class="file-name">
+                                <i class="fas fa-file-pdf file-icon"></i>
+                                <span>{{ property.floor_plan_3_name }}</span>
+                            </div>
+                            <a href="{{ property.floor_plan_3_file.url }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download mr-1"></i> Download
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if property.floor_plan_4_file %}
+                        <div class="file-item">
+                            <div class="file-name">
+                                <i class="fas fa-file-pdf file-icon"></i>
+                                <span>{{ property.floor_plan_4_name }}</span>
+                            </div>
+                            <a href="{{ property.floor_plan_4_file.url }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download mr-1"></i> Download
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-alt fa-3x text-gray-300 mb-3"></i>
+                            <p class="mb-0 text-gray-600">No floor plans available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Additional Card for Other Information -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary mb-2">
+                            <i class="fas fa-calendar-alt mr-2"></i> Schedule Inspection
+                        </a>
+                        <a href="#" class="btn btn-outline-primary mb-2">
+                            <i class="fas fa-tools mr-2"></i> Create Maintenance Request
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-file-alt mr-2"></i> Generate Property Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock content %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Reports</title>
+    <style>
+        .report-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 5px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .btn-danger { background-color: #dc3545; }
+        .btn-success { background-color: #28a745; }
+        .btn-primary { background-color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>My Walkthrough Reports</h1>
+
+    {% for report in reports %}
+        {% if report.id %}
+            <div class="report-box">
+                {% if report.description %}
+                    <p><strong>Description:</strong> {{ report.description }}</p>
+                {% endif %}
+
+                {% if report.gie1 %}<p><strong>Visual Inspection: Exterior of House:</strong> {{ report.gie1 }} - {{ report.gie1_remarks }}</p>{% endif %}
+                {% if report.gie2 %}<p><strong>Drives / Walkways:</strong> {{ report.gie2 }} - {{ report.gie2_remarks }}</p>{% endif %}
+                {% if report.gie3 %}<p><strong>Generator: Reading Operational:</strong> {{ report.gie3 }} - {{ report.gie3_remarks }}</p>{% endif %}
+                {% if report.gie4 %}<p><strong>Irrigation: Zones & Heads Tested:</strong> {{ report.gie4 }} - {{ report.gie4_remarks }}</p>{% endif %}
+                {% if report.gie5 %}<p><strong>Propane Tank Meter Read:</strong> {{ report.gie5 }} - {{ report.gie5_remarks }}</p>{% endif %}
+                {% if report.gie6 %}<p><strong>A/C Air Handling Unit #1:</strong> {{ report.gie6 }} - {{ report.gie6_remarks }}</p>{% endif %}
+                {% if report.gie7 %}<p><strong>A/C Air Handling Unit #2:</strong> {{ report.gie7 }} - {{ report.gie7_remarks }}</p>{% endif %}
+                {% if report.gie8 %}<p><strong>A/C Air Handling Unit #3:</strong> {{ report.gie8 }} - {{ report.gie8_remarks }}</p>{% endif %}
+                {% if report.gie9 %}<p><strong>A/C Air Handling Unit #4:</strong> {{ report.gie9 }} - {{ report.gie9_remarks }}</p>{% endif %}
+                {% if report.gie10 %}<p><strong>A/C Air Handling Unit #5:</strong> {{ report.gie10 }} - {{ report.gie10_remarks }}</p>{% endif %}
+                {% if report.gie11 %}<p><strong>Mail / Newspapers / Notifications:</strong> {{ report.gie11 }} - {{ report.gie11_remarks }}</p>{% endif %}
+                {% if report.gie12 %}<p><strong>Outdoor Furniture:</strong> {{ report.gie12 }} - {{ report.gie12_remarks }}</p>{% endif %}
+                {% if report.gie13 %}<p><strong>Roof Eaves, Fascias, Gutters:</strong> {{ report.gie13 }} - {{ report.gie13_remarks }}</p>{% endif %}
+                {% if report.gie14 %}<p><strong>Exterior Lights (Sconces, Flood):</strong> {{ report.gie14 }} - {{ report.gie14_remarks }}</p>{% endif %}
+                {% if report.gie15 %}<p><strong>Mailbox:</strong> {{ report.gie15 }} - {{ report.gie15_remarks }}</p>{% endif %}
+
+                <!-- Download Buttons -->
+                <div>
+                    <a href="{% url 'export_pdf' report.id %}" class="btn btn-danger">Download PDF</a>
+                    <a href="{% url 'export_excel' report.id %}" class="btn btn-success">Download Excel</a>
+                    <a href="{% url 'export_csv' report.id %}" class="btn btn-primary">Download CSV</a>
+                </div>
+            </div>
+        {% endif %}
+    {% empty %}
+        <p>No reports found.</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,848 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: #ffffff;
+      line-height: 1.6;
+      padding: 0;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 1.2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    
+    
+    .container {
+      max-width: 1100px;
+      padding: 2rem;
+    }
+    
+    .page-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: #64748b;
+      margin-bottom: 2.5rem;
+    }
+    
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      min-height: 300px;
+    }
+    
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .section-title svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 1rem;
+      color: #1e293b;
+      transition: all 0.2s ease;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .date-time-container {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .date-picker-container, .time-picker-container {
+      position: relative;
+      flex: 1;
+    }
+    
+    .icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      pointer-events: none;
+    }
+    
+    .btn-container {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+    }
+    
+    .btn-secondary {
+      background-color: transparent;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    
+    .btn-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .progress-container {
+      /* overflow-x: auto; */
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      min-width: 900px;
+    }
+    
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      right: 20px;
+      height: 3px;
+      background-color: #e2e8f0;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    
+    .progress-bar-fill {
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      height: 3px;
+      background-color: #2563eb;
+      transform: translateY(-50%);
+      transition: width 0.3s ease;
+      z-index: 2;
+    }
+    
+    .step {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: white;
+      border: 3px solid #e2e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #64748b;
+      position: relative;
+      z-index: 3;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .step.active, .step.completed {
+      border-color: #2563eb;
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    .step:hover:not(.active) {
+      background-color: #f8fafc;
+      transform: scale(1.05);
+    }
+    
+    .step-label {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #64748b;
+    }
+    
+    .step.active + .step-label, .step.completed + .step-label {
+      color: #2563eb;
+      font-weight: 600;
+    }
+    
+    .form-step {
+      display: none;
+    }
+    
+    .form-step.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 768px) {
+      .date-time-container {
+        flex-direction: column;
+      }
+      .progress-container {
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+      .nav-links {
+        display: none;
+      }
+      
+      .btn-container {
+        flex-direction: column-reverse;
+        gap: 1rem;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+   <style>
+    .progress-container {
+        width: 100%;
+        margin: auto;
+        position: relative;
+        padding-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Thin baseline for reference */
+    .progress-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #ddd; /* Light gray baseline */
+        border-radius: 2px;
+        z-index: 0;
+    }
+
+    /* Progress bar filling over the baseline */
+    .progress-bar-fill {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        height: 4px;
+        width: 50%; /* Adjust as per progress */
+        background: #007bff;
+        border-radius: 2px;
+        transition: width 0.3s ease-in-out;
+        z-index: 1;
+    }
+
+    .trial {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        width: 100%;
+    }
+
+    .step {
+        position: relative;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        background: #fff;
+        padding: 5px 10px;
+        z-index: 2;
+    }
+</style>
+
+
+  <div class="container">
+    <h1 class="page-title">Pre-Arrival Services</h1>
+    <p class="page-subtitle">Please complete all required information to submit your travel request.</p>
+    
+    <div class="progress-container">
+        <div class="progress-line"></div> <!-- Baseline for the progress -->
+        <div class="progress-bar-fill" id="progress-fill"></div> <!-- Moving Progress Bar -->
+        
+        <div class="trial">
+            <div class="step active" data-step="1">1<span class="step-label">Home</span></div>
+            <div class="step" data-step="2">2<span class="step-label">Temperature</span></div>
+            <div class="step" data-step="3">3<span class="step-label">Preferences</span></div>
+            <div class="step" data-step="4">4<span class="step-label">Additional</span></div>
+            <div class="step" data-step="5">5<span class="step-label">Submit</span></div>
+        </div>
+    </div>
+    
+ 
+ 
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: green;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+      
+    
+    <form id="multi-step-form" method="POST">
+      {% csrf_token %}
+      <!-- Step 1: Home - Arrival Details -->
+      <div class="form-step active" data-step="1">
+        <div class="card">
+          <h2 class="section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            PRE-ARRIVAL DETAILS
+          </h2>
+          
+          <div class="form-group">
+            <label class="form-label">Your Name </label>
+            <input type="text" name="name" class="form-control" placeholder="Enter Your Name " required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Arrival Date & Time</label>
+            <div class="date-time-container">
+              <div class="date-picker-container">
+                <input type="date" name="arrival_date" class="form-control" required>
+                <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  </svg>
+                </div>
+              </div>
+              <div class="time-picker-container">
+                <input type="time" name="arrival_time" class="form-control" required>
+                <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="btn-container">
+          <div></div> <!-- Empty div for spacing -->
+          <button type="button" class="btn btn-primary next-btn " >Continue to Step 2</button>
+        </div>
+      </div>
+      
+      <!-- Step 2 -->
+      <div class="form-step" data-step="2">
+        <div class="card">
+            <h2 class="section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              ARRIVAL PREFERENCES
+            </h2>
+          
+            <!-- Temperature Settings (Single Row) -->
+            <div class="form-group" style="display: flex; flex-direction: column;">
+              <label class="form-label">Temperature Settings</label>
+              <input type="number" name="temperature" class="form-control" placeholder="Set temperature">
+            </div>
+          
+            <!-- Pool & Hot Tub Temperature (Side by Side) -->
+            <div class="form-group" style="display: flex; gap: 15px;">
+              <div style="flex: 1;">
+                <label class="form-label">Pool Temperature</label>
+                <input type="number" name="pool_temperature" class="form-control" placeholder="Enter pool temperature">
+              </div>
+              <div style="flex: 1;">
+                <label class="form-label">Hot Tub Temperature</label>
+                <input type="number" name="hot_bath_temperature" class="form-control" placeholder="Enter hot tub temperature" >
+              </div>
+            </div>
+          
+            <!-- Indoor & Outdoor Lights (Side by Side) -->
+            <div class="form-group" style="display: flex; gap: 15px;">
+              <div style="flex: 1;">
+                <label class="form-label">Indoor Lights</label>
+                <select class="form-control"  name="indoor_lights">
+                  <option value="">Select</option>
+                  <option value="all_on">All On</option>
+                 <option value="all_off">All Off</option>
+                </select>
+                
+              </div>
+              <div style="flex: 1;">
+                <label class="form-label">Outdoor Lights</label>
+                <select class="form-control" name="outdoor_lights" >
+                  <option value="">Select</option>
+                  <option value="all_on">All On</option>
+                 <option value="all_off">All Off</option>
+                </select>
+              </div>
+            </div>
+          
+            <!-- Window Blind Settings (Single Row) -->
+            <div class="form-group" style="display: flex; flex-direction: column;">
+              <label class="form-label">Window Blind Settings</label>
+              <select class="form-control" name="window_position" >
+                <option value="">Select</option>
+                <option value="up">Up</option>
+                <option value="down">Down</option>
+                <option value="sideway">Sideway</option>
+              </select>
+            </div>
+          </div>
+          
+        
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+          <button type="button" class="btn btn-primary next-btn">Continue to Step 3</button>
+        </div>
+      </div>
+      
+      <!-- Step 3 -->
+      <div class="form-step" data-step="3">
+        <!-- MUSIC Section -->
+<!-- MUSIC Section -->
+<div class="card" style="padding: 15px; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background: #fff;">
+  
+    <!-- MUSIC Section -->
+    <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111; ">
+      MUSIC
+    </h2>
+    <div class="form-group" style="margin-bottom: 8px;">
+      <label class="form-label" style="font-weight: 500; color: #333;">Genre</label>
+      <input type="text" name="music_genre" class="form-control" placeholder="Enter music genre" >
+    </div>
+  
+    <!-- FLOWERS Section -->
+    <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
+      FLOWERS
+    </h2>
+    <div class="form-group" style="margin-bottom: 8px;">
+      <label class="form-label" style="font-weight: 500; color: #333;">Type</label>
+      <input type="text" name="flower_type" class="form-control" placeholder="Enter flower type" >
+    </div>
+  
+    <div class="form-group" style="margin-bottom: 8px;">
+      <label class="form-label" style="font-weight: 500; color: #333;">Location</label>
+      <input type="text" name="flower_location" class="form-control" placeholder="Enter delivery location"  >
+    </div>
+  
+    <!-- GROCERIES Section -->
+    <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;" >
+      GROCERIES
+    </h2>
+    <div class="form-group">
+      <label class="form-label">Details</label>
+      <input type="text" name="groceries_details" class="form-control" placeholder="Enter grocery details"  >
+    </div>
+  
+  </div>
+  
+        
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+          <button type="button" class="btn btn-primary next-btn">Continue to Step 4</button>
+        </div>
+      </div>
+      
+      <!-- Step 4 -->
+      <div class="form-step" data-step="4">
+        <div class="card" style="padding: 15px; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background: #fff;">
+
+            <!-- ALCOHOL Section -->
+            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
+              ALCOHOL
+            </h2>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label class="form-label" style="font-weight: 500; color: #333;">Order Alcohol</label>
+              <input type="text" name="housekeeping" class="form-control" placeholder="Enter alcohol details" >
+            </div>
+          
+            <!-- HOUSEKEEPING Section -->
+            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
+              HOUSEKEEPING
+            </h2>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label class="form-label" style="font-weight: 500; color: #333;">Require Housekeeping</label>
+              <input type="text" name="housekeeping" class="form-control" placeholder="Enter housekeeping details" >
+            </div>
+          
+            <!-- TRANSPORTATION Section -->
+            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
+              TRANSPORTATION
+            </h2>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label class="form-label" style="font-weight: 500; color: #333;">Arrange Transportation</label>
+              <input type="text" name="transportation" class="form-control" placeholder="Enter transportation details" >
+            </div>
+          
+            <!-- AUTOMOBILES Section -->
+            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111; ">
+              AUTOMOBILES
+            </h2>
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 500; color: #333;">Manage Automobiles</label>
+              <input type="text" name="automobiles" class="form-control" placeholder="Enter automobile details" >
+            </div>
+          
+          </div>
+          
+        
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+          <button type="button" class="btn btn-primary next-btn">Continue to Step 5</button>
+        </div>
+      </div>
+      
+      <!-- Step 5 -->
+      <div class="form-step" data-step="5">
+        <div class="card">
+          <h2 class="section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Additional Pre-arrival Requests :
+          </h2>
+          
+          <div class="form-group">
+            <label class="form-label">Write down your additional Prearrival requests here - </label>
+            <textarea type="text" name="additional" class="form-control" placeholder="Enter meal preferences or requirements" rows="5"></textarea>
+
+          </div>
+        </div>
+        
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+      
+     
+    </form>
+  </div>
+<style>
+    
+</style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('multi-step-form');
+  const steps = document.querySelectorAll('.form-step');
+  const nextButtons = document.querySelectorAll('.next-btn');
+  const prevButtons = document.querySelectorAll('.prev-btn');
+  const stepIndicators = document.querySelectorAll('.step');
+  const progressFill = document.getElementById('progress-fill');
+  let currentStep = 1;
+  
+  // Update progress bar
+  function updateProgressBar() {
+    const totalSteps = steps.length;
+    const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    progressFill.style.width = `calc(${progressPercentage}% - ${20 * progressPercentage / 100}px)`;
+  }
+  
+  // Show specific step
+  function showStep(stepNumber) {
+    // Ensure the step number is valid
+    if (stepNumber < 1 || stepNumber > steps.length) {
+      console.error('Invalid step number:', stepNumber);
+      return;
+    }
+    
+    // Hide all steps
+    steps.forEach(step => {
+      step.classList.remove('active');
+    });
+    
+    // Update step indicators
+    stepIndicators.forEach(indicator => {
+      const indicatorStep = parseInt(indicator.dataset.step);
+      indicator.classList.remove('active');
+      
+      if (indicatorStep < stepNumber) {
+        indicator.classList.add('completed');
+      } else {
+        indicator.classList.remove('completed');
+      }
+      
+      if (indicatorStep === stepNumber) {
+        indicator.classList.add('active');
+      }
+    });
+    
+    // Show the target step
+    const targetStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+    if (targetStep) {
+      targetStep.classList.add('active');
+      currentStep = stepNumber;
+      updateProgressBar();
+    } else {
+      console.error('Step not found:', stepNumber);
+    }
+  }
+  
+  // Event listeners for next buttons
+  nextButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const currentStepElement = this.closest('.form-step');
+      const nextStepNumber = parseInt(currentStepElement.dataset.step) + 1;
+      
+      // Simply proceed to the next step without validation
+      showStep(nextStepNumber);
+    });
+  });
+  
+  // Event listeners for previous buttons
+  prevButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const currentStepElement = this.closest('.form-step');
+      const prevStepNumber = parseInt(currentStepElement.dataset.step) - 1;
+      showStep(prevStepNumber);
+    });
+  });
+  
+  // Event listeners for step indicators
+  stepIndicators.forEach(indicator => {
+    indicator.addEventListener('click', function() {
+      const clickedStepNumber = parseInt(this.dataset.step);
+      // Allow clicking on any step
+      showStep(clickedStepNumber);
+    });
+  });
+  
+
+});
+  </script>
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('multi-step-form');
+  const steps = document.querySelectorAll('.form-step');
+  const nextButtons = document.querySelectorAll('.next-btn');
+  const prevButtons = document.querySelectorAll('.prev-btn');
+  const stepIndicators = document.querySelectorAll('.step');
+  const progressFill = document.getElementById('progress-fill');
+  let currentStep = 1;
+  
+  // Update progress bar
+  function updateProgressBar() {
+    const totalSteps = steps.length;
+    const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    progressFill.style.width = `calc(${progressPercentage}% - ${20 * progressPercentage / 100}px)`;
+  }
+  
+  // Show specific step
+  function showStep(stepNumber) {
+    // Ensure the step number is valid
+    if (stepNumber < 1 || stepNumber > steps.length) {
+      console.error('Invalid step number:', stepNumber);
+      return;
+    }
+    
+    // Hide all steps
+    steps.forEach(step => {
+      step.classList.remove('active');
+    });
+    
+    // Update step indicators
+    stepIndicators.forEach(indicator => {
+      const indicatorStep = parseInt(indicator.dataset.step);
+      indicator.classList.remove('active');
+      
+      if (indicatorStep < stepNumber) {
+        indicator.classList.add('completed');
+      } else {
+        indicator.classList.remove('completed');
+      }
+      
+      if (indicatorStep === stepNumber) {
+        indicator.classList.add('active');
+      }
+    });
+    
+    // Show the target step
+    const targetStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+    if (targetStep) {
+      targetStep.classList.add('active');
+      currentStep = stepNumber;
+      updateProgressBar();
+    } else {
+      console.error('Step not found:', stepNumber);
+    }
+  }
+  
+  // Validate current step fields
+  function validateStep(stepElement) {
+    const requiredFields = stepElement.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+      if (!field.value.trim()) {
+        isValid = false;
+        field.classList.add('invalid');
+        
+        // Add event listener to remove invalid class when user types
+        field.addEventListener('input', function() {
+          if (this.value.trim()) {
+            this.classList.remove('invalid');
+          }
+        }, { once: true });
+      } else {
+        field.classList.remove('invalid');
+      }
+    });
+    
+    return isValid;
+  }
+  
+  // Event listeners for next buttons
+  nextButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const currentStepElement = this.closest('.form-step');
+      const nextStepNumber = parseInt(currentStepElement.dataset.step) + 1;
+      
+      // Validate current step
+      if (validateStep(currentStepElement)) {
+        showStep(nextStepNumber);
+      } else {
+        // Show validation message
+        alert('Please fill in all required fields before proceeding.');
+      }
+    });
+  });
+  
+  // Event listeners for previous buttons
+  prevButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const currentStepElement = this.closest('.form-step');
+      const prevStepNumber = parseInt(currentStepElement.dataset.step) - 1;
+      showStep(prevStepNumber);
+    });
+  });
+  
+  // Event listeners for step indicators
+  stepIndicators.forEach(indicator => {
+    indicator.addEventListener('click', function() {
+      const clickedStepNumber = parseInt(this.dataset.step);
+      
+      // Only allow clicking on completed steps or the next available step
+      if (clickedStepNumber <= currentStep || clickedStepNumber === currentStep + 1) {
+        showStep(clickedStepNumber);
+      }
+    });
+  });
+  
+  // Form submission
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate all steps before submission
+    let allValid = true;
+    steps.forEach(step => {
+      if (!validateStep(step)) {
+        allValid = false;
+        const stepNumber = parseInt(step.dataset.step);
+        showStep(stepNumber);
+        return;
+      }
+    });
+    
+    if (allValid) {
+      alert('Form submitted successfully!');
+      // Here you would typically send the form data to your server
+    }
+  });
+  
+  // Initialize
+  showStep(1);  // Make sure we start at step 1
+  updateProgressBar();
+});
+</script> -->
+{% endblock content %}

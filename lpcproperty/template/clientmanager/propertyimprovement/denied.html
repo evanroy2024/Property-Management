@@ -1,0 +1,423 @@
+{% extends 'cmbase.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<style>
+    /* Custom modern styling */
+    .dashboard-container {
+        padding: 2rem 1.5rem;
+        background-color: #f8f9fc;
+        border-radius: 12px;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0;
+    }
+    
+    .page-subtitle {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+    }
+    
+    .custom-card {
+        border-radius: 12px;
+        border: none;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .custom-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .stats-card {
+        border-radius: 12px;
+        border-left: 5px solid;
+        padding: 1.25rem;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .stats-card.primary {
+        border-left-color: #4361ee;
+        background: linear-gradient(135deg, #eef1fe 0%, #f3f5ff 100%);
+    }
+    
+    .stats-card.warning {
+        border-left-color: #ff9f43;
+        background: linear-gradient(135deg, #fff8ee 0%, #fff4e6 100%);
+    }
+    
+    .stats-card.success {
+        border-left-color: #2eb867;
+        background: linear-gradient(135deg, #edfcf2 0%, #e6f9ed 100%);
+    }
+    
+    .stats-card.danger {
+        border-left-color: #ea5455;
+        background: linear-gradient(135deg, #feeeee 0%, #fce6e6 100%);
+    }
+    
+    .stats-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: #2c3e50;
+    }
+    
+    .stats-label {
+        color: #7f8c8d;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .stats-icon.primary {
+        background-color: #4361ee;
+        color: white;
+    }
+    
+    .stats-icon.warning {
+        background-color: #ff9f43;
+        color: white;
+    }
+    
+    .stats-icon.success {
+        background-color: #2eb867;
+        color: white;
+    }
+    
+    .stats-icon.danger {
+        background-color: #ea5455;
+        color: white;
+    }
+    
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .modern-table {
+        margin-bottom: 0;
+    }
+    
+    .modern-table thead {
+        background-color: #f8fafc;
+    }
+    
+    .modern-table th {
+        border: none;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.25rem;
+    }
+    
+    .modern-table tbody tr {
+        transition: all 0.2s;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .modern-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+    
+    .modern-table td {
+        border: none;
+        padding: 1rem 1.25rem;
+        vertical-align: middle;
+    }
+    
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+    
+    .badge-custom {
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+    
+    .badge-pending {
+        background-color: #fff4e5;
+        color: #ff9f43;
+    }
+    
+    .badge-completed {
+        background-color: #e6f7ef;
+        color: #2eb867;
+    }
+    
+    .badge-cancelled {
+        background-color: #feeeee;
+        color: #ea5455;
+    }
+    
+    .badge-default {
+        background-color: #eef1fe;
+        color: #4361ee;
+    }
+    
+    .badge-unassigned {
+        background-color: #f1f5f9;
+        color: #64748b;
+    }
+    
+    .btn-custom {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.5rem 1.25rem;
+        transition: all 0.3s;
+    }
+    
+    .btn-view {
+        background-color: #eef1fe;
+        color: #4361ee;
+        border: none;
+    }
+    
+    .btn-view:hover {
+        background-color: #4361ee;
+        color: white;
+    }
+    
+    .btn-update {
+        background-color: #fff4e5;
+        color: #ff9f43;
+        border: none;
+    }
+    
+    .btn-update:hover {
+        background-color: #ff9f43;
+        color: white;
+    }
+    
+    .table-footer {
+        background-color: #f8fafc;
+        border-top: 1px solid #f1f5f9;
+        padding: 1rem 1.25rem;
+    }
+    
+    .pagination-custom .page-link {
+        border: none;
+        color: #64748b;
+        background: transparent;
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+    
+    .pagination-custom .page-item.active .page-link {
+        background-color: #4361ee;
+        color: white;
+    }
+    
+    .empty-state {
+        padding: 3rem 1rem;
+        text-align: center;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        color: #cbd5e1;
+    }
+    
+    .empty-text {
+        color: #64748b;
+        margin-top: 1rem;
+    }
+    
+    .empty-action {
+        margin-top: 1.5rem;
+    }
+    
+    .action-col {
+        width: 160px;
+    }
+    body {
+        background-color: #f8f9fc;
+    }
+    .dashboard-container {
+    margin-top: 10px;
+    margin-bottom: 100px;
+}
+</style>
+
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="d-flex justify-content-center align-items-center mb-4 text-center flex-column flex-md-row gap-3">
+        <!-- Left Image -->
+        <img src="{% static 'img/smalllogo.png' %}" alt="Concierge Icon" style="width: auto; height: 50px; margin-top: -10px;">
+    
+        <!-- Centered Text -->
+        <div>
+            <h1 class="page-title mb-1">Pending Concierge Requests</h1>
+            <p class="page-subtitle">Track and manage your client service requests</p>
+        </div>
+    </div>
+    
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <a href="{% url 'clientmanager:property_pending_requests' %}" class="text-decoration-none">
+                <div class="stats-card primary">
+                    <div>
+                        <div class="stats-value text-black">Pending</div>
+                        <div class="stats-label text-black">Requests</div>
+                    </div>
+                    <div class="stats-icon primary">
+                        <i class="bi bi-list-check"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'clientmanager:property_open_requests' %}" class="text-decoration-none">
+                <div class="stats-card warning">
+                    <div>
+                        <div class="stats-value text-black">Open</div>
+                        <div class="stats-label text-black">Requests</div>
+                    </div>
+                    <div class="stats-icon warning">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'clientmanager:property_completed_requests' %}" class="text-decoration-none">
+                <div class="stats-card success">
+                    <div>
+                        <div class="stats-value text-black">Completed</div>
+                        <div class="stats-label text-black">Requests</div>
+                    </div>
+                    <div class="stats-icon success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'clientmanager:property_denied_requests' %}" class="text-decoration-none">
+                <div class="stats-card danger">
+                    <div>
+                        <div class="stats-value text-black">Denied</div>
+                        <div class="stats-label text-black">Requests</div>
+                    </div>
+                    <div class="stats-icon danger">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    
+
+    <!-- Table -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table modern-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Client</th>
+                        <th>PIN</th>
+                        <th>Vendor</th>
+                        <th>Cost</th>
+                        <th>Description</th>
+                        <th>Created</th>
+                        <th>Status</th>
+                        <th class="text-center action-col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ req.client.username }}</td>
+                        <td>{{ req.pino }}</td>
+                        <td>{% if req.vendor %}{{ req.vendor.company_name }}{% else %}Not Assigned{% endif %}</td>
+                        <td>${{ req.cost|default:"0.00" }}</td>
+                        <td>{{ req.description|truncatechars:40 }}</td>
+                        <td>{{ req.created_at|date:"Y-m-d" }}</td>
+                        <td> {% if req.get_status_display == "Pending" %}
+                            <span class="badge-custom badge-pending">{{ req.get_status_display }}</span>
+                        {% elif req.get_status_display == "Completed" %}
+                            <span class="badge-custom badge-completed">{{ req.get_status_display }}</span>
+                        {% elif req.get_status_display == "Cancelled" %}
+                            <span class="badge-custom badge-cancelled">{{ req.get_status_display }}</span>
+                        {% else %}
+                            <span class="badge-custom badge-default">{{ req.get_status_display }}</span>
+                        {% endif %}</td>
+                        <td class="text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{% url 'clientmanager:property_view_request' req.id %}" class="btn btn-custom btn-view">
+                                    <i class="bi bi-eye me-1"></i> 
+                                </a>
+                                <a href="{% url 'clientmanager:property_update_request' req.id %}" class="btn btn-custom btn-update">
+                                    <i class="bi bi-pencil me-1"></i> 
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox-fill empty-icon"></i>
+                                <h4 class="mt-3" style="color: #334155;">No requests found</h4>
+                                <p class="empty-text">There are currently no pending Property Improvement requests Found</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if requests %}
+        <div class="table-footer d-flex justify-content-between align-items-center">
+            <div style="color: #64748b; font-size: 0.875rem;">Showing {{ requests|length }} items</div>
+            <nav>
+                <ul class="pagination pagination-custom mb-0">
+                    <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

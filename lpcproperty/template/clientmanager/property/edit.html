@@ -1,0 +1,653 @@
+{% extends 'cmbase.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --primary-color-hover: #2e59d9;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --border-color: #e3e6f0;
+            --shadow-color: rgba(58, 59, 69, 0.15);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .content-wrapper {
+            padding: 1.5rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            color: var(--dark-color);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .card {
+            background-color: #fff;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 var(--shadow-color);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--light-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--dark-color);
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.35rem;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: #bac8f3;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+            outline: 0;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -0.5rem;
+            margin-left: -0.5rem;
+        }
+        
+        .form-col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0 0.5rem;
+        }
+        
+        @media (min-width: 576px) {
+            .form-col-md {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .form-col-lg {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .checkbox-label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        
+        .checkbox-label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-checkbox input:checked + .checkbox-label:before {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .checkbox-label:after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-checkbox input:checked + .checkbox-label:after {
+            opacity: 1;
+        }
+        
+        .form-select {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--dark-color);
+            background-color: #fff;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 0.35rem;
+            appearance: none;
+        }
+        
+        .form-select:focus {
+            border-color: #bac8f3;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .file-upload {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+        
+        .file-upload-input {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: calc(2.25rem + 2px);
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: calc(2.25rem + 2px);
+            padding: 0.5rem 0.75rem;
+            line-height: 1.5;
+            color: var(--dark-color);
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 0.35rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .file-upload-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            display: block;
+            padding: 0.5rem 1rem;
+            line-height: 1.5;
+            color: #fff;
+            background-color: var(--primary-color);
+            border-left: 1px solid var(--border-color);
+            border-top-right-radius: 0.35rem;
+            border-bottom-right-radius: 0.35rem;
+        }
+        
+        .floor-plan-section {
+            border: 1px solid var(--border-color);
+            border-radius: 0.35rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            color: var(--dark-color);
+            text-align: center;
+            vertical-align: middle;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.35rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            color: #fff;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-color-hover);
+            border-color: #2653d4;
+        }
+        
+        .btn-secondary {
+            color: #fff;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #717384;
+            border-color: #6c757d;
+        }
+        
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0.75rem;
+            color: var(--secondary-color);
+        }
+        
+        .input-with-icon .form-control {
+            padding-left: 2.5rem;
+        }
+        
+        .section-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 2rem 0;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">Edit Property</h1>
+                <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon">
+                    <i class="fas fa-arrow-left"></i> Back to Properties
+                </a>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Property Information Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-home"></i> Property Information</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="address">Property Address</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-map-marker-alt input-icon"></i>
+                                        <input type="text" id="address" name="address" class="form-control" value="{{ property.address }}" placeholder="Enter full property address">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="size_of_home">Size of Home (sq ft)</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-expand-arrows-alt input-icon"></i>
+                                        <input type="text" id="size_of_home" name="size_of_home" class="form-control" value="{{ property.size_of_home }}" placeholder="Enter size in square feet">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="number_of_stories">Number of Stories</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-building input-icon"></i>
+                                        <input type="number" id="number_of_stories" name="number_of_stories" class="form-control" value="{{ property.number_of_stories }}" placeholder="Enter number of stories">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="year_built">Year Built</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-calendar-alt input-icon"></i>
+                                        <input type="number" id="year_built" name="year_built" class="form-control" value="{{ property.year_built }}" placeholder="Enter year built">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="construction_type">Construction Type</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-hammer input-icon"></i>
+                                <input type="text" id="construction_type" name="construction_type" class="form-control" value="{{ property.construction_type }}" placeholder="E.g., Wood frame, Concrete block, etc.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property Features Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-list-check"></i> Property Features</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">Property Amenities</label>
+                            <div class="checkbox-group">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name="has_pool" {% if property.has_pool %}checked{% endif %}>
+                                    <span class="checkbox-label">Swimming Pool</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name="gated_community" {% if property.gated_community %}checked{% endif %}>
+                                    <span class="checkbox-label">Gated Community</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name="impact_windows" {% if property.impact_windows %}checked{% endif %}>
+                                    <span class="checkbox-label">Impact Windows</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name="has_hoa" {% if property.has_hoa %}checked{% endif %}>
+                                    <span class="checkbox-label">Has HOA</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name="gated_property" {% if property.gated_property %}checked{% endif %}>
+                                    <span class="checkbox-label">Gated Property</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="preferred_contact_method">Preferred Contact Method</label>
+                            <select id="preferred_contact_method" name="preferred_contact_method" class="form-select">
+                                <option value="email" {% if property.preferred_contact_method == "email" %}selected{% endif %}>Email</option>
+                                <option value="phone" {% if property.preferred_contact_method == "phone" %}selected{% endif %}>Phone</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floor Plans Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-layer-group"></i> Floor Plans</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Floor Plan 1 -->
+                        <div class="floor-plan-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-image"></i> Floor Plan 1
+                            </h3>
+                            <div class="form-row">
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_1_name">Name/Description</label>
+                                        <input type="text" id="floor_plan_1_name" name="floor_plan_1_name" class="form-control" value="{{ property.floor_plan_1_name }}" placeholder="E.g., Main Floor, Ground Level">
+                                    </div>
+                                </div>
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_1_file">Floor Plan File</label>
+                                        <div class="file-upload">
+                                            <input type="file" id="floor_plan_1_file" name="floor_plan_1_file" class="file-upload-input">
+                                            <label for="floor_plan_1_file" class="file-upload-label">Choose file</label>
+                                            <span class="file-upload-button">Browse</span>
+                                        </div>
+                                        {% if property.floor_plan_1_file %}
+                                        <small class="text-success">Current file: {{ property.floor_plan_1_file.name }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Floor Plan 2 -->
+                        <div class="floor-plan-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-image"></i> Floor Plan 2
+                            </h3>
+                            <div class="form-row">
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_2_name">Name/Description</label>
+                                        <input type="text" id="floor_plan_2_name" name="floor_plan_2_name" class="form-control" value="{{ property.floor_plan_2_name }}" placeholder="E.g., Second Floor, Upper Level">
+                                    </div>
+                                </div>
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_2_file">Floor Plan File</label>
+                                        <div class="file-upload">
+                                            <input type="file" id="floor_plan_2_file" name="floor_plan_2_file" class="file-upload-input">
+                                            <label for="floor_plan_2_file" class="file-upload-label">Choose file</label>
+                                            <span class="file-upload-button">Browse</span>
+                                        </div>
+                                        {% if property.floor_plan_2_file %}
+                                        <small class="text-success">Current file: {{ property.floor_plan_2_file.name }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Floor Plan 3 -->
+                        <div class="floor-plan-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-image"></i> Floor Plan 3
+                            </h3>
+                            <div class="form-row">
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_3_name">Name/Description</label>
+                                        <input type="text" id="floor_plan_3_name" name="floor_plan_3_name" class="form-control" value="{{ property.floor_plan_3_name }}" placeholder="E.g., Basement, Lower Level">
+                                    </div>
+                                </div>
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_3_file">Floor Plan File</label>
+                                        <div class="file-upload">
+                                            <input type="file" id="floor_plan_3_file" name="floor_plan_3_file" class="file-upload-input">
+                                            <label for="floor_plan_3_file" class="file-upload-label">Choose file</label>
+                                            <span class="file-upload-button">Browse</span>
+                                        </div>
+                                        {% if property.floor_plan_3_file %}
+                                        <small class="text-success">Current file: {{ property.floor_plan_3_file.name }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Floor Plan 4 -->
+                        <div class="floor-plan-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-image"></i> Floor Plan 4
+                            </h3>
+                            <div class="form-row">
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_4_name">Name/Description</label>
+                                        <input type="text" id="floor_plan_4_name" name="floor_plan_4_name" class="form-control" value="{{ property.floor_plan_4_name }}" placeholder="E.g., Garage, Outdoor Area">
+                                    </div>
+                                </div>
+                                <div class="form-col form-col-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="floor_plan_4_file">Floor Plan File</label>
+                                        <div class="file-upload">
+                                            <input type="file" id="floor_plan_4_file" name="floor_plan_4_file" class="file-upload-input">
+                                            <label for="floor_plan_4_file" class="file-upload-label">Choose file</label>
+                                            <span class="file-upload-button">Browse</span>
+                                        </div>
+                                        {% if property.floor_plan_4_file %}
+                                        <small class="text-success">Current file: {{ property.floor_plan_4_file.name }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary btn-icon">
+                        <i class="fas fa-save"></i> Update Property
+                    </button>
+                    <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Update file input labels when files are selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInputs = document.querySelectorAll('.file-upload-input');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const fileName = this.value.split('\\').pop();
+                    const label = this.nextElementSibling;
+                    if (fileName) {
+                        label.innerHTML = fileName;
+                    } else {
+                        label.innerHTML = 'Choose file';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock content %}

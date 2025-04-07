@@ -1,0 +1,315 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3f37c9;
+            --accent-color: #4cc9f0;
+            --text-color: #2b2d42;
+            --light-text: #8d99ae;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 30px rgba(67, 97, 238, 0.1);
+            --btn-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        .fullpage {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background decoration */
+        .bg-shape {
+            position: absolute;
+            z-index: -1;
+            border-radius: 50%;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+            top: -150px;
+            left: -100px;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, rgba(76, 201, 240, 0.1), rgba(67, 97, 238, 0.08));
+            bottom: -100px;
+            right: -50px;
+        }
+        
+        /* Card styling */
+        .card-container {
+            width: 100%;
+            max-width: 700px;
+            perspective: 1000px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: none;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        
+        /* Header styling */
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            padding: 2rem;
+            text-align: center;
+            border-bottom: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header h2 {
+            color: white;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        .card-header p {
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 0;
+            position: relative;
+        }
+        
+        .header-icon {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: -60px;
+            right: -60px;
+        }
+        
+        .header-icon i {
+            color: white;
+            font-size: 3rem;
+        }
+        
+        /* Form styling */
+        .card-body {
+            padding: 2.5rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e9ecef;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            border-color: var(--primary-light);
+        }
+        
+        .form-control::placeholder {
+            color: #adb5bd;
+        }
+        
+        .form-floating > .form-control, .form-floating > .form-select {
+            height: calc(3.5rem + 2px);
+            padding: 1rem 0.75rem;
+        }
+        
+        .form-floating > label {
+            padding: 1rem 0.75rem;
+        }
+        
+        /* Input groups */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
+            z-index: 10;
+        }
+        
+        .input-with-icon {
+            padding-left: 2.75rem;
+        }
+        
+        /* Submit button */
+        .btn-submit {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: var(--btn-shadow);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transition: all 0.4s ease;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-submit:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-light), var(--primary-color));
+            transition: opacity 0.4s ease-in-out;
+            z-index: -1;
+            opacity: 0;
+        }
+        
+        .btn-submit:hover:before {
+            opacity: 1;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .header-icon {
+                width: 100px;
+                height: 100px;
+                top: -40px;
+                right: -40px;
+            }
+            
+            .header-icon i {
+                font-size: 2rem;
+            }
+        }
+    </style>
+<div class="fullpage">
+    <!-- Background shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    
+    <div class="card-container">
+        <div class="card">
+            <div class="card-header">
+                <div class="header-icon float-animation">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <h2>Send Us a Message</h2>
+                <p>We're here to help with your property needs</p>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-control input-with-icon" name="name" placeholder="Your Name" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" class="form-control input-with-icon" name="email" placeholder="Your Email" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-question-circle input-icon"></i>
+                        <select class="form-select input-with-icon" name="need_type" required>
+                            <option value="" disabled selected>What Do You Need?</option>
+                            <option value="management">Property Management</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="rental">Rental Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-comment-alt input-icon" style="top: 20px;"></i>
+                        <textarea class="form-control input-with-icon" name="message" rows="4" placeholder="Your Message" required></textarea>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple form animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-control, .form-select');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-5px)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock content %}

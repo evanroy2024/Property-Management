@@ -1,0 +1,530 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #f5f5f5;
+            --accent-color: #8f94fb;
+            --text-color: #333;
+            --light-color: #fff;
+            --dark-color: #2c2c54;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* Header Styling */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            padding: 4rem 0 6rem;
+            margin-bottom: -3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            color: var(--light-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Animated background elements */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .circle:nth-child(1) {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .circle:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            left: 30%;
+            animation-delay: 1s;
+        }
+
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 5%;
+            animation-delay: 2s;
+        }
+
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            right: 20%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        /* Search bar styling */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .search-container:hover {
+            transform: translateY(-3px);
+        }
+
+        .search-input {
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem 0.75rem 3rem;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 8px 25px rgba(78, 84, 200, 0.25);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        /* FAQ Category styling */
+        .faq-category {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .category-btn {
+            background-color: var(--light-color);
+            border: none;
+            border-radius: 30px;
+            padding: 0.6rem 1.8rem;
+            color: var(--text-color);
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .category-btn::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: all 0.3s;
+            z-index: -1;
+        }
+
+        .category-btn:hover::before,
+        .category-btn.active::before {
+            width: 100%;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            color: var(--light-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main container styling */
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* FAQ item styling */
+        .faq-item {
+            background: var(--light-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .faq-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-item::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .faq-item:hover::before,
+        .faq-item.active::before {
+            opacity: 1;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark-color);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item.active .faq-question {
+            color: var(--primary-color);
+        }
+
+        .faq-question i {
+            transition: transform 0.4s ease;
+            color: var(--primary-color);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            background-color: rgba(245, 247, 250, 0.5);
+            line-height: 1.7;
+            padding: 0 1.5rem;
+            color: #555;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 1.5rem;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        /* Animation classes */
+        .animate-in {
+            animation: fadeInUp 0.7s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer styling */
+        .faq-footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem 0;
+            color: var(--text-color);
+        }
+
+        .faq-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .faq-footer a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                padding: 3rem 0 5rem;
+            }
+
+            .faq-container {
+                padding: 1rem;
+            }
+
+            .faq-question {
+                padding: 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .faq-answer {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+
+    <header class="header">
+        <div class="background-animation">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+
+        <div class="container header-content">
+            <div class="row">
+                <div class="col-md-10 mx-auto text-center">
+                    <h1 class="mb-4 animate-in" style="animation-delay: 0.1s;">Frequently Asked Questions</h1>
+                    <p class="animate-in" style="animation-delay: 0.3s;">Find answers to the most common questions about
+                        our products and services.</p>
+                </div>
+                
+            </div>
+        </div>
+    </header>
+
+    <div class="faq-container">
+       
+
+        <div class="faq-category animate-in" style="animation-delay: 0.7s;">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="general">General</button>
+            <button class="category-btn" data-category="account">Account</button>
+            <button class="category-btn" data-category="billing">Billing</button>
+            <button class="category-btn" data-category="technical">Technical</button>
+        </div>
+
+        <div id="faqList" class="faq-list">
+            {% for faq in faqs %}
+            <div class="faq-item animate-in" style="animation-delay: {{ forloop.counter0|add:"0.8"|floatformat:1 }}s;" data-category="{{ faq.category }}">
+                <div class="faq-question">
+                    {{ faq.question }}
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    {{ faq.answer }}
+                </div>
+            </div>
+            {% empty %}
+            <p>No FAQs available at the moment.</p>
+            {% endfor %}
+        </div>
+        
+
+        <div class="faq-footer animate-in" style="animation-delay: 1.6s;">
+            <p>Still have questions? <a href="#" class="contact-link">Contact our support team</a></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const faqItems = document.querySelectorAll('.faq-item');
+        
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+        
+                    const selectedCategory = button.getAttribute('data-category');
+        
+                    faqItems.forEach(item => {
+                        const itemCategory = item.getAttribute('data-category');
+        
+                        if (selectedCategory === 'all' || itemCategory === selectedCategory) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+        </script>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize FAQ toggle functionality
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+
+                question.addEventListener('click', () => {
+                    // Toggle active class on clicked item
+                    item.classList.toggle('active');
+
+                    // Optional: Close other items when one is opened
+                    // faqItems.forEach(otherItem => {
+                    //     if (otherItem !== item) {
+                    //         otherItem.classList.remove('active');
+                    //     }
+                    // });
+                });
+            });
+
+            // Category filtering
+            const categoryButtons = document.querySelectorAll('.category-btn');
+
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active button
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Get selected category
+                    const category = button.getAttribute('data-category');
+
+                    // Filter items
+                    filterItems(category, document.getElementById('faqSearch').value);
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('faqSearch');
+            let debounceTimer;
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const activeCategory = document.querySelector('.category-btn.active').getAttribute('data-category');
+                    filterItems(activeCategory, searchInput.value);
+                }, 300);
+            });
+
+            // Function to filter items based on category and search term
+            function filterItems(category, searchTerm) {
+                const faqItems = document.querySelectorAll('.faq-item');
+                const searchTermLower = searchTerm.toLowerCase();
+                let hasVisibleItems = false;
+
+                faqItems.forEach(item => {
+                    const itemCategory = item.getAttribute('data-category');
+                    const questionText = item.querySelector('.faq-question').textContent.toLowerCase();
+                    const answerText = item.querySelector('.faq-answer').textContent.toLowerCase();
+
+                    const matchesCategory = category === 'all' || itemCategory === category;
+                    const matchesSearch = searchTerm === '' ||
+                        questionText.includes(searchTermLower) ||
+                        answerText.includes(searchTermLower);
+
+                    if (matchesCategory && matchesSearch) {
+                        item.style.display = 'block';
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Show "no results" message if needed
+                const noResultsMsg = document.querySelector('.no-results-message');
+
+                if (!hasVisibleItems) {
+                    if (!noResultsMsg) {
+                        const message = document.createElement('div');
+                        message.className = 'text-center py-4 no-results-message';
+                        message.innerHTML = `
+                            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                            <p>No FAQs found matching your criteria. Please try a different search or category.</p>
+                        `;
+                        document.getElementById('faqList').appendChild(message);
+                    }
+                } else if (noResultsMsg) {
+                    noResultsMsg.remove();
+                }
+            }
+
+            // Initialize animations with offset for each item
+            animateItems();
+        });
+
+        function animateItems() {
+            const animatedElements = document.querySelectorAll('.animate-in');
+
+            animatedElements.forEach(element => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                element.style.opacity = '1';
+                                element.style.transform = 'translateY(0)';
+                            }, parseFloat(element.style.animationDelay) * 1000);
+                            observer.unobserve(element);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                observer.observe(element);
+            });
+        }
+    </script>
+{% endblock content %}

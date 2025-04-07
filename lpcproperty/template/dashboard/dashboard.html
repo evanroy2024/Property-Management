@@ -1,0 +1,207 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+/* Full Container */
+.full-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    color: #1a1a1a;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* First Row */
+.first1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.first1 img {
+    height: 50px;
+    width: auto;
+}
+
+.first1 p {
+    font-size: 2.55rem;
+    line-height: 2.5rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: -2px;
+    color: #1a1a1a;
+    font-family: 'Impact', sans-serif;
+}
+
+/* Second Row */
+.first2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Store Logos */
+.store-logo {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+.store-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Section Title */
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #c08457;
+    border-bottom: 2px solid #c08457;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    text-align: left;
+    max-width: 1150px;
+    width: 105%;
+    margin-left: -8%;
+}
+
+/* Containers */
+.container, .container2 {
+    max-width: 90%;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.button-container, .button-container2, .button-container3 {
+    margin-top: 20px;
+}
+
+/* Buttons - Unified for light theme */
+.button {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s ease;
+}
+.button:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.btn1 { background-color: #fff3e0; color: #2e3a59; }
+.btn2 { background-color: #ffe0b2; color: #2e3a59; }
+.btn3 { background-color: #ffcc80; color: #2e3a59; }
+
+.btn4 { background-color: #e1f5fe; color: #1a1a1a; }
+.btn5 { background-color: #b3e5fc; color: #1a1a1a; }
+.btn6 { background-color: #81d4fa; color: #1a1a1a; }
+
+.btn7 { background-color: #ffffff; color: #2e3a59; }
+.btn8 { background-color: #f0f0f0; color: #2e3a59; }
+
+/* Divider */
+.first3 hr {
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+
+/* Body Background */
+body {
+    background-color: #f5f5f5;
+}
+.btn1 {
+    border: 1px solid #000000;
+}
+.btn2 {
+    border: 1px solid #000000;
+}
+.btn3 {
+    border: 1px solid #000000;
+}
+.btn4 {
+    border: 1px solid #000000;
+}
+.btn5 {
+    border: 1px solid #000000;
+}
+.btn6 {
+    border: 1px solid #000000;
+}
+.btn7 {
+    border: 1px solid #000000;
+}
+.btn8 {
+    border: 1px solid #000000;
+}
+
+</style>
+
+<div class="full-container">
+    <div class="first1">
+        <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
+        <p>WELCOME {{ client.first_name }} {{ client.last_name }}</p>
+    </div>
+
+    <div class="first2">
+        <p>Logged In As: {{ client.username }}</p>
+
+        <div>
+            <a href="https://play.google.com/store" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                     alt="Google Play" class="store-logo">
+            </a>
+            <a href="https://www.apple.com/app-store/" target="_blank">
+                <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
+                     alt="App Store" class="store-logo">
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-title">Property / Client Information</div>
+        <div class="button-container">
+            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:client_properties' %}';">Property / Client Information</button>
+            <button class="button btn2" onclick="window.location.href='{% url 'mainapp:service_request' %}';">Service Request</button>
+            <button class="button btn3" onclick="window.location.href='{% url 'mainapp:docoments' %}';">Documents</button>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: -3%;">
+        <div class="section-title">CONCIERGE SERVICES</div>
+        <div class="button-container2">
+            <button class="button btn4" onclick="window.location.href='{% url 'servicesapp:Concierge_request' %}';">Concierge Request</button>
+            <button class="button btn5" onclick="window.location.href='{% url 'servicesapp:prearrival_form' %}';">Pre-Arrival Notification</button>
+            <button class="button btn6" onclick="window.location.href='{% url 'servicesapp:departure_form' %}';">Departure Notification & Refresh</button>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: -3%;">
+        <div class="section-title">HOME IMPROVEMENT SERVICES</div>
+        <div class="button-container3">
+            <button class="button btn7" onclick="window.location.href='{% url 'propertydetails:property_improvements' %}';">Home Improvement Services</button>
+            <button class="button btn8" onclick="window.location.href='{% url 'my_properties' %}';">Contact Your Client Manager</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

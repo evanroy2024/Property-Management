@@ -1,0 +1,27 @@
+pip install django 
+
+pip insatall pillow
+
+for excel csv pdf format ------
+pip install openpyxl
+pip install reportlab
+
+<div class="report-footer">
+                <div class="report-meta">
+                    <p>Generated on {% now "F d, Y" %}</p>
+                    <p>Report ID: {{ report.id }}</p>
+                </div>
+                
+                <!-- Enhanced Download Buttons -->
+                <div class="download-buttons">
+                    <button onclick="generatePDF('report-{{ report.id }}')" class="btn btn-danger download-btn">
+                        <i class="fa fa-file-pdf-o"></i> Download PDF
+                    </button>
+                    <a href="{% url 'export_excel' report.id %}" class="btn btn-success">
+                        <i class="fa fa-file-excel-o"></i> Download Excel
+                    </a>
+                    <a href="{% url 'export_csv' report.id %}" class="btn btn-primary">
+                        <i class="fa fa-file-text-o"></i> Download CSV
+                    </a>
+                </div>
+            </div>

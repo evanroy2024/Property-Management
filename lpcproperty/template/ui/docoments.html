@@ -1,0 +1,300 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+/* Full Container (80% Width, Centered) */
+.full-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+/* First Row (Logo + Heading in the Same Line, Centered) */
+.first1 {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the row */
+    gap: 15px; /* Space between logo and text */
+    margin-bottom: 20px;
+}
+
+.first1 img {
+    height: 50px; /* Adjust logo size */
+    width: auto;
+}
+
+.first1 p {
+    font-size: 2.55rem; /* Keep the size as before */
+    line-height: 2.5rem;
+    font-weight: 500; /* Heavy weight (further bolder) */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: -2px;
+    color: rgb(9, 9, 79);
+    font-family: 'Impact', sans-serif; /* Impact is a heavy and muscular font */
+}
+
+
+
+/* Second Row (User Info + Store Buttons in a Single Line) */
+.first2 {
+    display: flex;
+    justify-content: space-between; /* Text Left, Icons Right */
+    align-items: center;
+    width: 100%; /* Full Width */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Store Logos */
+.store-logo {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.store-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Third Row (Section Title) */
+.first3 {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.first3 h2 {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Divider */
+.first3 hr {
+    width: 100%;
+    border: 1px solid white;
+    margin-top: 5px;
+}
+
+/* For property Options  */
+.container {
+            max-width: 90%;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #e0a96d;
+            border-bottom: 1px solid #e0a96d;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            text-align: left;
+            max-width: 1150px;
+            width: 105%;
+            margin-left: -8%;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn1 { background-color: #f5e8d8; color: #1a2a41; }
+        .btn2 { background-color: #dbb98a; color: #1a2a41; }
+        .btn3 { background-color: #e0a96d; color: #1a2a41; }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .container{
+            padding: 0px;
+        }
+
+/* 2nd container  */
+/* For property Options */
+/* For property Options */
+.container2 {
+    max-width: 90%;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #e0a96d;
+    border-bottom: 1px solid #e0a96d;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    text-align: left;
+    max-width: 1150px;
+    width: 105%;
+    margin-left: -8%;
+}
+
+.button-container2 {
+    margin-top: 20px;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn4 { 
+    background-color: rgba(127, 207, 235, 0.8); /* Light blue */
+    color: #fff; 
+}
+
+.btn5 { 
+    background-color: rgba(95, 179, 214, 0.8); /* Darker blue */
+    color: #fff; 
+}
+
+.btn6 { 
+    background-color: rgba(70, 144, 179, 0.8); /* Even darker blue */
+    color: #fff; 
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+/* For Property Options in container3 */
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #e0a96d;
+    border-bottom: 1px solid #e0a96d;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    text-align: left;
+    max-width: 1150px;
+    width: 105%;
+    margin-left: -8%;
+}
+
+.button-container3 {
+    margin-top: 20px;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn7 { 
+    background-color: rgba(255, 255, 255, 0.9); /* Light dark white */
+    color: #333; 
+}
+
+.btn8 { 
+    background-color: rgba(220, 220, 220, 0.9); /* Darker dark white */
+    color: #333; 
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+.container {
+    padding: 50px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.button {
+    font-family: "Arial Black", Arial, sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+}
+
+
+</style>
+
+<div class="full-container">
+    <!-- First Row (Logo + Heading in Same Row, Centered) -->
+    <div class="first1">
+        <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
+        <p style="color: #e5a75f;">Carl Johnson's documents</p>
+    </div>
+
+
+    <!-- Third Row (Property/Client Info Title) -->
+    <div class="container">
+        <div class="section-title">WALK-THRU REPORTS</div>
+        <div class="button-container">
+            <button class="button btn1">WALK-THRU REPORTS</button>
+            <button class="button btn1">OPEN ITEMS</button>
+            <button class="button btn1">COMPLETED ITEMS</button>
+            <button class="button btn1">CLIENT DENIED</button>
+            
+
+
+        </div>
+    </div>
+    <div class="container" style="margin-top: -3%;">
+        <div class="section-title">SERVICE REQUEST STATUS</div>
+        <div class="button-container2">
+            <button class="button btn1">Open Requests</button>
+            <button class="button btn1">COMPLETED ITEMS</button>
+            <button class="button btn1">CLIENT DENIED</button>
+            
+
+
+        </div>
+    </div>
+    <div class="container" style="margin-top: -3%;">
+        <div class="section-title">CONCIERGE REQUEST STATUS</div>
+        <div class="button-container3">
+            <button class="button btn1"> Open Requests</button>
+            <button class="button btn1">COMPLETED ITEMS</button>
+            <button class="button btn1">CLIENT DENIED</button>
+        </div>
+    </div>
+    <div class="container" style="margin-top: -3%;">
+        <div class="section-title">PROPERTY IMPROVEMENTS</div>
+        <div class="button-container3">
+            <button class="button btn1">Open Projects</button>
+            <button class="button btn1"> COMPLETED PROJECTS</button>
+        </div>
+    </div>
+ 
+</div>
+{% endblock %}

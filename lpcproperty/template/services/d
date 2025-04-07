@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'lotus-gold': '#d1aa6b',
+          'lotus-dark': '#121212',
+          'lotus-darker': '#0a0a0a',
+          'lotus-gray': '#2a2a2a',
+          'lotus-light-gray': '#3d3d3d',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;500;600&display=swap');
+  
+  body {
+    background-color: #0a0a0a;
+    font-family: 'Raleway', sans-serif;
+    color: #e0e0e0;
+  }
+  
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .gold-border {
+    border-color: #d1aa6b;
+  }
+  
+  .lotus-container {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Custom scrollbar for textarea */
+  textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  textarea::-webkit-scrollbar-track {
+    background: #2a2a2a;
+  }
+  
+  textarea::-webkit-scrollbar-thumb {
+    background: #d1aa6b;
+    border-radius: 4px;
+  }
+  
+  textarea::-webkit-scrollbar-thumb:hover {
+    background: #c09a5b;
+  }
+</style>
+
+<div class="bg-lotus-darker min-h-screen py-10 px-4">
+  <div class="lotus-container max-w-4xl mx-auto bg-lotus-dark rounded-lg overflow-hidden border border-lotus-gray">
+    <!-- Header -->
+    <div class=" py-6 px-6 sm:px-10 border-b border-lotus-gray">
+      <div class="flex flex-col sm:flex-row items-center justify-between">
+        <div class="flex items-center gap-4 mb-4 sm:mb-0">
+          <img class="w-16 sm:w-20" src="{% static 'img/smalllogo.png' %}" alt="Lotus Property Logo">
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">Lotus Property</h1>
+        </div>
+        <div class="text-sm sm:text-base font-light text-gray-400">
+          Client Service Portal
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="p-6 sm:p-10">
+      <!-- Introduction Section -->
+      <div class="mb-8 border-b border-lotus-gray pb-6">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-lotus-gold">Client Information</h2>
+        <p class="text-gray-300 mb-3">Please send a brief description of how we can assist you with your property needs.</p>
+        <p class="text-gray-300 mb-4">For Interior requests, please reference your floor plan and note the room designation so we can precisely locate the item.</p>
+        <a href="#" class="text-lotus-gold hover:underline font-medium flex items-center">
+          View Your Floor Plans
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+      
+      <!-- Request Form -->
+      <div>
+        <div class="flex items-center mb-6">
+          <h2 class="text-xl sm:text-2xl font-semibold text-white">Submit Your Request</h2>
+          <div class="h-1 w-20 bg-lotus-gold ml-4 rounded-full"></div>
+        </div>
+        
+        <form>
+          <!-- Request Type Selection -->
+          <div class="mb-8">
+            <label class="block text-gray-200 font-medium mb-3">Request Type</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="INTERIOR RESIDENCE" onclick="toggleInteriorDropdown(true)">
+                <span class="ml-2 text-sm text-gray-300">INTERIOR RESIDENCE</span>
+              </label>
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="EXTERIOR STRUCTURE" onclick="toggleInteriorDropdown(false)">
+                <span class="ml-2 text-sm text-gray-300">EXTERIOR STRUCTURE</span>
+              </label>
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="EXTERIOR GROUNDS" onclick="toggleInteriorDropdown(false)">
+                <span class="ml-2 text-sm text-gray-300">EXTERIOR GROUNDS</span>
+              </label>
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="HOUSEKEEPING" onclick="toggleInteriorDropdown(false)">
+                <span class="ml-2 text-sm text-gray-300">HOUSEKEEPING</span>
+              </label>
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="WATER FEATURES" onclick="toggleInteriorDropdown(false)">
+                <span class="ml-2 text-sm text-gray-300">WATER FEATURES</span>
+              </label>
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="STORM PREPAREDNESS" onclick="toggleInteriorDropdown(false)">
+                <span class="ml-2 text-sm text-gray-300">STORM PREPAREDNESS</span>
+              </label>
+              <label class="relative flex items-center p-3 rounded-md border border-lotus-gray bg-lotus-dark cursor-pointer hover:border-lotus-gold transition-all">
+                <input type="radio" name="request" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold bg-black border-lotus-gray" value="OTHER" onclick="toggleInteriorDropdown(false)">
+                <span class="ml-2 text-sm text-gray-300">OTHER</span>
+              </label>
+            </div>
+          </div>
+          
+         
+          
+          <!-- Message Box -->
+          <div class="mb-8">
+            <label for="service-request" class="block text-gray-200 font-medium mb-2">Service Details</label>
+            <div class="relative rounded-md shadow-md border border-lotus-gray focus-within:border-lotus-gold focus-within:ring-1 focus-within:ring-lotus-gold">
+              <textarea 
+                id="service-request"
+                rows="5" 
+                class="block w-full rounded-md border-0 py-3 px-4 bg-lotus-darker text-gray-200 focus:ring-0 sm:text-sm placeholder-gray-500"
+                placeholder="Please provide details about your service request..."
+              ></textarea>
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                <button type="button" class="text-gray-500 hover:text-lotus-gold transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">Include any relevant details that will help us respond to your request promptly.</p>
+          </div>
+           <!-- Interior Room Selection - Only visible when INTERIOR RESIDENCE is selected -->
+           <div id="interior-room-selection" class="mb-8 hidden">
+            <label class="block text-gray-200 font-medium mb-3">Select Room</label>
+            <div class="relative">
+              <select 
+                name="room-type" 
+                class="block w-full rounded-md border border-lotus-gray bg-lotus-darker py-3 px-4 text-gray-200 appearance-none focus:outline-none focus:ring-1 focus:ring-lotus-gold focus:border-lotus-gold"
+              >
+                <option value="" disabled selected>Select a room...</option>
+                <option value="living-room">Living Room</option>
+                <option value="bedroom">Bedroom</option>
+                <option value="patio">Patio</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-lotus-gold">
+                <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <!-- Submit Button -->
+          <div class="flex justify-center sm:justify-end">
+            <button 
+              type="submit" 
+              class="bg-lotus-gold hover:bg-opacity-90 text-black rounded-md px-6 py-3 font-medium shadow-md transform transition hover:-translate-y-1 duration-300"
+            >
+              Submit Request
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+  
+  </div>
+</div>
+
+<script>
+  function toggleInteriorDropdown(show) {
+    const interiorRoomSelection = document.getElementById('interior-room-selection');
+    if (show) {
+      interiorRoomSelection.classList.remove('hidden');
+    } else {
+      interiorRoomSelection.classList.add('hidden');
+    }
+  }
+</script>
+{% endblock content %}

@@ -1,0 +1,567 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-light: #eef2ff;
+      --primary-dark: #3a56e4;
+      --client-color: #4361ee;
+      --manager-color: #10b981;
+      --manager-light: #ecfdf5;
+      --dark-text: #1e293b;
+      --light-text: #64748b;
+      --lighter-text: #94a3b8;
+      --border-radius-lg: 16px;
+      --border-radius-md: 12px;
+      --border-radius-sm: 8px;
+      --box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      --box-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      color: var(--dark-text);
+      background-color: #f8fafc;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+     
+    }
+    
+    .chat-container {
+      width: 100%;
+      max-width: 900px;
+      height: 80vh;
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .chat-header {
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      background: white;
+      z-index: 10;
+    }
+    
+    .property-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .property-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background-color: var(--primary-light);
+      border-radius: 12px;
+      color: var(--primary-color);
+    }
+    
+    .property-icon i {
+      font-size: 22px;
+    }
+    
+    .property-title h2 {
+      color: var(--dark-text);
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+    
+    .property-subtitle {
+      color: var(--light-text);
+      font-size: 14px;
+      font-weight: 400;
+    }
+    
+    .messages-wrapper {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background-color: #fcfcfc;
+      background-image: linear-gradient(0deg, #f8fafc 0%, #ffffff 100%);
+    }
+    
+    #messages-container {
+      height: 100%;
+      overflow-y: auto;
+      padding: 32px;
+      scroll-behavior: smooth;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .message-group {
+      display: flex;
+      flex-direction: column;
+      max-width: 75%;
+      gap: 2px;
+    }
+    
+    .message-group.client {
+      align-self: flex-start;
+      margin-right: auto;
+    }
+    
+    .message-group.manager {
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    
+    .message-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .client .avatar {
+      background-color: var(--client-color);
+    }
+    
+    .manager .avatar {
+      background-color: var(--manager-color);
+    }
+    
+    .author-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--dark-text);
+    }
+    
+    .message {
+      padding: 14px 18px;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--box-shadow-sm);
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 100%;
+      word-wrap: break-word;
+      position: relative;
+    }
+    
+    .client .message {
+      background-color: white;
+      color: var(--dark-text);
+      border-top-left-radius: 4px;
+    }
+    
+    .manager .message {
+      background-color: var(--primary-color);
+      color: white;
+      border-top-right-radius: 4px;
+    }
+    
+    .message-time {
+      font-size: 12px;
+      color: var(--lighter-text);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .manager .message-time {
+      justify-content: flex-end;
+    }
+    
+    .message-time i {
+      font-size: 10px;
+    }
+    
+    .date-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 24px 0;
+      color: var(--light-text);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .date-divider::before,
+    .date-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: #e2e8f0;
+      margin: 0 16px;
+    }
+    
+    .empty-messages {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 24px;
+      text-align: center;
+      color: var(--light-text);
+    }
+    
+    .empty-messages i {
+      font-size: 64px;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+    
+    .empty-messages h3 {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--dark-text);
+    }
+    
+    .empty-messages p {
+      max-width: 300px;
+      font-size: 15px;
+    }
+    
+    .message-form-container {
+      padding: 20px 32px;
+      background-color: white;
+      border-top: 1px solid #f1f5f9;
+      position: relative;
+    }
+    
+    #message-form {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+    }
+    
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+    
+    #message-text {
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+      border-radius: var(--border-radius-md);
+      padding: 16px 20px;
+      resize: none;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--dark-text);
+      max-height: 180px;
+      min-height: 56px;
+      overflow-y: auto;
+      transition: var(--transition);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    
+    #message-text:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+    
+    #message-text::placeholder {
+      color: var(--lighter-text);
+    }
+    
+    button[type="submit"] {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-md);
+      padding: 0;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--box-shadow-sm);
+      flex-shrink: 0;
+    }
+    
+    button[type="submit"]:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px -10px rgba(79, 70, 229, 0.4);
+    }
+    
+    button[type="submit"] i {
+      font-size: 18px;
+    }
+    
+    /* Custom scrollbar */
+    #messages-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    #messages-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    #messages-container::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 20px;
+    }
+    
+    #message-text::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    #message-text::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    #message-text::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 20px;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message-group {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    
+    @media (max-width: 768px) {
+      .chat-container {
+        height: 100vh;
+        max-width: 100%;
+        border-radius: 0;
+      }
+      
+      .chat-header {
+        padding: 16px;
+      }
+      
+      #messages-container {
+        padding: 16px;
+      }
+      
+      .message-group {
+        max-width: 85%;
+      }
+      
+      .message-form-container {
+        padding: 16px;
+      }
+    }
+    .full-page{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
+  border: 1px solid #13293D;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.chat-header {
+  background-color:  #13293D;
+}
+  </style>
+  <title>Property Messages</title>
+<div class="full-page">
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="property-info">
+        <div class="property-icon">
+          <i class="fas fa-building"></i>
+        </div>
+        <div class="property-title">
+          <h2>{{ property.property_name }}</h2>
+          <div class="property-subtitle">Messaging</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="messages-wrapper">
+      <div id="messages-container">
+        {% if messages %}
+          {% comment %}
+            Note: In a real implementation, you'd want to group messages by date
+            and show date dividers between different days
+          {% endcomment %}
+          
+          {% for msg in messages %}
+            <div class="message-group {% if msg.sender_type == 'client' %}client{% else %}manager{% endif %}">
+              <div class="message-author">
+                <div class="avatar">
+                  {% if msg.sender_type == 'client' and msg.sender_client %}
+                    {{ msg.sender_client.username|slice:":1"|upper }}
+                  {% elif msg.sender_type == 'manager' and msg.sender_manager %}
+                    {{ msg.sender_manager.username|slice:":1"|upper }}
+                  {% else %}
+                    ?
+                  {% endif %}
+                </div>
+                <div class="author-name">
+                  {% if msg.sender_type == 'client' and msg.sender_client %}
+                    {{ msg.sender_client.username }}
+                  {% elif msg.sender_type == 'manager' and msg.sender_manager %}
+                    {{ msg.sender_manager.username }}
+                  {% else %}
+                    Unknown
+                  {% endif %}
+                </div>
+              </div>
+              <div class="message">
+                {{ msg.message_text }}
+              </div>
+              <div class="message-time">
+                <i class="far fa-clock"></i> {{ msg.sent_at }}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-messages">
+            <i class="far fa-comments"></i>
+            <h3>No messages yet</h3>
+            <p>Start the conversation by sending your first message below.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="message-form-container">
+      <form id="message-form">
+        {% csrf_token %}
+        <div class="input-wrapper">
+          <textarea id="message-text" name="message" placeholder="Type your message..." required></textarea>
+        </div>
+        <button type="submit">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Auto-scroll to bottom on load
+      const messagesContainer = document.getElementById('messages-container');
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      // Auto-resize textarea
+      const textarea = document.getElementById('message-text');
+      
+      function adjustTextareaHeight() {
+        textarea.style.height = 'auto';
+        const height = Math.min(textarea.scrollHeight, 180);
+        textarea.style.height = `${height}px`;
+      }
+      
+      textarea.addEventListener('input', adjustTextareaHeight);
+      
+      $('#message-form').on('submit', function(e) {
+        e.preventDefault();  // Prevent the form from submitting normally
+
+        var messageText = $('#message-text').val().trim();
+        
+        if (!messageText) return;
+        
+        var propertyId = "{{ property.id }}";  // Pass the property ID to the JS
+
+        // Send AJAX request
+        $.ajax({
+          url: "{% url 'send_message' property.id %}",  // URL for your send message view
+          type: "POST",
+          data: {
+            message: messageText,
+            property_id: propertyId,
+            csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),  // CSRF token
+          },
+          success: function(response) {
+            // Format current time
+            const now = new Date();
+            const formattedTime = response.sent_at || now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Create new message group HTML
+            const newMessageHTML = `
+              <div class="message-group manager" style="opacity: 0; transform: translateY(10px);">
+                <div class="message-author">
+                  <div class="avatar">Y</div>
+                  <div class="author-name">You</div>
+                </div>
+                <div class="message">
+                  ${messageText}
+                </div>
+                <div class="message-time">
+                  <i class="far fa-clock"></i> ${formattedTime}
+                </div>
+              </div>
+            `;
+            
+            // Append the new message
+            $('#messages-container').append(newMessageHTML);
+            
+            // Add animation after a tiny delay (for DOM update)
+            setTimeout(() => {
+              const newMessage = document.querySelector('.message-group:last-child');
+              newMessage.style.opacity = 1;
+              newMessage.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // Clear input and reset height
+            $('#message-text').val('');
+            textarea.style.height = '56px';
+            
+            // Scroll to the bottom with animation
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Check if we need to remove the empty state
+            if (document.querySelector('.empty-messages')) {
+              document.querySelector('.empty-messages').remove();
+            }
+          },
+          error: function(xhr, errmsg, err) {
+            console.log("Error sending message: " + errmsg);
+            // Consider showing a nice error toast or notification here
+          }
+        });
+      });
+    });
+  </script>
+{% endblock content %}

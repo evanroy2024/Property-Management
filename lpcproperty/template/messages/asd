@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Chat</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3bac77;
+      --secondary-light: #4cc88d;
+      --light-gray: #f3f6fc;
+      --dark-gray: #2a3652;
+      --text-primary: #333745;
+      --text-secondary: #6b7a99;
+      --border-radius: 16px;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: #f0f4f9;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .chat-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 20px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 40px);
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .chat-header {
+      background: white;
+      padding: 20px 24px;
+      border-bottom: 1px solid #edf2f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .chat-header h2 {
+      margin: 0;
+      color: var(--dark-gray);
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    
+    .chat-header-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background-color: var(--primary-light);
+      color: white;
+      font-size: 1.2rem;
+    }
+    
+    .property-badge {
+      background-color: var(--light-gray);
+      color: var(--dark-gray);
+      padding: 8px 16px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .property-badge i {
+      color: var(--primary);
+      font-size: 12px;
+    }
+    
+    .messages-container {
+      padding: 24px;
+      flex: 1;
+      overflow-y: auto;
+      background-color: #f8fafd;
+      scroll-behavior: smooth;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .message {
+      display: flex;
+      flex-direction: column;
+      max-width: 75%;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message.client {
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    
+    .message.manager {
+      align-self: flex-start;
+      margin-right: auto;
+    }
+    
+    .message-bubble {
+      padding: 14px 18px;
+      border-radius: 18px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+    
+    .client .message-bubble {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .manager .message-bubble {
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+      color: white;
+      border-bottom-left-radius: 4px;
+    }
+    
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      margin-right: 8px;
+      color: white;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .client .avatar {
+      background: linear-gradient(135deg, #3a49c5, var(--primary));
+    }
+    
+    .manager .avatar {
+      background: linear-gradient(135deg, #31945b, var(--secondary));
+    }
+    
+    .sender-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    
+    .message-time {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 6px;
+      align-self: flex-end;
+    }
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #8b98b1;
+      padding: 24px;
+      text-align: center;
+    }
+    
+    .empty-state i {
+      font-size: 64px;
+      margin-bottom: 16px;
+      color: #d0d9e8;
+    }
+    
+    .empty-state p {
+      font-size: 1.1rem;
+      font-weight: 500;
+      max-width: 260px;
+    }
+    
+    .message-form {
+      padding: 20px 24px;
+      border-top: 1px solid #edf2f7;
+      background-color: white;
+      position: relative;
+    }
+    
+    .message-input {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    
+    textarea {
+      flex: 1;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      resize: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+      min-height: 54px;
+      max-height: 150px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    }
+    
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.15);
+    }
+    
+    button {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border: none;
+      color: white;
+      border-radius: 14px;
+      height: 54px;
+      width: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(67, 97, 238, 0.25);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    .sending-indicator {
+      position: absolute;
+      bottom: 70px;
+      left: 24px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    
+    .sending-indicator.visible {
+      opacity: 1;
+    }
+    
+    .typing-dots {
+      display: inline-flex;
+      margin-left: 5px;
+    }
+    
+    .typing-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--text-secondary);
+      margin: 0 2px;
+      animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+    
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typingAnimation {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-4px); }
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .chat-container {
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        max-width: 100%;
+      }
+      
+      .message {
+        max-width: 85%;
+      }
+      
+      .chat-header {
+        padding: 16px;
+      }
+      
+      .messages-container {
+        padding: 16px;
+      }
+      
+      .message-form {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-header-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <h2>Messages</h2>
+      </div>
+      <div class="property-badge">
+        <i class="fas fa-home"></i>
+        <span id="property-name">{{ property.property_name }}</span>
+      </div>
+    </div>
+    
+    <div class="messages-container" id="messages-container">
+      {% for msg in messages %}
+        <div class="message {% if msg.sender_type == 'client' %}client{% else %}manager{% endif %}">
+          <div class="message-header">
+            <div class="avatar">
+              {% if msg.sender_type == 'client' and msg.sender_client %}
+                {{ msg.sender_client.username|first|upper }}
+              {% elif msg.sender_type == 'manager' and msg.sender_manager %}
+                {{ msg.sender_manager.username|first|upper }}
+              {% else %}
+                ?
+              {% endif %}
+            </div>
+            <div class="sender-name">
+              {% if msg.sender_type == 'client' and msg.sender_client %}
+                {{ msg.sender_client.username }}
+              {% elif msg.sender_type == 'manager' and msg.sender_manager %}
+                {{ msg.sender_manager.username }}
+              {% else %}
+                Unknown
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="message-bubble">
+            {{ msg.message_text }}
+            <div class="message-time">{{ msg.sent_at }}</div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state">
+          <i class="far fa-comments"></i>
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+      {% endfor %}
+      <div id="scroll-anchor"></div>
+    </div>
+    
+    <div class="sending-indicator" id="sending-indicator">
+      Sending
+      <div class="typing-dots">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+    
+    <div class="message-form">
+      <form id="message-form" method="post" action="{% url 'send_message' property.id %}">
+        {% csrf_token %}
+        <div class="message-input">
+          <textarea name="message" id="message-input" rows="1" placeholder="Type your message..." required></textarea>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Auto-resize textarea based on content
+    const textarea = document.getElementById('message-input');
+    
+    function resizeTextarea() {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+    }
+    
+    textarea.addEventListener('input', resizeTextarea);
+    
+    // Function to scroll to the bottom of messages
+    function scrollToBottom() {
+      const messagesContainer = document.getElementById('messages-container');
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Create a message element
+    function createMessageElement(message, senderType, senderName, time) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${senderType}`;
+      
+      const messageHeader = document.createElement('div');
+      messageHeader.className = 'message-header';
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = senderName.charAt(0).toUpperCase();
+      
+      const senderNameDiv = document.createElement('div');
+      senderNameDiv.className = 'sender-name';
+      senderNameDiv.textContent = senderName;
+      
+      const messageBubble = document.createElement('div');
+      messageBubble.className = 'message-bubble';
+      messageBubble.textContent = message;
+      
+      const messageTime = document.createElement('div');
+      messageTime.className = 'message-time';
+      messageTime.textContent = time;
+      
+      messageHeader.appendChild(avatar);
+      messageHeader.appendChild(senderNameDiv);
+      messageBubble.appendChild(messageTime);
+      messageDiv.appendChild(messageHeader);
+      messageDiv.appendChild(messageBubble);
+      
+      return messageDiv;
+    }
+    
+    // Handle form submission with AJAX
+    document.getElementById('message-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const form = this;
+      const messageInput = document.getElementById('message-input');
+      const messageText = messageInput.value.trim();
+      
+      if (!messageText) return;
+      
+      // Show sending indicator
+      const sendingIndicator = document.getElementById('sending-indicator');
+      sendingIndicator.classList.add('visible');
+      
+      // Prepare form data
+      const formData = new FormData(form);
+      
+      // Get current time
+      const now = new Date();
+      const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      // Create XHR request
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', form.action, true);
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      
+      xhr.onload = function() {
+        // Hide sending indicator
+        sendingIndicator.classList.remove('visible');
+        
+        if (xhr.status >= 200 && xhr.status < 400) {
+          // Clear the input field
+          messageInput.value = '';
+          messageInput.style.height = 'auto';
+          
+          try {
+            const response = JSON.parse(xhr.responseText);
+            
+            // Check if there's an empty state message and remove it
+            const emptyState = document.querySelector('.empty-state');
+            if (emptyState) {
+              emptyState.remove();
+            }
+            
+            // Create and append the new message element
+            const messagesContainer = document.getElementById('messages-container');
+            const messageElement = createMessageElement(
+              messageText,
+              response.sender_type || 'client', 
+              response.sender_name || 'You',
+              currentTime
+            );
+            
+            messagesContainer.appendChild(messageElement);
+            scrollToBottom();
+            
+          } catch (error) {
+            console.error('Error parsing response:', error);
+            // Fallback: reload the page if JSON parsing fails
+            window.location.reload();
+          }
+        } else {
+          console.error('Request failed');
+          // Fallback to traditional form submission
+          form.submit();
+        }
+      };
+      
+      xhr.onerror = function() {
+        console.error('Request failed');
+        sendingIndicator.classList.remove('visible');
+        // Fallback to traditional form submission
+        form.submit();
+      };
+      
+      xhr.send(formData);
+    });
+    
+    // Scroll to bottom when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      scrollToBottom();
+      
+      // Focus on the input field
+      document.getElementById('message-input').focus();
+    });
+    
+    // Listen for Enter key to submit, but allow Shift+Enter for new line
+    textarea.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('message-form').dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

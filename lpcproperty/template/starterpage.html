@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome {{ client.first_name }}</title>
+</head>
+<body>
+    <h2>Welcome, {{ client.first_name }} {{ client.last_name }}!</h2>
+    <p>Your email: {{ client.email }}</p>
+    <p>Your phone: {{ client.phone_number }}</p>
+    <p>Preferred Contact: {{ client.get_preferred_contact_method_display }}</p>
+
+    <a href="{% url 'mainapp:client_logout' %}">Logout</a>
+</body>
+</html>

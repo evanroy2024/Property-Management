@@ -1,0 +1,12 @@
+/* fieldset.module.aligned .form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+fieldset.module.aligned .form-row > * {
+    flex: 1;
+}
+textarea {
+    height: 60px;
+} */

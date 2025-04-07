@@ -1,0 +1,17 @@
+<h2>My Properties</h2>
+
+{% for property in properties %}
+    <div>
+       
+        {% if request.session.client_id %}
+            <p><strong>Manager:</strong> {{ property.client_manager.first_name }} {{ property.client_manager.last_name }}</p>
+        {% elif request.session.manager_id %}
+            <p><strong>Client:</strong> {{ property.client.first_name }} {{ property.client.last_name }}</p>
+        {% endif %}
+
+        <a href="{% url 'view_messages' property.id %}" class="btn btn-primary">Open Messages</a>
+    </div>
+    <hr>
+{% empty %}
+    <p>No properties assigned.</p>
+{% endfor %}

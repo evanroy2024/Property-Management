@@ -1,0 +1,521 @@
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script> -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+    
+   
+    
+    .mycontainer {
+      display: flex;
+      max-width: 1000px;
+      width: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 
+                  0 0 100px rgba(0, 0, 0, 0.05);
+    }
+    
+    .profile-section {
+      background: linear-gradient(145deg, #3a7bd5, #00d2ff);
+      width: 360px;
+      padding: 55px 35px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .profile-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 40%);
+      animation: shine 15s infinite linear;
+    }
+    
+    @keyframes shine {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .logo-container {
+      position: relative;
+      margin-bottom: 35px;
+    }
+    
+    .logo-circle {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 48px;
+      font-weight: bold;
+      color: #3a7bd5;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15),
+                  0 0 0 8px rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .logo-circle::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1));
+      border-radius: 50%;
+      z-index: -1;
+    }
+    
+    .profile-name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 35px;
+      text-align: center;
+      opacity: 0.9;
+      letter-spacing: 0.3px;
+    }
+    
+    .profile-info {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .info-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .info-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .info-text {
+      flex: 1;
+    }
+    
+    .info-label {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    
+    .info-value {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    
+    .message-section {
+      flex: 1;
+      padding: 55px 50px;
+      display: flex;
+      flex-direction: column;
+      background: white;
+    }
+    
+    .message-header {
+      margin-bottom: 40px;
+    }
+    
+    .message-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 12px;
+    }
+    
+    .message-subtitle {
+      font-size: 15px;
+      color: #677788;
+      line-height: 1.6;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 2px solid #e8eef4;
+      font-size: 15px;
+      transition: all 0.3s;
+      background: #f9fafc;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3a7bd5;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(58, 123, 213, 0.15);
+    }
+    
+    textarea.form-control {
+      min-height: 180px;
+      resize: vertical;
+    }
+    
+    .submit-btn {
+      background: linear-gradient(145deg, #3a7bd5, #00d2ff);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 10px 20px rgba(58, 123, 213, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px rgba(58, 123, 213, 0.3);
+    }
+    
+    .btn-icon {
+      margin-left: 10px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .profile-section {
+        width: 100%;
+      }
+      
+      .message-section {
+        padding: 40px 30px;
+      }
+    }
+    
+    /* Additional decorative elements */
+    .profile-section::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    
+    .decoration {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .decoration-1 {
+      width: 100px;
+      height: 100px;
+      top: 10%;
+      left: -50px;
+    }
+    
+    .decoration-2 {
+      width: 50px;
+      height: 50px;
+      bottom: 20%;
+      right: 10%;
+    }
+  </style>
+</head>
+<div class="full-contact-page">
+  <div class="mycontainer">
+    <!-- Profile Section -->
+    <div class="profile-section">
+      <div class="decoration decoration-1"></div>
+      <div class="decoration decoration-2"></div>
+      
+      <div class="logo-container">
+        <div class="logo-circle">
+          A
+        </div>
+      </div>
+      
+      <h2 class="profile-name">Alex Johnson</h2>
+      <p class="profile-subtitle">Senior Product Designer</p>
+      
+      <div class="profile-info">
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="info-text">
+            <div class="info-label">Email Address</div>
+            <div class="info-value">alex.johnson@designco.com</div>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <div class="info-text">
+            <div class="info-label">Phone Number</div>
+            <div class="info-value">+1 (555) 123-4567</div>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-building"></i>
+          </div>
+          <div class="info-text">
+            <div class="info-label">Company</div>
+            <div class="info-value">Design Co. International</div>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="info-text">
+            <div class="info-label">Location</div>
+            <div class="info-value">San Francisco, CA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Message Section -->
+    <div class="message-section">
+    <!-- Property Listing Component -->
+<div class="properties-grid">
+  {% for property in properties %}
+    <div class="property-card">
+      <div class="property-icon letter-icon">
+        {{ property.address|first }}
+      </div>
+      <div class="property-details">
+        <h3 class="property-address">{{ property.address }}</h3>
+        {% if property.type %}
+          <p class="property-type">{{ property.type }}</p>
+        {% endif %}
+      </div>
+      <div class="property-meta">
+        {% if property.unread_messages %}
+          <div class="unread-badge">{{ property.unread_messages }}</div>
+        {% endif %}
+      </div>
+      <a href="{% url 'view_messages' property.id %}" class="message-button">
+        <i class="fas fa-comments"></i>
+        <span>Open Chat</span>
+      </a>
+    </div>
+  {% empty %}
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-home"></i>
+      </div>
+      <h3>No properties yet</h3>
+      <p>Properties assigned to you will appear here.</p>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+  /* Updated styling for property cards with letter icons */
+  .properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .property-card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+  }
+  
+  .property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+  }
+  
+  .letter-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: #eef2ff;
+    border-radius: 12px;
+    color: #4361ee;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  
+  .property-details {
+    flex: 1;
+    margin-bottom: 1.25rem;
+  }
+  
+  .property-address {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+  }
+  
+  .property-type {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
+  
+  .property-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  
+  .unread-badge {
+    background-color: #4361ee;
+    color: white;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    min-width: 1.5rem;
+    text-align: center;
+  }
+  
+  .message-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #4361ee;
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .message-button:hover {
+    background-color: #3a56e4;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -5px rgba(67, 97, 238, 0.3);
+  }
+  
+  .message-button span {
+    font-size: 0.9rem;
+  }
+  
+  .empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: white;
+    border-radius: 16px;
+    border: 1px dashed #e2e8f0;
+  }
+  
+  @media (max-width: 768px) {
+    .properties-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+    </div>
+  </div>
+</div>
+<style>
+  .full-contact-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f4f8;
+  }
+</style>
+  {% endblock content %}

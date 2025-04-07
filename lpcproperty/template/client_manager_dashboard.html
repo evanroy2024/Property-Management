@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Manager Dashboard</title>
+</head>
+<body>
+    <h1>You have {{ client_count }} assigned client{{ client_count|pluralize }}</h1>
+
+    <ul>
+        {% for client in clients %}
+            <li>{{ client.first_name }} {{ client.last_name }} ({{ client.email }})</li>
+        {% empty %}
+            <li>No clients assigned yet.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

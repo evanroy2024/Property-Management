@@ -1,0 +1,771 @@
+{% extends 'cmbase.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+    --primary: #e19540;
+    --primary-dark: #d18030;
+    --secondary: #f2b06e;
+    --text: #333;
+    --text-light: #666;
+    --bg: #f8f9fa;
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 2rem 0;
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .intro {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-next {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .tab-buttons::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tab-buttons::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .tab-link {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background-color: #f1f3f5;
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--text);
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .tab-link:hover {
+            background-color: #e9ecef;
+        }
+
+        .tab-link.active {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .tab-content, .tabs-wrapper {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tabs-wrapper.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            background-color: #f8f9fa;
+            transition: var(--transition);
+            animation: slideIn 0.3s ease;
+            animation-fill-mode: both;
+        }
+
+        .item-row:hover {
+            background-color: #f1f3f5;
+        }
+
+        .item-label {
+            flex: 2;
+            font-weight: 500;
+        }
+
+        .item-control {
+            flex: 1;
+            padding: 0 1rem;
+        }
+
+        .item-remarks {
+            flex: 3;
+        }
+
+        .item-remarks input {
+            padding: 0.5rem;
+        }
+
+        .section-title {
+            margin: 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-icon {
+            margin-right: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .tab-buttons {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                gap: 5px;
+            }
+            
+            .item-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .item-label, .item-control, .item-remarks {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Tab navigation buttons */
+        .tab-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Badge for active tab indicator */
+        .tab-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Animation for slide transitions */
+        @keyframes slideRight {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideLeft {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .slide-right {
+            animation: slideRight 0.3s ease forwards;
+        }
+
+        .slide-left {
+            animation: slideLeft 0.3s ease forwards;
+        }
+
+        /* Staggered animation for list items */
+        .item-row:nth-child(1) { animation-delay: 0.1s; }
+        .item-row:nth-child(2) { animation-delay: 0.2s; }
+        .item-row:nth-child(3) { animation-delay: 0.3s; }
+        .item-row:nth-child(4) { animation-delay: 0.4s; }
+        .item-row:nth-child(5) { animation-delay: 0.5s; }
+        .item-row:nth-child(6) { animation-delay: 0.6s; }
+        .item-row:nth-child(7) { animation-delay: 0.7s; }
+        .item-row:nth-child(8) { animation-delay: 0.8s; }
+        .item-row:nth-child(9) { animation-delay: 0.9s; }
+        .item-row:nth-child(10) { animation-delay: 1.0s; }
+    </style>
+
+    <header>
+        <div class="container">
+            <h1>Walkthrough Report</h1>
+            <p class="intro">Complete inspection details for your property walkthrough</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Progress indicator -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-steps" id="progress-steps">
+                        <span>Basic Info</span>
+                        <span>Inspection Details</span>
+                        <span>Review & Submit</span>
+                    </div>
+                </div>
+
+                <!-- INITIAL BASIC FIELDS -->
+                <div id="basic-info">
+                    <div class="form-group">
+                        <label for="id_user">User:</label>
+                        {{ form.user }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_description">Description:</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_cost">Cost:</label>
+                        {{ form.cost }}
+                    </div>
+
+                    <!-- <div class="form-group">
+                        <label for="id_client_approval">Client Approval:</label>
+                        {{ form.client_approval }}
+                    </div> -->
+
+                    <button type="button" class="btn btn-next" onclick="showTabs()">
+                        Continue to Inspection <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- CATEGORY TABS -->
+                <div class="tabs-wrapper" id="category-tabs">
+                    <div class="tab-buttons" id="tab-buttons">
+                        <button type="button" class="tab-link active" data-tab="GIE" data-index="0">
+                            <i class="fas fa-home tab-icon"></i>Exterior
+                        </button>
+                        <button type="button" class="tab-link" data-tab="GII" data-index="1">
+                            <i class="fas fa-door-open tab-icon"></i>Interior
+                        </button>
+                        <button type="button" class="tab-link" data-tab="GARAGE" data-index="2">
+                            <i class="fas fa-warehouse tab-icon"></i>Garage
+                        </button>
+                        <button type="button" class="tab-link" data-tab="LAUNDRY" data-index="3">
+                            <i class="fas fa-tshirt tab-icon"></i>Laundry
+                        </button>
+                        <button type="button" class="tab-link" data-tab="KITCHEN" data-index="4">
+                            <i class="fas fa-utensils tab-icon"></i>Kitchen
+                        </button>
+                        
+                        <button type="button" class="tab-link" data-tab="BATHROOM" data-index="5">
+                            <i class="fas fa-bath tab-icon"></i>Bathroom
+                        </button>
+                        <button type="button" class="tab-link" data-tab="BEDROOMS" data-index="6">
+                            <i class="fas fa-bed tab-icon"></i>Bedrooms
+                        </button>
+                        <button type="button" class="tab-link" data-tab="BASEMENT" data-index="7">
+                            <i class="fas fa-dungeon tab-icon"></i>Basement
+                        </button>
+                        <button type="button" class="tab-link" data-tab="ATTIC" data-index="8">
+                            <i class="fas fa-archive tab-icon"></i>Attic
+                        </button>
+                        <button type="button" class="tab-link" data-tab="HVAC" data-index="9">
+                            <i class="fas fa-temperature-high tab-icon"></i>HVAC
+                        </button>
+                        <!-- Add more tabs as needed -->
+                    </div>
+
+                    <!-- TAB CONTENT: GIE -->
+                    <div class="tab-content active" id="GIE">
+                        <h3 class="section-title">General Items - Exterior</h3>
+                        
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie1.label_tag }}</div>
+                            <div class="item-control">{{ form.gie1 }}</div>
+                            <div class="item-remarks">{{ form.gie1_remarks }}</div>
+                        </div>
+                        
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie2.label_tag }}</div>
+                            <div class="item-control">{{ form.gie2 }}</div>
+                            <div class="item-remarks">{{ form.gie2_remarks }}</div>
+                        </div>
+                        
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie3.label_tag }}</div>
+                            <div class="item-control">{{ form.gie3 }}</div>
+                            <div class="item-remarks">{{ form.gie3_remarks }}</div>
+                        </div>
+                    </div>
+
+                    <!-- TAB CONTENT: GII -->
+                    <div class="tab-content" id="GII">
+                        <h3 class="section-title">General Items - Interior</h3>
+                        
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii1.label_tag }}</div>
+                            <div class="item-control">{{ form.gii1 }}</div>
+                            <div class="item-remarks">{{ form.gii1_remarks }}</div>
+                        </div>
+                        
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii2.label_tag }}</div>
+                            <div class="item-control">{{ form.gii2 }}</div>
+                            <div class="item-remarks">{{ form.gii2_remarks }}</div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="GARAGE">
+                        <h3 class="section-title">Garage</h3>
+                        <div class="item-row">
+                            <div class="item-label">Door Operation</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Lighting</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="LAUNDRY">
+                        <h3 class="section-title">Laundry / Mudroom</h3>
+                        <div class="item-row">
+                            <div class="item-label">Washer Connections</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Dryer Connections</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="KITCHEN">
+                        <h3 class="section-title">Kitchen</h3>
+                        <div class="item-row">
+                            <div class="item-label">Countertops</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Cabinets</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="BATHROOM">
+                        <h3 class="section-title">Bathroom</h3>
+                        <div class="item-row">
+                            <div class="item-label">Plumbing</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Fixtures</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="BEDROOMS">
+                        <h3 class="section-title">Bedrooms</h3>
+                        <div class="item-row">
+                            <div class="item-label">Doors & Windows</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Closets</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="BASEMENT">
+                        <h3 class="section-title">Basement</h3>
+                        <div class="item-row">
+                            <div class="item-label">Water Issues</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Foundation</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="ATTIC">
+                        <h3 class="section-title">Attic</h3>
+                        <div class="item-row">
+                            <div class="item-label">Insulation</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Ventilation</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="HVAC">
+                        <h3 class="section-title">HVAC</h3>
+                        <div class="item-row">
+                            <div class="item-label">Heating System</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                        <div class="item-row">
+                            <div class="item-label">Cooling System</div>
+                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
+                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Navigation -->
+                    <div class="tab-nav">
+                        <button type="button" class="btn" style="background-color: #6c757d;" id="prev-tab">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        
+                        <div id="tab-indicator"></div>
+                        
+                        <button type="button" class="btn" id="next-tab">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="button" class="btn" style="background-color: #6c757d;" onclick="backToBasic()">
+                            <i class="fas fa-arrow-left"></i> Back to Basic Info
+                        </button>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-check"></i> Submit Report
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all necessary elements
+            const tabs = document.querySelectorAll('.tab-link');
+            const contents = document.querySelectorAll('.tab-content');
+            const progressFill = document.getElementById('progress-fill');
+            const prevTabBtn = document.getElementById('prev-tab');
+            const nextTabBtn = document.getElementById('next-tab');
+            const tabIndicator = document.getElementById('tab-indicator');
+            
+            // Get total number of tabs
+            const totalTabs = tabs.length;
+            let currentTabIndex = 0;
+            
+            // Set up dynamic progress steps
+            updateProgressSteps();
+            
+            // Initialize progress bar
+            progressFill.style.width = '33%';
+            
+            // Initialize tab indicator
+            updateTabIndicator();
+            
+            // Tab click event
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Get the index of the clicked tab
+                    currentTabIndex = parseInt(tab.dataset.index);
+                    
+                    // Update tabs and content
+                    updateActiveTab();
+                    
+                    // Update progress for inspection phase
+                    updateInspectionProgress();
+                    
+                    // Apply animation to the content
+                    animateTabContent();
+                });
+            });
+            
+            // Previous tab button
+            prevTabBtn.addEventListener('click', () => {
+                if (currentTabIndex > 0) {
+                    currentTabIndex--;
+                    updateActiveTab();
+                    updateInspectionProgress();
+                    
+                    // Apply slide right animation (coming from left)
+                    const activeContent = document.querySelector('.tab-content.active');
+                    activeContent.classList.remove('slide-left');
+                    activeContent.classList.add('slide-right');
+                }
+            });
+            
+            // Next tab button
+            nextTabBtn.addEventListener('click', () => {
+                if (currentTabIndex < totalTabs - 1) {
+                    currentTabIndex++;
+                    updateActiveTab();
+                    updateInspectionProgress();
+                    
+                    // Apply slide left animation (coming from right)
+                    const activeContent = document.querySelector('.tab-content.active');
+                    activeContent.classList.remove('slide-right');
+                    activeContent.classList.add('slide-left');
+                }
+            });
+            
+            // Function to update active tab
+            function updateActiveTab() {
+                // Remove active class from all tabs and contents
+                tabs.forEach(btn => btn.classList.remove('active'));
+                contents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to current tab and content
+                tabs[currentTabIndex].classList.add('active');
+                const activeTabId = tabs[currentTabIndex].dataset.tab;
+                document.getElementById(activeTabId).classList.add('active');
+                
+                // Update tab indicator
+                updateTabIndicator();
+                
+                // Scroll tab into view if needed
+                tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                
+                // Enable/disable prev/next buttons
+                prevTabBtn.disabled = currentTabIndex === 0;
+                nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
+            }
+            
+            // Function to update tab indicator
+            function updateTabIndicator() {
+                tabIndicator.innerHTML = `Tab ${currentTabIndex + 1} of ${totalTabs} <span class="tab-badge">${currentTabIndex + 1}</span>`;
+            }
+            
+            // Function to update progress based on inspection phase
+            function updateInspectionProgress() {
+                // Calculate progress percentage for inspection phase (additional 33% beyond basic info)
+                const inspectionProgress = 33 + ((currentTabIndex / (totalTabs - 1)) * 33);
+                progressFill.style.width = inspectionProgress + '%';
+            }
+            
+            // Function to update progress steps based on number of tabs
+            function updateProgressSteps() {
+                const progressSteps = document.getElementById('progress-steps');
+                progressSteps.innerHTML = `
+                    <span>Basic Info</span>
+                    <span>Inspection (${totalTabs} areas)</span>
+                    <span>Review & Submit</span>
+                `;
+            }
+            
+            // Function to animate tab content items
+            function animateTabContent() {
+                // Reset animations
+                const items = document.querySelectorAll('.tab-content.active .item-row');
+                items.forEach(item => {
+                    item.style.opacity = 0;
+                    void item.offsetWidth; // Force reflow
+                    item.style.opacity = 1;
+                });
+            }
+        });
+        
+        // Show tabs after initial fields
+        function showTabs() {
+            document.getElementById('basic-info').style.display = 'none';
+            document.getElementById('category-tabs').classList.add('active');
+            document.getElementById('progress-fill').style.width = '33%';
+            
+            // Add animation
+            document.getElementById('category-tabs').style.animation = 'fadeIn 0.5s ease';
+            
+            // Reset to first tab when showing tabs section
+            const tabs = document.querySelectorAll('.tab-link');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(btn => btn.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            tabs[0].classList.add('active');
+            document.getElementById(tabs[0].dataset.tab).classList.add('active');
+        }
+        
+        // Go back to basic info
+        function backToBasic() {
+            document.getElementById('basic-info').style.display = 'block';
+            document.getElementById('category-tabs').classList.remove('active');
+            document.getElementById('progress-fill').style.width = '33%';
+            
+            // Add animation
+            document.getElementById('basic-info').style.animation = 'fadeIn 0.5s ease';
+        }
+    </script>
+{% endblock content %}
