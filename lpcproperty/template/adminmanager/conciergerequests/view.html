@@ -1,0 +1,235 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Custom modern styling for details page */
+    .details-container {
+        padding: 2rem 1.5rem;
+        background-color: #f8f9fc;
+        border-radius: 12px;
+    }
+    
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .request-id {
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .detail-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+    }
+    
+    .detail-card-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        background-color: #f8fafc;
+    }
+    
+    .detail-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #334155;
+        margin: 0;
+    }
+    
+    .detail-body {
+        padding: 0;
+    }
+    
+    .detail-item {
+        display: flex;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+    
+    .detail-label {
+        width: 30%;
+        min-width: 150px;
+        padding: 1.25rem;
+        background-color: #fafbff;
+        font-weight: 600;
+        color: #64748b;
+        border-right: 1px solid #f1f5f9;
+    }
+    
+    .detail-value {
+        width: 70%;
+        padding: 1.25rem;
+        color: #1e293b;
+    }
+    
+    .badge-custom {
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+    
+    .badge-pending {
+        background-color: #fff4e5;
+        color: #ff9f43;
+    }
+    
+    .badge-completed {
+        background-color: #e6f7ef;
+        color: #2eb867;
+    }
+    
+    .badge-cancelled {
+        background-color: #feeeee;
+        color: #ea5455;
+    }
+    
+    .badge-default {
+        background-color: #eef1fe;
+        color: #4361ee;
+    }
+    
+    .badge-unassigned {
+        background-color: #f1f5f9;
+        color: #64748b;
+    }
+    
+    .btn-custom {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.625rem 1.5rem;
+        transition: all 0.3s;
+    }
+    
+    .btn-update {
+        background-color: #fff4e5;
+        color: #ff9f43;
+        border: none;
+    }
+    
+    .btn-update:hover {
+        background-color: #ff9f43;
+        color: white;
+    }
+    
+    .btn-back {
+        background-color: #eef1fe;
+        color: #4361ee;
+        border: none;
+    }
+    
+    .btn-back:hover {
+        background-color: #4361ee;
+        color: white;
+    }
+    
+    .timestamp {
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+    
+    .description-box {
+        background-color: #f8fafc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+    }
+</style>
+
+<div class="details-container">
+    <!-- Header -->
+    <div class="detail-header">
+        <div>
+            <h1 class="page-title">Concierge Request Details</h1>
+            <div class="request-id">Request ID: #{{ request_obj.id }}</div>
+        </div>
+        <div>
+            {% if request_obj.get_status_display == "Pending" %}
+                <span class="badge-custom badge-pending">{{ request_obj.get_status_display }}</span>
+            {% elif request_obj.get_status_display == "Completed" %}
+                <span class="badge-custom badge-completed">{{ request_obj.get_status_display }}</span>
+            {% elif request_obj.get_status_display == "Cancelled" %}
+                <span class="badge-custom badge-cancelled">{{ request_obj.get_status_display }}</span>
+            {% else %}
+                <span class="badge-custom badge-default">{{ request_obj.get_status_display }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Details Card -->
+    <div class="detail-card">
+        <div class="detail-card-header">
+            <h3 class="detail-card-title">Request Information</h3>
+        </div>
+        <div class="detail-body">
+            <div class="detail-item">
+                <div class="detail-label">Client</div>
+                <div class="detail-value">
+                    <div class="d-flex align-items-center">
+                        <div style="width: 40px; height: 40px; background-color: #4361ee; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                            {{ request_obj.user.username|first|upper }}
+                        </div>
+                        <div class="ms-3">
+                            <div style="font-weight: 600;">{{ request_obj.user.username }}</div>
+                            <div class="timestamp">Client ID: {{ request_obj.user.id }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Description</div>
+                <div class="detail-value">
+                    <div class="description-box">{{ request_obj.description }}</div>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Vendor</div>
+                <div class="detail-value">
+                    {% if request_obj.vendor %}
+                        <span style="font-weight: 500;">{{ request_obj.vendor.company_name }}</span>
+                    {% else %}
+                        <span class="badge-custom badge-unassigned">Not Assigned</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Created At</div>
+                <div class="detail-value">
+                    <div style="font-weight: 500;">{{ request_obj.created_at|date:"F j, Y" }}</div>
+                    <div class="timestamp">{{ request_obj.created_at|time:"H:i" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="d-flex gap-3">
+        <a href="{% url 'adminmanager:concierge_update_request' request_obj.id %}" class="btn btn-custom btn-update">
+            <i class="bi bi-pencil me-2"></i> Update Request
+        </a>
+        <a href="javascript:history.back()" class="btn btn-custom btn-back">
+            <i class="bi bi-arrow-left me-2"></i> Back to List
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'clientmanager',
     'contacttogether',
     'contentpage',
+    'adminmanager',    # For custom admin panel Custom UI 
 ]
 
 MIDDLEWARE = [

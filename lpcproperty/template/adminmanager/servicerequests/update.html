@@ -1,0 +1,126 @@
+{% extends 'adminmanager/adminbase.html' %}
+{ % load static %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #ffffff;
+        color: #000000;
+    }
+    .custom-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+    .card-header-custom {
+        background: linear-gradient(135deg, #0050c8, #007bff);
+        color: white;
+        border: none;
+        padding: 20px 25px;
+    }
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+        background-color: #f9f9f9;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        background-color: #ffffff;
+    }
+    .input-group-text {
+        background-color: #e9ecef;
+        border: 2px solid #e0e0e0;
+        border-right: none;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #0050c8, #007bff);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 14px 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+    }
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    .page-container {
+        padding: 40px 0;
+    }
+    .status-select {
+        border-left: 4px solid #007bff;
+    }
+    .vendor-select {
+        border-left: 4px solid #28a745;
+    }
+    .cost-input {
+        border-left: 4px solid #fd7e14;
+    }
+</style>
+
+<div class="page-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="custom-card">
+                    <div class="card-header-custom">
+                        <h3 class="mb-0 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-gear me-3" viewBox="0 0 16 16">
+                                <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>
+                                <path d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3.5 3.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zm-6.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5z"/>
+                                <path d="M12 14a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1.5-2.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m-3 0a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 3a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m3 0a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1"/>
+                            </svg>
+                            Update Property Improvement Request
+                        </h3>
+                    </div>
+                    <div class="card-body p-4 p-lg-5">
+                        <form method="post" class="needs-validation" novalidate>{% csrf_token %}
+                            <div class="mb-4">
+                                <label for="status" class="form-label">Request Status</label>
+                                <select name="status" class="form-select">
+                                    {% for val, label in request_obj.STATUS_CHOICES %}
+                                        <option value="{{ val }}" {% if val == request_obj.status %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="vendor" class="form-label">Assign Vendor</label>
+                                <select name="vendor" class="form-select">
+                                    <option value="">-- Select Vendor --</option>
+                                    {% for vendor in vendors %}
+                                        <option value="{{ vendor.id }}" {% if request_obj.vendor == vendor %}selected{% endif %}>
+                                            {{ vendor.company_name }} ({{ vendor.service }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </svg>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

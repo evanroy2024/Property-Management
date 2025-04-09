@@ -1,0 +1,112 @@
+{% extends 'adminmanager/adminbase.html' %}
+{ % load static %}
+
+{% block title %}Edit Testimonial{% endblock %}
+
+{% block content %}
+<style>
+    .edit-testimonial-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .edit-testimonial-container h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .edit-testimonial-container label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+        color: #374151;
+    }
+
+    .edit-testimonial-container input[type="text"],
+    .edit-testimonial-container textarea,
+    .edit-testimonial-container input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        color: #111827;
+    }
+
+    .edit-testimonial-container textarea {
+        resize: vertical;
+    }
+
+    .testimonial-image-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 2px solid #f3f4f6;
+    }
+
+    .edit-testimonial-btn {
+        background-color: #10b981;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .edit-testimonial-btn:hover {
+        background-color: #059669;
+    }
+
+    .testimonial-back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .testimonial-back-link:hover {
+        text-decoration: underline;
+    }
+    body{
+        background-color: white;
+    }
+</style>
+
+<div class="edit-testimonial-container">
+    <h2 style="color: black;">Edit Testimonial - {{ testimonial.name }}</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" value="{{ testimonial.name }}" required>
+
+        <label for="comment">Comment:</label>
+        <textarea name="comment" id="comment" rows="4" required>{{ testimonial.comment }}</textarea>
+
+        <label>Current Photo:</label><br>
+        <img src="{{ testimonial.photo.url }}" alt="Current Photo" class="testimonial-image-preview"><br>
+
+        <label for="photo">Change Photo (optional):</label>
+        <input type="file" name="photo" id="photo" accept="image/*">
+
+        <button type="submit" class="edit-testimonial-btn">Save Changes</button>
+    </form>
+
+    <a href="{% url 'adminmanager:testimonial_list' %}" class="testimonial-back-link">← Back to Testimonials</a>
+</div>
+{% endblock content %}

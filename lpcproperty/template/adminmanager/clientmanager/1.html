@@ -1,0 +1,34 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block content %}
+<h2>All Client Managers</h2>
+<a href="{% url 'adminmanager:create' %}">+ Add New</a>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Preferred Contact</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cm in clientmanagers %}
+        <tr>
+            <td>{{ cm.first_name }} {{ cm.last_name }}</td>
+            <td>{{ cm.email }}</td>
+            <td>{{ cm.preferred_contact_method }}</td>
+            <td>
+                <a href="{% url 'adminmanager:detail' cm.pk %}">View</a> |
+                <a href="{% url 'adminmanager:edit' cm.pk %}">Edit</a> |
+                <a href="{% url 'adminmanager:delete' cm.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No client managers found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

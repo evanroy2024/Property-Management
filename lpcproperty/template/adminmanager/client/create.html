@@ -1,0 +1,361 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block content %}
+    <style>
+        /* Custom styles for the form - won't affect cmbase */
+        body{
+            background-color: white;
+        }
+        .client-form-container {
+            padding: 25px 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .page-title {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .client-form {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 850px;
+            margin: 0 auto 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        
+        .form-input, 
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            background-color: #f8fafc;
+        }
+        
+        .form-input:focus, 
+        .form-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            background-color: #fff;
+        }
+        
+        .form-input::placeholder {
+            color: #cbd5e0;
+        }
+        
+        .section-divider {
+            position: relative;
+            padding-bottom: 10px;
+            margin: 35px 0 20px;
+            grid-column: 1 / -1;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: #4f46e5;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::after {
+            content: "";
+            flex-grow: 1;
+            height: 1px;
+            background-color: #e2e8f0;
+            margin-left: 15px;
+        }
+        
+        .contact-section {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+            grid-column: 1 / -1;
+        }
+        
+        .contact-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contact-badge {
+            background-color: #4f46e5;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        .form-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: block;
+            margin: 30px auto 10px;
+            min-width: 200px;
+        }
+        
+        .form-button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .required-field label::after {
+            content: " *";
+            color: #e53e3e;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .client-form {
+                padding: 20px;
+            }
+        }
+
+        .client-form {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 850px;
+    margin: 0 auto 40px;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.1),
+        0 16px 40px rgba(0, 0, 0, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.05);
+}
+
+    </style>
+
+    <div class="client-form-container">
+        <h2 class="page-title">Create New Client</h2>
+        
+        <form method="post" class="client-form">
+            {% csrf_token %}
+            
+            <div class="section-divider">
+                <div class="section-title">Personal Information</div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group required-field">
+                    <label class="form-label" for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" class="form-input" required>
+                </div>
+                
+                <div class="form-group required-field">
+                    <label class="form-label" for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" class="form-input" required>
+                </div>
+                
+                <div class="form-group required-field">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-input" required>
+                </div>
+                
+                <div class="form-group required-field">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group required-field">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+            </div>
+            
+            <div class="section-divider">
+                <div class="section-title">Contact Information</div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label class="form-label" for="address">Address</label>
+                    <input type="text" id="address" name="address" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="city">City</label>
+                    <input type="text" id="city" name="city" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="state">State</label>
+                    <input type="text" id="state" name="state" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="zipcode">Zipcode</label>
+                    <input type="text" id="zipcode" name="zipcode" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone_number">Phone Number</label>
+                    <input type="text" id="phone_number" name="phone_number" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="preferred_contact_method">Preferred Contact Method</label>
+                    <select id="preferred_contact_method" name="preferred_contact_method" class="form-select">
+                        <option value="email">Email</option>
+                        <option value="phone">Phone</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <div class="contact-header">
+                    <div class="contact-badge">1</div>
+                    <div class="section-title">Contact Person 1</div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_name">Name</label>
+                        <input type="text" id="contact1_name" name="contact1_name" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_email">Email</label>
+                        <input type="email" id="contact1_email" name="contact1_email" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_phone">Phone</label>
+                        <input type="text" id="contact1_phone" name="contact1_phone" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_preferred">Preferred</label>
+                        <select id="contact1_preferred" name="contact1_preferred" class="form-select">
+                            <option value="">-- Select --</option>
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <div class="contact-header">
+                    <div class="contact-badge">2</div>
+                    <div class="section-title">Contact Person 2</div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="contact2_name">Name</label>
+                        <input type="text" id="contact2_name" name="contact2_name" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact2_email">Email</label>
+                        <input type="email" id="contact2_email" name="contact2_email" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact2_phone">Phone</label>
+                        <input type="text" id="contact2_phone" name="contact2_phone" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact2_preferred">Preferred</label>
+                        <select id="contact2_preferred" name="contact2_preferred" class="form-select">
+                            <option value="">-- Select --</option>
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <div class="contact-header">
+                    <div class="contact-badge">3</div>
+                    <div class="section-title">Contact Person 3</div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="contact3_name">Name</label>
+                        <input type="text" id="contact3_name" name="contact3_name" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact3_email">Email</label>
+                        <input type="email" id="contact3_email" name="contact3_email" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact3_phone">Phone</label>
+                        <input type="text" id="contact3_phone" name="contact3_phone" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact3_preferred">Preferred</label>
+                        <select id="contact3_preferred" name="contact3_preferred" class="form-select">
+                            <option value="">-- Select --</option>
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="form-button">Create Client</button>
+        </form>
+    </div>
+{% endblock content %}

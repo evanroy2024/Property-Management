@@ -1,0 +1,451 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 15px;
+        }
+        
+        .form-group {
+            flex: 1 0 100%;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-group.half {
+                flex: 1 0 50%;
+            }
+            
+            .form-group.third {
+                flex: 1 0 33.333%;
+            }
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .file-name-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .file-input-container {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .custom-file-input {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .custom-file-input input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed #aaa;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .back-link {
+                margin-top: 10px;
+            }
+            
+            .form-row {
+                margin: 0 0 15px;
+            }
+            
+            .form-group {
+                padding: 0;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .file-upload-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Create Property</h1>
+            <a href="{% url 'adminmanager:property_list' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Properties
+            </a>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-home"></i> Basic Property Information</h2>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="form-label" for="client_id">Select Client</label>
+                        <select class="form-control" name="client_id" id="client_id" required>
+                            {% for client in clients %}
+                                <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                
+                    <div class="form-group half">
+                        <label class="form-label" for="client_manager_id">Select Client Manager</label>
+                        <select class="form-control" name="client_manager_id" id="client_manager_id" required>
+                            {% for manager in managers %}
+                                <option value="{{ manager.id }}">{{ manager.first_name }} {{ manager.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group half">
+                        <label class="form-label" for="address">Property Address</label>
+                        <input class="form-control" type="text" id="address" name="address" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group third">
+                        <label class="form-label" for="size_of_home">Size of Home</label>
+                        <input class="form-control" type="text" id="size_of_home" name="size_of_home" placeholder="e.g. 2,500 sq ft">
+                    </div>
+                    <div class="form-group third">
+                        <label class="form-label" for="number_of_stories">Number of Stories</label>
+                        <input class="form-control" type="number" id="number_of_stories" name="number_of_stories" min="1">
+                    </div>
+                    <div class="form-group third">
+                        <label class="form-label" for="year_built">Year Built</label>
+                        <input class="form-control" type="number" id="year_built" name="year_built" min="1800" max="2025">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="construction_type">Construction Type</label>
+                        <input class="form-control" type="text" id="construction_type" name="construction_type" placeholder="e.g. Concrete Block, Wood Frame">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-check"></i> Property Features</h2>
+                <div class="checkbox-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="has_pool" id="has_pool">
+                        Swimming Pool
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="gated_community" id="gated_community">
+                        Gated Community
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="impact_windows" id="impact_windows">
+                        Impact Windows
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="has_hoa" id="has_hoa">
+                        HOA
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="gated_property" id="gated_property">
+                        Gated Property
+                    </label>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-envelope"></i> Contact Preference</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="preferred_contact_method">Preferred Contact Method</label>
+                        <select class="form-control" id="preferred_contact_method" name="preferred_contact_method">
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
+                
+                <div class="file-upload">
+                    <div class="file-upload-row">
+                        <div class="file-name-input">
+                            <label class="form-label" for="floor_plan_1_name">Floor Plan 1 Name</label>
+                            <input class="form-control" type="text" id="floor_plan_1_name" name="floor_plan_1_name" placeholder="e.g. Main Floor">
+                        </div>
+                        <div class="file-input-container">
+                            <label class="form-label" for="floor_plan_1_file">Floor Plan 1 File</label>
+                            <div class="custom-file-input">
+                                <input type="file" id="floor_plan_1_file" name="floor_plan_1_file">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-upload-row">
+                        <div class="file-name-input">
+                            <label class="form-label" for="floor_plan_2_name">Floor Plan 2 Name</label>
+                            <input class="form-control" type="text" id="floor_plan_2_name" name="floor_plan_2_name" placeholder="e.g. Second Floor">
+                        </div>
+                        <div class="file-input-container">
+                            <label class="form-label" for="floor_plan_2_file">Floor Plan 2 File</label>
+                            <div class="custom-file-input">
+                                <input type="file" id="floor_plan_2_file" name="floor_plan_2_file">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-upload-row">
+                        <div class="file-name-input">
+                            <label class="form-label" for="floor_plan_3_name">Floor Plan 3 Name</label>
+                            <input class="form-control" type="text" id="floor_plan_3_name" name="floor_plan_3_name" placeholder="e.g. Basement">
+                        </div>
+                        <div class="file-input-container">
+                            <label class="form-label" for="floor_plan_3_file">Floor Plan 3 File</label>
+                            <div class="custom-file-input">
+                                <input type="file" id="floor_plan_3_file" name="floor_plan_3_file">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="file-upload-row">
+                        <div class="file-name-input">
+                            <label class="form-label" for="floor_plan_4_name">Floor Plan 4 Name</label>
+                            <input class="form-control" type="text" id="floor_plan_4_name" name="floor_plan_4_name" placeholder="e.g. Garage/Exterior">
+                        </div>
+                        <div class="file-input-container">
+                            <label class="form-label" for="floor_plan_4_file">Floor Plan 4 File</label>
+                            <div class="custom-file-input">
+                                <input type="file" id="floor_plan_4_file" name="floor_plan_4_file">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-save"></i> Create Property
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add form validation and improve UX with JavaScript if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Example: Add visual feedback when file is selected
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        this.parentElement.style.borderColor = '#2ecc71';
+                    } else {
+                        this.parentElement.style.borderColor = '#ddd';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock content %}

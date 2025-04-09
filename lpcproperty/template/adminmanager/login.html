@@ -1,0 +1,247 @@
+
+
+{% extends "outbase.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Center the login container */
+    .login-container {
+        padding: 40px;
+        border-radius: 12px;
+        width: 40%;
+        text-align: center;
+        margin: auto;
+    }
+  
+    /* Heading (One Line, Bold) */
+    .login-container h1 {
+        font-size: 17px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #d1aa6b;
+        letter-spacing: 1px;
+        white-space: nowrap; /* Prevents text from breaking into multiple lines */
+    }
+  
+    /* Labels Above Input Fields */
+    .login-container h2 {
+        font-size: 16px;
+        text-align: left;
+        font-weight: bold;
+        margin: 10px 0 5px 0;
+        color: #fff;
+    }
+  
+    /* Input Fields (Left-Aligned, White Background) */
+    .input-field {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        background: #fff;
+        color: #000;
+        font-weight: bold;
+    }
+  
+    .input-field::placeholder {
+        color: #aaa;
+    }
+  
+    /* Forgot Password */
+    .forgot-password {
+        display: block;
+        margin: 10px 0;
+        color: #4a26ff;
+        font-size: 16px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+  
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+  
+    /* Login Button */
+    .login-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        background: #d1aa6b;
+        color: #000;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+  
+    .login-btn:hover {
+        background: #d1aa6b;
+    }
+
+    /* User Type Selection Tick Boxes */
+    .user-type-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+    }
+    
+    .user-type-option {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    
+    .user-type-checkbox {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #d1aa6b;
+        border-radius: 50%;
+        margin-right: 8px;
+        position: relative;
+        background: white;
+    }
+    
+    .user-type-checkbox::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #d1aa6b;
+        font-weight: bold;
+        font-size: 14px;
+        opacity: 0;
+    }
+    
+    .user-type-checkbox.checked::after {
+        opacity: 1;
+    }
+    
+    .user-type-label {
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>
+  
+<!-- Your page-specific content here -->
+<div class="login-container">
+  <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
+  <img src="{% static 'logo.png' %}" alt="Company Logo" class="logo">
+  
+  {% if messages %}
+  <div class="error-message">
+      {% for message in messages %}
+          <p>{{ message }}</p>
+      {% endfor %}
+  </div>
+  {% endif %}
+  
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+</form>
+  
+  <a href="#" class="forgot-password">Forgot Password?</a>
+</div>
+
+<style>
+    /* Form container styling */
+form {
+    width: 100%;
+    margin: 20px 0;
+}
+
+/* Django form as_p styling */
+form p {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+/* Label styling */
+form label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+/* Input field styling */
+form input[type="text"],
+form input[type="password"],
+form input[type="email"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #212529;
+    font-size: 16px;
+    font-weight: 500;
+    transition: border-color 0.3s;
+}
+
+/* Input focus state */
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    border-color: #d1aa6b;
+    box-shadow: 0 0 0 3px rgba(209, 170, 107, 0.25);
+}
+
+/* Error messages */
+form .errorlist {
+    color: #dc3545;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0;
+}
+
+/* Help text */
+form .helptext {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+/* Login button */
+form button[type="submit"] {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #d1aa6b;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+/* Button hover state */
+form button[type="submit"]:hover {
+    background-color: #c19a5b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(209, 170, 107, 0.3);
+}
+
+/* Button active state */
+form button[type="submit"]:active {
+    transform: translateY(0);
+}
+</style>
+{% endblock %}

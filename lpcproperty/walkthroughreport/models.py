@@ -1,72 +1,4 @@
 
-
-# from django.db import models
-
-# # === CATEGORY CONSTANTS ===
-# K = 'K'   # Kitchen
-# BA = 'BA' # Bathroom
-# B = 'B'   # Bedroom
-
-# # === MCQ OPTIONS ===
-# MCQ_CHOICES = [
-#     ('na', 'N/A'),
-#     ('compliant', 'Compliant'),
-#     ('heads_up', 'Heads-Up'),
-#     ('non_compliant', 'Non-Compliant'),
-# ]
-
-# # === Custom Field with Category Tag ===
-# class CategoryCharField(models.CharField):
-#     def __init__(self, *args, category=None, **kwargs):
-#         self.category = category
-#         super().__init__(*args, **kwargs)
-
-# # === Main Model ===
-# class InspectionReport(models.Model):
-#     inspector_name = models.CharField(max_length=100)
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     # Kitchen Questions
-#     kitchen_counter_clean = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=K,verbose_name="Is the kitchen clean ?")
-#     kitchen_counter_clean_remarks = models.TextField(blank=True, null=True)
-
-#     kitchen_appliances_working = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=K)
-#     kitchen_appliances_working_remarks = models.TextField(blank=True, null=True)
-
-#     kitchen_floor_clean = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=K)
-#     kitchen_floor_clean_remarks = models.TextField(blank=True, null=True)
-
-#     # Bedroom Questions
-#     bedroom_bed_made = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=B)
-#     bedroom_bed_made_remarks = models.TextField(blank=True, null=True)
-
-#     bedroom_lights_functional = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=B)
-#     bedroom_lights_functional_remarks = models.TextField(blank=True, null=True)
-
-#     bedroom_clean_floor = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=B)
-#     bedroom_clean_floor_remarks = models.TextField(blank=True, null=True)
-
-#     # Bathroom Questions
-#     bathroom_sink_clean = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=BA)
-#     bathroom_sink_clean_remarks = models.TextField(blank=True, null=True)
-
-#     bathroom_toilet_sanitized = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=BA)
-#     bathroom_toilet_sanitized_remarks = models.TextField(blank=True, null=True)
-
-#     bathroom_floor_dry = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=BA,verbose_name="Is the bathroom floor dry?")
-#     bathroom_floor_dry_remarks = models.TextField(blank=True, null=True)
-
-#     def __str__(self):
-#         return f"{self.inspector_name} ({self.created_at.date()})"
-
-#     def get_fields_by_category(self, category_code):
-#         return [
-#             (field.name, getattr(self, field.name))
-#             for field in self._meta.fields
-#             if hasattr(field, 'category') and field.category == category_code
-#         ]
-
-
 # Starting of walkthrough Report Here ------------------------------------------------------------------------
 from django.db import models
 from mainapp.models import Client, Vendor  # Import from mainapp
@@ -129,7 +61,7 @@ class WalkthroughReport(models.Model):
     updatedate = models.DateField(blank=True, null=True)
     datetime = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     cost = models.IntegerField(default=0,blank=True, null=True,)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending',blank=True, null=True)
     client_approval = models.BooleanField(default=False)  # Yes/No approval field
     gie1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GIE, verbose_name="Visual Inspection: Exterior of House")
     gie1_remarks = models.CharField(max_length=500, blank=True, null=True)
@@ -163,11 +95,11 @@ class WalkthroughReport(models.Model):
     gie15_remarks = models.TextField(blank=True, null=True)
 
     gii1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GII, verbose_name="Visual Inspection: Interior of House")
-    gii1_remarks = models.TextField(blank=True, null=True)
+    gii1_remarks = models.CharField(max_length=500, blank=True, null=True)
     gii2 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GII, verbose_name="Exterior Doors Codes")
-    gii2_remarks = models.TextField(blank=True, null=True)
+    gii2_remarks = models.CharField(max_length=500, blank=True, null=True)
     gii3 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GII, verbose_name="Exterior Doors & Hardware")
-    gii3_remarks = models.TextField(blank=True, null=True)
+    gii3_remarks = models.CharField(max_length=500, blank=True, null=True)
     gii4 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GII, verbose_name="Exterior Windows & Hardware")
     gii4_remarks = models.TextField(blank=True, null=True)
     gii5 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GII, verbose_name="Smoke Detectors")

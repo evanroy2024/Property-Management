@@ -1,0 +1,94 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Create Social Links{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: white !important;
+        color: black;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+    }
+
+    .form-wrapper h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
+
+    input[type="url"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .create-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        font-size: 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .create-btn:hover {
+        background-color: #333;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="form-wrapper">
+    <h2>Create Social Links</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="facebook">Facebook:</label>
+        <input type="url" name="facebook" id="facebook">
+
+        <label for="instagram">Instagram:</label>
+        <input type="url" name="instagram" id="instagram">
+
+        <label for="pinterest">Pinterest:</label>
+        <input type="url" name="pinterest" id="pinterest">
+
+        <label for="linkedin">LinkedIn:</label>
+        <input type="url" name="linkedin" id="linkedin">
+
+        <button type="submit" class="create-btn">Create</button>
+    </form>
+
+    <a href="{% url 'adminmanager:social_links_list' %}" class="back-link">⬅ Back</a>
+</div>
+{% endblock content %}
