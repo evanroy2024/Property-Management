@@ -1,4 +1,4 @@
-{% extends "outbase.html" %}
+{% extends base_template %}
 {% load static %}
 
 {% block content %}
@@ -287,6 +287,11 @@
       bottom: 20%;
       right: 10%;
     }
+    p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: black;
+}
   </style>
 </head>
 <div class="full-contact-page">
@@ -369,31 +374,106 @@
         {% endif %}
         
         <div class="property-details">
+         
+          
           <div class="detail-item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Added on Apr 3, 2025</span>
+            <i class="fas fa-user"></i>
+            <span> <b>Email :</b> {{ property.client_manager.email }} </span>
           </div>
           <div class="detail-item">
             <i class="fas fa-user"></i>
-            <span>{{ property.owner|default:"Owner name" }}</span>
+            <span> <b>Phone :</b> {{ property.client_manager.phone_number }} </span>
           </div>
+          <div class="detail-item">
+            <i class="fas fa-user"></i>
+            <span>Address : {{ property.client_manager.city }} | {{ property.client_manager.state }} | {{ property.client_manager.zipcode }}</span>
+          </div>
+          
         </div>
       </div>
       
       <div class="card-footer">
-        <div class="last-activity">
-          <i class="fas fa-clock"></i>
-          <span>Click to open Mesage</span>
+        <div class="action-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-outline-primary" onclick="openModal('emailModal')">
+            <i class="fas fa-envelope"></i> Email
+          </button>
+      
+          <button class="btn btn-outline-success" onclick="openModal('callModal')">
+            <i class="fas fa-phone-alt"></i> Call
+          </button>
+      
+          <button class="btn btn-outline-info" onclick="openModal('textModal')">
+            <i class="fas fa-sms"></i> Text
+          </button>
+      
+          <a href="{% url 'view_messages' property.id %}" class="chat-button btn btn-outline-dark">
+            <i class="fas fa-comments"></i>
+            <span>Open Chat</span>
+            {% if property.unread_messages %}
+              <span class="message-badge">{{ property.unread_messages }}</span>
+            {% endif %}
+          </a>
         </div>
-        <a href="{% url 'view_messages' property.id %}" class="chat-button">
-          <i class="fas fa-comments"></i>
-          <span>Open Chat</span>
-          {% if property.unread_messages %}
-            <span class="message-badge">{{ property.unread_messages }}</span>
-          {% endif %}
-        </a>
       </div>
+      
+      
+    
+      
     </div>
+      <!-- Email Modal -->
+      <div id="emailModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <form method="post" action="/send-email/"> <!-- Adjust action as needed -->
+            {% csrf_token %}
+            <h3>Send Email</h3>
+            <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+            <textarea name="message" class="form-control" rows="4" placeholder="Email message..." required></textarea>
+            <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" onclick="closeModal('emailModal')">Cancel</button>
+              <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+     <!-- Call Modal -->
+<div id="callModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div style="text-align: center;">
+      <div style="font-size: 40px; color: #4361ee; margin-bottom: 10px;">
+        📞
+      </div>
+      <h3 style="margin-bottom: 10px; font-size: 20px; color: #333;">Confirm Call</h3>
+      <p style="font-size: 14px; color: #555;">Are you sure you want to call the manager?</p>
+    </div>
+    <div class="modal-buttons">
+      <form onclick="closeModal('callModal')" style="margin: 0;">
+        <button type="submit" class="btn btn-secondary">Cancel</button>
+      </form>
+      <form method="post" action="/call-manager/" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Yes, Call</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+      
+      <!-- Text Modal -->
+      <div id="textModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <form method="post" action="/send-text/"> <!-- Adjust action as needed -->
+            {% csrf_token %}
+            <h3>Send Text</h3>
+            <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+            <textarea name="message" class="form-control" rows="4" placeholder="Text message..." required></textarea>
+            <div class="modal-buttons">
+              <button type="button" class="btn btn-secondary" onclick="closeModal('textModal')">Cancel</button>
+              <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
   {% empty %}
     <div class="empty-state">
       <div class="empty-icon">
@@ -677,5 +757,279 @@
     min-height: 100vh;
     background-color: #f0f4f8;
   }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
 </style>
+
+<style>
+  #callModal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#callModal .modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#callModal .modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+  /* Enhanced Modal Styles Only */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.25s ease;
+  border: 1px solid #f0f0f0;
+}
+
+/* Modal Header */
+.modal-content h3 {
+  margin: 0;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #f5f5f5;
+  background-color: #fafbff;
+}
+
+/* Form Elements */
+.modal-content form {
+  padding: 20px;
+}
+
+.modal-content .form-control {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.modal-content .form-control:focus {
+  outline: none;
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  background-color: #fff;
+}
+
+.modal-content textarea.form-control {
+  resize: none;
+  min-height: 100px;
+}
+
+/* Modal Buttons */
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-buttons .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-buttons .btn-primary {
+  background: #4361ee;
+  color: white;
+}
+
+.modal-buttons .btn-primary:hover {
+  background: #3a56e4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.25);
+}
+
+.modal-buttons .btn-secondary {
+  background: #f0f0f0;
+  color: #555;
+}
+
+.modal-buttons .btn-secondary:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+.modal-close:before, .modal-close:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #555;
+  top: 50%;
+  left: 0;
+}
+
+.modal-close:before {
+  transform: rotate(45deg);
+}
+
+.modal-close:after {
+  transform: rotate(-45deg);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 576px) {
+  .modal-content {
+    width: 95%;
+  }
+  
+  .modal-buttons {
+    flex-direction: row;
+  }
+  
+  .modal-buttons .btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+/* Card optons phone email call etc  */
+.card-footer {
+  padding: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.action-buttons button, .action-buttons a {
+  flex: 1; /* Each button will take an equal amount of space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  gap: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* Prevent text from breaking */
+}
+
+.action-buttons button i, .action-buttons a i {
+  margin-right: 5px;
+}
+
+.action-buttons button:hover, .action-buttons a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.25);
+}
+
+@media (max-width: 768px) {
+  .action-buttons button, .action-buttons a {
+    flex: 1 1 48%; /* For medium screens, take up 48% each */
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons button, .action-buttons a {
+    flex: 1 1 100%; /* On very small screens, buttons will stack vertically */
+  }
+}
+
+</style>
+<script>
+  function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+  }
+  
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+  </script>
+  
   {% endblock content %}

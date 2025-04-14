@@ -102,24 +102,29 @@ from .utils import client_login_required  # Import the decorator
 from django.shortcuts import render
 from .utils import client_login_required  # Import the decorator
 
+from propertydetails.models import PropertyManagement   
 
-@client_login_required
 def client_properties(request):
-    client_id = request.session['client_id']  # Since decorator ensures login, we can directly access this
-    client = Client.objects.get(id=client_id)  # Get the client instance
-    properties = PropertyManagement.objects.filter(client=client)  # Get only this client's properties
+    client_id = request.session['client_id']
+    client = Client.objects.get(id=client_id)
+    
+    properties = PropertyManagement.objects.filter(client=client).prefetch_related(
+        'floors__rooms'
+    )
 
-    # Contact persons
     contacts = [
         {"name": client.contact1_name, "email": client.contact1_email, "phone": client.contact1_phone, "preferred": client.contact1_preferred},
         {"name": client.contact2_name, "email": client.contact2_email, "phone": client.contact2_phone, "preferred": client.contact2_preferred},
         {"name": client.contact3_name, "email": client.contact3_email, "phone": client.contact3_phone, "preferred": client.contact3_preferred},
     ]
-
-    # Filter out empty contacts (if they are not added)
     contacts = [c for c in contacts if c["name"]]
 
-    return render(request, 'property/properties.html', {'properties': properties, 'contacts': contacts})
+    return render(request, 'property/properties.html', {
+        'properties': properties,
+        'contacts': contacts,
+    })
+
+
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -134,20 +139,20 @@ from servicedetails.models import ServiceRequest
 
 def service_request(request):
     if request.method == "POST":
-        client_id = request.session.get("client_id")  # Get client ID from session
-
+        client_id = request.session.get("client_id")
         if not client_id:
             messages.error(request, "You must be logged in to submit a request.")
-            return redirect("mainapp:client_login")  # Redirect to login page
+            return redirect("mainapp:client_login")
 
         try:
-            client = Client.objects.get(id=client_id)  # Fetch Client instance
+            client = Client.objects.get(id=client_id)
         except Client.DoesNotExist:
             messages.error(request, "Client does not exist.")
             return redirect("mainapp:dashboard")
 
         request_type = request.POST.get("request_type")
         description = request.POST.get("description")
+        floor_plan_name = request.POST.get("floor-plan-selection")  # new optional field
 
         if not request_type or not description:
             messages.error(request, "All fields are required!")
@@ -155,15 +160,24 @@ def service_request(request):
 
         # Create and save the service request
         ServiceRequest.objects.create(
-            user=client, 
+            user=client,
             request_type=request_type,
-            description=description
+            description=description,
+            floor_plan_name=floor_plan_name  # Save it if present
         )
 
         messages.success(request, "Service request submitted successfully!")
-        return redirect("mainapp:dashboard")
+        return redirect("mainapp:service_request")
 
-    return render(request, "services/service.html", {"request_types": ServiceRequest.REQUEST_TYPE_CHOICES})
+    client_id = request.session['client_id']
+    client = Client.objects.get(id=client_id)
+    properties = PropertyManagement.objects.filter(client=client).prefetch_related('floors__rooms')
+
+
+    return render(request, "services/service.html", {
+        "request_types": ServiceRequest.REQUEST_TYPE_CHOICES,
+        "properties": properties
+    })
 
 
 def docoments(request):

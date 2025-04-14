@@ -347,245 +347,196 @@
     }
 </style>
 
+{% if messages %}
+  <div class="space-y-3">
+    {% for message in messages %}
+      <div class="alert alert-dismissible fade show p-4 rounded-3 border-start-4
+                  {% if message.tags == 'success' %}
+                    alert-success border-success
+                  {% elif message.tags == 'error' %}
+                    alert-danger border-danger
+                  {% elif message.tags == 'warning' %}
+                    alert-warning border-warning
+                  {% else %}
+                    alert-info border-info
+                  {% endif %}">
+        <p class="mb-0 text-sm font-weight-medium">{{ message }}</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 
   <div class="container">
     <h1 class="page-title">Pre-Arrival Services</h1>
 
     <p class="page-subtitle">Please complete all required information to submit your travel request.</p>
     
-    <div class="progress-container">
-        <div class="progress-line"></div> <!-- Baseline for the progress -->
-        <div class="progress-bar-fill" id="progress-fill"></div> <!-- Moving Progress Bar -->
-        
-        <div class="trial">
-            <div class="step active" data-step="1">1<span class="step-label">Home</span></div>
-            <div class="step" data-step="2">2<span class="step-label">Temperature</span></div>
-            <div class="step" data-step="3">3<span class="step-label">Preferences</span></div>
-            <div class="step" data-step="4">4<span class="step-label">Additional</span></div>
-            <div class="step" data-step="5">5<span class="step-label">Submit</span></div>
-        </div>
-    </div>
+   
     
  
  
-    {% if messages %}
-        {% for message in messages %}
-            <p style="color: green;">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
 
       
     
     <form id="multi-step-form" method="POST">
       {% csrf_token %}
-      <!-- Step 1: Home - Arrival Details -->
-      <div class="form-step active" data-step="1">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            PRE-ARRIVAL DETAILS
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Your Name </label>
-            <input type="text" name="name" class="form-control" placeholder="Enter Your Name " required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Arrival Date & Time</label>
-            <div class="date-time-container">
-              <div class="date-picker-container">
-                <input type="date" name="arrival_date" class="form-control" required>
-                <div class="icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  </svg>
-                </div>
-              </div>
-              <div class="time-picker-container">
-                <input type="time" name="arrival_time" class="form-control" required>
-                <div class="icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Step 1: All Combined -->
+<div class="form-step active" data-step="1">
+  <div class="card">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+      PRE-ARRIVAL DETAILS
+    </h2>
+
+    <!-- Your Name -->
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input type="text" name="name" class="form-control" placeholder="Enter Your Name" required>
+    </div>
+
+    <!-- Arrival Date & Time -->
+    <div class="form-group">
+      <label class="form-label">Arrival Date & Time</label>
+      <div class="date-time-container">
+        <div class="date-picker-container">
+          <input type="date" name="arrival_date" class="form-control" required>
+          <div class="icon"></div>
         </div>
-        
-        <div class="btn-container">
-          <div></div> <!-- Empty div for spacing -->
-          <button type="button" class="btn btn-primary next-btn " >Continue to Step 2</button>
+        <div class="time-picker-container">
+          <input type="time" name="arrival_time" class="form-control" required>
+          <div class="icon"></div>
         </div>
       </div>
-      
-      <!-- Step 2 -->
-      <div class="form-step" data-step="2">
-        <div class="card">
-            <h2 class="section-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              ARRIVAL PREFERENCES
-            </h2>
-          
-            <!-- Temperature Settings (Single Row) -->
-            <div class="form-group" style="display: flex; flex-direction: column;">
-              <label class="form-label">Temperature Settings</label>
-              <input type="number" name="temperature" class="form-control" placeholder="Set temperature">
-            </div>
-          
-            <!-- Pool & Hot Tub Temperature (Side by Side) -->
-            <div class="form-group" style="display: flex; gap: 15px;">
-              <div style="flex: 1;">
-                <label class="form-label">Pool Temperature</label>
-                <input type="number" name="pool_temperature" class="form-control" placeholder="Enter pool temperature">
-              </div>
-              <div style="flex: 1;">
-                <label class="form-label">Hot Tub Temperature</label>
-                <input type="number" name="hot_bath_temperature" class="form-control" placeholder="Enter hot tub temperature" >
-              </div>
-            </div>
-          
-            <!-- Indoor & Outdoor Lights (Side by Side) -->
-            <div class="form-group" style="display: flex; gap: 15px;">
-              <div style="flex: 1;">
-                <label class="form-label">Indoor Lights</label>
-                <select class="form-control"  name="indoor_lights">
-                  <option value="">Select</option>
-                  <option value="all_on">All On</option>
-                 <option value="all_off">All Off</option>
-                </select>
-                
-              </div>
-              <div style="flex: 1;">
-                <label class="form-label">Outdoor Lights</label>
-                <select class="form-control" name="outdoor_lights" >
-                  <option value="">Select</option>
-                  <option value="all_on">All On</option>
-                 <option value="all_off">All Off</option>
-                </select>
-              </div>
-            </div>
-          
-            <!-- Window Blind Settings (Single Row) -->
-            <div class="form-group" style="display: flex; flex-direction: column;">
-              <label class="form-label">Window Blind Settings</label>
-              <select class="form-control" name="window_position" >
-                <option value="">Select</option>
-                <option value="up">Up</option>
-                <option value="down">Down</option>
-                <option value="sideway">Sideway</option>
-              </select>
-            </div>
-          </div>
-          
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 3</button>
-        </div>
+    </div>
+
+    <!-- Arrival Preferences -->
+    <h2 class="section-title">ARRIVAL PREFERENCES</h2>
+
+    <div class="form-group" style="display: flex; flex-direction: column;">
+      <label class="form-label">Temperature Settings</label>
+      <input type="number" name="temperature" class="form-control" placeholder="Set temperature">
+    </div>
+
+    <div class="form-group" style="display: flex; gap: 15px;">
+      <div style="flex: 1;">
+        <label class="form-label">Pool Temperature</label>
+        <input type="number" name="pool_temperature" class="form-control" placeholder="Enter pool temperature">
       </div>
-      
-      <!-- Step 3 -->
-      <div class="form-step" data-step="3">
-        <!-- MUSIC Section -->
-<!-- MUSIC Section -->
-<div class="card" style="padding: 15px; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background: #fff;">
-  
-    <!-- MUSIC Section -->
-    <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111; ">
-      MUSIC
-    </h2>
-    <div class="form-group" style="margin-bottom: 8px;">
-      <label class="form-label" style="font-weight: 500; color: #333;">Genre</label>
-      <input type="text" name="music_genre" class="form-control" placeholder="Enter music genre" >
+      <div style="flex: 1;">
+        <label class="form-label">Hot Tub Temperature</label>
+        <input type="number" name="hot_bath_temperature" class="form-control" placeholder="Enter hot tub temperature">
+      </div>
     </div>
-  
-    <!-- FLOWERS Section -->
-    <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-      FLOWERS
-    </h2>
-    <div class="form-group" style="margin-bottom: 8px;">
-      <label class="form-label" style="font-weight: 500; color: #333;">Type</label>
-      <input type="text" name="flower_type" class="form-control" placeholder="Enter flower type" >
+
+    <div class="form-group" style="display: flex; gap: 15px;">
+      <div style="flex: 1;">
+        <label class="form-label">Indoor Lights</label>
+        <select class="form-control" name="indoor_lights">
+          <option value="">Select</option>
+          <option value="all_on">All On</option>
+          <option value="all_off">All Off</option>
+        </select>
+      </div>
+      <div style="flex: 1;">
+        <label class="form-label">Outdoor Lights</label>
+        <select class="form-control" name="outdoor_lights">
+          <option value="">Select</option>
+          <option value="all_on">All On</option>
+          <option value="all_off">All Off</option>
+        </select>
+      </div>
     </div>
-  
-    <div class="form-group" style="margin-bottom: 8px;">
-      <label class="form-label" style="font-weight: 500; color: #333;">Location</label>
-      <input type="text" name="flower_location" class="form-control" placeholder="Enter delivery location"  >
+
+    <div class="form-group" style="display: flex; flex-direction: column;">
+      <label class="form-label">Window Blind Settings</label>
+      <select class="form-control" name="window_position">
+        <option value="">Select</option>
+        <option value="up">Up</option>
+        <option value="down">Down</option>
+        <option value="sideway">Sideway</option>
+      </select>
     </div>
-  
-    <!-- GROCERIES Section -->
-    <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;" >
-      GROCERIES
-    </h2>
+
+    <!-- Music -->
+    <h2 class="section-title">MUSIC</h2>
+    <div class="form-group">
+      <label class="form-label">Genre</label>
+      <input type="text" name="music_genre" class="form-control" placeholder="Enter music genre">
+    </div>
+
+    <!-- Flowers -->
+    <h2 class="section-title">FLOWERS</h2>
+    <div class="form-group">
+      <label class="form-label">Type</label>
+      <input type="text" name="flower_type" class="form-control" placeholder="Enter flower type">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Location</label>
+      <input type="text" name="flower_location" class="form-control" placeholder="Enter delivery location">
+    </div>
+
+    <!-- Groceries -->
+    <h2 class="section-title">GROCERIES</h2>
     <div class="form-group">
       <label class="form-label">Details</label>
-      <input type="text" name="groceries_details" class="form-control" placeholder="Enter grocery details"  >
+      <input type="text" name="groceries_details" class="form-control" placeholder="Enter grocery details">
     </div>
-  
-  </div>
-  
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 4</button>
-        </div>
-      </div>
-      
-      <!-- Step 4 -->
-      <div class="form-step" data-step="4">
-        <div class="card" style="padding: 15px; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background: #fff;">
 
-            <!-- ALCOHOL Section -->
-            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-              ALCOHOL
-            </h2>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label class="form-label" style="font-weight: 500; color: #333;">Order Alcohol</label>
-              <input type="text" name="housekeeping" class="form-control" placeholder="Enter alcohol details" >
-            </div>
-          
-            <!-- HOUSEKEEPING Section -->
-            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-              HOUSEKEEPING
-            </h2>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label class="form-label" style="font-weight: 500; color: #333;">Require Housekeeping</label>
-              <input type="text" name="housekeeping" class="form-control" placeholder="Enter housekeeping details" >
-            </div>
-          
-            <!-- TRANSPORTATION Section -->
-            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-              TRANSPORTATION
-            </h2>
-            <div class="form-group" style="margin-bottom: 8px;">
-              <label class="form-label" style="font-weight: 500; color: #333;">Arrange Transportation</label>
-              <input type="text" name="transportation" class="form-control" placeholder="Enter transportation details" >
-            </div>
-          
-            <!-- AUTOMOBILES Section -->
-            <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111; ">
-              AUTOMOBILES
-            </h2>
-            <div class="form-group">
-              <label class="form-label" style="font-weight: 500; color: #333;">Manage Automobiles</label>
-              <input type="text" name="automobiles" class="form-control" placeholder="Enter automobile details" >
-            </div>
-          
-          </div>
-          
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 5</button>
-        </div>
-      </div>
+    <!-- Alcohol -->
+    <h2 class="section-title">ALCOHOL</h2>
+    <div class="form-group">
+      <label class="form-label">Order Alcohol</label>
+      <input type="text" name="alcohol" class="form-control" placeholder="Enter alcohol details">
+    </div>
+
+    <!-- Housekeeping -->
+    <h2 class="section-title">HOUSEKEEPING</h2>
+    <div class="form-group">
+      <label class="form-label">Require Housekeeping</label>
+      <input type="text" name="housekeeping" class="form-control" placeholder="Enter housekeeping details">
+    </div>
+
+    <!-- Transportation -->
+    <h2 class="section-title">TRANSPORTATION</h2>
+    <div class="form-group">
+      <label class="form-label">Arrange Transportation</label>
+      <input type="text" name="transportation" class="form-control" placeholder="Enter transportation details">
+    </div>
+
+    <!-- Automobiles -->
+    <h2 class="section-title">AUTOMOBILES</h2>
+    <div class="form-group">
+      <label class="form-label">Automobile Details</label>
+      <input type="text" name="automobiles" class="form-control" placeholder="Enter automobile details">
+    </div>
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Additional Pre-arrival Requests :
+    </h2>
+    
+    <div class="form-group">
+      <label class="form-label">Write down your additional Prearrival requests here - </label>
+      <textarea type="text" name="additional" class="form-control" placeholder="Enter meal preferences or requirements" rows="5"></textarea>
+
+  </div>
+   
+  <!-- Single Step Submit -->
+  <div class="btn-container" style="margin-top: 15px;">
+    <div></div>
+    <button type="submit" class="btn btn-primary">Submit All</button>
+  </div>
+</div>
+
       
       <!-- Step 5 -->
-      <div class="form-step" data-step="5">
+      <!-- <div class="form-step" data-step="5">
         <div class="card">
           <h2 class="section-title">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -606,7 +557,7 @@
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
       </div>
-      
+       -->
      
     </form>
   </div>
@@ -680,6 +631,11 @@
         updateProgressBar();
     });
 </script>
+<style>
+  .standalone-footer{
+    display: none;
+  }
+</style>
 
 <!-- <script>
     document.addEventListener('DOMContentLoaded', function() {

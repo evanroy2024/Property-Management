@@ -28,22 +28,26 @@ class PropertyManagement(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     # Floor Plan Fields (Supports Image & PDF)
-    floor_plan_1_name = models.CharField(max_length=100, blank=True, null=True)
-    floor_plan_1_file = models.FileField(upload_to="floor_plans/", blank=True, null=True)
-
-    floor_plan_2_name = models.CharField(max_length=100, blank=True, null=True)
-    floor_plan_2_file = models.FileField(upload_to="floor_plans/", blank=True, null=True)
-
-    floor_plan_3_name = models.CharField(max_length=100, blank=True, null=True)
-    floor_plan_3_file = models.FileField(upload_to="floor_plans/", blank=True, null=True)
-
-    floor_plan_4_name = models.CharField(max_length=100, blank=True, null=True)
-    floor_plan_4_file = models.FileField(upload_to="floor_plans/", blank=True, null=True)
+  
 
     # Add created_at field
 
     def __str__(self):
         return f"Property at {self.address} - Managed by {self.client_manager}"
+
+
+class Floor(models.Model):
+    property = models.ForeignKey(PropertyManagement, on_delete=models.CASCADE, related_name='floors')
+    floor_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Property at {self.floor_name} "
+
+class Room(models.Model):
+    floor = models.ForeignKey(Floor, on_delete=models.CASCADE, related_name='rooms')
+    room_name = models.CharField(max_length=255)
+    room_size = models.CharField(max_length=255)
+    room_image = models.ImageField(upload_to='rooms_images/', null=True, blank=True)
 
 class PropertyImprovement(models.Model):
     STATUS_CHOICES = [

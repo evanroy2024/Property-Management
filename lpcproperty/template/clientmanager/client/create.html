@@ -252,11 +252,12 @@
                     <select id="preferred_contact_method" name="preferred_contact_method" class="form-select">
                         <option value="email">Email</option>
                         <option value="phone">Phone</option>
+                        <option value="text">text</option>
                     </select>
                 </div>
             </div>
-            
-            <div class="contact-section">
+
+            <div class="contact-section" style="display: none;">
                 <div class="contact-header">
                     <div class="contact-badge">1</div>
                     <div class="section-title">Contact Person 1</div>
@@ -289,7 +290,7 @@
                 </div>
             </div>
             
-            <div class="contact-section">
+            <div class="contact-section" style="display: none;">
                 <div class="contact-header">
                     <div class="contact-badge">2</div>
                     <div class="section-title">Contact Person 2</div>
@@ -322,7 +323,7 @@
                 </div>
             </div>
             
-            <div class="contact-section">
+            <div class="contact-section" style="display: none;">
                 <div class="contact-header">
                     <div class="contact-badge">3</div>
                     <div class="section-title">Contact Person 3</div>
@@ -354,8 +355,43 @@
                     </div>
                 </div>
             </div>
+            <button id="showContactBtn" class="show-button">Add additional Contact Person</button>
             
             <button type="submit" class="form-button">Create Client</button>
         </form>
     </div>
+
+    <script>
+        const sections = document.querySelectorAll('.contact-section');
+        const button = document.getElementById('showContactBtn');
+        let currentIndex = 0;
+    
+        button.addEventListener('click', () => {
+            if (currentIndex < sections.length) {
+                sections[currentIndex].style.display = 'block';
+                currentIndex++;
+    
+                if (currentIndex === sections.length) {
+                    button.style.display = 'none'; // Hide the button after showing all
+                }
+            }
+        });
+    </script>
+<style>
+    .show-button {
+        padding: 10px 20px;
+        background: #6e8efb;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .show-button:hover {
+        background: #a777e3;
+    }
+</style>
+    
 {% endblock content %}

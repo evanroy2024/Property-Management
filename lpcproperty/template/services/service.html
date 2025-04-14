@@ -1,4 +1,4 @@
-{% extends "cmbase.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
@@ -57,6 +57,32 @@
     background: #c09a5b;
   }
 </style>
+<!-- property plans pic imahge Start -->
+<div id="floor-plan-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+  <div class="bg-white max-w-4xl w-full p-6 rounded-lg shadow-lg relative overflow-y-auto max-h-[90vh]">
+    
+    <!-- Close Button -->
+    <button onclick="closeFloorPlans()" class="absolute top-2 right-2 text-gray-600 hover:text-black text-2xl font-bold">&times;</button>
+
+    <p class="text-xl font-semibold mb-4">Floor Plans</p>
+
+    {% for property in properties %}
+    {% for floor in property.floors.all %}
+      {% for room in floor.rooms.all %}
+        {% if room.room_image %}
+          <div>
+            <img src="{{ room.room_image.url }}" alt="{{ room.room_name }}" class="w-full h-auto rounded">
+            <p class="text-center text-sm mt-1">{{ room.room_name }} - {{ room.room_size }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+  
+  </div>
+</div>
+
+<!-- property plans pic imahge End -->
 
 <div class="bg-lotus-gray-light min-h-screen py-10 px-4">
   <div class="lotus-container max-w-4xl mx-auto bg-white rounded-lg overflow-hidden border border-lotus-border">
@@ -73,7 +99,27 @@
         </div>
       </div>
     </div>
-
+    {% if messages %}
+    <div class="space-y-3">
+      {% for message in messages %}
+        <div class="flex items-start justify-between p-4 rounded-lg shadow-md 
+                    {% if message.tags == 'success' %}
+                      bg-green-100 text-green-800 border border-green-300
+                    {% elif message.tags == 'error' %}
+                      bg-red-100 text-red-800 border border-red-300
+                    {% elif message.tags == 'warning' %}
+                      bg-yellow-100 text-yellow-800 border border-yellow-300
+                    {% else %}
+                      bg-blue-100 text-blue-800 border border-blue-300
+                    {% endif %}
+                    ">
+          <p class="text-sm font-medium">{{ message }}</p>
+          <button onclick="this.parentElement.remove();" class="ml-4 text-lg leading-none focus:outline-none">&times;</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
     <!-- Main Content -->
     <div class="p-6 sm:p-10">
       
@@ -82,12 +128,13 @@
         <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-lotus-gold">Client Information</h2>
         <p class="text-gray-700 mb-3">Please send a brief description of how we can assist you with your property needs.</p>
         <p class="text-gray-700 mb-4">For Interior requests, please reference your floor plan and note the room designation so we can precisely locate the item.</p>
-        <a href="#" class="text-lotus-gold hover:underline font-medium flex items-center">
+        <a href="#" onclick="showFloorPlans()" class="text-lotus-gold hover:underline font-medium flex items-center">
           View Your Floor Plans
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
+        
       </div>
 
       <!-- Request Form -->
@@ -100,11 +147,7 @@
         <form method="POST">
           {% csrf_token %}
 
-          {% if messages %}
-            {% for message in messages %}
-              <p class="text-red-600 text-sm mb-2">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
+         
 
           <!-- Request Type -->
           <div class="mb-8">
@@ -136,17 +179,29 @@
             </div>
             <p class="mt-2 text-sm text-gray-500">Include any relevant details that will help us respond to your request promptly.</p>
           </div>
-
           <!-- Interior Room Selection -->
           <div id="interior-room-selection" class="mb-8 hidden">
             <label class="block text-gray-800 font-medium mb-3">Select Room</label>
             <div class="relative">
-              <select name="room-type" class="block w-full rounded-md border border-lotus-border bg-white py-3 px-4 text-gray-800 appearance-none focus:outline-none focus:ring-1 focus:ring-lotus-gold focus:border-lotus-gold">
-                <option value="" disabled selected>Select a room...</option>
-                <option value="living-room">Living Room</option>
-                <option value="bedroom">Bedroom</option>
-                <option value="patio">Patio</option>
+              <select name="floor-plan-selection" class="block w-full rounded-md border border-lotus-border bg-white py-3 px-4 text-gray-800 appearance-none focus:outline-none focus:ring-1 focus:ring-lotus-gold focus:border-lotus-gold">
+                <option value="" disabled selected>Select a floor plan...</option>
+              
+                {% for property in properties %}
+                  {% if property.floor_plan_1_name %}
+                    <option value="{{ property.floor_plan_1_name }}">{{ property.floor_plan_1_name }}</option>
+                  {% endif %}
+                  {% if property.floor_plan_2_name %}
+                    <option value="{{ property.floor_plan_2_name }}">{{ property.floor_plan_2_name }}</option>
+                  {% endif %}
+                  {% if property.floor_plan_3_name %}
+                    <option value="{{ property.floor_plan_3_name }}">{{ property.floor_plan_3_name }}</option>
+                  {% endif %}
+                  {% if property.floor_plan_4_name %}
+                    <option value="{{ property.floor_plan_4_name }}">{{ property.floor_plan_4_name }}</option>
+                  {% endif %}
+                {% endfor %}
               </select>
+              
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-lotus-gold">
                 <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
@@ -176,5 +231,34 @@
     const interiorRoomSelection = document.getElementById('interior-room-selection');
     interiorRoomSelection.classList.toggle('hidden', !show);
   }
+
+  // To show visit property Plans 
+  function showFloorPlans() {
+    document.getElementById('floor-plan-modal').classList.remove('hidden');
+    console.log("pressed")
+  }
+
+  function closeFloorPlans() {
+    document.getElementById('floor-plan-modal').classList.add('hidden');
+  }
+
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const requestTypeRadios = document.querySelectorAll('input[name="request_type"]');
+    const interiorRoomSection = document.getElementById("interior-room-selection");
+
+    requestTypeRadios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        if (this.value === "interior_residence") {
+          interiorRoomSection.classList.remove("hidden");
+        } else {
+          interiorRoomSection.classList.add("hidden");
+        }
+      });
+    });
+  });
+</script>
+
+
 {% endblock content %}

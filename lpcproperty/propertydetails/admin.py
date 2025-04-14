@@ -18,26 +18,7 @@ class PropertyManagementAdmin(admin.ModelAdmin):
         ("Contact Preferences", {
             "fields": ("preferred_contact_method",),
         }),
-        ("Floor Plan 1", {
-            "fields": (
-                "floor_plan_1_name", "floor_plan_1_file",
-            ),
-        }),
-        ("Floor Plan 2", {
-            "fields": (
-                "floor_plan_2_name", "floor_plan_2_file",
-            ),
-        }),
-        ("Floor Plan 3", {
-            "fields": (
-                "floor_plan_3_name", "floor_plan_3_file",
-            ),
-        }),
-        ("Floor Plan 4", {
-            "fields": (
-                "floor_plan_4_name", "floor_plan_4_file",
-            ),
-        }),
+       
     )
 
 from django.contrib import admin
@@ -50,3 +31,8 @@ class PropertyImprovementAdmin(admin.ModelAdmin):
     search_fields = ('pino', 'client__name', 'description')
     ordering = ('-created_at',)
     readonly_fields = ('created_at', 'updated_at')
+
+from .models import Floor ,Room
+
+admin.site.register(Floor)
+admin.site.register(Room)

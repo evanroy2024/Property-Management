@@ -389,24 +389,24 @@
                 <!-- INITIAL BASIC FIELDS -->
                 <div id="basic-info">
                     <div class="form-group">
-                        <label for="id_user">User:</label>
+                        <label for="id_user">Client :</label>
                         {{ form.user }}
                     </div>
 
                     <div class="form-group">
-                        <label for="id_description">Description:</label>
+                        <label for="id_description">Inspection Notes :</label>
                         {{ form.description }}
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="id_cost">Cost:</label>
                         {{ form.cost }}
-                    </div>
+                    </div> -->
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="id_client_approval">Client Approval:</label>
                         {{ form.client_approval }}
-                    </div>
+                    </div> -->
 
                     <button type="button" class="btn btn-next" onclick="showTabs()">
                         Continue to Inspection <i class="fas fa-arrow-right"></i>
@@ -453,152 +453,412 @@
                     <!-- TAB CONTENT: GIE -->
                     <div class="tab-content active" id="GIE">
                         <h3 class="section-title">General Items - Exterior</h3>
-                        
+                    
                         <div class="item-row">
                             <div class="item-label">{{ form.gie1.label_tag }}</div>
                             <div class="item-control">{{ form.gie1 }}</div>
                             <div class="item-remarks">{{ form.gie1_remarks }}</div>
                         </div>
-                        
+                    
                         <div class="item-row">
                             <div class="item-label">{{ form.gie2.label_tag }}</div>
                             <div class="item-control">{{ form.gie2 }}</div>
                             <div class="item-remarks">{{ form.gie2_remarks }}</div>
                         </div>
-                        
+                    
                         <div class="item-row">
                             <div class="item-label">{{ form.gie3.label_tag }}</div>
                             <div class="item-control">{{ form.gie3 }}</div>
                             <div class="item-remarks">{{ form.gie3_remarks }}</div>
                         </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie4.label_tag }}</div>
+                            <div class="item-control">{{ form.gie4 }}</div>
+                            <div class="item-remarks">{{ form.gie4_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie5.label_tag }}</div>
+                            <div class="item-control">{{ form.gie5 }}</div>
+                            <div class="item-remarks">{{ form.gie5_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie6.label_tag }}</div>
+                            <div class="item-control">{{ form.gie6 }}</div>
+                            <div class="item-remarks">{{ form.gie6_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie7.label_tag }}</div>
+                            <div class="item-control">{{ form.gie7 }}</div>
+                            <div class="item-remarks">{{ form.gie7_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie8.label_tag }}</div>
+                            <div class="item-control">{{ form.gie8 }}</div>
+                            <div class="item-remarks">{{ form.gie8_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie9.label_tag }}</div>
+                            <div class="item-control">{{ form.gie9 }}</div>
+                            <div class="item-remarks">{{ form.gie9_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie10.label_tag }}</div>
+                            <div class="item-control">{{ form.gie10 }}</div>
+                            <div class="item-remarks">{{ form.gie10_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie11.label_tag }}</div>
+                            <div class="item-control">{{ form.gie11 }}</div>
+                            <div class="item-remarks">{{ form.gie11_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie12.label_tag }}</div>
+                            <div class="item-control">{{ form.gie12 }}</div>
+                            <div class="item-remarks">{{ form.gie12_remarks }}</div>
+                        </div>
+
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie13.label_tag }}</div>
+                            <div class="item-control">{{ form.gie13 }}</div>
+                            <div class="item-remarks">{{ form.gie13_remarks }}</div>
+                        </div>
+
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie14.label_tag }}</div>
+                            <div class="item-control">{{ form.gie14 }}</div>
+                            <div class="item-remarks">{{ form.gie14_remarks }}</div>
+                        </div>
+
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gie15.label_tag }}</div>
+                            <div class="item-control">{{ form.gie15 }}</div>
+                            <div class="item-remarks">{{ form.gie15_remarks }}</div>
+                        </div>
                     </div>
+
+                    
 
                     <!-- TAB CONTENT: GII -->
                     <div class="tab-content" id="GII">
                         <h3 class="section-title">General Items - Interior</h3>
-                        
+                    
                         <div class="item-row">
                             <div class="item-label">{{ form.gii1.label_tag }}</div>
                             <div class="item-control">{{ form.gii1 }}</div>
                             <div class="item-remarks">{{ form.gii1_remarks }}</div>
                         </div>
-                        
+                    
                         <div class="item-row">
                             <div class="item-label">{{ form.gii2.label_tag }}</div>
                             <div class="item-control">{{ form.gii2 }}</div>
                             <div class="item-remarks">{{ form.gii2_remarks }}</div>
                         </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii3.label_tag }}</div>
+                            <div class="item-control">{{ form.gii3 }}</div>
+                            <div class="item-remarks">{{ form.gii3_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii4.label_tag }}</div>
+                            <div class="item-control">{{ form.gii4 }}</div>
+                            <div class="item-remarks">{{ form.gii4_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii5.label_tag }}</div>
+                            <div class="item-control">{{ form.gii5 }}</div>
+                            <div class="item-remarks">{{ form.gii5_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii6.label_tag }}</div>
+                            <div class="item-control">{{ form.gii6 }}</div>
+                            <div class="item-remarks">{{ form.gii6_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii7.label_tag }}</div>
+                            <div class="item-control">{{ form.gii7 }}</div>
+                            <div class="item-remarks">{{ form.gii7_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii8.label_tag }}</div>
+                            <div class="item-control">{{ form.gii8 }}</div>
+                            <div class="item-remarks">{{ form.gii8_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.gii9.label_tag }}</div>
+                            <div class="item-control">{{ form.gii9 }}</div>
+                            <div class="item-remarks">{{ form.gii9_remarks }}</div>
+                        </div>
                     </div>
+
+                    
 
                     <div class="tab-content" id="GARAGE">
                         <h3 class="section-title">Garage</h3>
+                    
                         <div class="item-row">
-                            <div class="item-label">Door Operation</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.garage1.label_tag }}</div>
+                            <div class="item-control">{{ form.garage1 }}</div>
+                            <div class="item-remarks">{{ form.garage1_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Lighting</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.garage2.label_tag }}</div>
+                            <div class="item-control">{{ form.garage2 }}</div>
+                            <div class="item-remarks">{{ form.garage2_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage3.label_tag }}</div>
+                            <div class="item-control">{{ form.garage3 }}</div>
+                            <div class="item-remarks">{{ form.garage3_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage4.label_tag }}</div>
+                            <div class="item-control">{{ form.garage4 }}</div>
+                            <div class="item-remarks">{{ form.garage4_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage5.label_tag }}</div>
+                            <div class="item-control">{{ form.garage5 }}</div>
+                            <div class="item-remarks">{{ form.garage5_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage6.label_tag }}</div>
+                            <div class="item-control">{{ form.garage6 }}</div>
+                            <div class="item-remarks">{{ form.garage6_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage7.label_tag }}</div>
+                            <div class="item-control">{{ form.garage7 }}</div>
+                            <div class="item-remarks">{{ form.garage7_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage8.label_tag }}</div>
+                            <div class="item-control">{{ form.garage8 }}</div>
+                            <div class="item-remarks">{{ form.garage8_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.garage9.label_tag }}</div>
+                            <div class="item-control">{{ form.garage9 }}</div>
+                            <div class="item-remarks">{{ form.garage9_remarks }}</div>
                         </div>
                     </div>
+
+                    
 
                     <div class="tab-content" id="LAUNDRY">
                         <h3 class="section-title">Laundry / Mudroom</h3>
+                    
                         <div class="item-row">
-                            <div class="item-label">Washer Connections</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.laundry1.label_tag }}</div>
+                            <div class="item-control">{{ form.laundry1 }}</div>
+                            <div class="item-remarks">{{ form.laundry1_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Dryer Connections</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.laundry2.label_tag }}</div>
+                            <div class="item-control">{{ form.laundry2 }}</div>
+                            <div class="item-remarks">{{ form.laundry2_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.laundry3.label_tag }}</div>
+                            <div class="item-control">{{ form.laundry3 }}</div>
+                            <div class="item-remarks">{{ form.laundry3_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.laundry4.label_tag }}</div>
+                            <div class="item-control">{{ form.laundry4 }}</div>
+                            <div class="item-remarks">{{ form.laundry4_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.laundry5.label_tag }}</div>
+                            <div class="item-control">{{ form.laundry5 }}</div>
+                            <div class="item-remarks">{{ form.laundry5_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.laundry6.label_tag }}</div>
+                            <div class="item-control">{{ form.laundry6 }}</div>
+                            <div class="item-remarks">{{ form.laundry6_remarks }}</div>
                         </div>
                     </div>
 
+                    
+
                     <div class="tab-content" id="KITCHEN">
                         <h3 class="section-title">Kitchen</h3>
+                    
                         <div class="item-row">
-                            <div class="item-label">Countertops</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen1.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen1 }}</div>
+                            <div class="item-remarks">{{ form.kitchen1_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Cabinets</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen2.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen2 }}</div>
+                            <div class="item-remarks">{{ form.kitchen2_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen3.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen3 }}</div>
+                            <div class="item-remarks">{{ form.kitchen3_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen4.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen4 }}</div>
+                            <div class="item-remarks">{{ form.kitchen4_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen5.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen5 }}</div>
+                            <div class="item-remarks">{{ form.kitchen5_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen6.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen6 }}</div>
+                            <div class="item-remarks">{{ form.kitchen6_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen7.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen7 }}</div>
+                            <div class="item-remarks">{{ form.kitchen7_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen8.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen8 }}</div>
+                            <div class="item-remarks">{{ form.kitchen8_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen9.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen9 }}</div>
+                            <div class="item-remarks">{{ form.kitchen9_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen10.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen10 }}</div>
+                            <div class="item-remarks">{{ form.kitchen10_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen11.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen11 }}</div>
+                            <div class="item-remarks">{{ form.kitchen11_remarks }}</div>
+                        </div>
+                    
+                        <div class="item-row">
+                            <div class="item-label">{{ form.kitchen12.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen12 }}</div>
+                            <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                         </div>
                     </div>
+                    
 
                     <div class="tab-content" id="BATHROOM">
                         <h3 class="section-title">Bathroom</h3>
                         <div class="item-row">
-                            <div class="item-label">Plumbing</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen11.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen11 }}</div>
+                            <div class="item-remarks">{{ form.kitchen11_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Fixtures</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen12.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen12 }}</div>
+                            <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                         </div>
                     </div>
 
                     <div class="tab-content" id="BEDROOMS">
                         <h3 class="section-title">Bedrooms</h3>
                         <div class="item-row">
-                            <div class="item-label">Doors & Windows</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen11.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen11 }}</div>
+                            <div class="item-remarks">{{ form.kitchen11_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Closets</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen12.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen12 }}</div>
+                            <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                         </div>
                     </div>
 
                     <div class="tab-content" id="BASEMENT">
                         <h3 class="section-title">Basement</h3>
                         <div class="item-row">
-                            <div class="item-label">Water Issues</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen11.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen11 }}</div>
+                            <div class="item-remarks">{{ form.kitchen11_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Foundation</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen12.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen12 }}</div>
+                            <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                         </div>
                     </div>
 
                     <div class="tab-content" id="ATTIC">
                         <h3 class="section-title">Attic</h3>
                         <div class="item-row">
-                            <div class="item-label">Insulation</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen11.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen11 }}</div>
+                            <div class="item-remarks">{{ form.kitchen11_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Ventilation</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen12.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen12 }}</div>
+                            <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                         </div>
                     </div>
 
                     <div class="tab-content" id="HVAC">
                         <h3 class="section-title">HVAC</h3>
                         <div class="item-row">
-                            <div class="item-label">Heating System</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen11.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen11 }}</div>
+                            <div class="item-remarks">{{ form.kitchen11_remarks }}</div>
                         </div>
+                    
                         <div class="item-row">
-                            <div class="item-label">Cooling System</div>
-                            <div class="item-control"><select><option>Pass</option><option>Fail</option></select></div>
-                            <div class="item-remarks"><input type="text" placeholder="Enter remarks"></div>
+                            <div class="item-label">{{ form.kitchen12.label_tag }}</div>
+                            <div class="item-control">{{ form.kitchen12 }}</div>
+                            <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                         </div>
                     </div>
 

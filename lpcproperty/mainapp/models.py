@@ -19,6 +19,8 @@ class Client(models.Model):
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),
         ('phone', 'Phone'),
+        ('text', 'text'),
+
     ]
     preferred_contact_method = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, default='email'
@@ -83,6 +85,7 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),
         ('phone', 'Phone'),
+        ('text', 'text'),
     ]
     preferred_contact_method = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, default='email'
@@ -124,7 +127,7 @@ class Vendor(models.Model):
     zip_code = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15)
-    service = models.CharField(max_length=50, choices=SERVICE_CHOICES , blank=True, null=True)
-
+    # service = models.CharField(max_length=50, choices=SERVICE_CHOICES , blank=True, null=True)
+    service = models.TextField(blank=True, null=True)
     def __str__(self):
         return self.company_name

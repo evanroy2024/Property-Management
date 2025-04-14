@@ -70,4 +70,10 @@ def my_properties(request):
     else:
         return redirect('login')
 
-    return render(request, 'messages/client_manager_support.html', {'properties': properties})
+    if request.session.get('client_id'):
+        base_template = "outbase.html"
+    elif request.session.get('manager_id'):
+        base_template = "cmbase.html"
+    else:
+        base_template = "outbase.html"  # Default base template
+    return render(request, 'messages/client_manager_support.html', {'properties': properties,'base_template': base_template})

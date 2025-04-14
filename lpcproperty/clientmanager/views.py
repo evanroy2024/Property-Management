@@ -51,11 +51,14 @@ from django.contrib import messages
 def get_client_manager_id(request):
     return request.session.get('client_id')
 
-
+# def client_list_page(request):
+#     clients = Client.objects.all()
+#     return render(request, 'clientmanager/client/client_list_page.html', {'clients': clients})
 def property_list_view(request):
     manager_id = request.session.get('manager_id') 
+    clients = Client.objects.all()
     properties = PropertyManagement.objects.filter(client_manager_id=manager_id)
-    return render(request, 'clientmanager/property/list.html', {'properties': properties})
+    return render(request, 'clientmanager/property/list.html', {'properties': properties,'clients': clients})
 
 
 def property_detail_view(request, pk):
@@ -64,36 +67,67 @@ def property_detail_view(request, pk):
     return render(request, 'clientmanager/property/detail.html', {'property': prop})
 
 
+from django.shortcuts import render, redirect
+from propertydetails.models import PropertyManagement, Floor, Room
+
 def property_create_view(request):
-    manager_id = request.session.get('manager_id') 
     if request.method == 'POST':
-        PropertyManagement.objects.create(
+        # Ensure the required fields are present in the POST request
+        if not all([request.POST.get('client_id'), request.POST.get('client_manager_id'), request.POST.get('address')]):
+            # Handle error for missing required fields (client, client manager, and address)
+            return render(request, 'clientmanager/property/create.html', {
+                'clients': Client.objects.all(),
+                'managers': ClientManagers.objects.all(),
+                'error_message': 'Please fill in all required fields: Client, Client Manager, and Address.'
+            })
+
+        # Create Property
+        property = PropertyManagement.objects.create(
             client_id=request.POST['client_id'],
-            client_manager_id=manager_id,
+            client_manager_id=request.POST['client_manager_id'],
             address=request.POST['address'],
-            size_of_home=request.POST['size_of_home'],
-            number_of_stories=request.POST['number_of_stories'],
-            construction_type=request.POST['construction_type'],
-            year_built=request.POST['year_built'],
+            size_of_home=request.POST.get('size_of_home', ''),
+            number_of_stories=request.POST.get('number_of_stories', ''),
+            construction_type=request.POST.get('construction_type', ''),
+            year_built=request.POST.get('year_built', ''),
             has_pool='has_pool' in request.POST,
             gated_community='gated_community' in request.POST,
             impact_windows='impact_windows' in request.POST,
             has_hoa='has_hoa' in request.POST,
             gated_property='gated_property' in request.POST,
-            preferred_contact_method=request.POST['preferred_contact_method'],
-            floor_plan_1_name=request.POST.get('floor_plan_1_name'),
-            floor_plan_2_name=request.POST.get('floor_plan_2_name'),
-            floor_plan_3_name=request.POST.get('floor_plan_3_name'),
-            floor_plan_4_name=request.POST.get('floor_plan_4_name'),
-            floor_plan_1_file=request.FILES.get('floor_plan_1_file'),
-            floor_plan_2_file=request.FILES.get('floor_plan_2_file'),
-            floor_plan_3_file=request.FILES.get('floor_plan_3_file'),
-            floor_plan_4_file=request.FILES.get('floor_plan_4_file'),
+            preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
         )
+
+        # Loop through each floor
+        floor_count = len([key for key in request.POST if key.startswith('floor_name_')])
+        for i in range(1, floor_count + 1):
+            floor_name = request.POST.get(f'floor_name_{i}')
+            floor = Floor.objects.create(property=property, floor_name=floor_name)
+            
+            # Loop through each room for this floor
+            room_count = len([key for key in request.POST if key.startswith(f'room_name_{i}_')])
+            for j in range(1, room_count + 1):
+                room_name = request.POST.get(f'room_name_{i}_{j}')
+                room_size = request.POST.get(f'room_size_{i}_{j}')
+                room_image = request.FILES.get(f'room_image_{i}_{j}')
+                
+                Room.objects.create(
+                    floor=floor,
+                    room_name=room_name,
+                    room_size=room_size,
+                    room_image=room_image
+                )
+
         return redirect('clientmanager:property_list')
 
-    return render(request, 'clientmanager/property/create.html')
+    # Fetch clients and managers
+    clients = Client.objects.all()
+    managers = ClientManagers.objects.all()
 
+    return render(request, 'clientmanager/property/create.html', {
+        'clients': clients,
+        'managers': managers,
+    })
 
 def property_update_view(request, pk):
     manager_id = request.session.get('manager_id') 
@@ -128,8 +162,8 @@ def property_update_view(request, pk):
 
 
 def property_delete_view(request, pk):
-    manager_id = request.session.get('manager_id') 
-    prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id='manager_id')
+    # manager_id = request.session.get('manager_id')     client_manager_id='manager_id'
+    prop = get_object_or_404(PropertyManagement, pk=pk,)
 
     if request.method == 'POST':
         prop.delete()
@@ -148,12 +182,23 @@ def vendor_list(request):
     return render(request, 'clientmanager/vendor/list.html', {'vendors': vendors})
 
 
-# Create vendor
 def create_vendor(request):
     if not request.session.get('manager_id'):
         return redirect('clientmanager:client_login')
 
     if request.method == 'POST':
+        # 1. Get selected checkbox services
+        services = request.POST.getlist('service[]')  # list of checked values
+
+        # 2. Get comma-separated custom services
+        additional_services = request.POST.get('additional_service', '').strip()
+        if additional_services:
+            custom_list = [s.strip() for s in additional_services.split(',') if s.strip()]
+            services.extend(custom_list)  # combine both
+
+        # 3. Join all services into one string
+        service_str = ','.join(services)
+
         Vendor.objects.create(
             company_name=request.POST.get('company_name'),
             username=request.POST.get('username'),
@@ -163,11 +208,10 @@ def create_vendor(request):
             zip_code=request.POST.get('zip_code'),
             email=request.POST.get('email'),
             phone_number=request.POST.get('phone_number'),
-            service=request.POST.get('service'),
+            service=service_str,
         )
         return redirect('clientmanager:vendor_list')
 
-    # Pass choices here 👇
     return render(request, 'clientmanager/vendor/create.html', {
         'service_choices': Vendor.SERVICE_CHOICES
     })

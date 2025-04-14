@@ -215,35 +215,25 @@
 
     <div class="property-container">
         <p class="section-title">Home Overview</p>
-        <div class="image-gallery">
-            {% for property in properties %}
-                {% if property.floor_plan_1_file %}
-                    <div class="image-item">
-                        <img src="{{ property.floor_plan_1_file.url }}" alt="{{ property.floor_plan_1_name }}" class="gallery-img">
-                        <p class="image-caption">{{ property.floor_plan_1_name }}</p>
-                    </div>
-                {% endif %}
-                {% if property.floor_plan_2_file %}
-                    <div class="image-item">
-                        <img src="{{ property.floor_plan_2_file.url }}" alt="{{ property.floor_plan_2_name }}" class="gallery-img">
-                        <p class="image-caption">{{ property.floor_plan_2_name }}</p>
-                    </div>
-                {% endif %}
-                {% if property.floor_plan_3_file %}
-                    <div class="image-item">
-                        <img src="{{ property.floor_plan_3_file.url }}" alt="{{ property.floor_plan_3_name }}" class="gallery-img">
-                        <p class="image-caption">{{ property.floor_plan_3_name }}</p>
-                    </div>
-                {% endif %}
-                {% if property.floor_plan_4_file %}
-                    <div class="image-item">
-                        <img src="{{ property.floor_plan_4_file.url }}" alt="{{ property.floor_plan_4_name }}" class="gallery-img">
-                        <p class="image-caption">{{ property.floor_plan_4_name }}</p>
-                    </div>
-                {% endif %}
+        
+        {% for property in properties %}
+    
+            {% for floor in property.floors.all %}
+                <h4>Floor: {{ floor.floor_name }}</h4>
+                <div class="image-gallery">
+                    {% for room in floor.rooms.all %}
+                        {% if room.room_image %}
+                            <div class="image-item">
+                                <img src="{{ room.room_image.url }}" alt="{{ room.room_name }}" class="gallery-img">
+                                <p class="image-caption">{{ room.room_name }} ({{ room.room_size }})</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             {% endfor %}
-        </div>
+        {% endfor %}
     </div>
+    
 
     <script>
         document.querySelectorAll('.gallery-img').forEach(img => {
