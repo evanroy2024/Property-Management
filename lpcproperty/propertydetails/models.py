@@ -18,6 +18,10 @@ class PropertyManagement(models.Model):
     has_hoa = models.BooleanField(default=False)
     gated_property = models.BooleanField(default=False)
 
+    city = models.CharField(max_length=20, null=True, blank=True)
+    state = models.CharField(max_length=20, null=True, blank=True)
+
+
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),
         ('phone', 'Phone'),

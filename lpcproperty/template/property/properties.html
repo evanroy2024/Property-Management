@@ -217,22 +217,34 @@
         <p class="section-title">Home Overview</p>
         
         {% for property in properties %}
-    
-            {% for floor in property.floors.all %}
-                <h4>Floor: {{ floor.floor_name }}</h4>
-                <div class="image-gallery">
-                    {% for room in floor.rooms.all %}
-                        {% if room.room_image %}
+        <div class="property-card">
+            <h3 class="property-address">{{ property.address }}</h3>
+            
+            {% if property.floors.all %}
+                {% for floor in property.floors.all %}
+                <div class="floor-card">
+                    <h4 class="floor-title">{{ floor.floor_name }}</h4>
+                    <div class="image-gallery">
+                        {% for room in floor.rooms.all %}
+                            {% if room.room_image %}
                             <div class="image-item">
                                 <img src="{{ room.room_image.url }}" alt="{{ room.room_name }}" class="gallery-img">
                                 <p class="image-caption">{{ room.room_name }} ({{ room.room_size }})</p>
                             </div>
-                        {% endif %}
-                    {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p class="no-floors-msg">No floor plans available for this property.</p>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No properties available.</p>
         {% endfor %}
     </div>
+    
     
 
     <script>

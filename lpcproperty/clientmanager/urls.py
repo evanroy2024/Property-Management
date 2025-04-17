@@ -66,6 +66,7 @@ urlpatterns = [
     path('property/denied/', views.property_denied_requests, name='property_denied_requests'),
     path('property/update/<int:request_id>/', views.update_property_request, name='property_update_request'),
     path('property/view/<int:request_id>/', views.view_property_request, name='property_view_request'),
+    path('property/<int:pk>/export/', views.export_property_pdf, name='export_property_pdf'),   # Export Feature
 
     # Building of walkthrpough report submission 
     # path("walkthrough/submit/", views.submit_walkthrough, name="submit_walkthrough"),

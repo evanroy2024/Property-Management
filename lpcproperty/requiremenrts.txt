@@ -1,7 +1,0 @@
-pip install django 
-
-pip insatall pillow
-
-for excel csv pdf format ------
-pip install openpyxl
-pip install reportlab

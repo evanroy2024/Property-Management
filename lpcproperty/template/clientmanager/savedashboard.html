@@ -1,0 +1,551 @@
+{% extends 'cmbase.html' %}
+{ % load static %}
+{% block content %}
+    <title>Property Management Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #000; /* Set all text color to black */
+            font-size: 16px; /* Set a standard font size for everything */
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 16px; /* Standard size */
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 1.2rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px; /* Standard size */
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            color: #000; /* Black text */
+        }
+
+        .card-header:after {
+            content: "+";
+            position: absolute;
+            right: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px; /* Standard size */
+            transition: all 0.3s ease;
+            color: #000; /* Black text */
+        }
+
+        .card.active .card-header:after {
+            content: "−";
+            color: #000; /* Black text */
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .card.active .card-content {
+            max-height: 2000px;
+        }
+
+        .sub-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1.28em;
+        }
+
+        .sub-option {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            position: relative;
+            width: 100%;
+            color: #000; /* Black text */
+            font-size: 16px; /* Standard size */
+        }
+
+
+
+        .sub-option.has-children:after {
+            content: "+";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px; /* Standard size */
+            color: #000; /* Black text */
+        }
+
+        .sub-option.expanded:after {
+            content: "−";
+            color: #000; /* Black text */
+        }
+
+        .third-level-options {
+            display: none;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #ddd;
+        }
+
+        .third-level-options.visible {
+            display: flex;
+        }
+
+        .third-level-option {
+            background-color: #e6f3f7;
+            border-radius: 4px;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 16px; /* Standard size */
+            border: 1px solid #c9e3eb;
+            transition: all 0.2s ease;
+            width: 100%;
+            color: #000; /* Black text */
+        }
+
+
+        /* Color themes for different cards - keeping background colors but making text black */
+        .property-management {
+            background-color: #f1e8dd;
+        }
+
+        .property-management .card-header {
+            background-color: #e8d5c4;
+            color: #000; /* Black text */
+        }
+
+        .pre-arrival {
+            background-color: #e6ccad;
+        }
+
+        .pre-arrival .card-header {
+            background-color: #dbb98f;
+            color: #000; /* Black text */
+        }
+
+        .departure {
+            background-color: #e9b072;
+        }
+
+        .departure .card-header {
+            background-color: #e19540;
+            color: #000; /* Black text */
+        }
+
+        .client {
+            background-color: #8fd4e6;
+        }
+
+        .client .card-header {
+            background-color: #70c9df;
+            color: #000; /* Black text */
+        }
+
+        .cms {
+            background-color: #5aafca;
+        }
+
+        .cms .card-header {
+            background-color: #4599b3;
+            color: #000; /* Black text */
+        }
+
+        .vendors {
+            background-color: #2f7d98;
+        }
+
+        .vendors .card-header {
+            background-color: #26667c;
+            color: #000; /* Black text */
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+            color: #000; /* Black text */
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* For the card headers - increase height and font */
+.card-header {
+    padding: 1.5rem;
+    font-size: 18px;
+}
+
+/* For the sub-options - increase height and font */
+.sub-option {
+    padding: 1.4rem;
+    font-size: 17px;
+    min-height: 60px;
+    /* background-color: red; */
+}
+
+/* For the third-level options - increase height and font */
+.third-level-option {
+    padding: 1.2rem;
+    font-size: 17px;
+    min-height: 55px;
+}
+
+/* Plus/minus indicators - increase size to match */
+.card-header:after,
+.sub-option.has-children:after {
+    font-size: 18px;
+}
+
+/* Container spacing adjustment */
+.sub-options {
+    gap: 1rem;
+    padding: 1.5rem;
+    
+}
+
+/* Third level options spacing */
+.third-level-options {
+    gap: 1rem;
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+}
+.container {
+    max-width: 800px;
+    background: #ffffff;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* subtle shadow */
+    border-radius: 8px; /* optional: smooth corners */
+}
+body {
+    background-color: #ffffff;
+}
+.third-level-option {
+    padding: 1.2rem;
+    font-size: 17px;
+    min-height: 55px;
+    background: #e5e5e5;
+}
+.third-level-option:hover {
+    padding: 1.2rem;
+    font-size: 17px;
+    min-height: 55px;
+    background: #e5e5e5;
+}
+
+/* Specific colors for each card */
+.testimonials {
+  background-color:  #e8daef; /* Light lavender color */
+}
+
+.testimonials .card-header {
+  background-color: #f0e6f5;
+}
+
+.faqs {
+  background-color: #c39bd3; /* Medium purple color */
+}
+
+.faqs .card-header {
+  background-color: #c39bd3;
+}
+
+.settings {
+  background-color: #8e44ad; /* Darker purple color */
+}
+
+.settings .card-header {
+  background-color: #7d3c98;
+  color: white; /* Better readability on dark background */
+}
+    </style>
+
+    <div class="container">
+        <!-- <h1>Property Management Dashboard</h1> -->
+
+        <!-- Property Management -->
+        <div class="card property-management">
+            <div class="card-header">  Manage Client / Properties </div>
+            <div class="card-content">
+                <div class="sub-options">
+                    <div class="sub-option has-children" data-id="property-details" onclick="window.location.href='{% url 'clientmanager:property_list' %}'">
+                        Property Management
+                    </div>
+                    <div class="sub-option has-children" data-id="property-improvements">
+                        Walk-Thru
+                        <div class="third-level-options">
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:walkthrough-form' %}'">Add Walk Trug Reports</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'walkthroughreport:all_reports' %}'">All Reports</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'walkthroughreport:open_reports' %}'">Open Reports</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'walkthroughreport:completed_reports' %}'">Completed Reports</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'walkthroughreport:denied_reports' %}'">Denied Reports</div>
+                        </div>
+                    </div>
+                    <div class="sub-option has-children" data-id="service-requests">
+                        Service Request
+                        <div class="third-level-options">
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:clientmanager_pending_requests' %}'">Pending Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:clientmanager_open_requests' %}'">Open Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:clientmanager_completed_requests' %}'">Completed Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:clientmanager_denied_requests' %}'">Denied Request</div>
+                        </div>
+                    </div>
+                    <div class="sub-option has-children" data-id="concierge-requests">
+                        Concierge Request
+                        <div class="third-level-options">
+                            <div class="third-level-option">Pending Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:concierge_pending_requests' %}'">Open Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:concierge_open_requests' %}'">Denied Request</div> 
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:concierge_completed_requests' %}'">Completed Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:concierge_denied_requests' %}'">Denied Request</div>
+                            
+                        </div>
+                    </div>
+                    <div class="sub-option has-children" data-id="concierge-requests">
+                        Property Improvement
+                        <div class="third-level-options">
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:property_pending_requests' %}'">Pending Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:property_open_requests' %}'">Open Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:property_completed_requests' %}'">Completed Request</div>
+                            <div class="third-level-option" onclick="window.location.href='{% url 'clientmanager:property_denied_requests' %}'">Denied Request</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <!-- Pre-Arrival Info -->
+        <!-- <div class="card pre-arrival">
+            <div class="card-header">Pre-Arrival Info</div>
+            <div class="card-content">
+                <div class="sub-options">
+                    <div class="sub-option">Pre-Arrival Request 1</div>
+                    <div class="sub-option">Pre-Arrival Request 2</div>
+                    <div class="sub-option">Pre-Arrival Request 3</div>
+                    <div class="sub-option">Pre-Arrival Request 4</div>
+                </div>
+            </div>
+        </div> -->
+        <div class="card pre-arrival" onclick="window.location.href='{% url 'clientmanager:prearrival_requests' %}'">
+            <div class="card-header">Pre-Arrival Info</div>
+        </div>
+
+        <!-- Departure Info -->
+        <div class="card departure" onclick="window.location.href='{% url 'clientmanager:departure_requests' %}'">
+            <div class="card-header">Departure Info</div>
+        </div>
+
+        <!-- Manage Client -->
+        <div class="card client">
+            <div class="card-header" >Manage Client</div>
+            <div class="card-content">
+                <div class="sub-options">
+                    <div class="sub-option"  onclick="window.location.href='{% url 'clientmanager:client_list_page' %}'">Client Profiles</div>
+                    <div class="sub-option"  onclick="window.location.href='{% url 'clientmanager:client_create_view' %}'">Create Profiles</div>
+                </div>
+            </div>
+        </div>
+
+        
+  <!-- Manage CM's -->
+  <div class="card cms">
+    <div class="card-header">Manage Your Details</div>
+    <div class="card-content">
+      <div class="sub-options">
+        <div class="sub-option" onclick="window.location.href='{% url 'clientmanager:clientmanager_profile_view' %}'">Profile</div>
+        <div class="sub-option" onclick="window.location.href='{% url 'clientmanager:clientmanager_profile_edit' %}'">Customize</div>
+
+      </div>
+    </div>
+  </div>
+        <!-- Manage Vendors -->
+        <div class="card vendors">
+            <div class="card-header">Manage Vendors</div>
+            <div class="card-content">
+                <div class="sub-options">
+                    <div class="sub-option" onclick="window.location.href='{% url 'clientmanager:vendor_list' %}'">Vendor Lists</div>
+                    <div class="sub-option" onclick="window.location.href='{% url 'clientmanager:create_vendor' %}'">Create Vendor</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card vendors">
+            <div class="card-header">Messages & Chats </div>
+            <div class="card-content">
+              <div class="sub-options">
+                <div class="sub-option" onclick="window.location.href='{% url 'my_properties' %}'">open Client Chats</div>
+                <div class="sub-option" onclick="window.location.href='{% url 'contentpage:send_message' %}'" >Contact Admin</div>
+              </div>
+            </div>
+          </div>
+        
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.card');
+
+            // Main card expansion with auto-close others functionality
+            cards.forEach(card => {
+                const header = card.querySelector('.card-header');
+
+                header.addEventListener('click', () => {
+                    // If this card is not active, close all other cards first
+                    if (!card.classList.contains('active')) {
+                        // Close all cards
+                        cards.forEach(otherCard => {
+                            if (otherCard !== card && otherCard.classList.contains('active')) {
+                                otherCard.classList.remove('active');
+
+                                // Also close any expanded sub-options inside other cards
+                                const expandedSubOptions = otherCard.querySelectorAll('.sub-option.expanded');
+                                expandedSubOptions.forEach(option => {
+                                    option.classList.remove('expanded');
+                                    option.querySelector('.third-level-options').classList.remove('visible');
+                                });
+                            }
+                        });
+                    }
+
+                    // Toggle current card
+                    card.classList.toggle('active');
+
+                    // Add fade-in effect to sub-options when expanded
+                    if (card.classList.contains('active')) {
+                        const subOptions = card.querySelectorAll('.sub-option');
+                        subOptions.forEach((option, index) => {
+                            option.classList.remove('fade-in');
+                            // Trigger reflow
+                            void option.offsetWidth;
+                            option.classList.add('fade-in');
+                            option.style.animationDelay = `${index * 0.08}s`;
+                        });
+                    }
+                });
+            });
+
+            // Sub-options with third level options
+            const subOptionsWithChildren = document.querySelectorAll('.sub-option.has-children');
+            subOptionsWithChildren.forEach(option => {
+                option.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    // Get the current card containing this option
+                    const currentCard = this.closest('.card');
+
+                    // If this sub-option is not expanded, close all other sub-options in this card
+                    if (!this.classList.contains('expanded')) {
+                        const otherSubOptions = currentCard.querySelectorAll('.sub-option.expanded');
+                        otherSubOptions.forEach(subOption => {
+                            if (subOption !== this) {
+                                subOption.classList.remove('expanded');
+                                subOption.querySelector('.third-level-options').classList.remove('visible');
+                            }
+                        });
+                    }
+
+                    // Toggle current option
+                    this.classList.toggle('expanded');
+                    const thirdLevelOptions = this.querySelector('.third-level-options');
+                    thirdLevelOptions.classList.toggle('visible');
+
+                    // Apply animation to third-level options
+                    if (thirdLevelOptions.classList.contains('visible')) {
+                        const options = thirdLevelOptions.querySelectorAll('.third-level-option');
+                        options.forEach((option, index) => {
+                            option.classList.remove('fade-in');
+                            void option.offsetWidth;
+                            option.classList.add('fade-in');
+                            option.style.animationDelay = `${index * 0.08}s`;
+                        });
+                    }
+                });
+            });
+
+            // Click effect for third-level options
+            const thirdLevelOptions = document.querySelectorAll('.third-level-option');
+            thirdLevelOptions.forEach(option => {
+                option.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1.03)';
+                    }, 100);
+
+                    // Here you would typically implement navigation or action
+                    console.log('Selected:', this.textContent);
+                });
+            });
+
+            // Regular sub-options click effect
+            const regularSubOptions = document.querySelectorAll('.sub-option:not(.has-children)');
+            regularSubOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1.01)';
+                    }, 100);
+                });
+            });
+        });
+    </script>
+    <style>
+        /* Font override */
+    * {
+      font-family: 'Montserrat', sans-serif !important;
+      font-weight: 600;
+    }
+
+    
+    
+    </style>
+{% endblock content %}

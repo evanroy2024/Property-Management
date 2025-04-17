@@ -66,6 +66,42 @@ def property_detail_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
     return render(request, 'clientmanager/property/detail.html', {'property': prop})
 
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+import io
+from propertydetails.models import PropertyManagement
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.conf import settings
+import os
+from django.shortcuts import get_object_or_404
+
+def link_callback(uri, rel):
+    path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
+    return path
+
+def export_property_pdf(request, pk):
+    prop = get_object_or_404(PropertyManagement, pk=pk)
+    template_path = 'clientmanager/property/pdf_template.html'
+    context = {'property': prop}
+    html = render_to_string(template_path, context)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="property_{prop.pk}.pdf"'
+
+    pisa.CreatePDF(
+        html,
+        dest=response,
+        link_callback=link_callback  # This fixes the image path issue
+    )
+
+    return response
+
+
+
 
 from django.shortcuts import render, redirect
 from propertydetails.models import PropertyManagement, Floor, Room
@@ -129,36 +165,197 @@ def property_create_view(request):
         'managers': managers,
     })
 
+
 def property_update_view(request, pk):
     manager_id = request.session.get('manager_id') 
     prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
+    client = prop.client  # assumes there's a ForeignKey to Client
 
     if request.method == 'POST':
+        # Property fields
         prop.address = request.POST['address']
-        prop.size_of_home = request.POST['size_of_home']
-        prop.number_of_stories = request.POST['number_of_stories']
-        prop.construction_type = request.POST['construction_type']
-        prop.year_built = request.POST['year_built']
+        prop.size_of_home = request.POST.get('size_of_home', '')
+        prop.number_of_stories = request.POST.get('number_of_stories', '')
+        prop.construction_type = request.POST.get('construction_type', '')
+        prop.year_built = request.POST.get('year_built', '')
         prop.has_pool = 'has_pool' in request.POST
         prop.gated_community = 'gated_community' in request.POST
         prop.impact_windows = 'impact_windows' in request.POST
         prop.has_hoa = 'has_hoa' in request.POST
         prop.gated_property = 'gated_property' in request.POST
-        prop.preferred_contact_method = request.POST['preferred_contact_method']
-        prop.floor_plan_1_name = request.POST.get('floor_plan_1_name')
-        prop.floor_plan_2_name = request.POST.get('floor_plan_2_name')
-        prop.floor_plan_3_name = request.POST.get('floor_plan_3_name')
-        prop.floor_plan_4_name = request.POST.get('floor_plan_4_name')
-
-        if request.FILES.get('floor_plan_1_file'): prop.floor_plan_1_file = request.FILES['floor_plan_1_file']
-        if request.FILES.get('floor_plan_2_file'): prop.floor_plan_2_file = request.FILES['floor_plan_2_file']
-        if request.FILES.get('floor_plan_3_file'): prop.floor_plan_3_file = request.FILES['floor_plan_3_file']
-        if request.FILES.get('floor_plan_4_file'): prop.floor_plan_4_file = request.FILES['floor_plan_4_file']
-
+        prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
         prop.save()
+
+        # Update Client info
+        client.first_name = request.POST.get('client_first_name', '')
+        client.last_name = request.POST.get('client_last_name', '')
+        client.username = request.POST.get('client_username', '')
+        client.email = request.POST.get('client_email', '')
+        client.address = request.POST.get('client_address', '')
+        client.city = request.POST.get('client_city', '')
+        client.state = request.POST.get('client_state', '')
+        client.zipcode = request.POST.get('client_zipcode', '')
+        client.phone_number = request.POST.get('client_phone_number', '')
+        client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
+
+        # Contact Person 1
+        client.contact1_name = request.POST.get('contact1_name', '')
+        client.contact1_email = request.POST.get('contact1_email', '')
+        client.contact1_phone = request.POST.get('contact1_phone', '')
+        client.contact1_preferred = request.POST.get('contact1_preferred', '')
+
+        # Contact Person 2
+        client.contact2_name = request.POST.get('contact2_name', '')
+        client.contact2_email = request.POST.get('contact2_email', '')
+        client.contact2_phone = request.POST.get('contact2_phone', '')
+        client.contact2_preferred = request.POST.get('contact2_preferred', '')
+
+        # Contact Person 3
+        client.contact3_name = request.POST.get('contact3_name', '')
+        client.contact3_email = request.POST.get('contact3_email', '')
+        client.contact3_phone = request.POST.get('contact3_phone', '')
+        client.contact3_preferred = request.POST.get('contact3_preferred', '')
+
+        client.save()
+
+        # Process Floors and Rooms
+        existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
+
+        i = 1
+        while True:
+            floor_key = f'floor_name_{i}'
+            if floor_key not in request.POST:
+                break
+
+            floor_name = request.POST.get(floor_key)
+
+            # Reuse or create floor
+            floor = existing_floors.get(floor_key)
+            if floor:
+                floor.floor_name = floor_name
+                floor.save()
+            else:
+                floor = Floor.objects.create(property=prop, floor_name=floor_name)
+
+            j = 1
+            while True:
+                room_name_key = f'room_name_{i}_{j}'
+                room_size_key = f'room_size_{i}_{j}'
+                room_image_key = f'room_image_{i}_{j}'
+
+                if room_name_key not in request.POST:
+                    break
+
+                room_name = request.POST.get(room_name_key)
+                room_size = request.POST.get(room_size_key)
+                room_image = request.FILES.get(room_image_key)
+
+                # Try to reuse an existing room or create a new one
+                if j <= floor.rooms.count():
+                    room = floor.rooms.all()[j-1]
+                    room.room_name = room_name
+                    room.room_size = room_size
+                    if room_image:
+                        room.room_image = room_image
+                    room.save()
+                else:
+                    Room.objects.create(
+                        floor=floor,
+                        room_name=room_name,
+                        room_size=room_size,
+                        room_image=room_image
+                    )
+                j += 1
+            i += 1
+
+        # Floors & Rooms update logic here (same as before)
+
+        # ... floors/rooms logic remains unchanged ...
+
         return redirect('clientmanager:property_list')
 
-    return render(request, 'clientmanager/property/edit.html', {'property': prop})
+    floors = prop.floors.prefetch_related('rooms').all()
+    return render(request, 'clientmanager/property/edit.html', {
+        'property': prop,
+        'floors': floors,
+        'client': client,
+    })
+# def property_update_view(request, pk):
+#     manager_id = request.session.get('manager_id') 
+#     prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
+
+#     if request.method == 'POST':
+#         # Update Property fields
+#         prop.address = request.POST['address']
+#         prop.size_of_home = request.POST.get('size_of_home', '')
+#         prop.number_of_stories = request.POST.get('number_of_stories', '')
+#         prop.construction_type = request.POST.get('construction_type', '')
+#         prop.year_built = request.POST.get('year_built', '')
+#         prop.has_pool = 'has_pool' in request.POST
+#         prop.gated_community = 'gated_community' in request.POST
+#         prop.impact_windows = 'impact_windows' in request.POST
+#         prop.has_hoa = 'has_hoa' in request.POST
+#         prop.gated_property = 'gated_property' in request.POST
+#         prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
+#         prop.save()
+
+#         # Process Floors and Rooms
+#         existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
+
+#         i = 1
+#         while True:
+#             floor_key = f'floor_name_{i}'
+#             if floor_key not in request.POST:
+#                 break
+
+#             floor_name = request.POST.get(floor_key)
+
+#             # Reuse or create floor
+#             floor = existing_floors.get(floor_key)
+#             if floor:
+#                 floor.floor_name = floor_name
+#                 floor.save()
+#             else:
+#                 floor = Floor.objects.create(property=prop, floor_name=floor_name)
+
+#             j = 1
+#             while True:
+#                 room_name_key = f'room_name_{i}_{j}'
+#                 room_size_key = f'room_size_{i}_{j}'
+#                 room_image_key = f'room_image_{i}_{j}'
+
+#                 if room_name_key not in request.POST:
+#                     break
+
+#                 room_name = request.POST.get(room_name_key)
+#                 room_size = request.POST.get(room_size_key)
+#                 room_image = request.FILES.get(room_image_key)
+
+#                 # Try to reuse an existing room or create a new one
+#                 if j <= floor.rooms.count():
+#                     room = floor.rooms.all()[j-1]
+#                     room.room_name = room_name
+#                     room.room_size = room_size
+#                     if room_image:
+#                         room.room_image = room_image
+#                     room.save()
+#                 else:
+#                     Room.objects.create(
+#                         floor=floor,
+#                         room_name=room_name,
+#                         room_size=room_size,
+#                         room_image=room_image
+#                     )
+#                 j += 1
+#             i += 1
+
+#         return redirect('clientmanager:property_list')
+
+#     floors = prop.floors.prefetch_related('rooms').all()
+#     return render(request, 'clientmanager/property/edit.html', {
+#         'property': prop,
+#         'floors': floors
+#     })
 
 
 def property_delete_view(request, pk):

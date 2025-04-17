@@ -216,22 +216,22 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>Client Name</th>
+                            <th>City</th>
                             <th>Address</th>
+                            <th>State</th>
                             <th>Size (sq ft)</th>
-                            <th>Stories</th>
-                            <th>Year Built</th>
-                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for prop in properties %}
                         <tr>
-                            <td><strong>{{ prop.address }}</strong></td>
+                            <td><strong>{{ prop.client }}</strong></td>
+                            <td>{{ prop.city }}</td>
+                            <td>{{ prop.address }}</td>
+                            <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
-                            <td>{{ prop.number_of_stories }}</td>
-                            <td>{{ prop.year_built }}</td>
-                            <td><span class="badge bg-success">Active</span></td>
                             <td>
                                 <a href="{% url 'clientmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                                     <i class="fas fa-eye"></i>
