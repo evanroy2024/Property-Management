@@ -266,6 +266,70 @@
             }
         }
     </style>
+    <style>
+        .new-client-card {
+            background: #eef7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #cce0f5;
+        }
+    
+        .form-row-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+    
+        .form-group.flex-50 {
+            flex: 1 1 45%;
+        }
+    
+        .form-group.flex-33 {
+            flex: 1 1 30%;
+        }
+    
+        .disabled-select {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    
+        .toggle-btn {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+    
+        .toggle-btn:hover {
+            filter: brightness(1.1);
+        }
+    </style>
+    
+{% if messages %}
+<div class="space-y-3">
+  {% for message in messages %}
+    <div class="alert alert-dismissible fade show p-4 rounded-3 border-start-4
+                {% if message.tags == 'success' %}
+                  alert-success border-success
+                {% elif message.tags == 'error' %}
+                  alert-danger border-danger
+                {% elif message.tags == 'warning' %}
+                  alert-warning border-warning
+                {% else %}
+                  alert-info border-info
+                {% endif %}">
+      <p class="mb-0 text-sm font-weight-medium">{{ message }}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
 
     <div class="container">
         <div class="page-header">
@@ -278,17 +342,83 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
+            <!-- Display Error Messages -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-home"></i> Basic Property Information</h2>
                 <div class="form-row">
+                    
+                    <!-- Existing Client Dropdown -->
                     <div class="form-group half">
-                        <label class="form-label" for="client_id">Select Client</label>
+                        <label class="form-label" for="client_id">Select Existing Client</label>
                         <select class="form-control" name="client_id" id="client_id" required>
                             {% for client in clients %}
                                 <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    
+                    <!-- Toggle Button -->
+                    <div>
+                        <button type="button" id="toggle-new-client" class="toggle-btn">+ Add Client</button>
+                    </div>
+                    
+                    <!-- New Client Form -->
+                    <div id="new-client-form" class="new-client-card" style="display: none;">
+                        <h5 style="font-weight: 600;">New Client Info</h5>
+                    
+                        <div class="form-row-flex">
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_first_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_username" placeholder="Username">
+                            </div>
+                    
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="new_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="password" class="form-control" name="new_password" placeholder="Password">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_phone" placeholder="Phone">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        const toggleBtn = document.getElementById('toggle-new-client');
+                        const newClientForm = document.getElementById('new-client-form');
+                        const existingClientSelect = document.getElementById('client_id');
+                    
+                        let showForm = false;
+                    
+                        toggleBtn.addEventListener('click', () => {
+                            showForm = !showForm;
+                            newClientForm.style.display = showForm ? 'block' : 'none';
+                            existingClientSelect.classList.toggle('disabled-select', showForm);
+                            existingClientSelect.disabled = showForm;
+                    
+                            toggleBtn.innerText = showForm ? '← Use Existing ' : '+ Add New Client';
+                        });
+                    </script>
+
+<!-- adding new client ends here  -->
                 
                     <div class="form-group half">
                         <label class="form-label" for="client_manager_id">Select Client Manager</label>
@@ -298,31 +428,30 @@
                             {% endfor %}
                         </select>
                     </div>
+                    
                     <div class="form-group half">
                         <label class="form-label" for="address">Property Address</label>
-                        <input class="form-control" type="text" id="address" name="address" required>
+                        <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the property address">
                     </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group third">
+                    
+                    <div class="form-group half">
                         <label class="form-label" for="size_of_home">Size of Home</label>
-                        <input class="form-control" type="text" id="size_of_home" name="size_of_home" placeholder="e.g. 2,500 sq ft">
+                        <input class="form-control" type="text" id="size_of_home" name="size_of_home" placeholder="e.g. 2500 sqft">
                     </div>
-                    <div class="form-group third">
+        
+                    <div class="form-group half">
                         <label class="form-label" for="number_of_stories">Number of Stories</label>
-                        <input class="form-control" type="number" id="number_of_stories" name="number_of_stories" min="1">
+                        <input class="form-control" type="number" id="number_of_stories" name="number_of_stories" required placeholder="Enter the number of stories" min="1">
                     </div>
-                    <div class="form-group third">
-                        <label class="form-label" for="year_built">Year Built</label>
-                        <input class="form-control" type="number" id="year_built" name="year_built" min="1800" max="2025">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
+                    
+                    <div class="form-group half">
                         <label class="form-label" for="construction_type">Construction Type</label>
-                        <input class="form-control" type="text" id="construction_type" name="construction_type" placeholder="e.g. Concrete Block, Wood Frame">
+                        <input class="form-control" type="text" id="construction_type" name="construction_type" placeholder="e.g. Concrete">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="form-label" for="year_built">Year Built</label>
+                        <input class="form-control" type="number" id="year_built" name="year_built" placeholder="e.g. 1995">
                     </div>
                 </div>
             </div>
@@ -369,67 +498,170 @@
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
                 
-                <div class="file-upload">
-                    <div class="file-upload-row">
-                        <div class="file-name-input">
-                            <label class="form-label" for="floor_plan_1_name">Floor Plan 1 Name</label>
-                            <input class="form-control" type="text" id="floor_plan_1_name" name="floor_plan_1_name" placeholder="e.g. Main Floor">
-                        </div>
-                        <div class="file-input-container">
-                            <label class="form-label" for="floor_plan_1_file">Floor Plan 1 File</label>
-                            <div class="custom-file-input">
-                                <input type="file" id="floor_plan_1_file" name="floor_plan_1_file">
+                <div id="floors-container">
+                    <div class="floor-section" id="floor-section-1">
+                        <h2>Floor 1</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="floor_name_1">Floor Name</label>
+                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor">
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="file-upload-row">
-                        <div class="file-name-input">
-                            <label class="form-label" for="floor_plan_2_name">Floor Plan 2 Name</label>
-                            <input class="form-control" type="text" id="floor_plan_2_name" name="floor_plan_2_name" placeholder="e.g. Second Floor">
-                        </div>
-                        <div class="file-input-container">
-                            <label class="form-label" for="floor_plan_2_file">Floor Plan 2 File</label>
-                            <div class="custom-file-input">
-                                <input type="file" id="floor_plan_2_file" name="floor_plan_2_file">
+                        
+                        <div class="rooms-container" id="rooms-container-1">
+                            <h3>Rooms for Floor 1</h3>
+                            <div class="room-group" id="room-group-1-1">
+                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name">
+                                <input class="form-control" type="text" name="room_size_1_1" placeholder="Room Size">
+                                <input class="form-control" type="file" name="room_image_1_1" accept="image/*">
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="file-upload-row">
-                        <div class="file-name-input">
-                            <label class="form-label" for="floor_plan_3_name">Floor Plan 3 Name</label>
-                            <input class="form-control" type="text" id="floor_plan_3_name" name="floor_plan_3_name" placeholder="e.g. Basement">
-                        </div>
-                        <div class="file-input-container">
-                            <label class="form-label" for="floor_plan_3_file">Floor Plan 3 File</label>
-                            <div class="custom-file-input">
-                                <input type="file" id="floor_plan_3_file" name="floor_plan_3_file">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="file-upload-row">
-                        <div class="file-name-input">
-                            <label class="form-label" for="floor_plan_4_name">Floor Plan 4 Name</label>
-                            <input class="form-control" type="text" id="floor_plan_4_name" name="floor_plan_4_name" placeholder="e.g. Garage/Exterior">
-                        </div>
-                        <div class="file-input-container">
-                            <label class="form-label" for="floor_plan_4_file">Floor Plan 4 File</label>
-                            <div class="custom-file-input">
-                                <input type="file" id="floor_plan_4_file" name="floor_plan_4_file">
-                            </div>
-                        </div>
+                        
+                        <button type="button" onclick="addRoom(1)">Add Room</button>
+
                     </div>
                 </div>
+                
+                <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
+                
             </div>
-            
+            <style>
+
+/* Headings */
+.card-title,
+h2,
+h3 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Form group and row layout */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #34495e;
+}
+
+/* Inputs */
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Floor section */
+.floor-section {
+  border: 1px solid #e1e1e1;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  background-color: #fafafa;
+}
+
+/* Room group styling */
+.room-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+button {
+  padding: 10px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+            </style>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-block">
                     <i class="fas fa-save"></i> Create Property
                 </button>
             </div>
         </form>
+        <script>
+            let floorCount = 1;
+            
+            function addFloor() {
+                floorCount++;
+                const floorSection = document.createElement("div");
+                floorSection.className = "floor-section";
+                floorSection.id = `floor-section-${floorCount}`;
+                
+                floorSection.innerHTML = `
+                    <h2>Floor ${floorCount}</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                            <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                        </div>
+                    </div>
+                    <div class="rooms-container" id="rooms-container-${floorCount}">
+                        <h3>Rooms for Floor ${floorCount}</h3>
+                        <div class="room-group" id="room-group-${floorCount}-1">
+                            <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                            <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
+                            <input class="form-control" type="file" name="room_image_${floorCount}_1" accept="image/*" required>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+                `;
+                
+                document.getElementById("floors-container").appendChild(floorSection);
+            }
+            
+            function addRoom(floorId) {
+                const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+                const roomGroup = document.createElement("div");
+                roomGroup.className = "room-group";
+                roomGroup.id = `room-group-${floorId}-${roomCount}`;
+                
+                roomGroup.innerHTML = `
+                    <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+                    <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
+                    <input class="form-control" type="file" name="room_image_${floorId}_${roomCount}" accept="image/*" required>
+                `;
+                
+                document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+            }
+            </script>
     </div>
 
     <script>
@@ -448,4 +680,5 @@
             });
         });
     </script>
+    
 {% endblock content %}

@@ -185,23 +185,20 @@
             <div class="relative">
               <select name="floor-plan-selection" class="block w-full rounded-md border border-lotus-border bg-white py-3 px-4 text-gray-800 appearance-none focus:outline-none focus:ring-1 focus:ring-lotus-gold focus:border-lotus-gold">
                 <option value="" disabled selected>Select a floor plan...</option>
-              
+                
                 {% for property in properties %}
-                  {% if property.floor_plan_1_name %}
-                    <option value="{{ property.floor_plan_1_name }}">{{ property.floor_plan_1_name }}</option>
-                  {% endif %}
-                  {% if property.floor_plan_2_name %}
-                    <option value="{{ property.floor_plan_2_name }}">{{ property.floor_plan_2_name }}</option>
-                  {% endif %}
-                  {% if property.floor_plan_3_name %}
-                    <option value="{{ property.floor_plan_3_name }}">{{ property.floor_plan_3_name }}</option>
-                  {% endif %}
-                  {% if property.floor_plan_4_name %}
-                    <option value="{{ property.floor_plan_4_name }}">{{ property.floor_plan_4_name }}</option>
-                  {% endif %}
+                    {% for floor in property.floors.all %}
+                        {% for room in floor.rooms.all %}
+                            {% if room.room_image %}
+                                <option value="{{ floor.floor_name }} - {{ room.room_name }} - {{ room.room_size }}">
+                                    Floor {{ floor.floor_name }} - {{ room.room_name }} ({{ room.room_size }})
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
                 {% endfor %}
-              </select>
-              
+            </select>
+            
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-lotus-gold">
                 <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>

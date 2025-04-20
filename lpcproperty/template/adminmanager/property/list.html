@@ -106,6 +106,41 @@
     .icon-gray {
         color: #dddfeb;
     }
+
+    .h3, h3 {
+        color: black;
+    }
+    .table th {
+    background-color: white;
+}
+
+/* Professional Styling for Search Input Boxes */
+#search-first-name, #search-last-name, #search-address, #search-city, #search-state {
+    border-radius: 8px; /* Rounded corners for a modern look */
+    padding: 10px; /* Padding inside the boxes */
+    font-size: 14px; /* A little bigger text for readability */
+    border: 1px solid #ddd; /* Light border color for subtlety */
+    width: 100%; /* Make the inputs responsive */
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for border and focus effects */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3); /* Soft blue glow around the input */
+
+}
+
+/* Focus Effect - Subtle glow to draw attention */
+#search-first-name:focus, #search-last-name:focus, #search-address:focus, #search-city:focus, #search-state:focus {
+    border-color: #007bff; /* Blue border on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Soft blue glow around the input */
+    outline: none; /* Remove default focus outline */
+}
+
+
+/* Placeholder Styling */
+#search-first-name::placeholder, #search-last-name::placeholder, #search-address::placeholder, #search-city::placeholder, #search-state::placeholder {
+    color: #888; /* Lighter placeholder color */
+    font-style: italic; /* Slightly italicized placeholder */
+}
+
 </style>
 
 <div class="content-wrapper">
@@ -190,49 +225,69 @@
 
     <!-- Properties Table Card -->
     <div class="card shadow mb-4">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold">Property Listings</h6>
             <div class="dropdown">
                 <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter mr-1"></i> Filter
+                    <i class="fas fa-filter mr-1"></i> Filter Client
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">All Properties</a></li>
-                    <li><a class="dropdown-item" href="#">Single Family</a></li>
-                    <li><a class="dropdown-item" href="#">Multi-Family</a></li>
-                    <li><a class="dropdown-item" href="#">Commercial</a></li>
-                </ul>
             </div>
         </div>
+    
+        <!-- Live Filters -->
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-md-2">
+                    <input type="text" id="search-first-name" class="form-control" placeholder="Client First Name">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" id="search-last-name" class="form-control" placeholder="Client Last Name">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" id="search-address" class="form-control" placeholder="Property Address">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="search-city" class="form-control" placeholder="Property City">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="search-state" class="form-control" placeholder="Property State">
+                </div>
+            </div>
+        </div>
+    
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>Client Name</th>
+                            <th>City</th>
                             <th>Address</th>
+                            <th>State</th>
                             <th>Size (sq ft)</th>
-                            <th>Stories</th>
-                            <th>Year Built</th>
-                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="property-table">
                         {% for prop in properties %}
-                        <tr>
-                            <td><strong>{{ prop.address }}</strong></td>
+                        <tr class="property-row"
+                            data-firstname="{{ prop.client.first_name|lower }}"
+                            data-lastname="{{ prop.client.last_name|lower }}"
+                            data-address="{{ prop.address|lower }}"
+                            data-city="{{ prop.city|lower }}"
+                            data-state="{{ prop.state|lower }}">
+                            <td><strong>{{ prop.client.first_name }} {{ prop.client.last_name }} ({{ prop.client.username }})</strong></td>
+                            <td>{{ prop.city }}</td>
+                            <td>{{ prop.address }}</td>
+                            <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
-                            <td>{{ prop.number_of_stories }}</td>
-                            <td>{{ prop.year_built }}</td>
-                            <td><span class="badge bg-success">Active</span></td>
                             <td>
                                 <a href="{% url 'adminmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{% url 'adminmanager:property_edit' prop.pk %}" class="btn btn-info btn-sm action-btn" title="Edit Property">
+                                <a href="{% url 'adminmanager:property_edit' prop.pk %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                
                                 <a href="{% url 'adminmanager:property_delete' prop.pk %}" class="btn btn-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Property">
                                     <i class="fas fa-trash"></i>
                                 </a>
@@ -257,8 +312,143 @@
             </div>
         </div>
     </div>
+    
+    <!-- JavaScript for Live Filtering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchFirstName = document.getElementById("search-first-name");
+            const searchLastName = document.getElementById("search-last-name");
+            const searchAddress = document.getElementById("search-address");
+            const searchCity = document.getElementById("search-city");
+            const searchState = document.getElementById("search-state");
+            const tableRows = document.querySelectorAll(".property-row");
+    
+            function filterTable() {
+                const firstName = searchFirstName.value.toLowerCase();
+                const lastName = searchLastName.value.toLowerCase();
+                const address = searchAddress.value.toLowerCase();
+                const city = searchCity.value.toLowerCase();
+                const state = searchState.value.toLowerCase();
+    
+                tableRows.forEach(row => {
+                    const rowFirstName = row.getAttribute("data-firstname");
+                    const rowLastName = row.getAttribute("data-lastname");
+                    const rowAddress = row.getAttribute("data-address");
+                    const rowCity = row.getAttribute("data-city");
+                    const rowState = row.getAttribute("data-state");
+    
+                    const matchesFirstName = rowFirstName.includes(firstName);
+                    const matchesLastName = rowLastName.includes(lastName);
+                    const matchesAddress = rowAddress.includes(address);
+                    const matchesCity = rowCity.includes(city);
+                    const matchesState = rowState.includes(state);
+    
+                    if (matchesFirstName && matchesLastName && matchesAddress && matchesCity && matchesState) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+    
+            searchFirstName.addEventListener("input", filterTable);
+            searchLastName.addEventListener("input", filterTable);
+            searchAddress.addEventListener("input", filterTable);
+            searchCity.addEventListener("input", filterTable);
+            searchState.addEventListener("input", filterTable);
+        });
+    </script>
+    
 </div>
 
+<!-- <hr style="background-color: none; margin: 0.001rem 0; margin-left: 20px;"> -->
+
+<!-- Client starts here --------------------------------------------------------------------------------- -->
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="h3 mb-0 text-black-800">Manage Clients</h1>
+        <a href="{% url 'clientmanager:client_create_view' %}" class="btn btn-primary">
+            <i class="fas fa-plus fa-sm mr-2"></i> Add New Client
+        </a>
+    </div>
+
+   
+
+    <!-- Properties Table Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold">Client Listings</h6>
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter mr-1"></i> Filter
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">All Properties</a></li>
+                    <li><a class="dropdown-item" href="#">Single Family</a></li>
+                    <li><a class="dropdown-item" href="#">Multi-Family</a></li>
+                    <li><a class="dropdown-item" href="#">Commercial</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Client Cell</th>
+                            <th>Address</th>
+                            <!-- <th>Status</th> -->
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                        <tr>
+                            <td><strong>{{ client.username }}</strong></td>
+                            <td>{{ client.first_name }} {{ client.last_name }}</td>
+                            <td>{{ client.email }}</td>
+                            <th>{{ client.phone_number }}</th>
+                            <th>{{ client.address  }}</th>
+                            <!-- <td>{{ prop.year_built }}</td> -->
+                            <!-- <td><span class="badge bg-success">Active</span></td> -->
+                            <td>
+                                <a href="{% url 'clientmanager:client_edit_page' client.id %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'clientmanager:client_edit_page' client.id %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="/" class="btn btn-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Property">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="fas fa-home fa-4x mb-3 icon-gray"></i>
+                                    <h4 class="text-gray-800 mb-2">No Cleints found</h4>
+                                    <p class="text-gray-600 mb-3">Get started by adding your first Cleint</p>
+                                    <a href="{% url 'clientmanager:property_create' %}" class="btn btn-primary">
+                                        <i class="fas fa-plus mr-2"></i> Add Cleints
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Client Ends here ----------------------------------------------------------------------------------- -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>

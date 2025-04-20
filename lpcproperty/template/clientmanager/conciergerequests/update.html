@@ -11,7 +11,14 @@
           <div class="text-center mb-4 subtitle-animation">
             <p class="text-muted">Manage your concierge request details below</p>
           </div>
-          
+          {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <strong>Success!</strong> {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+          {% endfor %}
+          {% endif %}
           <form method="post" class="needs-validation form-animation" novalidate>
             {% csrf_token %}
             
@@ -34,7 +41,7 @@
                 <option value="">-- Select Vendor --</option>
                 {% for vendor in vendors %}
                 <option value="{{ vendor.id }}" {% if vendor == request_obj.vendor %}selected{% endif %}>
-                  {{ vendor.company_name }}
+                  {{ vendor.company_name }} (  {{ vendor.service }} )
                 </option>
                 {% endfor %}
               </select>
@@ -46,19 +53,26 @@
               </div>
             </div>
             
-            <div class="d-flex justify-content-between align-items-center mt-5 button-animation w-100">
-                <!-- Left Button -->
-                <button type="button" class="btn custom-btn px-5 py-3"  onclick="window.location.href='{% url 'clientmanager:concierge_pending_requests' %}'">
-                    <i class="bi bi-arrow-left-circle-fill me-2"></i>
-                    <span>Go Back</span>
-                </button>
-            
-                <!-- Right Button -->
-                <button type="submit" class="btn custom-btn px-5 py-3">
-                    <span>Update Request</span>
-                    <i class="bi bi-arrow-right-circle-fill ms-2"></i>
-                </button>
-            </div>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+
+              <!-- Back Button -->
+              <a href="{% url 'clientmanager:concierge_pending_requests' %}" class="btn btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill me-2" viewBox="0 0 16 16">
+                      <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.5 8a.5.5 0 0 1 .5-.5h4.793L8.146 6.354a.5.5 0 1 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 1 1-.708-.708L9.793 8.5H5a.5.5 0 0 1-.5-.5z"/>
+                  </svg>
+                  Back
+              </a>
+          
+              <!-- Update Button -->
+              <button type="submit" class="btn btn-submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                  </svg>
+                  Save 
+              </button>
+          
+          </div>
+          
             
           </form>
         </div>
@@ -114,7 +128,9 @@
     position: relative;
     margin-bottom: 1.5rem;
   }
-
+  .form-floating>.form-select:hover{
+    cursor: pointer;
+  }
   .custom-select {
     height: 60px;
     border-radius: 10px;
@@ -166,57 +182,31 @@
   }
 
   /* Button Styling */
-  .custom-btn {
+  .btn-submit {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: white;
-    border: none;
-    border-radius: 50px;
+    border: 2px solid var(--primary); /* Add border */
+    border-radius: 5px;
     font-weight: 600;
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
     z-index: 1;
-  }
+}
 
-  .custom-btn:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-    transition: all 0.5s ease;
-    z-index: -1;
-    border-radius: 50px;
-  }
+.btn-submit:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    border-color: var(--primary-light); /* Change border on hover */
+    cursor: pointer;
+}
 
-  .custom-btn:hover:before {
-    width: 100%;
-  }
+.btn-submit svg {
+    margin-right: 8px; /* Adjust icon spacing */
+}
 
-  .custom-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
-  }
 
-  .custom-btn:active {
-    transform: translateY(0);
-  }
-
-  .custom-btn span, .custom-btn i {
-    display: inline-block;
-    transition: all 0.3s ease;
-  }
-
-  .custom-btn:hover span {
-    transform: translateX(-5px);
-  }
-
-  .custom-btn:hover i {
-    transform: translateX(5px);
-  }
+  
 
   /* Animations */
   @keyframes fadeIn {

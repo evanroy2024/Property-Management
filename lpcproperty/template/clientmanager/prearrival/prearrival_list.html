@@ -335,8 +335,20 @@
 </style>
 
 <div class="page-container">
-    <h1 class="page-title">Prearrival Requests</h1>
-    
+   <!-- Include Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<div class="d-flex align-items-center mt-4" style="margin-bottom: 20px;">
+    <!-- Back Arrow and Heading Text -->
+    <a href="{% url 'clientmanager:client_dashboard' %}" class="d-flex align-items-center text-decoration-none" style="display: flex; align-items: center; color: inherit;">
+        <i class="fas fa-arrow-left me-3" style="font-size: 20px; color: #007bff;"></i> <!-- Font Awesome Arrow -->
+        <h1 class="page-title mb-0" style="font-size: 1.5rem; font-weight: bold; color: #333;">Prearrival Requests</h1>
+    </a>
+</div>
+<!-- client info details Start -->
+
+<!-- Client info details End  -->
+
     <div class="requests-card">
         <div class="card-header">
             <h2>
@@ -357,6 +369,7 @@
                 <li class="request-item">
                     <div class="request-info">
                         <div class="request-name">{{ r.name }}</div>
+                        
                         <div class="request-date">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -368,12 +381,17 @@
                         </div>
                     </div>
                     <div class="request-actions">
-                        <a class="btn btn-contact" href="#" onclick="return false;">
+                        <a class="btn btn-contact" href="#" onclick="showContactDetails(
+                            '{{ r.user.first_name }}',
+                            '{{ r.user.last_name }}',
+                            '{{ r.user.email }}',
+                            '{{ r.user.phone_number }}',
+                            '{{ r.user.contact1_email }}',
+                            '{{ r.user.contact1_phone }}'
+                        )">
                             Contact Client
-                            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                            </svg>
                         </a>
+                        
                         <a class="btn btn-view" href="{% url 'clientmanager:prearrival_request_detail' r.id %}">
                             View Details
                             <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -394,6 +412,95 @@
                 </li>
             {% endfor %}
         </ul>
+        
+        <!-- Modal Popup -->
+       <!-- Contact Client Button -->
+
+<!-- Modal for displaying client details -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeContactDetails()"> <b style="color: black;">Contact Details</b> <b style="color: white;">--------------------</b>  &times;</span>
+        <div id="clientDetails"></div>
+    </div>
+</div>
+
+    <style>
+        /* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    color: black;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #ff0000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: rgb(255, 0, 0);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Button Styling */
+.btn-contact {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-contact svg {
+    margin-left: 10px;
+    fill: white;
+}
+
+/* Client Details Display */
+#clientDetails p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+    </style>
+   <script>
+    function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
+        const clientDetails = `
+            <p><strong>Full Name:</strong> ${firstName} ${lastName}</p>
+            <p><strong>📧 Email:</strong> ${email}</p>
+            <p><strong>📞 Phone Number:</strong> ${phoneNumber}</p>
+            <hr>
+            <p><strong>🔁 Additional Email:</strong> ${contact1Email}</p>
+            <p><strong>🔁 Additional Phone:</strong> ${contact1Phone}</p>
+        `;
+        document.getElementById('clientDetails').innerHTML = clientDetails;
+        document.getElementById('contactModal').style.display = "block";
+    }
+    
+    function closeContactDetails() {
+        document.getElementById('contactModal').style.display = "none";
+    }
+    </script>
+    
     </div>
 </div>
 {% endblock %}

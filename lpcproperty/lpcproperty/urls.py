@@ -27,8 +27,8 @@ urlpatterns = [
     path("clientmanager/", include('clientmanager.urls')),
     path("contact/", include('contacttogether.urls')),
     path("contentpage/", include('contentpage.urls')),
-    path('admin/', admin.site.urls),
-    path('admin-panel/', include('adminmanager.urls')),
+    path('admin-panel/', admin.site.urls),
+    path('admin/', include('adminmanager.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

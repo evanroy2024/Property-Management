@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -369,39 +371,34 @@
                         <th>Submission Date</th>
                         <th>CR Description</th>
                         <th>Approval Status</th>
-                        <th>Repair Date </th>
+                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for request in service_requests %}
                     <tr class="{% if request.status == 'open' %}active{% endif %}">
-                        <td>{{ request.created_at|date:"Y-m-d H:i" }}</td>
-                        <td>{{ request.description }}</td>
-                        <td class="availability-badge">
+                        <td class="cr-date">{{ request.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="cr-description">{{ request.description }}</td>
+                        <td class="cr-status availability-badge">
                             {% if request.status == 'completed' %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 Completed
                             {% elif request.status == 'pending' %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="orange" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="orange" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>
                                 Pending
                             {% elif request.status == 'denied' %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                 Denied
                             {% else %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>
                                 Open
                             {% endif %}
                         </td>
-                        <td>N/A</td>
+                        <td>
+                            <a href="#" class="btn-outline-primary" title="View" onclick="openCRModal(this)">
+                                <i class="fa-solid fa-eye"><b> View </b></i>
+                            </a>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -411,6 +408,129 @@
                 </tbody>
             </table>
         </div>
+        
+        <!-- Modal for CR View -->
+        <div id="crDetailsModal" class="modal">
+            <div class="modal-content">
+                <h2>CR Request Details</h2>
+                <div id="crModalDetailsContent">
+                    <!-- Filled by JS -->
+                </div>
+                <button class="cancel-btn" onclick="closeCRModal()">Cancel</button>
+            </div>
+        </div>
+        
+        <!-- Reuse Same CSS -->
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+                padding-top: 60px;
+            }
+        
+            .modal-content {
+                background-color: white;
+                margin: 5% auto;
+                padding: 25px;
+                border-radius: 8px;
+                width: 80%;
+                max-width: 600px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                animation: slideIn 0.4s ease-out;
+                position: relative;
+            }
+        
+            @keyframes slideIn {
+                from {
+                    transform: translateY(-30px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        
+            .close-btn {
+                color: #aaa;
+                font-size: 28px;
+                font-weight: bold;
+                position: absolute;
+                right: 15px;
+                top: 10px;
+                cursor: pointer;
+            }
+        
+            .close-btn:hover {
+                color: #333;
+            }
+        
+            .cancel-btn {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+        
+            .cancel-btn:hover {
+                background-color: #d32f2f;
+            }
+        
+            .modal-content h2 {
+                font-size: 22px;
+                color: #333;
+                margin-bottom: 15px;
+                font-weight: 600;
+            }
+        
+            #crModalDetailsContent {
+                font-size: 16px;
+                color: #555;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+        </style>
+        
+        <!-- JavaScript for CR Modal -->
+        <script>
+            function openCRModal(button) {
+                const row = button.closest("tr");
+        
+                const date = row.querySelector(".cr-date").innerText;
+                const description = row.querySelector(".cr-description").innerText;
+                const status = row.querySelector(".cr-status").innerText.trim();
+        
+                const html = `
+                    <p><strong>Submission Date:</strong> ${date}</p>
+                    <p><strong>Description:</strong> ${description}</p>
+                    <p><strong>Status:</strong> ${status}</p>
+                `;
+        
+                document.getElementById("crModalDetailsContent").innerHTML = html;
+                document.getElementById("crDetailsModal").style.display = "block";
+            }
+        
+            function closeCRModal() {
+                document.getElementById("crDetailsModal").style.display = "none";
+            }
+        
+            window.onclick = function(event) {
+                const modal = document.getElementById("crDetailsModal");
+                if (event.target === modal) {
+                    closeCRModal();
+                }
+            }
+        </script>
         
 
         <div class="service-details">

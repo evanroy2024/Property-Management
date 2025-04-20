@@ -105,66 +105,99 @@ def export_property_pdf(request, pk):
 
 from django.shortcuts import render, redirect
 from propertydetails.models import PropertyManagement, Floor, Room
+from mainapp.models import Client 
+from django.db import transaction
 
 def property_create_view(request):
-    if request.method == 'POST':
-        # Ensure the required fields are present in the POST request
-        if not all([request.POST.get('client_id'), request.POST.get('client_manager_id'), request.POST.get('address')]):
-            # Handle error for missing required fields (client, client manager, and address)
-            return render(request, 'clientmanager/property/create.html', {
-                'clients': Client.objects.all(),
-                'managers': ClientManagers.objects.all(),
-                'error_message': 'Please fill in all required fields: Client, Client Manager, and Address.'
-            })
-
-        # Create Property
-        property = PropertyManagement.objects.create(
-            client_id=request.POST['client_id'],
-            client_manager_id=request.POST['client_manager_id'],
-            address=request.POST['address'],
-            size_of_home=request.POST.get('size_of_home', ''),
-            number_of_stories=request.POST.get('number_of_stories', ''),
-            construction_type=request.POST.get('construction_type', ''),
-            year_built=request.POST.get('year_built', ''),
-            has_pool='has_pool' in request.POST,
-            gated_community='gated_community' in request.POST,
-            impact_windows='impact_windows' in request.POST,
-            has_hoa='has_hoa' in request.POST,
-            gated_property='gated_property' in request.POST,
-            preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
-        )
-
-        # Loop through each floor
-        floor_count = len([key for key in request.POST if key.startswith('floor_name_')])
-        for i in range(1, floor_count + 1):
-            floor_name = request.POST.get(f'floor_name_{i}')
-            floor = Floor.objects.create(property=property, floor_name=floor_name)
-            
-            # Loop through each room for this floor
-            room_count = len([key for key in request.POST if key.startswith(f'room_name_{i}_')])
-            for j in range(1, room_count + 1):
-                room_name = request.POST.get(f'room_name_{i}_{j}')
-                room_size = request.POST.get(f'room_size_{i}_{j}')
-                room_image = request.FILES.get(f'room_image_{i}_{j}')
-                
-                Room.objects.create(
-                    floor=floor,
-                    room_name=room_name,
-                    room_size=room_size,
-                    room_image=room_image
-                )
-
-        return redirect('clientmanager:property_list')
-
-    # Fetch clients and managers
     clients = Client.objects.all()
     managers = ClientManagers.objects.all()
 
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                # Get client_id if selected
+                client_id = request.POST.get('client_id')
+                
+                # If no existing client selected, try creating a new one
+                if not client_id:
+                    new_first_name = request.POST.get('new_first_name', '')
+                    new_last_name = request.POST.get('new_last_name', '')
+                    new_username = request.POST.get('new_username', '')
+                    new_email = request.POST.get('new_email', '')
+                    new_password = request.POST.get('new_password', '')
+                    new_phone = request.POST.get('new_phone', '')
+
+                    if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
+                        raise ValueError("Fill all required fields for new client")
+
+                    new_client = Client.objects.create(
+                        first_name=new_first_name,
+                        last_name=new_last_name,
+                        username=new_username,
+                        email=new_email,
+                        password=new_password,  # storing plain for now
+                        phone_number=new_phone
+                    )
+                    client_id = new_client.id
+
+                # Validate required fields
+                client_manager_id = request.POST.get('client_manager_id')
+                address = request.POST.get('address')
+                if not all([client_id, client_manager_id, address]):
+                    raise ValueError("Client Manager and Address are required")
+
+                # Create the Property
+                prop = PropertyManagement.objects.create(
+                    client_id=client_id,
+                    client_manager_id=client_manager_id,
+                    address=address,
+                    size_of_home=request.POST.get('size_of_home', ''),
+                    number_of_stories=request.POST.get('number_of_stories', ''),
+                    construction_type=request.POST.get('construction_type', ''),
+                    year_built=request.POST.get('year_built', ''),
+                    has_pool='has_pool' in request.POST,
+                    gated_community='gated_community' in request.POST,
+                    impact_windows='impact_windows' in request.POST,
+                    has_hoa='has_hoa' in request.POST,
+                    gated_property='gated_property' in request.POST,
+                    preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
+                )
+
+                # Loop through each floor and room
+                floor_count = len([k for k in request.POST if k.startswith('floor_name_')])
+                for i in range(1, floor_count + 1):
+                    floor_name = request.POST.get(f'floor_name_{i}')
+                    if not floor_name:
+                        continue
+                    floor = Floor.objects.create(property=prop, floor_name=floor_name)
+
+                    room_count = len([k for k in request.POST if k.startswith(f'room_name_{i}_')])
+                    for j in range(1, room_count + 1):
+                        room_name = request.POST.get(f'room_name_{i}_{j}')
+                        room_size = request.POST.get(f'room_size_{i}_{j}')
+                        room_image = request.FILES.get(f'room_image_{i}_{j}')
+                        if room_name:
+                            Room.objects.create(
+                                floor=floor,
+                                room_name=room_name,
+                                room_size=room_size,
+                                room_image=room_image
+                            )
+
+                return redirect('clientmanager:property_list')
+
+        except Exception as e:
+            print("Error occurred:", str(e))  # Shows error in terminal
+            return render(request, 'clientmanager/property/create.html', {
+                'clients': clients,
+                'managers': managers,
+                'error_message': str(e)
+            })
+
     return render(request, 'clientmanager/property/create.html', {
         'clients': clients,
-        'managers': managers,
+        'managers': managers
     })
-
 
 def property_update_view(request, pk):
     manager_id = request.session.get('manager_id') 
@@ -280,6 +313,8 @@ def property_update_view(request, pk):
         'floors': floors,
         'client': client,
     })
+
+
 # def property_update_view(request, pk):
 #     manager_id = request.session.get('manager_id') 
 #     prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
@@ -617,6 +652,7 @@ def update_service_request(request, request_id):
         else:
             request_obj.vendor = None
         request_obj.save()
+        messages.success(request, 'Request Updated Successfully!')
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
     return render(request, 'clientmanager/servicerequests/update.html', {
@@ -687,6 +723,7 @@ def update_concierge_request(request, request_id):
         else:
             request_obj.vendor = None
         request_obj.save()
+        messages.success(request, 'Request Updated Successfully!')
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
     return render(request, 'clientmanager/conciergerequests/update.html', {
@@ -768,6 +805,7 @@ def update_property_request(request, request_id):
                 request_obj.vendor = None
 
         request_obj.save()
+        messages.success(request, 'Request Updated Successfully!')
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
     return render(request, 'clientmanager/propertyimprovement/update.html', {

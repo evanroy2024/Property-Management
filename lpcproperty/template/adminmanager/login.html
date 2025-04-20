@@ -5,15 +5,22 @@
 
 {% block content %}
 <style>
+    body {
+        background: #ffffff;
+        color: #000; /* Default text color */
+        font-family: Arial, sans-serif;
+    }
+
     /* Center the login container */
     .login-container {
+        background: #ffffff;
         padding: 40px;
         border-radius: 12px;
         width: 40%;
         text-align: center;
         margin: auto;
     }
-  
+
     /* Heading (One Line, Bold) */
     .login-container h1 {
         font-size: 17px;
@@ -22,48 +29,48 @@
         text-transform: uppercase;
         color: #d1aa6b;
         letter-spacing: 1px;
-        white-space: nowrap; /* Prevents text from breaking into multiple lines */
+        white-space: nowrap;
     }
-  
+
     /* Labels Above Input Fields */
     .login-container h2 {
         font-size: 16px;
         text-align: left;
         font-weight: bold;
         margin: 10px 0 5px 0;
-        color: #fff;
+        color: #333;
     }
-  
-    /* Input Fields (Left-Aligned, White Background) */
+
+    /* Input Fields */
     .input-field {
         width: 100%;
         padding: 12px;
         margin-bottom: 10px;
-        border: none;
+        border: 1px solid #ccc;
         border-radius: 5px;
         background: #fff;
         color: #000;
         font-weight: bold;
     }
-  
+
     .input-field::placeholder {
-        color: #aaa;
+        color: #888;
     }
-  
+
     /* Forgot Password */
     .forgot-password {
         display: block;
         margin: 10px 0;
-        color: #4a26ff;
+        color: #007bff;
         font-size: 16px;
         font-weight: 700;
         text-decoration: none;
     }
-  
+
     .forgot-password:hover {
         text-decoration: underline;
     }
-  
+
     /* Login Button */
     .login-btn {
         width: 100%;
@@ -77,9 +84,9 @@
         cursor: pointer;
         transition: 0.3s;
     }
-  
+
     .login-btn:hover {
-        background: #d1aa6b;
+        background: #c29655;
     }
 
     /* User Type Selection Tick Boxes */
@@ -89,13 +96,13 @@
         gap: 30px;
         margin-bottom: 20px;
     }
-    
+
     .user-type-option {
         display: flex;
         align-items: center;
         cursor: pointer;
     }
-    
+
     .user-type-checkbox {
         display: inline-block;
         width: 20px;
@@ -104,9 +111,9 @@
         border-radius: 50%;
         margin-right: 8px;
         position: relative;
-        background: white;
+        background: #fff;
     }
-    
+
     .user-type-checkbox::after {
         content: "✓";
         position: absolute;
@@ -118,22 +125,52 @@
         font-size: 14px;
         opacity: 0;
     }
-    
+
     .user-type-checkbox.checked::after {
         opacity: 1;
     }
-    
+
     .user-type-label {
-        color: #fff;
+        color: #000;
         font-size: 14px;
         font-weight: bold;
+    }
+
+    /* Dropdowns Group Layout */
+    .main-three-btn {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .main-three-btn div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    select {
+        padding: 8px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        color: #000;
+    }
+    body{
+        background: #ffffff;
     }
 </style>
   
 <!-- Your page-specific content here -->
 <div class="login-container">
   <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
-  <img src="{% static 'logo.png' %}" alt="Company Logo" class="logo">
+  <img src="{% static 'whitelogo.png' %}" alt="Company Logo" class="logo">
   
   {% if messages %}
   <div class="error-message">
@@ -142,7 +179,7 @@
       {% endfor %}
   </div>
   {% endif %}
-  
+  <h1 style="text-decoration: underline;">Admin Login</h1>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

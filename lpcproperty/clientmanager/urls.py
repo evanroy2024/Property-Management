@@ -7,7 +7,7 @@ app_name = 'clientmanager'
 from .views import client_manager_login_view, client_dashboard_view, client_logout_view
 
 urlpatterns = [
-    path('login/', client_manager_login_view, name='client_login'),
+    path('', client_manager_login_view, name='client_login'),
     path('dashboard/', client_dashboard_view, name='client_dashboard'),
     path('logout/', client_logout_view, name='client_logout'),
 

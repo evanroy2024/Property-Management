@@ -266,6 +266,51 @@
             }
         }
     </style>
+    <style>
+        .new-client-card {
+            background: #eef7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #cce0f5;
+        }
+    
+        .form-row-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+    
+        .form-group.flex-50 {
+            flex: 1 1 45%;
+        }
+    
+        .form-group.flex-33 {
+            flex: 1 1 30%;
+        }
+    
+        .disabled-select {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    
+        .toggle-btn {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+    
+        .toggle-btn:hover {
+            filter: brightness(1.1);
+        }
+    </style>
+    
 {% if messages %}
 <div class="space-y-3">
   {% for message in messages %}
@@ -309,18 +354,71 @@
                     </ul>
                 </div>
             {% endif %}
-            
+
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-home"></i> Basic Property Information</h2>
                 <div class="form-row">
+                    
+                    <!-- Existing Client Dropdown -->
                     <div class="form-group half">
-                        <label class="form-label" for="client_id">Select Client</label>
+                        <label class="form-label" for="client_id">Select Existing Client</label>
                         <select class="form-control" name="client_id" id="client_id" required>
                             {% for client in clients %}
                                 <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    
+                    <!-- Toggle Button -->
+                    <div>
+                        <button type="button" id="toggle-new-client" class="toggle-btn">+ Add Client</button>
+                    </div>
+                    
+                    <!-- New Client Form -->
+                    <div id="new-client-form" class="new-client-card" style="display: none;">
+                        <h5 style="font-weight: 600;">New Client Info</h5>
+                    
+                        <div class="form-row-flex">
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_first_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_username" placeholder="Username">
+                            </div>
+                    
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="new_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="password" class="form-control" name="new_password" placeholder="Password">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_phone" placeholder="Phone">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        const toggleBtn = document.getElementById('toggle-new-client');
+                        const newClientForm = document.getElementById('new-client-form');
+                        const existingClientSelect = document.getElementById('client_id');
+                    
+                        let showForm = false;
+                    
+                        toggleBtn.addEventListener('click', () => {
+                            showForm = !showForm;
+                            newClientForm.style.display = showForm ? 'block' : 'none';
+                            existingClientSelect.classList.toggle('disabled-select', showForm);
+                            existingClientSelect.disabled = showForm;
+                    
+                            toggleBtn.innerText = showForm ? '← Use Existing ' : '+ Add New Client';
+                        });
+                    </script>
+
+<!-- adding new client ends here  -->
                 
                     <div class="form-group half">
                         <label class="form-label" for="client_manager_id">Select Client Manager</label>

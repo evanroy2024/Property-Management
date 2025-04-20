@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -370,62 +372,172 @@
                         <th>SR Type</th>
                         <th>SR Description</th>
                         <th>Approval Status</th>
-                        <th>User</th>
+                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for request in service_requests %}
                     <tr class="{% if request.status == 'open' %}active{% endif %}">
-                        <td>{{ request.created_at|date:"Y-m-d H:i" }}</td>
-                        <td>{{ request.request_type }}</td>
-                        <td>{{ request.description }}</td>
-                        <td class="availability-badge">
+                        <td class="submission-date">{{ request.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="sr-type">{{ request.request_type }}</td>
+                        <td class="sr-description">{{ request.description }}</td>
+                        <td class="sr-status">
                             {% if request.status == 'completed' %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
                                 Completed
                             {% elif request.status == 'pending' %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="orange" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg>
                                 Pending
                             {% elif request.status == 'denied' %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
                                 Denied
                             {% else %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                </svg>
                                 Open
                             {% endif %}
                         </td>
-                        <td>{{ request.user.name }}</td>
+                        <td>
+                            <a href="#" class="btn-outline-primary" title="View" onclick="openModal(this)">
+                                <i class="fa-solid fa-eye"> <b> View </b></i>
+                            </a>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4">No service requests found.</td>
+                        <td colspan="5">No service requests found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         
+        <!-- Modal Structure -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h2>Request Details</h2>
+                <div id="modalDetailsContent">
+                    <!-- Filled by JS -->
+                </div>
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+        
+        <!-- Styles -->
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+                padding-top: 60px;
+            }
+        
+            .modal-content {
+                background-color: white;
+                margin: 5% auto;
+                padding: 25px;
+                border-radius: 8px;
+                width: 80%;
+                max-width: 600px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                animation: slideIn 0.4s ease-out;
+                position: relative;
+            }
+        
+            @keyframes slideIn {
+                from {
+                    transform: translateY(-30px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        
+            .close-btn {
+                color: #aaa;
+                font-size: 28px;
+                font-weight: bold;
+                position: absolute;
+                right: 15px;
+                top: 10px;
+                cursor: pointer;
+            }
+        
+            .close-btn:hover {
+                color: #333;
+            }
+        
+            .cancel-btn {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+        
+            .cancel-btn:hover {
+                background-color: #d32f2f;
+            }
+        
+            .modal-content h2 {
+                font-size: 22px;
+                color: #333;
+                margin-bottom: 15px;
+                font-weight: 600;
+            }
+        
+            #modalDetailsContent {
+                font-size: 16px;
+                color: #555;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+        </style>
+        
+        <!-- JavaScript -->
+        <script>
+            function openModal(button) {
+                const row = button.closest("tr");
+        
+                const date = row.querySelector(".submission-date").innerText;
+                const type = row.querySelector(".sr-type").innerText;
+                const description = row.querySelector(".sr-description").innerText;
+                const status = row.querySelector(".sr-status").innerText;
+        
+                const html = `
+                    <p><strong>Submission Date:</strong> ${date}</p>
+                    <p><strong>SR Type:</strong> ${type}</p>
+                    <p><strong>Description:</strong> ${description}</p>
+                    <p><strong>Status:</strong> ${status}</p>
+                `;
+        
+                document.getElementById("modalDetailsContent").innerHTML = html;
+                document.getElementById("detailsModal").style.display = "block";
+            }
+        
+            function closeModal() {
+                document.getElementById("detailsModal").style.display = "none";
+            }
+        
+            // Optional: close modal on background click
+            window.onclick = function(event) {
+                const modal = document.getElementById("detailsModal");
+                if (event.target === modal) {
+                    closeModal();
+                }
+            }
+        </script>
+        
+        
 
         <div class="service-details">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
-                Property Management Services
-            </h2>
-            <p>Maximize your investment's potential with our comprehensive property management solutions. We handle everything from tenant acquisition to maintenance, allowing you to enjoy passive income without the hassle.</p>
-            
+
             <div class="features-grid">
                 <div class="feature-card">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

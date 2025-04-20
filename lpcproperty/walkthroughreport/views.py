@@ -237,6 +237,9 @@ def export_excel(request, report_id):
     wb.save(response)
     return response
 
+
+
+
 def export_csv(request, report_id):
     report = WalkthroughReport.objects.get(pk=report_id)
     data = get_verbose_data(report)
@@ -246,13 +249,32 @@ def export_csv(request, report_id):
     response['Content-Disposition'] = f'attachment; filename={filename}'
 
     writer = csv.writer(response)
-    writer.writerow(['Question', 'Answer', 'Remarks'])
-    for question, answer, remark in data:
-        writer.writerow([question, answer, remark])
+    
+    # Adding a title row
+    writer.writerow(["🏠 Walkthrough Report"])
+    writer.writerow([])  # Blank row for spacing
+    
+    # Add headers (emphasizing structure)
+    writer.writerow(['Category', 'Question', 'Answer', 'Remarks'])
+
+    # Group data by category and write to the CSV
+    grouped = {}
+    for question, answer, remark, category in data:
+        if category not in grouped:
+            grouped[category] = []
+        grouped[category].append((question, answer, remark))
+
+    # Add each category and its rows without unwanted emoji or label
+    for category, rows in grouped.items():
+        # Get category label without any unwanted prefix (emoji or special chars)
+        label = CATEGORY_LABELS.get(category, category).replace("📌", "").strip()  # Remove unwanted parts
+
+        writer.writerow([label])  # Only the clean category name
+        for question, answer, remark in rows:
+            writer.writerow([category, question, answer, remark or "-"])
+        writer.writerow([])  # Blank row to separate categories
 
     return response
-
-
 # Creating Reports 
 from django.shortcuts import render, get_object_or_404
 
