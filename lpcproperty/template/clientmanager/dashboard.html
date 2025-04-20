@@ -146,11 +146,11 @@
             <div class="sub-item"> <i class="fas fa-chart-line"></i> Walk-Thru </div>
             <div class="sub-sub-menu">
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:walkthrough-form' %}'">Create New Walk-Thru Report</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'walkthroughreport:all_reports' %}'" >All Walk-Thru Reports</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'walkthroughreport:open_reports' %}'">Open Walk-Thru Items</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'walkthroughreport:completed_reports' %}'">Completed Walk-Thru Items</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'walkthroughreport:denied_reports' %}'">Pending walk-Thru Items</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'walkthroughreport:denied_reports' %}'">Denied Walk-Thru Items</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:all_reports' %}'" >All Walk-Thru Reports</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:open_reports' %}'">Open Walk-Thru Items</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:completed_reports' %}'">Completed Walk-Thru Items</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:denied_reports' %}'">Pending walk-Thru Items</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:denied_reports' %}'">Denied Walk-Thru Items</div>
 
             </div>
             <div class="sub-item"> <i class="fas fa-cogs"></i> Service Requested</div>
@@ -213,22 +213,16 @@
         <!-- Manage Client -->
        
         <!-- Manage CM's -->
-        <div class="menu-item manage-cms">
+        <div class="menu-item manage-cms" onclick="window.location.href='{% url 'clientmanager:vendor_list' %}'">
             Manage Vendors
         </div>
-        <div class="sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:vendor_list' %}'">Vendor List</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:create_vendor' %}'">Create Vendor</div>
-        </div>
+       
         
         <!-- Manage Vendors -->
-      <div class="menu-item manage-vendors">
+      <div class="menu-item manage-vendors" onclick="window.location.href='{% url 'clientmanager:clientmanager_profile_edit' %}'">
             Manage Your Details
         </div>
-        <div class="sub-menu">
-                <div class="sub-sub-item"  onclick="window.location.href='{% url 'clientmanager:clientmanager_profile_view' %}'">Add Profile</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_profile_edit' %}'">Customize</div>
-        </div>
+       
         
         
          <!-- Manage Testimonials -->

@@ -43,7 +43,7 @@
     .input-field {
         width: 100%;
         padding: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 18px;
         border: 1px solid #ccc;
         border-radius: 5px;
         background: #fff;
@@ -163,6 +163,19 @@
     body{
         background: #ffffff;
     }
+    #username{
+        margin-top: 5px;
+        height: 57px;
+        border-radius: 8px;
+    }
+    #password{
+        height: 57px;
+        border-radius: 8px;
+    }
+    .login-btn {
+        color: white;
+        height: 60px;
+    }
 </style>
   
 <!-- Your page-specific content here -->
@@ -170,6 +183,17 @@
   <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
   <img src="{% static 'whitelogo.png' %}" alt="Company Logo" class="logo">
   <!-- User Type Selection Tick Boxes -->
+  <!-- User Type Selection Tick Boxes -->
+  <div class="user-type-container">
+    <div class="user-type-option" id="client-option" onclick="selectUserType('admin')">
+      <div class="user-type-checkbox" id="client-checkbox"></div>
+      <span class="user-type-label">Admin</span>
+    </div>
+    <div class="user-type-option" id="manager-option" onclick="selectUserType('client')">
+      <div class="user-type-checkbox checked" id="manager-checkbox"></div>
+      <span class="user-type-label">Client Manager</span>
+    </div>
+  </div>
   
   <form method="POST">
     {% csrf_token %}
@@ -177,10 +201,10 @@
     <div class="alert alert-warning">{{ message }}</div>
     {% endfor %}
 
-    <h2>EMAIL or USERNAME</h2>
+    <h2>Username :</h2>
     <input type="text" id="username" name="username" class="input-field" placeholder="Username" required>
     
-    <h2>PASSWORD</h2>
+    <h2>Password :</h2>
     <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
     
     <button type="submit" class="login-btn">Login</button>
@@ -190,19 +214,20 @@
 </div>
 
 <script>
-  function selectUserType(type) {
-    // Remove check from all options
-    document.getElementById('client-checkbox').classList.remove('checked');
-    document.getElementById('manager-checkbox').classList.remove('checked');
-    
-    // Add check to selected option
-    document.getElementById(type + '-checkbox').classList.add('checked');
-    
-    // If manager is selected, redirect to the client manager page
-    if (type === 'manager') {
-        window.location.href = "{% url 'mainapp:client_login' %}";
+    function selectUserType(type) {
+      // Uncheck both
+      document.getElementById('client-checkbox').classList.remove('checked');
+      document.getElementById('manager-checkbox').classList.remove('checked');
+  
+      // Check the one selected
+      if (type === 'admin') {
+        document.getElementById('client-checkbox').classList.add('checked');
+        window.location.href = "{% url 'adminmanager:admin_login' %}";
+      } else {
+        document.getElementById('manager-checkbox').classList.add('checked');
+        // Stay on current page
+      }
     }
-    // For client, we stay on the same page as requested
-  }
-</script>
+  </script>
+  
 {% endblock %}

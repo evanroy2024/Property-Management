@@ -243,110 +243,182 @@
                     <select id="preferred_contact_method" name="preferred_contact_method">
                         <option value="email" {% if client.preferred_contact_method == 'email' %}selected{% endif %}>Email</option>
                         <option value="phone" {% if client.preferred_contact_method == 'phone' %}selected{% endif %}>Phone</option>
+                        <option value="phone" {% if client.preferred_contact_method == 'text' %}selected{% endif %}>text</option>
                     </select>
                 </div>
             </div>
             
             <div class="section-title">Additional Contacts</div>
-            
-            <div class="contact-section">
-                <div class="contact-title">
-                    <div class="contact-number">1</div>
-                    <strong>Contact Person 1</strong>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact1_name">Name</label>
-                        <input type="text" id="contact1_name" name="contact1_name" value="{{ client.contact1_name }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact1_email">Email</label>
-                        <input type="email" id="contact1_email" name="contact1_email" value="{{ client.contact1_email }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact1_phone">Phone</label>
-                        <input type="text" id="contact1_phone" name="contact1_phone" value="{{ client.contact1_phone }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact1_preferred">Preferred Contact Method</label>
-                        <select id="contact1_preferred" name="contact1_preferred">
-                            <option value="">-- Select --</option>
-                            <option value="email" {% if client.contact1_preferred == 'email' %}selected{% endif %}>Email</option>
-                            <option value="phone" {% if client.contact1_preferred == 'phone' %}selected{% endif %}>Phone</option>
-                        </select>
-                    </div>
-                </div>
+          <!-- Contact Person 1 (Always visible) -->
+<div class="contact-section">
+    <div class="contact-title">
+        <div class="contact-number">1</div>
+        <strong>Contact Person 1</strong>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="contact1_name">Name</label>
+            <input type="text" id="contact1_name" name="contact1_name" value="{{ client.contact1_name }}">
+        </div>
+
+        <div class="form-group">
+            <label for="contact1_email">Email</label>
+            <input type="email" id="contact1_email" name="contact1_email" value="{{ client.contact1_email }}">
+        </div>
+
+        <div class="form-group">
+            <label for="contact1_phone">Phone</label>
+            <input type="text" id="contact1_phone" name="contact1_phone" value="{{ client.contact1_phone }}">
+        </div>
+
+        <div class="form-group">
+            <label for="contact1_preferred">Preferred Contact Method</label>
+            <select id="contact1_preferred" name="contact1_preferred">
+                <option value="">-- Select --</option>
+                <option value="email" {% if client.contact1_preferred == 'email' %}selected{% endif %}>Email</option>
+                <option value="phone" {% if client.contact1_preferred == 'phone' %}selected{% endif %}>Phone</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Person 2 -->
+{% if client.contact2_name or client.contact2_email or client.contact2_phone or client.contact2_preferred %}
+    <div class="contact-section">
+        <div class="contact-title">
+            <div class="contact-number">2</div>
+            <strong>Contact Person 2</strong>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="contact2_name">Name</label>
+                <input type="text" id="contact2_name" name="contact2_name" value="{{ client.contact2_name }}">
             </div>
-            
-            <div class="contact-section">
-                <div class="contact-title">
-                    <div class="contact-number">2</div>
-                    <strong>Contact Person 2</strong>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact2_name">Name</label>
-                        <input type="text" id="contact2_name" name="contact2_name" value="{{ client.contact2_name }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact2_email">Email</label>
-                        <input type="email" id="contact2_email" name="contact2_email" value="{{ client.contact2_email }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact2_phone">Phone</label>
-                        <input type="text" id="contact2_phone" name="contact2_phone" value="{{ client.contact2_phone }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact2_preferred">Preferred Contact Method</label>
-                        <select id="contact2_preferred" name="contact2_preferred">
-                            <option value="">-- Select --</option>
-                            <option value="email" {% if client.contact2_preferred == 'email' %}selected{% endif %}>Email</option>
-                            <option value="phone" {% if client.contact2_preferred == 'phone' %}selected{% endif %}>Phone</option>
-                        </select>
-                    </div>
-                </div>
+
+            <div class="form-group">
+                <label for="contact2_email">Email</label>
+                <input type="email" id="contact2_email" name="contact2_email" value="{{ client.contact2_email }}">
             </div>
-            
-            <div class="contact-section">
-                <div class="contact-title">
-                    <div class="contact-number">3</div>
-                    <strong>Contact Person 3</strong>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact3_name">Name</label>
-                        <input type="text" id="contact3_name" name="contact3_name" value="{{ client.contact3_name }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact3_email">Email</label>
-                        <input type="email" id="contact3_email" name="contact3_email" value="{{ client.contact3_email }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact3_phone">Phone</label>
-                        <input type="text" id="contact3_phone" name="contact3_phone" value="{{ client.contact3_phone }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact3_preferred">Preferred Contact Method</label>
-                        <select id="contact3_preferred" name="contact3_preferred">
-                            <option value="">-- Select --</option>
-                            <option value="email" {% if client.contact3_preferred == 'email' %}selected{% endif %}>Email</option>
-                            <option value="phone" {% if client.contact3_preferred == 'phone' %}selected{% endif %}>Phone</option>
-                        </select>
-                    </div>
-                </div>
+
+            <div class="form-group">
+                <label for="contact2_phone">Phone</label>
+                <input type="text" id="contact2_phone" name="contact2_phone" value="{{ client.contact2_phone }}">
             </div>
+
+            <div class="form-group">
+                <label for="contact2_preferred">Preferred Contact Method</label>
+                <select id="contact2_preferred" name="contact2_preferred">
+                    <option value="">-- Select --</option>
+                    <option value="email" {% if client.contact2_preferred == 'email' %}selected{% endif %}>Email</option>
+                    <option value="phone" {% if client.contact2_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                </select>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <button type="button" onclick="document.getElementById('contact2').style.display='block'; this.style.display='none';">Add Contact Person 2</button>
+    <div class="contact-section" id="contact2" style="display: none;">
+        <div class="contact-title">
+            <div class="contact-number">2</div>
+            <strong>Contact Person 2</strong>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="contact2_name">Name</label>
+                <input type="text" id="contact2_name" name="contact2_name">
+            </div>
+
+            <div class="form-group">
+                <label for="contact2_email">Email</label>
+                <input type="email" id="contact2_email" name="contact2_email">
+            </div>
+
+            <div class="form-group">
+                <label for="contact2_phone">Phone</label>
+                <input type="text" id="contact2_phone" name="contact2_phone">
+            </div>
+
+            <div class="form-group">
+                <label for="contact2_preferred">Preferred Contact Method</label>
+                <select id="contact2_preferred" name="contact2_preferred">
+                    <option value="">-- Select --</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                </select>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Contact Person 3 -->
+{% if client.contact3_name or client.contact3_email or client.contact3_phone or client.contact3_preferred %}
+    <div class="contact-section">
+        <div class="contact-title">
+            <div class="contact-number">3</div>
+            <strong>Contact Person 3</strong>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="contact3_name">Name</label>
+                <input type="text" id="contact3_name" name="contact3_name" value="{{ client.contact3_name }}">
+            </div>
+
+            <div class="form-group">
+                <label for="contact3_email">Email</label>
+                <input type="email" id="contact3_email" name="contact3_email" value="{{ client.contact3_email }}">
+            </div>
+
+            <div class="form-group">
+                <label for="contact3_phone">Phone</label>
+                <input type="text" id="contact3_phone" name="contact3_phone" value="{{ client.contact3_phone }}">
+            </div>
+
+            <div class="form-group">
+                <label for="contact3_preferred">Preferred Contact Method</label>
+                <select id="contact3_preferred" name="contact3_preferred">
+                    <option value="">-- Select --</option>
+                    <option value="email" {% if client.contact3_preferred == 'email' %}selected{% endif %}>Email</option>
+                    <option value="phone" {% if client.contact3_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                </select>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <button type="button" onclick="document.getElementById('contact3').style.display='block'; this.style.display='none';">Add Contact Person 3</button>
+    <div class="contact-section" id="contact3" style="display: none;">
+        <div class="contact-title">
+            <div class="contact-number">3</div>
+            <strong>Contact Person 3</strong>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="contact3_name">Name</label>
+                <input type="text" id="contact3_name" name="contact3_name">
+            </div>
+
+            <div class="form-group">
+                <label for="contact3_email">Email</label>
+                <input type="email" id="contact3_email" name="contact3_email">
+            </div>
+
+            <div class="form-group">
+                <label for="contact3_phone">Phone</label>
+                <input type="text" id="contact3_phone" name="contact3_phone">
+            </div>
+
+            <div class="form-group">
+                <label for="contact3_preferred">Preferred Contact Method</label>
+                <select id="contact3_preferred" name="contact3_preferred">
+                    <option value="">-- Select --</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                </select>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
             
             <div class="button-group">
                 <button type="submit">Update Client</button>

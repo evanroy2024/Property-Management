@@ -33,6 +33,13 @@ class ServiceRequest(models.Model):
 from django.db import models
 
 class PrearrivalInformation(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('open', 'Open'),
+        ('completed', 'Completed'),
+        ('denied', 'Denied'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     arrival_date = models.DateField(null=True, blank=True)
@@ -66,6 +73,13 @@ class PrearrivalInformation(models.Model):
 
 
 class DepartureInformation(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('open', 'Open'),
+        ('completed', 'Completed'),
+        ('denied', 'Denied'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     departure_date = models.DateField(null=True, blank=True)

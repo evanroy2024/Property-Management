@@ -220,40 +220,27 @@
         <!-- Manage Client -->
        
         <!-- Manage CM's -->
-        <div class="menu-item manage-client ">
+        <div class="menu-item manage-client " onclick="window.location.href='{% url 'adminmanager:list' %}'">
             Manage CM's
         </div>
-        <div class="sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:list' %}'">CM Lists</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:create' %}'">Create CM</div>
-        </div>
+        
 
-        <div class="menu-item manage-cms">
+        <div class="menu-item manage-cms" onclick="window.location.href='{% url 'adminmanager:vendor_list' %}'">
             Manage Vendors
-        </div>
-        <div class="sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:vendor_list' %}'">Vendor List</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:create_vendor' %}'">Create Vendor</div>
         </div>
         
         <!-- Manage Vendors -->
-      <div class="menu-item manage-vendors">
+      <div class="menu-item manage-vendors" onclick="window.location.href='{% url 'adminmanager:admin_faq_list' %}'">
             Manage FAQ's
         </div>
-        <div class="sub-menu">
-                <div class="sub-sub-item"  onclick="window.location.href='{% url 'adminmanager:admin_faq_list' %}'">FAQ Lists</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:admin_faq_create' %}'">Create FAQ</div>
-        </div>
+       
         
         
          <!-- Manage Testimonials -->
-        <div class="menu-item manage-faq">
+        <div class="menu-item manage-faq" onclick="window.location.href='{% url 'adminmanager:testimonial_list' %}'">
             Manage Testimonals 
         </div>
-        <div class="sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:testimonial_list' %}'">Testimonials List</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:testimonial_create' %}'" >Create Testimonials</div>
-        </div>
+        
 
         <div class="menu-item manage-testimonials">
            Settings

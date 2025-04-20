@@ -72,4 +72,16 @@ urlpatterns = [
     # path("walkthrough/submit/", views.submit_walkthrough, name="submit_walkthrough"),
     path('walkthrough/', views.walkthrough_report_view, name='walkthrough-form'),
     path('walkthrough/success/', views.walkthrough_success_view, name='walkthrough-success'),
+    # walkthrough all pages 
+    path('reports/', views.all_reports_view, name='all_reports'),
+    path('reports/<int:pk>/', views.report_detail_view, name='report_detail'),
+    path('reports/completed/', views.completed_reports_view, name='completed_reports'),
+    path('reports/denied/', views.denied_reports_view, name='denied_reports'),
+    path('reports/open/', views.open_reports_view, name='open_reports'),
+
+
+    path('export_pdf/<int:report_id>/', views.walk_export_pdf, name='export_pdf'),
+    path('export/excel/<int:report_id>/', views.walk_export_excel, name='export_excel'),
+    path('export/csv/<int:report_id>/', views.walk_export_csv, name='export_csv'),
+
 ]

@@ -274,16 +274,26 @@
               <div class="col-12">
                 <h6 class="section-title">Service Details</h6>
               </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <select class="form-select" id="service" name="service" aria-label="Service">
-                    {% for key, value in vendor.SERVICE_CHOICES %}
-                      <option value="{{ key }}" {% if vendor.service == key %}selected{% endif %}>{{ value }}</option>
-                    {% endfor %}
-                  </select>
-                  <label for="service">Service Type</label>
+            
+              <div class="">
+                <label class="form-label required-field mb-2">Service Type</label>
+            
+                <!-- Boxed service checkboxes -->
+                <div class="d-flex flex-wrap gap-2">
+                  {% for key, value in vendor.SERVICE_CHOICES %}
+                    <input type="checkbox" class="btn-check" id="service-{{ key }}" name="service[]" value="{{ key }}"
+                      {% if key in vendor.service %}checked{% endif %}>
+                    <label class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm" for="service-{{ key }}">{{ value }}</label>
+                  {% endfor %}
                 </div>
+            
+                <!-- Additional Services Input -->
+                <div class="form-floating mt-4">
+                  <input type="text" class="form-control" id="additional_service" name="additional_service"
+                         value="{{ vendor.additional_service }}" placeholder="cutting, painting, ...">
+                  <label for="additional_service">Add Additional Services (comma separated)</label>
+                </div>
+                <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
               </div>
             </div>
             

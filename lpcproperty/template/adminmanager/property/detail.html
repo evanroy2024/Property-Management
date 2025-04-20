@@ -155,7 +155,6 @@
                 </div>
                 <div class="card-body">
                     <!-- Property Image Placeholder -->
-                    <img src="/api/placeholder/800/250" alt="Property Image" class="property-image mb-4">
                     
                     <h4 class="property-address">{{ property.address }}</h4>
                     <span class="badge bg-success mb-3">Active</span>
@@ -178,19 +177,28 @@
                             <div class="info-value">{{ property.construction_type }}</div>
                         </div>
                         <div class="info-item">
+                            <span class="info-label">City</span>
+                            <div class="info-value">{{ property.city }}</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">State</span>
+                            <div class="info-value">{{ property.state }}</div>
+                        </div>
+                        
+                        <div class="info-item">
                             <span class="info-label">Preferred Contact Method</span>
                             <div class="info-value">{{ property.preferred_contact_method }}</div>
                         </div>
                     </div>
-
-                    <div class="action-buttons">
-                        <a href="{% url 'adminmanager:property_edit' property.pk %}" class="btn btn-info">
+                    
+                    <!-- <div class="action-buttons">
+                        <a href="{% url 'clientmanager:property_edit' property.pk %}" class="btn btn-info">
                             <i class="fas fa-edit fa-sm mr-2"></i> Edit Property
                         </a>
-                        <a href="{% url 'adminmanager:property_delete' property.pk %}" class="btn btn-danger">
+                        <a href="{% url 'clientmanager:property_delete' property.pk %}" class="btn btn-danger">
                             <i class="fas fa-trash fa-sm mr-2"></i> Delete Property
                         </a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -253,7 +261,7 @@
                     {% else %}
                         <div class="text-center py-4">
                             <i class="fas fa-file-alt fa-3x text-gray-300 mb-3"></i>
-                            <p class="mb-0 text-gray-600">No floor plans available</p>
+                            <p class="mb-0 text-gray-600">Click on Export PDF to see all Floor Plans Briefly also Full Property Information </p>
                         </div>
                     {% endif %}
                 </div>
@@ -266,15 +274,16 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="#" class="btn btn-outline-primary mb-2">
-                            <i class="fas fa-calendar-alt mr-2"></i> Schedule Inspection
-                        </a>
-                        <a href="#" class="btn btn-outline-primary mb-2">
-                            <i class="fas fa-tools mr-2"></i> Create Maintenance Request
-                        </a>
-                        <a href="#" class="btn btn-outline-primary">
-                            <i class="fas fa-file-alt mr-2"></i> Generate Property Report
-                        </a>
+                       
+                            <a href="{% url 'adminmanager:property_edit' property.pk %}" class="btn btn-primary mb-2 me-2">
+                              <i class="fas fa-pen-to-square me-2"></i> Edit Property
+                            </a>
+                            <a href="{% url 'adminmanager:export_property_pdf' property.id %}" class="btn btn-success">
+                                <i class="fas fa-file-download"></i> Export PDF
+                            </a>        
+                            <a href="{% url 'adminmanager:property_delete' property.pk %}" class="btn btn-danger mb-2">
+                              <i class="fas fa-trash-alt me-2"></i> Delete Property
+                            </a>
                     </div>
                 </div>
             </div>

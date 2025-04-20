@@ -18,12 +18,12 @@ from .models import PrearrivalInformation
 
 @admin.register(PrearrivalInformation)
 class PrearrivalInformationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'arrival_date', 'arrival_time', 'temperature', 'pool_temperature', 'hot_bath_temperature')
+    list_display = ('name', 'user', 'status', 'arrival_date', 'arrival_time', 'temperature', 'pool_temperature', 'hot_bath_temperature')
     list_filter = ('arrival_date', 'indoor_lights', 'outdoor_lights', 'window_position')
     search_fields = ('name', 'user__username', 'music_genre', 'flower_type', 'flower_location')
 
     fieldsets = (
-        ('User Information', {'fields': ('user', 'name', 'arrival_date', 'arrival_time')}),
+        ('User Information', {'fields': ('user', 'name', 'status','arrival_date', 'arrival_time')}),
         ('Temperature Settings', {'fields': ('temperature', 'pool_temperature', 'hot_bath_temperature')}),
         ('Lighting & Windows', {'fields': ('indoor_lights', 'outdoor_lights', 'window_position')}),
         ('Preferences', {'fields': ('music_genre', 'flower_type', 'flower_location')}),

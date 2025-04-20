@@ -1,5 +1,3 @@
-
-
 {% extends "outbase.html" %}
 {% load static %}
 
@@ -171,7 +169,17 @@
 <div class="login-container">
   <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
   <img src="{% static 'whitelogo.png' %}" alt="Company Logo" class="logo">
-  
+   <!-- User Type Selection Tick Boxes -->
+   <div class="user-type-container">
+    <div class="user-type-option" id="client-option" onclick="selectUserType('client')">
+      <div class="user-type-checkbox checked" id="client-checkbox"></div>
+      <span class="user-type-label">Admin</span>
+    </div>
+    <div class="user-type-option" id="manager-option" onclick="selectUserType('manager')">
+      <div class="user-type-checkbox" id="manager-checkbox"></div>
+      <span class="user-type-label">Client Manager</span>
+    </div>
+  </div>
   {% if messages %}
   <div class="error-message">
       {% for message in messages %}
@@ -179,7 +187,6 @@
       {% endfor %}
   </div>
   {% endif %}
-  <h1 style="text-decoration: underline;">Admin Login</h1>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -281,4 +288,20 @@ form button[type="submit"]:active {
     transform: translateY(0);
 }
 </style>
+<script>
+    function selectUserType(type) {
+      // Remove check from all options
+      document.getElementById('client-checkbox').classList.remove('checked');
+      document.getElementById('manager-checkbox').classList.remove('checked');
+      
+      // Add check to selected option
+      document.getElementById(type + '-checkbox').classList.add('checked');
+      
+      // If manager is selected, redirect to the client manager page
+      if (type === 'manager') {
+          window.location.href = "{% url 'clientmanager:client_login' %}";
+      }
+      // For client, we stay on the same page as requested
+    }
+  </script>
 {% endblock %}

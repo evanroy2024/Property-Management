@@ -495,6 +495,13 @@ def property_update_view(request, pk):
     })
 
 
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.conf import settings
+import os
+from django.shortcuts import get_object_or_404
+
 def property_delete_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk)
 
@@ -503,6 +510,27 @@ def property_delete_view(request, pk):
         return redirect('adminmanager:property_list')
 
     return render(request, 'adminmanager/property/delete.html', {'property': prop})
+
+def link_callback(uri, rel):
+    path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
+    return path
+def export_property_pdf(request, pk):
+    prop = get_object_or_404(PropertyManagement, pk=pk)
+    template_path = 'clientmanager/property/pdf_template.html'
+    context = {'property': prop}
+    html = render_to_string(template_path, context)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="property_{prop.pk}.pdf"'
+
+    pisa.CreatePDF(
+        html,
+        dest=response,
+        link_callback=link_callback  # This fixes the image path issue
+    )
+
+    return response
+
 
 # Building Services  ---------------------------------------------------------------------------------------------------------------
 from mainapp.models import Vendor
@@ -535,7 +563,6 @@ def create_vendor(request):
         'service_choices': Vendor.SERVICE_CHOICES
     })
 
-
 # Edit vendor
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
@@ -549,11 +576,34 @@ def edit_vendor(request, vendor_id):
         vendor.zip_code = request.POST.get('zip_code')
         vendor.email = request.POST.get('email')
         vendor.phone_number = request.POST.get('phone_number')
-        vendor.service = request.POST.get('service')
+
+        # Get selected services and additional services
+        selected_services = request.POST.getlist('service[]')
+        additional_service = request.POST.get('additional_service', '')
+
+        # Combine them into one string, if you're storing as comma-separated
+        combined_services = selected_services
+        if additional_service:
+            additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
+            combined_services += additional_list
+
+        # Save combined service string (e.g. comma-separated)
+        vendor.service = ', '.join(combined_services)
         vendor.save()
+
         return redirect('adminmanager:vendor_list')
 
-    return render(request, 'adminmanager/vendor/edit.html', {'vendor': vendor})
+    # Prepare existing services for form pre-checking
+    existing_services = vendor.service.split(',') if vendor.service else []
+
+    context = {
+        'vendor': vendor,
+        'selected_services': [s.strip() for s in existing_services],
+        'service_choices': Vendor.SERVICE_CHOICES,
+    }
+
+    return render(request, 'adminmanager/vendor/edit.html', context)
+
 
 
 # Delete vendor

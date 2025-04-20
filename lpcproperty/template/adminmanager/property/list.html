@@ -238,13 +238,14 @@
         <div class="p-3">
             <div class="row g-2">
                 <div class="col-md-2">
-                    <input type="text" id="search-first-name" class="form-control" placeholder="Client First Name">
-                </div>
-                <div class="col-md-2">
                     <input type="text" id="search-last-name" class="form-control" placeholder="Client Last Name">
                 </div>
                 <div class="col-md-2">
-                    <input type="text" id="search-address" class="form-control" placeholder="Property Address">
+                    <input type="text" id="search-first-name" class="form-control" placeholder="Client First Name">
+                </div>
+               
+                <div class="col-md-2">
+                    <input type="text" id="search-address" class="form-control" placeholder="CM Name ">
                 </div>
                 <div class="col-md-3">
                     <input type="text" id="search-city" class="form-control" placeholder="Property City">
@@ -262,6 +263,7 @@
                         <tr>
                             <th>Client Name</th>
                             <th>City</th>
+                            <th>CM Name</th>
                             <th>Address</th>
                             <th>State</th>
                             <th>Size (sq ft)</th>
@@ -273,11 +275,12 @@
                         <tr class="property-row"
                             data-firstname="{{ prop.client.first_name|lower }}"
                             data-lastname="{{ prop.client.last_name|lower }}"
-                            data-address="{{ prop.address|lower }}"
+                            data-address="{{ prop.client_manager|lower }}"
                             data-city="{{ prop.city|lower }}"
                             data-state="{{ prop.state|lower }}">
-                            <td><strong>{{ prop.client.first_name }} {{ prop.client.last_name }} ({{ prop.client.username }})</strong></td>
+                            <td><strong>{{ prop.client.last_name }}  {{ prop.client.first_name }} ({{ prop.client.username }})</strong></td>
                             <td>{{ prop.city }}</td>
+                            <td>{{ prop.client_manager }}</td>
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
@@ -368,7 +371,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <h1 class="h3 mb-0 text-black-800">Manage Clients</h1>
-        <a href="{% url 'clientmanager:client_create_view' %}" class="btn btn-primary">
+        <a href="{% url 'adminmanager:client_create_view' %}" class="btn btn-primary">
             <i class="fas fa-plus fa-sm mr-2"></i> Add New Client
         </a>
     </div>
@@ -409,22 +412,22 @@
                         {% for client in clients %}
                         <tr>
                             <td><strong>{{ client.username }}</strong></td>
-                            <td>{{ client.first_name }} {{ client.last_name }}</td>
+                            <td>{{ client.last_name }} {{ client.first_name }} </td>
                             <td>{{ client.email }}</td>
                             <th>{{ client.phone_number }}</th>
                             <th>{{ client.address  }}</th>
                             <!-- <td>{{ prop.year_built }}</td> -->
                             <!-- <td><span class="badge bg-success">Active</span></td> -->
                             <td>
-                                <a href="{% url 'clientmanager:client_edit_page' client.id %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
+                                <a href="{% url 'adminmanager:client_edit_page' client.id %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{% url 'clientmanager:client_edit_page' client.id %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
+                                <a href="{% url 'adminmanager:client_edit_page' client.id %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="/" class="btn btn-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Property">
+                                <!-- <a href="/" class="btn btn-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Property">
                                     <i class="fas fa-trash"></i>
-                                </a>
+                                </a> -->
                             </td>
                         </tr>
                         {% empty %}
@@ -434,7 +437,7 @@
                                     <i class="fas fa-home fa-4x mb-3 icon-gray"></i>
                                     <h4 class="text-gray-800 mb-2">No Cleints found</h4>
                                     <p class="text-gray-600 mb-3">Get started by adding your first Cleint</p>
-                                    <a href="{% url 'clientmanager:property_create' %}" class="btn btn-primary">
+                                    <a href="{% url 'adminmanager:property_create' %}" class="btn btn-primary">
                                         <i class="fas fa-plus mr-2"></i> Add Cleints
                                     </a>
                                 </div>

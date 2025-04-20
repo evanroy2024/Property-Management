@@ -50,6 +50,8 @@ urlpatterns = [
     path('properties/<int:pk>/', views.property_detail_view, name='property_detail'),
     path('properties/<int:pk>/edit/', views.property_update_view, name='property_edit'),
     path('properties/<int:pk>/delete/', views.property_delete_view, name='property_delete'),
+    path('property/<int:pk>/export/', views.export_property_pdf, name='export_property_pdf'),   # Export Feature
+
 
     # Vendors 
     path('vendors/', views.vendor_list, name='vendor_list'),

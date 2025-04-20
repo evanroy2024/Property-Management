@@ -293,25 +293,34 @@
               <div class="col-12">
                 <h6 class="section-title">Service Details</h6>
               </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <select class="form-select" id="service" name="service" required aria-label="Service">
-                    <option value="" selected disabled>Select a service</option>
-                    {% for key, value in service_choices %}
-                      <option value="{{ key }}">{{ value }}</option>
-                    {% endfor %}
-                  </select>
-                  <label for="service" class="required-field">Service Type</label>
-                  <div class="invalid-feedback">Please select a service type.</div>
+            
+              <div class="">
+                <label class="form-label required-field mb-2">Service Type</label>
+            
+                <!-- Boxed service buttons -->
+                <div class="d-flex flex-wrap gap-2">
+                  {% for key, value in service_choices %}
+                    <input type="checkbox" class="btn-check" id="service-{{ key }}" name="service[]" value="{{ key }}">
+                    <label class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm" for="service-{{ key }}">{{ value }}</label>
+                  {% endfor %}
                 </div>
+            
+                <!-- <div class="invalid-feedback d-block mt-2">Please select at least one service type.</div> -->
+            
+                <!-- Custom services input -->
+                <div class="form-floating mt-4">
+                  <input type="text" class="form-control" id="additional_service" name="additional_service" placeholder="cutting, painting, ...">
+                  <label for="additional_service">Add Additional Services (comma separated)</label>
+                </div>
+                <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
               </div>
             </div>
+            
             
             <div class="row">
               <div class="col-12">
                 <div class="d-flex justify-content-end mt-4">
-                  <a href="{% url 'clientmanager:client_dashboard' %}" class="btn btn-secondary me-2">Cancel</a>
+                  <a href="{% url 'adminmanager:admin_dashboard' %}" class="btn btn-secondary me-2">Cancel</a>
                   <button type="submit" class="btn btn-primary">
                     <i class="bi bi-plus-circle me-2"></i>Create Vendor
                   </button>
