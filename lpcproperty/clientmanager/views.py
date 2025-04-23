@@ -63,7 +63,10 @@ def property_list_view(request):
 
 def property_detail_view(request, pk):
     manager_id = request.session.get('manager_id') 
-    prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
+    # prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
+    prop = get_object_or_404(
+        PropertyManagement.objects.prefetch_related('floors__rooms'), pk=pk, client_manager_id=manager_id
+    )
     return render(request, 'clientmanager/property/detail.html', {'property': prop})
 
 from django.http import HttpResponse

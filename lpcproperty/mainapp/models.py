@@ -28,6 +28,7 @@ class Client(models.Model):
 
     # Contact Person 1
     contact1_name = models.CharField(max_length=150, blank=True, null=True)
+    contact1_last_name = models.CharField(max_length=150, blank=True, null=True)
     contact1_email = models.EmailField(blank=True, null=True)
     contact1_phone = models.CharField(max_length=15, blank=True, null=True)
     contact1_preferred = models.CharField(
@@ -36,6 +37,7 @@ class Client(models.Model):
 
     # Contact Person 2
     contact2_name = models.CharField(max_length=150, blank=True, null=True)
+    contact2_last_name = models.CharField(max_length=150, blank=True, null=True)
     contact2_email = models.EmailField(blank=True, null=True)
     contact2_phone = models.CharField(max_length=15, blank=True, null=True)
     contact2_preferred = models.CharField(
@@ -44,6 +46,7 @@ class Client(models.Model):
 
     # Contact Person 3
     contact3_name = models.CharField(max_length=150, blank=True, null=True)
+    contact3_last_name = models.CharField(max_length=150, blank=True, null=True)
     contact3_email = models.EmailField(blank=True, null=True)
     contact3_phone = models.CharField(max_length=15, blank=True, null=True)
     contact3_preferred = models.CharField(
@@ -65,7 +68,6 @@ class Client(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
-
 
 
 from django.db import models
@@ -110,22 +112,47 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
 
 class Vendor(models.Model):
     SERVICE_CHOICES = [
-        ('Appliance Repair', 'Appliance Repair'),
-        ('Artificial Turf', 'Artificial Turf'),
-        ('AV', 'AV'),
-        ('Car Detailer', 'Car Detailer'),
-        ('Carpet Cleaning', 'Carpet Cleaning'),
-        ('Caterer / Chef', 'Caterer / Chef'),
-        ('Countertops', 'Countertops'),
+    ('Appliance Repair', 'Appliance Repair'),
+    ('Artificial Turf', 'Artificial Turf'),
+    ('AV', 'AV'),
+    ('Car Detailer', 'Car Detailer'),
+    ('Carpet Cleaning', 'Carpet Cleaning'),
+    ('Caterer / Chef', 'Caterer / Chef'),
+    ('Countertops', 'Countertops'),
+    ('Drywall', 'Drywall'),
+    ('Electrician', 'Electrician'),
+    ('Fencing', 'Fencing'),
+    ('Finish Carpentry', 'Finish Carpentry'),
+    ('Flooring, Carpet', 'Flooring, Carpet'),
+    ('Flooring, Epoxy', 'Flooring, Epoxy'),
+    ('Flooring, Resilient', 'Flooring, Resilient'),
+    ('Flooring, Tile', 'Flooring, Tile'),
+    ('Furniture Movers', 'Furniture Movers'),
+    ('Garage Door', 'Garage Door'),
+    ('Glass, Installation', 'Glass, Installation'),
+    ('Glass, Repair', 'Glass, Repair'),
+    ('HVAC', 'HVAC'),
+    ('Landscape', 'Landscape'),
+    ('Locksmith', 'Locksmith'),
+    ('Millwork', 'Millwork'),
+    ('Painting', 'Painting'),
+    ('Plumbing', 'Plumbing'),
+    ('Plumbing Repair', 'Plumbing Repair'),
+    ('Pool Maintenance / Repair', 'Pool Maintenance / Repair'),
+    ('Pressure Washer', 'Pressure Washer'),
+    ('Roofing', 'Roofing'),
+    ('Security', 'Security'),
+    ('Wall Covering', 'Wall Covering'),
+    ('Window Treatments', 'Window Treatments'),
     ]
 
     company_name = models.CharField(max_length=255)
-    username = models.CharField(max_length=150, unique=True)
+    username = models.CharField(max_length=150)
     address = models.TextField()
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=20)
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     phone_number = models.CharField(max_length=15)
     # service = models.CharField(max_length=50, choices=SERVICE_CHOICES , blank=True, null=True)
     service = models.TextField(blank=True, null=True)

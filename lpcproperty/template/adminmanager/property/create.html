@@ -364,9 +364,12 @@
                         <label class="form-label" for="client_id">Select Existing Client</label>
                         <select class="form-control" name="client_id" id="client_id" required>
                             {% for client in clients %}
-                                <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
+                                <option value="{{ client.id }}">{{ client.last_name }} {{ client.first_name }} </option>
                             {% endfor %}
                         </select>
+                        
+                       
+                        
                     </div>
                     
                     <!-- Toggle Button -->
@@ -433,6 +436,13 @@
                         <label class="form-label" for="address">Property Address</label>
                         <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the property address">
                     </div>
+                    <div class="form-group half">
+                        <label class="form-label" for="city">City</label>
+                        <input class="form-control" type="text" id="city" name="city" required placeholder="Enter the City Name">
+                        <label class="form-label" for="state">State</label>
+                        <input class="form-control" type="text" id="state" name="state" required placeholder="Enter the State Name">
+                    </div>
+                   
                     
                     <div class="form-group half">
                         <label class="form-label" for="size_of_home">Size of Home</label>
@@ -490,6 +500,7 @@
                         <select class="form-control" id="preferred_contact_method" name="preferred_contact_method">
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="text">Text</option>
                         </select>
                     </div>
                 </div>
@@ -509,11 +520,12 @@
                         </div>
                         
                         <div class="rooms-container" id="rooms-container-1">
+                            <input class="form-control" type="file" name="room_image_1_1" accept="image/*">
+
                             <h3>Rooms for Floor 1</h3>
                             <div class="room-group" id="room-group-1-1">
                                 <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name">
                                 <input class="form-control" type="text" name="room_size_1_1" placeholder="Room Size">
-                                <input class="form-control" type="file" name="room_image_1_1" accept="image/*">
                             </div>
                         </div>
                         
@@ -525,6 +537,53 @@
                 <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
                 
             </div>
+            <script>
+                let floorCount = 1;
+            
+                function addFloor() {
+                    floorCount++;
+                    const floorSection = document.createElement("div");
+                    floorSection.className = "floor-section";
+                    floorSection.id = `floor-section-${floorCount}`;
+                    
+                    floorSection.innerHTML = `
+                        <h2>Floor ${floorCount}</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                                <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                            </div>
+                        </div>
+                        <div class="rooms-container" id="rooms-container-${floorCount}">
+                            <h3>Rooms for Floor ${floorCount}</h3>
+                            <div class="room-group" id="room-group-${floorCount}-1">
+                                <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                                <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
+                                <input class="form-control" type="file" name="room_image_${floorCount}_1" accept="image/*" >
+                            </div>
+                        </div>
+                        <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+                    `;
+                    
+                    document.getElementById("floors-container").appendChild(floorSection);
+                }
+            
+                function addRoom(floorId) {
+                    const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+                    const roomGroup = document.createElement("div");
+                    roomGroup.className = "room-group";
+                    roomGroup.id = `room-group-${floorId}-${roomCount}`;
+                    
+                    roomGroup.innerHTML = `
+                        <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+                        <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
+                        <input class="form-control" type="file" name="room_image_${floorId}_${roomCount}" accept="image/*" style="display: none;">
+                    `;
+                    
+                    document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+                }
+            </script>
+            
             <style>
 
 /* Headings */
@@ -680,5 +739,27 @@ button:disabled {
             });
         });
     </script>
-    
+     <script>
+                            window.onload = function() {
+                                var select = document.getElementById("client_id");
+                                var options = Array.from(select.options);
+                        
+                                // Sort the options alphabetically based on last name
+                                options.sort(function(a, b) {
+                                    var lastNameA = a.text.split(' ')[1].toUpperCase(); // Get the last name and convert to uppercase
+                                    var lastNameB = b.text.split(' ')[1].toUpperCase(); // Get the last name and convert to uppercase
+                        
+                                    return lastNameA.localeCompare(lastNameB); // Compare last names
+                                });
+                        
+                                // Remove all existing options
+                                select.innerHTML = "";
+                        
+                                // Re-add sorted options
+                                options.forEach(function(option) {
+                                    select.add(option);
+                                });
+                            };
+                        </script>
+                        
 {% endblock content %}

@@ -100,7 +100,7 @@
         }
 
         .gallery-img:hover {
-            transform: scale(1.05);
+            transform: scale(1.09);
         }
 
         .image-caption {
@@ -111,22 +111,30 @@
         }
 
         .full-screen-img {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95); /* Darker background for focus */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of everything */
+    padding: 20px; /* Prevent image from sticking to edges */
+}
 
-        .full-screen-img img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 10px;
-        }
+.full-screen-img img {
+    width: auto;
+    height: auto;
+    max-width: 95vw;  /* Slightly less than 100 to maintain margins */
+    max-height: 95vh;
+    border-radius: 20px; /* More rounding for visual appeal */
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.1); /* Soft glow effect */
+    transform: scale(1.30); /* Slight zoom for emphasis */
+    transition: transform 0.3s ease;
+}
+
 
         /* Responsive Styles */
         @media (max-width: 1024px) {
@@ -244,8 +252,35 @@
         <p>No properties available.</p>
         {% endfor %}
     </div>
-    
-    
+
+
+<!-- //////////////////////// -->
+ 
+<div class="property-container">
+    <p class="section-title">Client Manager Details </p>
+    {% if client_manager %}
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="info-box"><span>Client Manager Name :</span> <div class="info-value">{{ client_manager.first_name }} {{ client_manager.last_name }}</div></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box"><span>Client Manager Email :</span> <div class="info-value">{{ client_manager.email }}</div></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box"><span>Client Manager Phone :</span> <div class="info-value">{{ client_manager.phone_number }}</div></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box"><span>Client Manager State :</span> <div class="info-value">{{ client_manager.state }}</div></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box"><span>Client Manager City :</span> <div class="info-value">{{ client_manager.city }}</div></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box"><span>Preffered Contact Type Type:</span> <div class="info-value">{{ client_manager.preferred_contact_method }}</div></div>
+                </div>
+            </div>
+            {% endif %}
+</div>
 
     <script>
         document.querySelectorAll('.gallery-img').forEach(img => {
@@ -260,3 +295,4 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock content %}
+Conta

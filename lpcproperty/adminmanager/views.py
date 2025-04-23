@@ -277,9 +277,13 @@ def property_list_view(request):
     clients = Client.objects.all()
     properties = PropertyManagement.objects.all()  # Removed filtering
     return render(request, 'adminmanager/property/list.html', {'properties': properties,'clients': clients})
+from django.shortcuts import render, get_object_or_404
+from propertydetails.models import PropertyManagement
 
 def property_detail_view(request, pk):
-    prop = get_object_or_404(PropertyManagement, pk=pk)
+    prop = get_object_or_404(
+        PropertyManagement.objects.prefetch_related('floors__rooms'), pk=pk
+    )
     return render(request, 'adminmanager/property/detail.html', {'property': prop})
 
 from mainapp.models import Client, ClientManagers  # or whatever your models are named
@@ -342,6 +346,8 @@ def property_create_view(request):
                     has_hoa='has_hoa' in request.POST,
                     gated_property='gated_property' in request.POST,
                     preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
+                    state=request.POST.get('state', ''),  # Added state
+                    city=request.POST.get('city', ''),    # Added city
                 )
 
                 # Loop through each floor and room
@@ -353,10 +359,20 @@ def property_create_view(request):
                     floor = Floor.objects.create(property=prop, floor_name=floor_name)
 
                     room_count = len([k for k in request.POST if k.startswith(f'room_name_{i}_')])
+                    
+                    # Check if there is an image for the first room
+                    first_room_image = request.FILES.get(f'room_image_{i}_1')
+                    
                     for j in range(1, room_count + 1):
                         room_name = request.POST.get(f'room_name_{i}_{j}')
                         room_size = request.POST.get(f'room_size_{i}_{j}')
-                        room_image = request.FILES.get(f'room_image_{i}_{j}')
+                        
+                        # If the first room has an image, use it for all rooms on the same floor
+                        if first_room_image:
+                            room_image = first_room_image
+                        else:
+                            room_image = request.FILES.get(f'room_image_{i}_{j}')
+                        
                         if room_name:
                             Room.objects.create(
                                 floor=floor,
@@ -380,110 +396,118 @@ def property_create_view(request):
         'managers': managers
     })
 
+
+from django.shortcuts import render, redirect, get_object_or_404
+
+from django.shortcuts import render, get_object_or_404, redirect
+
 def property_update_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk)
-    client = prop.client  # assumes there's a ForeignKey to Client
+    client = prop.client
+    client_managers = ClientManagers.objects.all()
 
     if request.method == 'POST':
-        # Property fields
-        prop.address = request.POST['address']
-        prop.size_of_home = request.POST.get('size_of_home', '')
-        prop.number_of_stories = request.POST.get('number_of_stories', '')
-        prop.construction_type = request.POST.get('construction_type', '')
-        prop.year_built = request.POST.get('year_built', '')
-        prop.has_pool = 'has_pool' in request.POST
-        prop.gated_community = 'gated_community' in request.POST
-        prop.impact_windows = 'impact_windows' in request.POST
-        prop.has_hoa = 'has_hoa' in request.POST
-        prop.gated_property = 'gated_property' in request.POST
-        prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
-        prop.save()
+        # Handling Property and Client Info Updates
+        if 'address' in request.POST:
+            # Property fields
+            prop.address = request.POST['address']
+            prop.size_of_home = request.POST.get('size_of_home', '')
+            prop.number_of_stories = request.POST.get('number_of_stories', '')
+            prop.construction_type = request.POST.get('construction_type', '')
+            prop.year_built = request.POST.get('year_built', '')
+            prop.has_pool = 'has_pool' in request.POST
+            prop.gated_community = 'gated_community' in request.POST
+            prop.impact_windows = 'impact_windows' in request.POST
+            prop.has_hoa = 'has_hoa' in request.POST
+            prop.gated_property = 'gated_property' in request.POST
+            prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
+            prop.save()
 
-        # Update Client info
-        client.first_name = request.POST.get('client_first_name', '')
-        client.last_name = request.POST.get('client_last_name', '')
-        client.username = request.POST.get('client_username', '')
-        client.email = request.POST.get('client_email', '')
-        client.address = request.POST.get('client_address', '')
-        client.city = request.POST.get('client_city', '')
-        client.state = request.POST.get('client_state', '')
-        client.zipcode = request.POST.get('client_zipcode', '')
-        client.phone_number = request.POST.get('client_phone_number', '')
-        client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
+            # Update Client info
+            client.first_name = request.POST.get('client_first_name', '')
+            client.last_name = request.POST.get('client_last_name', '')
+            client.username = request.POST.get('client_username', '')
+            client.email = request.POST.get('client_email', '')
+            client.address = request.POST.get('client_address', '')
+            client.city = request.POST.get('client_city', '')
+            client.state = request.POST.get('client_state', '')
+            client.zipcode = request.POST.get('client_zipcode', '')
+            client.phone_number = request.POST.get('client_phone_number', '')
+            client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
 
-        # Contact Person 1
-        client.contact1_name = request.POST.get('contact1_name', '')
-        client.contact1_email = request.POST.get('contact1_email', '')
-        client.contact1_phone = request.POST.get('contact1_phone', '')
-        client.contact1_preferred = request.POST.get('contact1_preferred', '')
+            # Contact Person 1
+            client.contact1_name = request.POST.get('contact1_name', '')
+            client.contact1_email = request.POST.get('contact1_email', '')
+            client.contact1_phone = request.POST.get('contact1_phone', '')
+            client.contact1_preferred = request.POST.get('contact1_preferred', '')
 
-        # Contact Person 2
-        client.contact2_name = request.POST.get('contact2_name', '')
-        client.contact2_email = request.POST.get('contact2_email', '')
-        client.contact2_phone = request.POST.get('contact2_phone', '')
-        client.contact2_preferred = request.POST.get('contact2_preferred', '')
+            # Contact Person 2
+            client.contact2_name = request.POST.get('contact2_name', '')
+            client.contact2_email = request.POST.get('contact2_email', '')
+            client.contact2_phone = request.POST.get('contact2_phone', '')
+            client.contact2_preferred = request.POST.get('contact2_preferred', '')
 
-        # Contact Person 3
-        client.contact3_name = request.POST.get('contact3_name', '')
-        client.contact3_email = request.POST.get('contact3_email', '')
-        client.contact3_phone = request.POST.get('contact3_phone', '')
-        client.contact3_preferred = request.POST.get('contact3_preferred', '')
+            # Contact Person 3
+            client.contact3_name = request.POST.get('contact3_name', '')
+            client.contact3_email = request.POST.get('contact3_email', '')
+            client.contact3_phone = request.POST.get('contact3_phone', '')
+            client.contact3_preferred = request.POST.get('contact3_preferred', '')
 
-        client.save()
+            client.save()
 
-        # Process Floors and Rooms
-        existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
-
-        i = 1
-        while True:
-            floor_key = f'floor_name_{i}'
-            if floor_key not in request.POST:
-                break
-
-            floor_name = request.POST.get(floor_key)
-
-            # Reuse or create floor
-            floor = existing_floors.get(floor_key)
-            if floor:
-                floor.floor_name = floor_name
-                floor.save()
-            else:
-                floor = Floor.objects.create(property=prop, floor_name=floor_name)
-
-            j = 1
+            # Update floors and rooms
+            existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
+            i = 1
             while True:
-                room_name_key = f'room_name_{i}_{j}'
-                room_size_key = f'room_size_{i}_{j}'
-                room_image_key = f'room_image_{i}_{j}'
-
-                if room_name_key not in request.POST:
+                floor_key = f'floor_name_{i}'
+                if floor_key not in request.POST:
                     break
 
-                room_name = request.POST.get(room_name_key)
-                room_size = request.POST.get(room_size_key)
-                room_image = request.FILES.get(room_image_key)
-
-                # Try to reuse an existing room or create a new one
-                if j <= floor.rooms.count():
-                    room = floor.rooms.all()[j-1]
-                    room.room_name = room_name
-                    room.room_size = room_size
-                    if room_image:
-                        room.room_image = room_image
-                    room.save()
+                floor_name = request.POST.get(floor_key)
+                floor = existing_floors.get(floor_key)
+                if floor:
+                    floor.floor_name = floor_name
+                    floor.save()
                 else:
-                    Room.objects.create(
-                        floor=floor,
-                        room_name=room_name,
-                        room_size=room_size,
-                        room_image=room_image
-                    )
-                j += 1
-            i += 1
+                    floor = Floor.objects.create(property=prop, floor_name=floor_name)
 
-        # Floors & Rooms update logic here (same as before)
+                j = 1
+                while True:
+                    room_name_key = f'room_name_{i}_{j}'
+                    room_size_key = f'room_size_{i}_{j}'
+                    room_image_key = f'room_image_{i}_{j}'
 
-        # ... floors/rooms logic remains unchanged ...
+                    if room_name_key not in request.POST:
+                        break
+
+                    room_name = request.POST.get(room_name_key)
+                    room_size = request.POST.get(room_size_key)
+                    room_image = request.FILES.get(room_image_key)
+
+                    if j <= floor.rooms.count():
+                        room = floor.rooms.all()[j - 1]
+                        room.room_name = room_name
+                        room.room_size = room_size
+                        if room_image:
+                            room.room_image = room_image
+                        room.save()
+                    else:
+                        Room.objects.create(
+                            floor=floor,
+                            room_name=room_name,
+                            room_size=room_size,
+                            room_image=room_image
+                        )
+                    j += 1
+                i += 1
+
+        # Handling Client Manager Update (if new_cm is present)
+        if 'new_cm' in request.POST:
+            client_manager_id = request.POST.get('new_cm')
+            if client_manager_id:
+                client_manager = get_object_or_404(ClientManagers, pk=client_manager_id)
+                prop.client_manager = client_manager
+                prop.save()
 
         return redirect('adminmanager:property_list')
 
@@ -492,7 +516,32 @@ def property_update_view(request, pk):
         'property': prop,
         'floors': floors,
         'client': client,
+        'client_managers': client_managers,
+        'selected_client_manager': prop.client_manager
     })
+
+
+# def property_update_view(request, pk):
+#     prop = get_object_or_404(PropertyManagement, pk=pk)
+#     client_managers = ClientManagers.objects.all()
+
+#     if request.method == 'POST':
+#         submitted_cm_id = request.POST.get('new_cm')
+#         print("Submitted CM ID:", submitted_cm_id)
+
+#         if submitted_cm_id:
+#             new_cm = get_object_or_404(ClientManagers, pk=submitted_cm_id)
+#             prop.client_manager = new_cm
+#             prop.save()
+#             print("Client Manager updated to:", new_cm.id)
+
+#         return redirect('adminmanager:property_list')
+
+#     return render(request, 'adminmanager/property/edit.html', {
+#         'property': prop,
+#         'client_managers': client_managers
+#     })
+
 
 
 from django.http import HttpResponse
@@ -541,24 +590,35 @@ def vendor_list(request):
     return render(request, 'adminmanager/vendor/list.html', {'vendors': vendors})
 
 
-# Create vendor
+import uuid  # For generating a unique string
+
 def create_vendor(request):
-    
     if request.method == 'POST':
+        # Get selected services and additional services
+        selected_services = request.POST.getlist('service[]')
+        additional_service = request.POST.get('additional_service', '')
+
+        combined_services = selected_services
+        if additional_service:
+            additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
+            combined_services += additional_list
+
+        # Auto-generate a dummy username
+        auto_username = f'vendor_{uuid.uuid4().hex[:6]}'  # Example: vendor_a1b2c3
+
         Vendor.objects.create(
             company_name=request.POST.get('company_name'),
-            username=request.POST.get('username'),
+            username=auto_username,
             address=request.POST.get('address'),
             city=request.POST.get('city'),
             state=request.POST.get('state'),
             zip_code=request.POST.get('zip_code'),
             email=request.POST.get('email'),
             phone_number=request.POST.get('phone_number'),
-            service=request.POST.get('service'),
+            service=', '.join(combined_services),
         )
         return redirect('adminmanager:vendor_list')
 
-    # Pass choices here 👇
     return render(request, 'adminmanager/vendor/create.html', {
         'service_choices': Vendor.SERVICE_CHOICES
     })
@@ -670,6 +730,11 @@ def clientmanager_prearrival_requests(request):
 def clientmanager_prearrival_detail(request, request_id):
     request_detail = get_object_or_404(PrearrivalInformation, id=request_id)
 
+    if request.method == 'POST' and 'complete' in request.POST:
+        request_detail.status = 'completed'
+        request_detail.save()
+        return redirect('adminmanager:prearrival_requests')
+
     return render(request, 'adminmanager/prearrival/prearrival_detail.html', {
         'request_detail': request_detail
     })
@@ -686,15 +751,17 @@ def clientmanager_departure_requests(request):
     return render(request, 'adminmanager/departure/departure_list.html', {
         'requests': all_departure_requests
     })
-
-
 def clientmanager_departure_detail(request, request_id):
     departure_request = get_object_or_404(DepartureInformation, id=request_id)
+
+    if request.method == 'POST' and 'complete' in request.POST:
+        departure_request.status = 'completed'
+        departure_request.save()
+        return redirect('adminmanager:departure_requests')
 
     return render(request, 'adminmanager/departure/departure_detail.html', {
         'request_detail': departure_request
     })
-
 
 # Building pending completed denied services --------------------------------------------------------------------------------
 # from django.shortcuts import render
@@ -748,7 +815,7 @@ def update_service_request(request, request_id):
         else:
             request_obj.vendor = None
         request_obj.save()
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('adminmanager:clientmanager_pending_requests')
 
     return render(request, 'adminmanager/servicerequests/update.html', {
         'request_obj': request_obj,
@@ -860,7 +927,7 @@ def update_property_request(request, request_id):
                 request_obj.vendor = None
 
         request_obj.save()
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('adminmanager:property_pending_requests')
 
     return render(request, 'adminmanager/propertyimprovement/update.html', {
         'request_obj': request_obj,
@@ -952,16 +1019,19 @@ def client_edit_page(request, client_id):
         client.preferred_contact_method = request.POST.get('preferred_contact_method')
         
         client.contact1_name = request.POST.get('contact1_name')
+        client.contact1_last_name  = request.POST.get('contact1_last_name')
         client.contact1_email = request.POST.get('contact1_email')
         client.contact1_phone = request.POST.get('contact1_phone')
         client.contact1_preferred = request.POST.get('contact1_preferred')
 
         client.contact2_name = request.POST.get('contact2_name')
+        client.contact2_last_name  = request.POST.get('contact2_last_name')
         client.contact2_email = request.POST.get('contact2_email')
         client.contact2_phone = request.POST.get('contact2_phone')
         client.contact2_preferred = request.POST.get('contact2_preferred')
 
         client.contact3_name = request.POST.get('contact3_name')
+        client.contact3_last_name  = request.POST.get('contact3_last_name')
         client.contact3_email = request.POST.get('contact3_email')
         client.contact3_phone = request.POST.get('contact3_phone')
         client.contact3_preferred = request.POST.get('contact3_preferred')
@@ -971,36 +1041,63 @@ def client_edit_page(request, client_id):
 
     return render(request, 'adminmanager/client/client_edit_page.html', {'client': client})
 
-
+from django.db import IntegrityError
 def create_new_client_view(request):
+    error_message = None
+
     if request.method == 'POST':
-        Client.objects.create(
-            first_name=request.POST.get('first_name'),
-            last_name=request.POST.get('last_name'),
-            username=request.POST.get('username'),
-            email=request.POST.get('email'),
-            password=request.POST.get('password'),
-            address=request.POST.get('address'),
-            city=request.POST.get('city'),
-            state=request.POST.get('state'),
-            zipcode=request.POST.get('zipcode'),
-            phone_number=request.POST.get('phone_number'),
-            preferred_contact_method=request.POST.get('preferred_contact_method'),
-            contact1_name=request.POST.get('contact1_name'),
-            contact1_email=request.POST.get('contact1_email'),
-            contact1_phone=request.POST.get('contact1_phone'),
-            contact1_preferred=request.POST.get('contact1_preferred'),
-            contact2_name=request.POST.get('contact2_name'),
-            contact2_email=request.POST.get('contact2_email'),
-            contact2_phone=request.POST.get('contact2_phone'),
-            contact2_preferred=request.POST.get('contact2_preferred'),
-            contact3_name=request.POST.get('contact3_name'),
-            contact3_email=request.POST.get('contact3_email'),
-            contact3_phone=request.POST.get('contact3_phone'),
-            contact3_preferred=request.POST.get('contact3_preferred'),
-        )
-        return redirect('adminmanager:client_list_view')  # change if needed
-    return render(request, 'adminmanager/client/create.html')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+
+        # Check for existing username/email
+        if Client.objects.filter(username=username).exists():
+            error_message = "Username already exists. Please choose a different username."
+        elif Client.objects.filter(email=email).exists():
+            error_message = "Email already exists. Please use a different email."
+        else:
+            try:
+                Client.objects.create(
+                    first_name=request.POST.get('first_name'),
+                    last_name=request.POST.get('last_name'),
+                    username=username,
+                    email=email,
+                    password=request.POST.get('password'),
+                    address=request.POST.get('address'),
+                    city=request.POST.get('city'),
+                    state=request.POST.get('state'),
+                    zipcode=request.POST.get('zipcode'),
+                    phone_number=request.POST.get('phone_number'),
+                    preferred_contact_method=request.POST.get('preferred_contact_method'),
+
+                    # Contact 1
+                    contact1_name=request.POST.get('contact1_name'),
+                    contact1_last_name=request.POST.get('contact1_last_name'),
+                    contact1_email=request.POST.get('contact1_email'),
+                    contact1_phone=request.POST.get('contact1_phone'),
+                    contact1_preferred=request.POST.get('contact1_preferred'),
+
+                    # Contact 2
+                    contact2_name=request.POST.get('contact2_name'),
+                    contact2_last_name=request.POST.get('contact2_last_name'),
+                    contact2_email=request.POST.get('contact2_email'),
+                    contact2_phone=request.POST.get('contact2_phone'),
+                    contact2_preferred=request.POST.get('contact2_preferred'),
+
+                    # Contact 3
+                    contact3_name=request.POST.get('contact3_name'),
+                    contact3_last_name=request.POST.get('contact3_last_name'),
+                    contact3_email=request.POST.get('contact3_email'),
+                    contact3_phone=request.POST.get('contact3_phone'),
+                    contact3_preferred=request.POST.get('contact3_preferred'),
+                )
+                return redirect('adminmanager:client_list_page')
+
+            except IntegrityError as e:
+                error_message = "An unexpected error occurred. Please try again."
+
+    return render(request, 'adminmanager/client/create.html', {
+        'error_message': error_message
+    })
 
 # Client Manager Things Update ---------------------------------------------------------------------------------------------------------------
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1035,7 +1132,7 @@ def clientmanager_create_view(request):
         cm.set_password(data.get('password'))
         cm.save()
         messages.success(request, "Client Manager created successfully.")
-        return redirect('cadminmanager:list')
+        return redirect('dminmanager:list')
     return render(request, 'adminmanager/clientmanager/clientmanager_form.html', {
         'action': 'Create',
         'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,

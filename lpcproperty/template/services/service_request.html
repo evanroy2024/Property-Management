@@ -64,6 +64,11 @@
 <div class="bg-lotus-darker min-h-screen py-10 px-4">
   <div class="lotus-container max-w-4xl mx-auto bg-lotus-dark rounded-lg overflow-hidden border border-lotus-gray">
     <!-- Header -->
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
     <div class=" py-6 px-6 sm:px-10 border-b border-lotus-gray">
       <div class="flex flex-col sm:flex-row items-center justify-between">
         <div class="flex items-center gap-4 mb-4 sm:mb-0">

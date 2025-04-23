@@ -38,9 +38,8 @@ def property_improvements(request):
             description=description
         )
 
-        messages.success(request, "Your property improvement request has been submitted!")
-        return redirect("propertydetails:property_improvements")  # Redirect to the same page
-
+        # messages.success(request, "Your property improvement request has been submitted!")
+        return redirect("servicesapp:request_form_success")
     return render(request, "property/property_improvement.html")
 
 
@@ -93,7 +92,7 @@ def update_client_approval(request, improvement_id, decision):
         return redirect("propertydetails:open_property_improvements")
 
     improvement.save()
-    messages.success(request, f"Property Improvement {improvement.pino} has been {improvement.client_approval}.")
+    # messages.success(request, f"Property Improvement {improvement.pino} has been {improvement.client_approval}.")
     return redirect("propertydetails:open_property_improvements")
 
 

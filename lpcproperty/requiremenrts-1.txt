@@ -10,3 +10,7 @@ pip install reportlab
 For property Export pdf --------
 pip install WeasyPrint
 pip install xhtml2pdf
+
+
+For calender adding ==========
+pip install icalendar

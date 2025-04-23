@@ -52,15 +52,29 @@ def prearrival_form_view(request):
             automobiles=request.POST.get("automobiles") or None,
             additional=request.POST.get("additional") or None,
         )
-        messages.success(request, "Prearrival information submitted successfully!")
-        return redirect("servicesapp:prearrival_form")
+        # messages.success(request, "Prearrival information submitted successfully!")
+        return redirect("servicesapp:request_form_success")
 
-    return render(request, "services/prearrival_form.html")
+    return render(request, "services/prearrival_form.html",{"client": client})
+
+def prearrival_form_success(request):
+    messages.success(request, "Your request has been submitted successfully!")
+    return render(request, "services/prearrival-success.html")
 
 from django.shortcuts import render, redirect
 from .models import DepartureInformation, Client  
 
 def departure_form_view(request):
+    client_id = request.session.get("client_id")  # Assuming you store client ID in session
+    if not client_id:
+        messages.error(request, "You must be logged in to submit this form.")
+        return redirect("mainapp:client_login")  # Redirect to login page
+
+    try:
+        client = Client.objects.get(id=client_id)  # Get the Client instance
+    except Client.DoesNotExist:
+        messages.error(request, "Invalid user session.")
+        return redirect("mainapp:client_login")
     if request.method == "POST":
         name = request.POST.get("name")
         departure_date = request.POST.get("departure_date")
@@ -90,9 +104,9 @@ def departure_form_view(request):
                 trash=trash,
                 additional=additional,
             )
-            return redirect("servicesapp:departure_form")  # Redirect to success page
+            return redirect("servicesapp:request_form_success")  # Redirect to success page
 
-    return render(request, "services/departure_form.html")
+    return render(request, "services/departure_form.html" ,{"client": client})
 
 
 from django.shortcuts import render, redirect
@@ -121,7 +135,6 @@ def Concierge_request(request):
             description=description
         )
 
-        messages.success(request, "Your request has been submitted successfully!")
-        return redirect("servicesapp:Concierge_request")  # Redirect to the same page after submission
-
+        # messages.success(request, "Your request has been submitted successfully!")
+        return redirect("servicesapp:request_form_success")
     return render(request, "services/concierge_request.html")

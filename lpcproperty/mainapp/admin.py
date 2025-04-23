@@ -20,13 +20,13 @@ class ClientAdmin(admin.ModelAdmin):
             "fields": ("address", "city", "state", "zipcode","phone_number", "preferred_contact_method"),
         }),
         ("Preffered Contact 1", {
-            "fields": ("contact1_name", "contact1_email", "contact1_phone", "contact1_preferred"),
+            "fields": ("contact1_name", "contact1_email","contact1_last_name", "contact1_phone", "contact1_preferred"),
         }),
         ("Preffered Contact 2", {
-            "fields": ("contact2_name", "contact2_email", "contact2_phone", "contact2_preferred"),
+            "fields": ("contact2_name", "contact2_email","contact2_last_name", "contact2_phone", "contact2_preferred"),
         }),
         ("Preffered Contact 3", {
-            "fields": ("contact3_name", "contact3_email", "contact3_phone", "contact3_preferred"),
+            "fields": ("contact3_name", "contact3_email","contact3_last_name", "contact3_phone", "contact3_preferred"),
         }),
     )
 

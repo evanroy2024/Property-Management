@@ -263,6 +263,12 @@
         </div>
 
         <div class="form-group">
+            <label for="contact1_name">Last Name</label>
+            <input type="text" name="contact1_last_name" value="{{ client.contact1_last_name }}">
+        </div>
+
+
+        <div class="form-group">
             <label for="contact1_email">Email</label>
             <input type="email" id="contact1_email" name="contact1_email" value="{{ client.contact1_email }}">
         </div>
@@ -278,6 +284,8 @@
                 <option value="">-- Select --</option>
                 <option value="email" {% if client.contact1_preferred == 'email' %}selected{% endif %}>Email</option>
                 <option value="phone" {% if client.contact1_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                <option value="text" {% if client.contact1_preferred == 'text' %}selected{% endif %}>Text</option>
+
             </select>
         </div>
     </div>
@@ -295,7 +303,10 @@
                 <label for="contact2_name">Name</label>
                 <input type="text" id="contact2_name" name="contact2_name" value="{{ client.contact2_name }}">
             </div>
-
+            <div class="form-group">
+                <label for="contact1_name">Last Name</label>
+                <input type="text" name="contact2_last_name" value="{{ client.contact2_last_name }}">
+            </div>
             <div class="form-group">
                 <label for="contact2_email">Email</label>
                 <input type="email" id="contact2_email" name="contact2_email" value="{{ client.contact2_email }}">
@@ -312,6 +323,8 @@
                     <option value="">-- Select --</option>
                     <option value="email" {% if client.contact2_preferred == 'email' %}selected{% endif %}>Email</option>
                     <option value="phone" {% if client.contact2_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                    <option value="text" {% if client.contact2_preferred == 'text' %}selected{% endif %}>Text</option>
+
                 </select>
             </div>
         </div>
@@ -325,8 +338,13 @@
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label for="contact2_name">Name</label>
+                <label for="contact2_name">First Name</label>
                 <input type="text" id="contact2_name" name="contact2_name">
+            </div>
+
+            <div class="form-group">
+                <label for="contact1_name">Last Name</label>
+                <input type="text" name="contact2_last_name" >
             </div>
 
             <div class="form-group">
@@ -339,12 +357,15 @@
                 <input type="text" id="contact2_phone" name="contact2_phone">
             </div>
 
+            
+
             <div class="form-group">
                 <label for="contact2_preferred">Preferred Contact Method</label>
                 <select id="contact2_preferred" name="contact2_preferred">
                     <option value="">-- Select --</option>
                     <option value="email">Email</option>
                     <option value="phone">Phone</option>
+                    <option value="text">Text</option>
                 </select>
             </div>
         </div>
@@ -363,7 +384,10 @@
                 <label for="contact3_name">Name</label>
                 <input type="text" id="contact3_name" name="contact3_name" value="{{ client.contact3_name }}">
             </div>
-
+            <div class="form-group">
+                <label for="contact1_name">Last Name</label>
+                <input type="text" name="contact3_last_name" value="{{ client.contact3_last_name }}">
+            </div>
             <div class="form-group">
                 <label for="contact3_email">Email</label>
                 <input type="email" id="contact3_email" name="contact3_email" value="{{ client.contact3_email }}">
@@ -380,6 +404,7 @@
                     <option value="">-- Select --</option>
                     <option value="email" {% if client.contact3_preferred == 'email' %}selected{% endif %}>Email</option>
                     <option value="phone" {% if client.contact3_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                    <option value="text" {% if client.contact3_preferred == 'text' %}selected{% endif %}>Text</option>
                 </select>
             </div>
         </div>
@@ -396,7 +421,10 @@
                 <label for="contact3_name">Name</label>
                 <input type="text" id="contact3_name" name="contact3_name">
             </div>
-
+            <div class="form-group">
+                <label for="contact1_name">Last Name</label>
+                <input type="text" name="contact3_last_name" >
+            </div>
             <div class="form-group">
                 <label for="contact3_email">Email</label>
                 <input type="email" id="contact3_email" name="contact3_email">
@@ -413,6 +441,7 @@
                     <option value="">-- Select --</option>
                     <option value="email">Email</option>
                     <option value="phone">Phone</option>
+                    <option value="text">Text</option>
                 </select>
             </div>
         </div>

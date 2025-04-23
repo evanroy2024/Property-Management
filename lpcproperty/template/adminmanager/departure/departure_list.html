@@ -398,7 +398,7 @@
                 )">
                     Contact Client
                 </a>
-                <a class="btn btn-view" href="{% url 'adminmanager:prearrival_request_detail' r.id %}">
+                <a class="btn btn-view" href="{% url 'adminmanager:departure_request_detail' r.id %}">
                     View Details
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"></path>
@@ -441,89 +441,104 @@
     };
 </script>
         <!-- Modal for displaying client details -->
-<div id="contactModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeContactDetails()"> <b style="color: black;">Contact Details</b> <b style="color: white;">--------------------</b>  &times;</span>
-        <div id="clientDetails"></div>
-    </div>
-</div>
-
-    <style>
-        /* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    color: black;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 8px;
-}
-
-.close {
-    color: #ff0000;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: rgb(255, 0, 0);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Button Styling */
-.btn-contact {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.btn-contact svg {
-    margin-left: 10px;
-    fill: white;
-}
-
-/* Client Details Display */
-#clientDetails p {
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-    </style>
-   <script>
-    function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
-        const clientDetails = `
-            <p><strong>Full Name:</strong> ${firstName} ${lastName}</p>
-            <p><strong>📧 Email:</strong> ${email}</p>
-            <p><strong>📞 Phone Number:</strong> ${phoneNumber}</p>
-            <hr>
-            <p><strong>🔁 Additional Email:</strong> ${contact1Email}</p>
-            <p><strong>🔁 Additional Phone:</strong> ${contact1Phone}</p>
-        `;
-        document.getElementById('clientDetails').innerHTML = clientDetails;
-        document.getElementById('contactModal').style.display = "block";
+        <div id="contactModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeContactDetails()">
+                    <b style="color: black;">Contact Details</b>
+                    <b style="color: white;">--------------------</b> &times;
+                </span>
+                <div id="clientDetails"></div>
+            </div>
+        </div>
+        
+        <style>
+            /* Modal Styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                color: black;
+            }
+        
+            .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%;
+                max-width: 500px;
+                border-radius: 8px;
+            }
+        
+            .close {
+                color: #ff0000;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+        
+            .close:hover,
+            .close:focus {
+                color: rgb(255, 0, 0);
+                text-decoration: none;
+                cursor: pointer;
+            }
+        
+            /* Button Styling */
+            .btn-contact {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: rgb(255, 255, 255);
+                text-decoration: none;
+                border-radius: 5px;
+                display: inline-block;
+                margin: 5px 5px 10px 0;
+            }
+        
+            .btn-contact svg {
+                margin-left: 10px;
+                fill: white;
+            }
+        
+            /* Client Details Display */
+            #clientDetails p {
+                margin: 10px 0;
+                font-size: 16px;
+            }
+            .requests-card {
+        min-height: 600px;
     }
-    
-    function closeContactDetails() {
-        document.getElementById('contactModal').style.display = "none";
-    }
-    </script>
+        </style>
+        
+        <script>
+            function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
+                const clientDetails = `
+                    <p><strong>Full Name:</strong> ${firstName} ${lastName}</p>
+                    <p><strong>📧 Email:</strong> ${email}</p>
+                    <p><strong>📞 Phone Number:</strong> ${phoneNumber}</p>
+                    <a href="tel:${phoneNumber}" class="btn-contact">📞 Call</a>
+                    <a href="sms:${phoneNumber}" class="btn-contact">💬 Text</a>
+                    <a href="mailto:${email}" class="btn-contact">📧 Email</a>
+                    <hr>
+                    <p><strong>🔁 Additional Email:</strong> ${contact1Email}</p>
+                    <p><strong>🔁 Additional Phone:</strong> ${contact1Phone}</p>
+                    <a href="tel:${contact1Phone}" class="btn-contact">📞 Call</a>
+                    <a href="sms:${contact1Phone}" class="btn-contact">💬 Text</a>
+                    <a href="mailto:${contact1Email}" class="btn-contact">📧 Email</a>
+                `;
+                document.getElementById('clientDetails').innerHTML = clientDetails;
+                document.getElementById('contactModal').style.display = "block";
+            }
+        
+            function closeContactDetails() {
+                document.getElementById('contactModal').style.display = "none";
+            }
+        </script>
+        
     </div>
 </div>
 

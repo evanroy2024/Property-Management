@@ -204,21 +204,20 @@
                             <div class="detail-label">Description</div>
                             <div class="detail-value description-text">{{ request_obj.description }}</div>
                         </div>
-                        
-                        <tr><th>Vendor</th>
-                            <td>
-                                {% if request_obj.vendor %}
-                                    {{ request_obj.vendor.company_name }}
-                                {% else %}
-                                    Not Assigned
-                                {% endif %}
-                            </td>
-                        </tr>
-                        
-                        <tr><th>Created At</th><td>{{ request_obj.created_at }}</td></tr>
 
-                        
-                        
+                        <div class="detail-row">
+                            <div class="detail-label">Floor / Room Name :</div>
+                            <div class="detail-value description-text">{{ request_obj.floor_plan_name }}</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Vendor :</div>
+                            <div class="detail-value description-text"> {% if request_obj.vendor %}
+                                {{ request_obj.vendor.company_name }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}</div>
+                        </div>
                         
                         <div class="divider"></div>
                         

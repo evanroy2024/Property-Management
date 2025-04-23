@@ -378,6 +378,7 @@
  
  
 
+    <p>WELCOME {{ client.first_name }} {{ client.last_name }}</p>
       
     
     <form id="multi-step-form" method="POST">
@@ -395,9 +396,10 @@
 
     <!-- Your Name -->
     <div class="form-group">
-      <label class="form-label">Your Name</label>
-      <input type="text" name="name" class="form-control" placeholder="Enter Your Name" required>
-    </div>
+      <input type="text" name="name" class="form-control" 
+             value="{{ client.first_name }} {{ client.last_name }}" required hidden>
+  </div>
+
 
     <!-- Arrival Date & Time -->
     <div class="form-group">
@@ -528,9 +530,9 @@
   </div>
    
   <!-- Single Step Submit -->
-  <div class="btn-container" style="margin-top: 15px;">
-    <div></div>
-    <button type="submit" class="btn btn-primary">Submit All</button>
+  <div class="btn-container">
+    <a href="{% url 'mainapp:dashboard' %}" class="btn btn-secondary back-btn">Back</a>
+    <button type="submit" class="btn btn-primary submit-btn">Submit</button>
   </div>
 </div>
 

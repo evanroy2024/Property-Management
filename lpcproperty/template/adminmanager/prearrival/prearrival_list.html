@@ -452,88 +452,102 @@
 <!-- Modal for displaying client details -->
 <div id="contactModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeContactDetails()"> <b style="color: black;">Contact Details</b> <b style="color: white;">--------------------</b>  &times;</span>
+        <span class="close" onclick="closeContactDetails()">
+            <b style="color: black;">Contact Details</b>
+            <b style="color: white;">--------------------</b> &times;
+        </span>
         <div id="clientDetails"></div>
     </div>
 </div>
 
-    <style>
-        /* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    color: black;
-}
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        color: black;
+    }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 8px;
-}
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
 
-.close {
-    color: #ff0000;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+    .close {
+        color: #ff0000;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-.close:hover,
-.close:focus {
-    color: rgb(255, 0, 0);
-    text-decoration: none;
-    cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+        color: rgb(255, 0, 0);
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-/* Button Styling */
-.btn-contact {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-    border-radius: 5px;
-}
+    /* Button Styling */
+    .btn-contact {
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: rgb(255, 255, 255);
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        margin: 5px 5px 10px 0;
+    }
 
-.btn-contact svg {
-    margin-left: 10px;
-    fill: white;
-}
+    .btn-contact svg {
+        margin-left: 10px;
+        fill: white;
+    }
 
-/* Client Details Display */
-#clientDetails p {
-    margin: 10px 0;
-    font-size: 16px;
-}
+    /* Client Details Display */
+    #clientDetails p {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+    .requests-card {
+        min-height: 600px;
+    }
+</style>
 
-    </style>
-   <script>
+<script>
     function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
         const clientDetails = `
             <p><strong>Full Name:</strong> ${firstName} ${lastName}</p>
             <p><strong>📧 Email:</strong> ${email}</p>
             <p><strong>📞 Phone Number:</strong> ${phoneNumber}</p>
+            <a href="tel:${phoneNumber}" class="btn-contact">📞 Call</a>
+            <a href="sms:${phoneNumber}" class="btn-contact">💬 Text</a>
+            <a href="mailto:${email}" class="btn-contact">📧 Email</a>
             <hr>
             <p><strong>🔁 Additional Email:</strong> ${contact1Email}</p>
             <p><strong>🔁 Additional Phone:</strong> ${contact1Phone}</p>
+            <a href="tel:${contact1Phone}" class="btn-contact">📞 Call</a>
+            <a href="sms:${contact1Phone}" class="btn-contact">💬 Text</a>
+            <a href="mailto:${contact1Email}" class="btn-contact">📧 Email</a>
         `;
         document.getElementById('clientDetails').innerHTML = clientDetails;
         document.getElementById('contactModal').style.display = "block";
     }
-    
+
     function closeContactDetails() {
         document.getElementById('contactModal').style.display = "none";
     }
-    </script>
-    
+</script>
+
     </div>
 </div>
 {% endblock %}

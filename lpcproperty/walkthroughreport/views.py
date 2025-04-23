@@ -39,14 +39,6 @@ CATEGORY_LABELS = {
     "GUEST_HOUSE_BATHROOM": "Guest House - Bathroom",
 }
 
-def my_reports_view(request):
-    client_id = request.session.get('client_id')
-    if not client_id:
-        return redirect('client_login')  # optional: in case someone accesses directly
-
-    reports = WalkthroughReport.objects.filter(user_id=client_id)
-    return render(request, 'walkthrough/my_reports.html', {'reports': reports})
-
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import WalkthroughReport
@@ -278,22 +270,41 @@ def export_csv(request, report_id):
 # Creating Reports 
 from django.shortcuts import render, get_object_or_404
 
-def all_reports_view(request):
-    reports = WalkthroughReport.objects.all()
-    return render(request, 'walkthrough/all_reports.html', {'reports': reports})
 
 def report_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
     return render(request, 'walkthrough/report_detail.html', {'report': report})
+def all_reports_view(request):
+    client_id = request.session.get('client_id')
+    if not client_id:
+        return redirect('client_login')
+    reports = WalkthroughReport.objects.filter(user_id=client_id)
+    return render(request, 'walkthrough/all_reports.html', {'reports': reports})
+
+def my_reports_view(request):
+    client_id = request.session.get('client_id')
+    if not client_id:
+        return redirect('client_login')
+    reports = WalkthroughReport.objects.filter(user_id=client_id)
+    return render(request, 'walkthrough/my_reports.html', {'reports': reports})
 
 def completed_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Completed')
+    client_id = request.session.get('client_id')
+    if not client_id:
+        return redirect('client_login')
+    reports = WalkthroughReport.objects.filter(user_id=client_id, status='Completed')
     return render(request, 'walkthrough/completed_reports.html', {'reports': reports})
 
 def denied_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Denied')
+    client_id = request.session.get('client_id')
+    if not client_id:
+        return redirect('client_login')
+    reports = WalkthroughReport.objects.filter(user_id=client_id, status='Denied')
     return render(request, 'walkthrough/denied_reports.html', {'reports': reports})
 
 def open_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Open')
+    client_id = request.session.get('client_id')
+    if not client_id:
+        return redirect('client_login')
+    reports = WalkthroughReport.objects.filter(user_id=client_id, status='Open')
     return render(request, 'walkthrough/open_reports.html', {'reports': reports})

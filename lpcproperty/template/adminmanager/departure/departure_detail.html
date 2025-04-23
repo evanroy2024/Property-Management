@@ -47,9 +47,11 @@
                 <h3 class="mb-0" style="color: #2c3e50;">{{ request_detail.departure_date }} <span style="color: #dca54c;">•</span> {{ request_detail.departure_time }}</h3>
               </div>
               <div>
-                <button class="btn text-white px-4" style="background-color: #2c3e50; border-radius: 30px;">
-                  Add to Calendar
-                </button>
+                
+                <button class="btn text-white px-4" style="background-color: #2c3e50; border-radius: 30px;"
+              onclick="window.open('https://calendar.google.com/calendar/r/eventedit?text=Departure+Request&dates={{ request_detail.departure_date|date:'Ymd' }}T{{ request_detail.departure_time|date:'His' }}Z/{{ request_detail.departure_date|date:'Ymd' }}T{{ request_detail.departure_time|date:'His' }}Z&details=Reminder+for+Departure+Request&location=Online', '_blank')">
+        Add to Calendar
+      </button>
               </div>
             </div>
           </div>
@@ -169,13 +171,24 @@
             </svg>
             Print
           </button>
-          <button class="btn px-4 py-2" style="border-radius: 30px; background-color: #dca54c; color: white;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-              <path d="m10.97 4.97-.708.707L7.5 8.51 6.738 7.76l-.708.708 1.48 1.48 2.75-2.98.708-.707z"/>
-            </svg>
-            Complete Checkout
-          </button>
+          <form method="post" style="display: inline;" onsubmit="return showCheckoutAlert()">
+            {% csrf_token %}
+            <button type="submit" name="complete" class="btn px-4 py-2" style="border-radius: 30px; background-color: #dca54c; color: white;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="m10.97 4.97-.708.707L7.5 8.51 6.738 7.76l-.708.708 1.48 1.48 2.75-2.98.708-.707z"/>
+              </svg>
+              Complete Checkout
+            </button>
+          </form>
+          
+          <script>
+            function showCheckoutAlert() {
+              alert("✅ Checkout marked as completed!");
+              return true;
+            }
+          </script>
+          
         </div>
       </div>
     </div>

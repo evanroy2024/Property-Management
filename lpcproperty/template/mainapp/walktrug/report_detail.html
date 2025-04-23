@@ -1,0 +1,1454 @@
+{% extends 'outbase.html' %}
+
+{% load static %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; gap: 20px; margin: 20px;">
+    <a href="{% url 'mainapp:all_reports' %}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">All Reports</a>
+    <a href="{% url 'mainapp:completed_reports' %}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;">Completed Reports</a>
+    <a href="{% url 'mainapp:denied_reports' %}" style="padding: 10px 20px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px;">Denied Reports</a>
+</div>
+
+<!-- Extra  -->
+
+
+        <div class="container report-container" id="report-{{ report.id }}">
+            <div class="report-header">
+                <h1 class="report-title"> Report Name : {% if report.name %}{{ report.name }}{% else %}Inspection Report{% endif %}</h1>
+                {% if report.description %}
+                    <p class="report-description">{{ report.description }}</p>
+                    <p class="report-description">Publist Date : {{ report.datetime }}</p>
+
+                {% endif %}
+            </div>
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>1. General Items - Exterior</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.gie1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Visual Inspection: Exterior of House<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Note any damage or any other concerning items)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.gie1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if report.gie2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Drives / Walkways<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                No damage, stains, etc
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if report.gie3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Generator: Reading Operational<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Visual inspection all appears to be functioning; no alarms, red lights, etc
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if report.gie4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Irrigation: Zones & Heads Tested<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Run test of each zone
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Propane Tank Meter Read<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Record propane level
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie6 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #1<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                isual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie6_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie7 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #2<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                isual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie7_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie8 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #3<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Visual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie8_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie9 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #4<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Visual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie9 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie9 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie9 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie9 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie9_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie10 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #5<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Visual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie10 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie10 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie10 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie10 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie10_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie11 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Mail / Newspapers / Notifications<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Bring all mail, newspapers, flyers, and notifications inside the house
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie11 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie11 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie11 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie11 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie11_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie12 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Outdoor Furniture<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Reset as required; All in acceptable condition
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie12 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie12 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie12 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie12 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie12_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie13 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Roof Eaves, Fascias, Gutters<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                All in proper condition
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie13 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie13 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie13 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie13 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie13_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie14 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Exterior Lights (Sconces, Flood)<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                All bulbs working and non burnt out
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie14 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie14 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie14 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie14 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie14_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gie15 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Mailbox<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                No damage
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gie15 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie15 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie15 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gie15 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gie15_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                </tbody>
+                
+
+                
+                
+            </table>
+
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>2. General Items - Interior</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.gii1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Visual Inspection: Interior of House<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Note any damage or any other concerning items)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.gii1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if report.gii2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Exterior Doors Codes<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Batteries require replacement
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if report.gii3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Exterior Doors & Hardware<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Check all doors are locked and glass is secure and hardware is functioning properly
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if report.gii4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Exterior Windows & Hardware<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Check all windows are locked and glass is secure and hardware is functioning properly
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gii5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Smoke Detectors<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Check all Smoke Detectors are not "beeping" and battery replacement is not required
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gii6 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #1<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                isual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii6_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gii7 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #2<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                isual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii7_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gii8 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #3<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Visual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii8_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if report.gii9 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            A/C Air Handling Unit #4<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                Visual inspection of condensing unit; All connections acceptable?
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.gii9 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii9 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii9 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.gii9 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.gii9_remarks }}</td>
+                    </tr>
+                    {% endif %}
+
+                    <!-- Garage -->
+                     
+                </tbody>
+                
+
+                
+                
+            </table>
+
+            <!-- For garage  -->
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>Garage</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.garage1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Refrigerator: Make sure the fridge is running and cool inside<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check temperature and running condition)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.garage1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.garage1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.garage2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Freezer: Make sure freezer is cold and not frozen solid<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check temperature and frost buildup)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.garage2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.garage2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.garage3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Wine Refrigerator: Holding proper temperature<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check temperature stability)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.garage3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.garage3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.garage4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Cabinets / Tops: Visual Check of cabinets, countertops<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check for damage or wear)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.garage4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.garage4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.garage5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot and cold water; Check underneath for signs of leaks<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check plumbing and functionality)
+                            </small>
+                        </td>                        
+                        <td class="option-cell">{% if report.garage5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.garage5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.garage5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    <!-- Repeat for other garage items (garage6, garage7, etc.) in the same format -->
+                    
+                </tbody>
+            </table>
+            
+            <!-- For Laundery  -->
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>2. General Items - Laundry</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.laundry1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Washer / Dryer: Any visual concerns<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Note any issues with the washer/dryer)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.laundry1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.laundry1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.laundry2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sink: Faucet leaking, drain acceptable, overall condition<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check for any leaks or issues with the sink)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.laundry2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.laundry2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.laundry3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Cabinets / Tops: Visual Check of cabinets, countertops<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check the condition of cabinets and countertops)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.laundry3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.laundry3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.laundry4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Lights: Any burnt out requiring replacement?<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check if any lights are burnt out and need replacement)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.laundry4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.laundry4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.laundry5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Inspect the floors, walls, and ceilings for any issues)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.laundry5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.laundry5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.laundry6 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Doors: Hardware working properly<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check that the doors' hardware is functioning properly)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.laundry6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.laundry6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.laundry6_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+            <!-- For kitchen      -->
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>3. Kitchen</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.kitchen1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Refrigerator: Make sure the fridge is running and cool inside
+                        </td>
+                        <td class="option-cell">{% if report.kitchen1 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen1 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen1 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen1 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Freezer: Make sure freezer is cold and not frozen solid
+                        </td>
+                        <td class="option-cell">{% if report.kitchen2 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen2 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen2 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen2 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Ice Maker: Ice in bin, working properly
+                        </td>
+                        <td class="option-cell">{% if report.kitchen3 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen3 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen3 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen3 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Wine Refrigerator: Holding proper temperature
+                        </td>
+                        <td class="option-cell">{% if report.kitchen4 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen4 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen4 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen4 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Range: All burners working, oven works
+                        </td>
+                        <td class="option-cell">{% if report.kitchen5 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen5 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen5 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen5 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen6 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Microwave: Working properly
+                        </td>
+                        <td class="option-cell">{% if report.kitchen6 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen6 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen6 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen6 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen6_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen7 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Cabinets / Tops: Visual Check of cabinets, countertops
+                        </td>
+                        <td class="option-cell">{% if report.kitchen7 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen7 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen7 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen7 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen7_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen8 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Dishwasher: Run dishwasher monthly
+                        </td>
+                        <td class="option-cell">{% if report.kitchen8 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen8 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen8 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen8 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen8_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.kitchen9 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot and cold water; Check underneath for signs of leaks
+                        </td>
+                        <td class="option-cell">{% if report.kitchen9 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen9 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen9 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen9 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen9_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <!-- for Bustelers              -->
+            
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>Butler's Pantry</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.butlers1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Refrigerator: Ensure it’s operational and cooling<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Make sure the fridge is running and cool inside)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Freezer: Check for proper temperature and frost buildup<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Ensure the freezer is cold and not frozen solid)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Microwave: Check functionality<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Ensure the microwave heats and functions properly)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Coffee Maker: Ensure it’s working<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Run cycle to confirm functionality)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot/cold water, check for leaks<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Inspect plumbing and water pressure)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers6 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Countertops: Inspect surface and edges<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check for damage, chips, or wear)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers6_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers7 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Cabinets: Check hinges, handles, and interior<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Inspect for wear, damage, or misalignment)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers7_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers8 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Lights: Verify all fixtures and bulbs<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Ensure lights turn on and are not flickering)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers8_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers9 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Electrical Outlets: Test with device<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Ensure outlets are functional and safe)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers9 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers9 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers9 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers9 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers9_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers10 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Trash Bin: Present and clean<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Ensure bin is empty and in good condition)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers10 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers10 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers10 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers10 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers10_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers11 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Floors: Check for damage or wear<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Inspect flooring for stains, cracks, or dirt)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers11 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers11 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers11 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers11 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers11_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.butlers12 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Overall Cleanliness: Area should be tidy<br>
+                            <small style="display:block; margin-top: 4px; color: #666;">
+                                (Check for dust, dirt, and clutter)
+                            </small>
+                        </td>
+                        <td class="option-cell">{% if report.butlers12 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers12 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers12 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.butlers12 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.butlers12_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+            <!-- Break fast  -->
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>Breakfast Area</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.breakfast1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Lights: Any burnt out requiring replacement?
+                        </td>
+                        <td class="option-cell">{% if report.breakfast1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.breakfast1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.breakfast2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+                        </td>
+                        <td class="option-cell">{% if report.breakfast2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.breakfast2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.breakfast3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Doors: Hardware working properly
+                        </td>
+                        <td class="option-cell">{% if report.breakfast3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.breakfast3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.breakfast4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Cabinets / Tops: Visual Check of cabinets, countertops
+                        </td>
+                        <td class="option-cell">{% if report.breakfast4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.breakfast4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.breakfast5 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Furniture: Note any damage
+                        </td>
+                        <td class="option-cell">{% if report.breakfast5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.breakfast5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.breakfast5_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+
+            <!-- Entry  -->
+            <table class="questionnaire-table">
+                <thead>
+                    <tr>
+                        <th>Entry / Foyer</th>
+                        <th>N/A</th>
+                        <th>Compliant</th>
+                        <th>Heads-Up</th>
+                        <th>Non-Compliant</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if report.entry1 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Lights: Any burnt out requiring replacement?
+                        </td>
+                        <td class="option-cell">{% if report.entry1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.entry1_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.entry2 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+                        </td>
+                        <td class="option-cell">{% if report.entry2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.entry2_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.entry3 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Doors: Hardware working properly
+                        </td>
+                        <td class="option-cell">{% if report.entry3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.entry3_remarks }}</td>
+                    </tr>
+                    {% endif %}
+            
+                    {% if report.entry4 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Furniture: Note any damage
+                        </td>
+                        <td class="option-cell">{% if report.entry4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="option-cell">{% if report.entry4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+                        <td class="remarks-cell">{{ report.entry4_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+            <!-- <a href="{% url 'walkthroughreport:export_pdf' report.id %}" class="btn btn-primary" target="_blank">
+                Download PDF
+            </a>
+             -->
+            <div class="report-footer">
+                <div class="report-meta">
+                    <p>Generated on {% now "F d, Y" %}</p>
+                    <p>Report ID: {{ report.id }}</p>
+                </div>
+               
+                <!-- Enhanced Download Buttons -->
+                <div class="download-buttons">
+                    <!-- <button onclick="generatePDF('report-{{ report.id }}')" class="btn btn-danger download-btn">
+                        <i class="fa fa-file-pdf-o"></i> Download PDF
+                    </button> -->
+                    <a href="{% url 'mainapp:export_pdf' report.id %}" class="btn btn-success">
+                        <i class="fa fa-file-excel-o"></i> Download PDF
+                    </a>
+                    <a href="{% url 'mainapp:export_csv' report.id %}" class="btn btn-primary">
+                        <i class="fa fa-file-text-o"></i> Download CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Add html2pdf.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function generatePDF(elementId) {
+    // Get the element to convert to PDF
+    const element = document.getElementById(elementId);
+    
+    // Clone the element to avoid modifying the original
+    const clonedElement = element.cloneNode(true);
+    
+    // Create a temporary container to hold the cloned element
+    const tempContainer = document.createElement('div');
+    tempContainer.appendChild(clonedElement);
+    document.body.appendChild(tempContainer);
+    
+    // Remove the download buttons from the cloned element for the PDF
+    const downloadButtons = clonedElement.querySelector('.download-buttons');
+    if (downloadButtons) {
+        downloadButtons.style.display = 'none';
+    }
+    
+    // Set options for html2pdf
+    const options = {
+        margin: 10,
+        filename: 'inspection-report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    // Generate PDF
+    html2pdf().from(clonedElement).set(options).save().then(() => {
+        // Clean up the temporary container
+        document.body.removeChild(tempContainer);
+    });
+}
+</script>
+
+<style>
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --accent-color: #e74c3c;
+    --bg-color: #f9f9f9;
+    --text-color: #333;
+    --border-color: #ddd;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 30px;
+}
+
+.report-header {
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 20px;
+}
+
+.report-title {
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.report-description {
+    font-size: 16px;
+    color: #666;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.questionnaire-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 2px solid var(--primary-color);
+}
+
+.questionnaire-table th, 
+.questionnaire-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.questionnaire-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.questionnaire-table tr:nth-child(even) {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+.questionnaire-table tr:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.question-cell {
+    text-align: left;
+    font-weight: 500;
+    width: 40%;
+}
+
+.option-cell {
+    width: 10%;
+}
+
+.remarks-cell {
+    width: 20%;
+    text-align: left;
+}
+
+.checkmark {
+    color: #2ecc71;
+    font-size: 24px;
+}
+
+.report-footer {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+.report-meta {
+    color: #777;
+    font-style: italic;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.download-buttons a,
+.download-buttons button {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-success {
+    background-color: #2ecc71;
+}
+
+.btn-success:hover {
+    background-color: #27ae60;
+}
+
+.btn-primary {
+    background-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.download-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.download-btn:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.download-btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 1;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+@media print {
+    body {
+        background-color: white;
+    }
+    
+    .container {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .download-buttons {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 15px;
+    }
+    
+    .questionnaire-table th, 
+    .questionnaire-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+    
+    .report-title {
+        font-size: 24px;
+    }
+    
+    .report-footer {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .download-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+</style>
+
+{% endblock content %}
