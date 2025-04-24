@@ -269,42 +269,26 @@ def export_csv(request, report_id):
     return response
 # Creating Reports 
 from django.shortcuts import render, get_object_or_404
-
-
 def report_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
     return render(request, 'walkthrough/report_detail.html', {'report': report})
+
 def all_reports_view(request):
-    client_id = request.session.get('client_id')
-    if not client_id:
-        return redirect('client_login')
-    reports = WalkthroughReport.objects.filter(user_id=client_id)
+    reports = WalkthroughReport.objects.all()
     return render(request, 'walkthrough/all_reports.html', {'reports': reports})
 
 def my_reports_view(request):
-    client_id = request.session.get('client_id')
-    if not client_id:
-        return redirect('client_login')
-    reports = WalkthroughReport.objects.filter(user_id=client_id)
+    reports = WalkthroughReport.objects.all()
     return render(request, 'walkthrough/my_reports.html', {'reports': reports})
 
 def completed_reports_view(request):
-    client_id = request.session.get('client_id')
-    if not client_id:
-        return redirect('client_login')
-    reports = WalkthroughReport.objects.filter(user_id=client_id, status='Completed')
+    reports = WalkthroughReport.objects.filter(status='Completed')
     return render(request, 'walkthrough/completed_reports.html', {'reports': reports})
 
 def denied_reports_view(request):
-    client_id = request.session.get('client_id')
-    if not client_id:
-        return redirect('client_login')
-    reports = WalkthroughReport.objects.filter(user_id=client_id, status='Denied')
+    reports = WalkthroughReport.objects.filter(status='Denied')
     return render(request, 'walkthrough/denied_reports.html', {'reports': reports})
 
 def open_reports_view(request):
-    client_id = request.session.get('client_id')
-    if not client_id:
-        return redirect('client_login')
-    reports = WalkthroughReport.objects.filter(user_id=client_id, status='Open')
+    reports = WalkthroughReport.objects.filter(status='Open')
     return render(request, 'walkthrough/open_reports.html', {'reports': reports})
