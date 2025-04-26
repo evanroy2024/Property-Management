@@ -53,6 +53,24 @@ class Client(models.Model):
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
 
+    # Contact Person 3
+    contact4_name = models.CharField(max_length=150, blank=True, null=True)
+    contact4_last_name = models.CharField(max_length=150, blank=True, null=True)
+    contact4_email = models.EmailField(blank=True, null=True)
+    contact4_phone = models.CharField(max_length=15, blank=True, null=True)
+    contact4_preferred = models.CharField(
+        max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
+    )
+
+    # Contact Person 3
+    contact5_name = models.CharField(max_length=150, blank=True, null=True)
+    contact5_last_name = models.CharField(max_length=150, blank=True, null=True)
+    contact5_email = models.EmailField(blank=True, null=True)
+    contact5_phone = models.CharField(max_length=15, blank=True, null=True)
+    contact5_preferred = models.CharField(
+        max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def set_password(self, raw_password):
@@ -79,7 +97,7 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)  # Store hashed passwords
-    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
+    phone_number = models.CharField(max_length=15,blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     zipcode = models.CharField(max_length=10, blank=True, null=True)

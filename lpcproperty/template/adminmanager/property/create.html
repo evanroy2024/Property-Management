@@ -505,38 +505,40 @@
                     </div>
                 </div>
             </div>
-            
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
-                
+            
                 <div id="floors-container">
                     <div class="floor-section" id="floor-section-1">
                         <h2>Floor 1</h2>
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="floor_name_1">Floor Name</label>
-                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor">
+                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor" required>
                             </div>
                         </div>
-                        
+            <div class="form-row">
+        <div class="form-group">
+            <label class="form-label" for="floor_image_1">Floor Image</label>
+            <input class="form-control" type="file" id="floor_image_1" name="floor_image_1" accept="image/*">
+        </div>
+    </div>
                         <div class="rooms-container" id="rooms-container-1">
-                            <input class="form-control" type="file" name="room_image_1_1" accept="image/*">
-
                             <h3>Rooms for Floor 1</h3>
                             <div class="room-group" id="room-group-1-1">
-                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name">
-                                <input class="form-control" type="text" name="room_size_1_1" placeholder="Room Size">
+                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name" required>
+                                <input class="form-control" type="text" name="room_size_1_1" placeholder="Room Size" required>
                             </div>
                         </div>
-                        
+            
                         <button type="button" onclick="addRoom(1)">Add Room</button>
-
                     </div>
                 </div>
-                
+            
                 <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
-                
+            
             </div>
+            
             <script>
                 let floorCount = 1;
             
@@ -545,7 +547,7 @@
                     const floorSection = document.createElement("div");
                     floorSection.className = "floor-section";
                     floorSection.id = `floor-section-${floorCount}`;
-                    
+            
                     floorSection.innerHTML = `
                         <h2>Floor ${floorCount}</h2>
                         <div class="form-row">
@@ -559,12 +561,11 @@
                             <div class="room-group" id="room-group-${floorCount}-1">
                                 <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
                                 <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
-                                <input class="form-control" type="file" name="room_image_${floorCount}_1" accept="image/*" >
                             </div>
                         </div>
                         <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
                     `;
-                    
+            
                     document.getElementById("floors-container").appendChild(floorSection);
                 }
             
@@ -573,16 +574,16 @@
                     const roomGroup = document.createElement("div");
                     roomGroup.className = "room-group";
                     roomGroup.id = `room-group-${floorId}-${roomCount}`;
-                    
+            
                     roomGroup.innerHTML = `
                         <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
                         <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
-                        <input class="form-control" type="file" name="room_image_${floorId}_${roomCount}" accept="image/*" style="display: none;">
                     `;
-                    
+            
                     document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
                 }
             </script>
+            
             
             <style>
 

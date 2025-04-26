@@ -292,6 +292,7 @@ from django.shortcuts import render, redirect
 from propertydetails.models import PropertyManagement, Floor, Room
 from mainapp.models import Client 
 from django.db import transaction
+from django.core.exceptions import ValidationError
 
 def property_create_view(request):
     clients = Client.objects.all()
@@ -356,29 +357,29 @@ def property_create_view(request):
                     floor_name = request.POST.get(f'floor_name_{i}')
                     if not floor_name:
                         continue
-                    floor = Floor.objects.create(property=prop, floor_name=floor_name)
+                    
+                    # Handle floor image
+                    floor_image = request.FILES.get(f'floor_image_{i}')
 
+                    # Create floor with image handling
+                    floor = Floor.objects.create(
+                        property=prop,
+                        floor_name=floor_name,
+                        floor_imgae=floor_image,  # Adding floor image
+                    )
+
+                    # Now handle rooms under this floor
                     room_count = len([k for k in request.POST if k.startswith(f'room_name_{i}_')])
-                    
-                    # Check if there is an image for the first room
-                    first_room_image = request.FILES.get(f'room_image_{i}_1')
-                    
+
                     for j in range(1, room_count + 1):
                         room_name = request.POST.get(f'room_name_{i}_{j}')
                         room_size = request.POST.get(f'room_size_{i}_{j}')
-                        
-                        # If the first room has an image, use it for all rooms on the same floor
-                        if first_room_image:
-                            room_image = first_room_image
-                        else:
-                            room_image = request.FILES.get(f'room_image_{i}_{j}')
-                        
+
                         if room_name:
                             Room.objects.create(
                                 floor=floor,
                                 room_name=room_name,
-                                room_size=room_size,
-                                room_image=room_image
+                                room_size=room_size
                             )
 
                 return redirect('adminmanager:property_list')
@@ -435,19 +436,17 @@ def property_update_view(request, pk):
             client.phone_number = request.POST.get('client_phone_number', '')
             client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
 
-            # Contact Person 1
+            # Update contact persons info (if necessary)
             client.contact1_name = request.POST.get('contact1_name', '')
             client.contact1_email = request.POST.get('contact1_email', '')
             client.contact1_phone = request.POST.get('contact1_phone', '')
             client.contact1_preferred = request.POST.get('contact1_preferred', '')
 
-            # Contact Person 2
             client.contact2_name = request.POST.get('contact2_name', '')
             client.contact2_email = request.POST.get('contact2_email', '')
             client.contact2_phone = request.POST.get('contact2_phone', '')
             client.contact2_preferred = request.POST.get('contact2_preferred', '')
 
-            # Contact Person 3
             client.contact3_name = request.POST.get('contact3_name', '')
             client.contact3_email = request.POST.get('contact3_email', '')
             client.contact3_phone = request.POST.get('contact3_phone', '')
@@ -455,7 +454,7 @@ def property_update_view(request, pk):
 
             client.save()
 
-            # Update floors and rooms
+            # Update floors and rooms (including floor image)
             existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
             i = 1
             while True:
@@ -464,39 +463,39 @@ def property_update_view(request, pk):
                     break
 
                 floor_name = request.POST.get(floor_key)
+                floor_image = request.FILES.get(f'floor_image_{i}')  # New image input for each floor
+
                 floor = existing_floors.get(floor_key)
                 if floor:
                     floor.floor_name = floor_name
+                    if floor_image:  # If an image is provided, update it
+                        floor.floor_imgae = floor_image
                     floor.save()
                 else:
-                    floor = Floor.objects.create(property=prop, floor_name=floor_name)
+                    floor = Floor.objects.create(property=prop, floor_name=floor_name, floor_imgae=floor_image)
 
+                # Handle room updates
                 j = 1
                 while True:
                     room_name_key = f'room_name_{i}_{j}'
                     room_size_key = f'room_size_{i}_{j}'
-                    room_image_key = f'room_image_{i}_{j}'
 
                     if room_name_key not in request.POST:
                         break
 
                     room_name = request.POST.get(room_name_key)
                     room_size = request.POST.get(room_size_key)
-                    room_image = request.FILES.get(room_image_key)
 
                     if j <= floor.rooms.count():
                         room = floor.rooms.all()[j - 1]
                         room.room_name = room_name
                         room.room_size = room_size
-                        if room_image:
-                            room.room_image = room_image
                         room.save()
                     else:
                         Room.objects.create(
                             floor=floor,
                             room_name=room_name,
-                            room_size=room_size,
-                            room_image=room_image
+                            room_size=room_size
                         )
                     j += 1
                 i += 1
@@ -1132,7 +1131,7 @@ def clientmanager_create_view(request):
         cm.set_password(data.get('password'))
         cm.save()
         messages.success(request, "Client Manager created successfully.")
-        return redirect('dminmanager:list')
+        return redirect('adminmanager:list')
     return render(request, 'adminmanager/clientmanager/clientmanager_form.html', {
         'action': 'Create',
         'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,
@@ -1171,3 +1170,30 @@ def clientmanager_delete_view(request, pk):
         messages.success(request, "Client Manager deleted successfully.")
         return redirect('adminmanager:list')
     return render(request, 'adminmanager/clientmanager/clientmanager_confirm_delete.html', {'clientmanager': cm})
+
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt  # Optional if you already use {% csrf_token %}
+def send_email_view(request):
+    if request.method == 'POST':
+        to_email = request.POST.get('to_email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        try:
+            send_mail(
+                subject,
+                message,
+                'noreplys2000@gmail.com',  # From Email
+                [to_email],  # To Email
+                fail_silently=False,
+            )
+            # Stay on the same page and show success message
+            return render(request, 'adminmanager/success/success_mail.html', {'status': 'success', 'message': 'Email sent successfully!'})
+        except Exception as e:
+            # Stay on the same page and show error message
+            return render(request, 'adminmanager/success/success_mail.html', {'status': 'success', 'message': 'Email sent successfully!'})

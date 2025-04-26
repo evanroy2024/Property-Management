@@ -223,7 +223,6 @@
 
     <div class="property-container">
         <p class="section-title">Floor Plans Overview</p>
-        
         {% for property in properties %}
         <div class="property-card">
             <h3 class="property-address">{{ property.address }}</h3>
@@ -232,14 +231,26 @@
                 {% for floor in property.floors.all %}
                 <div class="floor-card">
                     <h4 class="floor-title">{{ floor.floor_name }}</h4>
+                    
+                    <!-- Display Floor Image -->
                     <div class="image-gallery">
+                        {% if floor.floor_imgae %}
+                        <div class="image-item">
+                            <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="gallery-img">
+                            <p class="image-caption">{{ floor.floor_name }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Display Room Names and Sizes -->
+                    <div class="rooms-info">
                         {% for room in floor.rooms.all %}
-                            {% if room.room_image %}
-                            <div class="image-item">
-                                <img src="{{ room.room_image.url }}" alt="{{ room.room_name }}" class="gallery-img">
-                                <p class="image-caption">{{ room.room_name }} ({{ room.room_size }})</p>
+                        <div class="room-item">
+                            <div class="room-name-size">
+                                <p class="room-name">{{ room.room_name }}</p>
+                                <p class="room-size">{{ room.room_size }} sq. ft.</p>
                             </div>
-                            {% endif %}
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -248,9 +259,10 @@
                 <p class="no-floors-msg">No floor plans available for this property.</p>
             {% endif %}
         </div>
-        {% empty %}
+    {% empty %}
         <p>No properties available.</p>
-        {% endfor %}
+    {% endfor %}
+    
     </div>
 
 
@@ -282,6 +294,112 @@
             {% endif %}
 </div>
 
+<style>
+    .property-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 15px;
+}
+
+.floor-card {
+    border: 1px solid #d6dbe1; /* Soft light gray border for floors */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fafbfc; /* Light background for better contrast */
+}
+
+.floor-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.image-gallery {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.image-item {
+    max-width: 300px;
+    margin: 10px;
+    text-align: center;
+}
+
+.gallery-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.image-caption {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.rooms-info {
+    margin-top: 20px;
+}
+
+.room-item {
+    margin-bottom: 10px;
+}
+
+.room-name-size {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #d0d7de; /* Soft light border around rooms */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.room-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.room-size {
+    font-size: 1rem;
+    color: #666;
+    background-color: #e0e6f1; /* Soft blueish background for room size */
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #b3c1d1; /* Subtle blue border around size */
+}
+
+.no-floors-msg {
+    color: #999;
+    font-style: italic;
+}
+
+.image-gallery .image-item {
+    border: 1px solid #f1f3f5; /* Soft border around image items */
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.image-gallery .image-item:hover {
+    border-color: #c2cbd6; /* Slightly darker border on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.property-card .no-properties-msg {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+</style>
     <script>
         document.querySelectorAll('.gallery-img').forEach(img => {
             img.addEventListener('click', function () {
@@ -295,4 +413,3 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock content %}
-Conta

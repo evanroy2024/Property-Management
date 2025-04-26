@@ -425,24 +425,68 @@
 
 <!-- JavaScript to filter list -->
 <script>
-    function filterRequests() {
-        const selectedStatus = document.getElementById("status-filter").value.toLowerCase();
-        const requestItems = document.querySelectorAll(".request-item");
-
-        requestItems.forEach(item => {
-            const status = item.getAttribute("data-status");
-            if (selectedStatus === "all" || status === selectedStatus) {
-                item.style.display = "";
-            } else {
-                item.style.display = "none";
-            }
-        });
+    function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
+        const clientDetails = `
+            <p><strong>Full Name:</strong> ${firstName} ${lastName}</p>
+            <p><strong>📧 Email:</strong> ${email}</p>
+            <p><strong>📞 Phone Number:</strong> ${phoneNumber}</p>
+            <a href="tel:${phoneNumber}" class="btn-contact">📞 Call</a>
+            <a href="sms:${phoneNumber}" class="btn-contact">💬 Text</a>
+            <button onclick="openEmailForm('${email}')" class="btn-contact">📧 Email</button>
+            <hr>
+            <p><strong>🔁 Additional Email:</strong> ${contact1Email}</p>
+            <p><strong>🔁 Additional Phone:</strong> ${contact1Phone}</p>
+            <a href="tel:${contact1Phone}" class="btn-contact">📞 Call</a>
+            <a href="sms:${contact1Phone}" class="btn-contact">💬 Text</a>
+            <button onclick="openEmailForm('${contact1Email}')" class="btn-contact">📧 Email</button>
+        `;
+        document.getElementById('clientDetails').innerHTML = clientDetails;
+        document.getElementById('contactModal').style.display = "block";
+        document.querySelector('.modal-content').style.display = "block"; // Make sure modal content is shown initially
     }
 
-    // Run filter on page load to show only pending
-    window.onload = function() {
-        filterRequests();
-    };
+    function closeContactDetails() {
+        document.getElementById('contactModal').style.display = "none";
+    }
+
+    function openEmailForm(email) {
+        // Hide client details
+        document.getElementById('clientDetails').style.display = "none";
+        // Hide the entire modal
+        document.getElementById('contactModal').style.display = "none";
+        // Hide only modal-content
+        const modalContent = document.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.style.display = "none";
+        }
+        // Hide card header
+        const cardHeader = document.querySelector('.card-header');
+        if (cardHeader) {
+            cardHeader.style.display = "none";
+        }
+        // Show email popup
+        document.getElementById('emailPopup').style.display = "block";
+        // Set email value
+        document.getElementById('toEmailInput').value = email;
+    }
+
+    function closeEmailForm() {
+        // Close email form
+        document.getElementById('emailPopup').style.display = "none";
+        // Show card header again
+        const cardHeader = document.querySelector('.card-header');
+        if (cardHeader) {
+            cardHeader.style.display = "block";
+        }
+        // Show modal again
+        document.getElementById('contactModal').style.display = "block";
+        const modalContent = document.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.style.display = "block";
+        }
+        // Show client details again
+        document.getElementById('clientDetails').style.display = "block";
+    }
 </script>
 
         
@@ -522,7 +566,6 @@
         min-height: 600px;
     }
 </style>
-
 <script>
     function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
         const clientDetails = `
@@ -531,13 +574,13 @@
             <p><strong>📞 Phone Number:</strong> ${phoneNumber}</p>
             <a href="tel:${phoneNumber}" class="btn-contact">📞 Call</a>
             <a href="sms:${phoneNumber}" class="btn-contact">💬 Text</a>
-            <a href="mailto:${email}" class="btn-contact">📧 Email</a>
+            <button onclick="openEmailForm('${email}')" class="btn-contact">📧 Email</button>
             <hr>
             <p><strong>🔁 Additional Email:</strong> ${contact1Email}</p>
             <p><strong>🔁 Additional Phone:</strong> ${contact1Phone}</p>
             <a href="tel:${contact1Phone}" class="btn-contact">📞 Call</a>
             <a href="sms:${contact1Phone}" class="btn-contact">💬 Text</a>
-            <a href="mailto:${contact1Email}" class="btn-contact">📧 Email</a>
+            <button onclick="openEmailForm('${contact1Email}')" class="btn-contact">📧 Email</button>
         `;
         document.getElementById('clientDetails').innerHTML = clientDetails;
         document.getElementById('contactModal').style.display = "block";
@@ -546,7 +589,63 @@
     function closeContactDetails() {
         document.getElementById('contactModal').style.display = "none";
     }
+
+    function openEmailForm(email) {
+        // Hide the whole modal
+        const contactModal = document.getElementById('contactModal');
+        if (contactModal) {
+            contactModal.style.display = "none";
+        }
+
+        // Also hide the card header (if you want)
+        const cardHeader = document.querySelector('.card-header');
+        if (cardHeader) {
+            cardHeader.style.display = "none";
+        }
+
+        // Show the email popup form
+        const emailPopup = document.getElementById('emailPopup');
+        if (emailPopup) {
+            emailPopup.style.display = "block";
+        }
+
+        // Set the email input hidden field
+        document.getElementById('toEmailInput').value = email;
+    }
+
+    function closeEmailForm() {
+        // Hide email form
+        document.getElementById('emailPopup').style.display = "none";
+
+        // Bring back the card header
+        const cardHeader = document.querySelector('.card-header');
+        if (cardHeader) {
+            cardHeader.style.display = "block";
+        }
+    }
 </script>
+
+
+<!-- Email Sending Popup -->
+<div id="emailPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 9999; width: 400px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Send Email</h3>
+    <form method="POST" action="{% url 'adminmanager:send_email' %}">
+        {% csrf_token %}
+        <input type="hidden" id="toEmailInput" name="to_email">
+        
+        <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 600;">Subject:</label>
+        <input type="text" name="subject" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; font-size: 14px;">
+        
+        <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 600;">Message:</label>
+        <textarea name="message" rows="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; font-size: 14px; resize: vertical;"></textarea>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeEmailForm()" style="padding: 10px 15px; border: 1px solid #ddd; background-color: #f5f5f5; color: #333; border-radius: 4px; cursor: pointer; font-weight: 500;">Cancel</button>
+            <button type="submit" style="padding: 10px 20px; border: none; background-color: #4A90E2; color: white; border-radius: 4px; cursor: pointer; font-weight: 500;">Send Email</button>
+        </div>
+    </form>
+</div>
+
 
     </div>
 </div>

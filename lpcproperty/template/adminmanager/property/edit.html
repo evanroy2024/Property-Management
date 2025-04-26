@@ -509,33 +509,46 @@
                         {% for floor in floors %}
                         <div class="floor-section" id="floor-section-{{ forloop.counter }}">
                             <h2>Floor {{ forloop.counter }}</h2>
+                            
+                            <!-- Floor Name -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label" for="floor_name_{{ forloop.counter }}">Floor Name</label>
                                     <input class="form-control" type="text" id="floor_name_{{ forloop.counter }}" name="floor_name_{{ forloop.counter }}" value="{{ floor.floor_name }}">
                                 </div>
                             </div>
+
+                            <!-- Floor Image -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="floor_image_{{ forloop.counter }}">Floor Image</label>
+                                    <input class="form-control" type="file" name="floor_image_{{ forloop.counter }}" accept="image/*">
+                                    {% if floor.floor_imgae %}
+                                        <small class="text-success">Current image: {{ floor.floor_imgae.name }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
                             
+                            <!-- Rooms for this Floor -->
                             <div class="rooms-container" id="rooms-container-{{ forloop.counter }}">
                                 <h3>Rooms for Floor {{ forloop.counter }}</h3>
                                 {% for room in floor.rooms.all %}
                                 <div class="room-group" id="room-group-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
                                     <input class="form-control" type="text" name="room_name_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_name }}" placeholder="Room Name">
                                     <input class="form-control" type="text" name="room_size_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_size }}" placeholder="Room Size">
-                                    <input class="form-control" type="file" name="room_image_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" accept="image/*">
-                                    {% if room.room_image %}
-                                        <small class="text-success">Current image: {{ room.room_image.name }}</small>
-                                    {% endif %}
+                                    <!-- No image input for rooms -->
                                 </div>
                                 {% endfor %}
                             </div>
+
                             <button type="button" onclick="addRoom({{ forloop.counter }})">Add Room</button>
                         </div>
                         {% endfor %}
                     </div>
-                
-                    <button type="button" style="width: 25%;"  class="add-room-btn"  onclick="addFloor()">Add Another Floor</button>
+
+                    <button type="button" style="width: 25%;" class="add-room-btn" onclick="addFloor()">Add Another Floor</button>
                 </div>
+
 
                 <!-- Client Details start -->
                 <div class="card client-info-card">
@@ -940,52 +953,65 @@
         });
     </script> -->
 
-<script>
-    let floorCount = 1;
-    
-    function addFloor() {
-        floorCount++;
-        const floorSection = document.createElement("div");
-        floorSection.className = "floor-section";
-        floorSection.id = `floor-section-${floorCount}`;
+    <script>
+        let floorCount = 1;
         
-        floorSection.innerHTML = `
-            <h2>Floor ${floorCount}</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                    <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+        // Add new floor function
+        function addFloor() {
+            floorCount++;
+            const floorSection = document.createElement("div");
+            floorSection.className = "floor-section";
+            floorSection.id = `floor-section-${floorCount}`;
+            
+            floorSection.innerHTML = `
+                <h2>Floor ${floorCount}</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                        <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                    </div>
                 </div>
-            </div>
-            <div class="rooms-container" id="rooms-container-${floorCount}">
-                <h3>Rooms for Floor ${floorCount}</h3>
-                <div class="room-group" id="room-group-${floorCount}-1">
-                    <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                    <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
-                    <input class="form-control" type="file" name="room_image_${floorCount}_1" accept="image/*" required>
-                </div>
-            </div>
-            <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
-        `;
-        
-        document.getElementById("floors-container").appendChild(floorSection);
-    }
     
-    function addRoom(floorId) {
-        const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
-        const roomGroup = document.createElement("div");
-        roomGroup.className = "room-group";
-        roomGroup.id = `room-group-${floorId}-${roomCount}`;
+                <!-- Floor Image -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="floor_image_${floorCount}">Floor Image</label>
+                        <input class="form-control" type="file" name="floor_image_${floorCount}" accept="image/*">
+                    </div>
+                </div>
+                
+                <!-- Rooms for the new floor -->
+                <div class="rooms-container" id="rooms-container-${floorCount}">
+                    <h3>Rooms for Floor ${floorCount}</h3>
+                    <div class="room-group" id="room-group-${floorCount}-1">
+                        <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                        <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
+                        <!-- No room image input -->
+                    </div>
+                </div>
+                <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+            `;
+            
+            document.getElementById("floors-container").appendChild(floorSection);
+        }
         
-        roomGroup.innerHTML = `
-            <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-            <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
-            <input class="form-control" type="file" name="room_image_${floorId}_${roomCount}" accept="image/*" required>
-        `;
-        
-        document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
-    }
+        // Add new room function for a specific floor
+        function addRoom(floorId) {
+            const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+            const roomGroup = document.createElement("div");
+            roomGroup.className = "room-group";
+            roomGroup.id = `room-group-${floorId}-${roomCount}`;
+            
+            roomGroup.innerHTML = `
+                <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+                <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
+                <!-- No room image input -->
+            `;
+            
+            document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+        }
     </script>
+    
 
     <style>
         #floors-container {

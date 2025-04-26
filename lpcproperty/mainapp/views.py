@@ -656,3 +656,6 @@ def denied_reports_view(request):
 def open_reports_view(request):
     reports = WalkthroughReport.objects.filter(status='Open')
     return render(request, 'mainapp/walktrug/open_reports.html', {'reports': reports})
+
+
+# Sending emails 

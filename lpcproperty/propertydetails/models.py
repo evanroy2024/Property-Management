@@ -43,6 +43,7 @@ class PropertyManagement(models.Model):
 class Floor(models.Model):
     property = models.ForeignKey(PropertyManagement, on_delete=models.CASCADE, related_name='floors')
     floor_name = models.CharField(max_length=255)
+    floor_imgae = models.ImageField(upload_to='floor_images/', null=True, blank=True)
 
     def __str__(self):
         return f"Property at {self.floor_name} "

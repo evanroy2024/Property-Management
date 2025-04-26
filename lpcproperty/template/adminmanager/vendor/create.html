@@ -284,32 +284,178 @@
               </div>
             </div>
             
+            <!-- Services show start  -->
             <div class="row mb-4">
               <div class="col-12">
                 <h6 class="section-title">Service Details</h6>
               </div>
             
-              <div class="">
+              <div class="col-12">
                 <label class="form-label required-field mb-2">Service Type</label>
-            
-                <!-- Boxed service buttons -->
-                <div class="d-flex flex-wrap gap-2">
-                  {% for key, value in service_choices %}
-                    <input type="checkbox" class="btn-check" id="service-{{ key }}" name="service[]" value="{{ key }}">
-                    <label class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm" for="service-{{ key }}">{{ value }}</label>
+                
+                <!-- Dropdown for selecting services -->
+                <div class="dropdown service-dropdown mb-3">
+                  <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" type="button" id="serviceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span>Select Services</span>
+                    <i class="bi bi-chevron-down"></i>
+                  </button>
+                  <ul class="dropdown-menu w-100" aria-labelledby="serviceDropdown">
+                    {% for key, value in service_choices %}
+                      <li>
+                        <a class="dropdown-item service-item" href="#" data-service-key="{{ key }}" data-service-value="{{ value }}">
+                          <div class="form-check">
+                            <input class="form-check-input service-checkbox" type="checkbox" id="service-check-{{ key }}" {% if key in vendor.service %}checked{% endif %}>
+                            <label class="form-check-label w-100" for="service-check-{{ key }}">{{ value }}</label>
+                          </div>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                
+                <!-- Display area for selected services -->
+                <div id="selected-services" class="d-flex flex-wrap gap-2 mb-3">
+                  {% for key in vendor.service %}
+                    {% for service_key, service_value in vendor.SERVICE_CHOICES %}
+                      {% if key == service_key %}
+                        <div class="selected-service-tag" data-service-key="{{ key }}">
+                          <span>{{ service_value }}</span>
+                          <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove"></button>
+                          <input type="hidden" name="service[]" value="{{ key }}">
+                        </div>
+                      {% endif %}
+                    {% endfor %}
                   {% endfor %}
                 </div>
             
-                <!-- <div class="invalid-feedback d-block mt-2">Please select at least one service type.</div> -->
-            
-                <!-- Custom services input -->
+                <!-- Additional Services Input -->
                 <div class="form-floating mt-4">
-                  <input type="text" class="form-control" id="additional_service" name="additional_service" placeholder="cutting, painting, ...">
+                  <input type="text" class="form-control" id="additional_service" name="additional_service"
+                         value="{{ vendor.additional_service }}" placeholder="cutting, painting, ...">
                   <label for="additional_service">Add Additional Services (comma separated)</label>
                 </div>
                 <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
               </div>
             </div>
+            
+            <style>
+              .service-dropdown .dropdown-menu {
+                padding: 0.5rem;
+                max-height: 300px;
+                overflow-y: auto;
+              }
+              
+              .service-dropdown .dropdown-item {
+                padding: 0.5rem;
+                border-radius: 4px;
+              }
+              
+              .service-dropdown .dropdown-item:hover {
+                background-color: #f8f9fa;
+              }
+              
+              .service-dropdown .dropdown-item:active {
+                background-color: #f0f0f0;
+                color: #212529;
+              }
+              
+              .service-dropdown .form-check {
+                padding-left: 0;
+                margin-bottom: 0;
+                display: flex;
+                align-items: center;
+              }
+              
+              .service-dropdown .form-check-input {
+                margin-right: 0.5rem;
+                margin-left: 0;
+                position: relative;
+              }
+              
+              .selected-service-tag {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.35rem 0.75rem;
+                background-color: #e9f0ff;
+                color: #0d6efd;
+                border: 1px solid #c9d8fd;
+                border-radius: 50px;
+                font-size: 0.875rem;
+              }
+              
+              .selected-service-tag .btn-close {
+                font-size: 0.5rem;
+                padding: 0.15rem;
+              }
+            </style>
+            
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              // Handle dropdown item clicks
+              document.querySelectorAll('.service-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  
+                  const checkbox = this.querySelector('.service-checkbox');
+                  checkbox.checked = !checkbox.checked;
+                  
+                  updateSelectedServices();
+                });
+              });
+              
+              // Handle checkbox clicks within dropdown
+              document.querySelectorAll('.service-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  updateSelectedServices();
+                });
+              });
+              
+              // Initial setup
+              updateSelectedServices();
+              
+              // Event delegation for remove buttons (for dynamically added elements)
+              document.getElementById('selected-services').addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-close') || e.target.closest('.btn-close')) {
+                  const tag = e.target.closest('.selected-service-tag');
+                  const serviceKey = tag.getAttribute('data-service-key');
+                  
+                  // Uncheck the corresponding checkbox
+                  const checkbox = document.querySelector(`#service-check-${serviceKey}`);
+                  if (checkbox) {
+                    checkbox.checked = false;
+                  }
+                  
+                  // Remove the tag
+                  tag.remove();
+                }
+              });
+              
+              function updateSelectedServices() {
+                const selectedServicesContainer = document.getElementById('selected-services');
+                selectedServicesContainer.innerHTML = '';
+                
+                document.querySelectorAll('.service-checkbox:checked').forEach(checkbox => {
+                  const serviceItem = checkbox.closest('.service-item');
+                  const serviceKey = serviceItem.getAttribute('data-service-key');
+                  const serviceValue = serviceItem.getAttribute('data-service-value');
+                  
+                  const tag = document.createElement('div');
+                  tag.className = 'selected-service-tag';
+                  tag.setAttribute('data-service-key', serviceKey);
+                  tag.innerHTML = `
+                    <span>${serviceValue}</span>
+                    <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove"></button>
+                    <input type="hidden" name="service[]" value="${serviceKey}">
+                  `;
+                  
+                  selectedServicesContainer.appendChild(tag);
+                });
+              }
+            });
+            </script>
+          
             
             
             <div class="row">

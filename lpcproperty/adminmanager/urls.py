@@ -107,4 +107,7 @@ urlpatterns = [
     path('walkthrough/', views.walkthrough_report_view, name='walkthrough-form'),
     path('walkthrough/success/', views.walkthrough_success_view, name='walkthrough-success'),
 
+    path('send-email/', views.send_email_view, name='send_email'),
+
+
 ]
