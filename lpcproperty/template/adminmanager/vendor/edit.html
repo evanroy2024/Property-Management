@@ -269,7 +269,6 @@
                 </div>
               </div>
             </div>
-            
             <div class="row mb-4">
               <div class="col-12">
                 <h6 class="section-title">Service Details</h6>
@@ -285,11 +284,11 @@
                     <i class="bi bi-chevron-down"></i>
                   </button>
                   <ul class="dropdown-menu w-100" aria-labelledby="serviceDropdown">
-                    {% for key, value in vendor.SERVICE_CHOICES %}
+                    {% for key, value in service_choices %}
                       <li>
                         <a class="dropdown-item service-item" href="#" data-service-key="{{ key }}" data-service-value="{{ value }}">
                           <div class="form-check">
-                            <input class="form-check-input service-checkbox" type="checkbox" id="service-check-{{ key }}" {% if key in vendor.service %}checked{% endif %}>
+                            <input class="form-check-input service-checkbox" type="checkbox" id="service-check-{{ key }}" {% if key in selected_services %}checked{% endif %}>
                             <label class="form-check-label w-100" for="service-check-{{ key }}">{{ value }}</label>
                           </div>
                         </a>
@@ -300,23 +299,19 @@
                 
                 <!-- Display area for selected services -->
                 <div id="selected-services" class="d-flex flex-wrap gap-2 mb-3">
-                  {% for key in vendor.service %}
-                    {% for service_key, service_value in vendor.SERVICE_CHOICES %}
-                      {% if key == service_key %}
-                        <div class="selected-service-tag" data-service-key="{{ key }}">
-                          <span>{{ service_value }}</span>
-                          <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove"></button>
-                          <input type="hidden" name="service[]" value="{{ key }}">
-                        </div>
-                      {% endif %}
-                    {% endfor %}
+                  {% for service in selected_services %}
+                    <div class="selected-service-tag" data-service-key="{{ service }}">
+                      <span>{{ service }}</span>
+                      <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove"></button>
+                      <input type="hidden" name="service[]" value="{{ service }}">
+                    </div>
                   {% endfor %}
                 </div>
             
                 <!-- Additional Services Input -->
                 <div class="form-floating mt-4">
                   <input type="text" class="form-control" id="additional_service" name="additional_service"
-                         value="{{ vendor.additional_service }}" placeholder="cutting, painting, ...">
+                         value="" placeholder="cutting, painting, ...">
                   <label for="additional_service">Add Additional Services (comma separated)</label>
                 </div>
                 <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>

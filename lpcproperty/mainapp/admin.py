@@ -66,3 +66,6 @@ class VendorAdmin(admin.ModelAdmin):
     search_fields = ("company_name", "username", "email", "phone_number", "city")
     list_filter = ("state", "service")
     ordering = ("company_name",)
+
+from .models import VendorService
+admin.site.register(VendorService)

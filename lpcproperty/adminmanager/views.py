@@ -16,7 +16,7 @@ def admin_login(request):
                 login(request, user)
                 return redirect('adminmanager:admin_dashboard')
             else:
-                messages.error(request, 'Invalid credentials or not an admin.')
+                messages.error(request, 'Invalid credentials or not an admin.', extra_tags='login_error')
     else:
         form = AdminLoginForm()
     return render(request, 'adminmanager/login.html', {'form': form})
@@ -590,21 +590,32 @@ def vendor_list(request):
 
 
 import uuid  # For generating a unique string
-
+from mainapp.models import VendorService
 def create_vendor(request):
+    # Get all services for the dropdown
+    all_services = VendorService.objects.all().order_by('name')
+    
     if request.method == 'POST':
         # Get selected services and additional services
         selected_services = request.POST.getlist('service[]')
         additional_service = request.POST.get('additional_service', '')
-
+        
         combined_services = selected_services
+        
+        # Process additional services
         if additional_service:
             additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
+            
+            # Add new services to the VendorService model
+            for service_name in additional_list:
+                if service_name:
+                    VendorService.objects.get_or_create(name=service_name)
+            
             combined_services += additional_list
-
+        
         # Auto-generate a dummy username
-        auto_username = f'vendor_{uuid.uuid4().hex[:6]}'  # Example: vendor_a1b2c3
-
+        auto_username = f'vendor_{uuid.uuid4().hex[:6]}'
+        
         Vendor.objects.create(
             company_name=request.POST.get('company_name'),
             username=auto_username,
@@ -617,11 +628,11 @@ def create_vendor(request):
             service=', '.join(combined_services),
         )
         return redirect('adminmanager:vendor_list')
-
+    
+    # Pass all services to the template
     return render(request, 'adminmanager/vendor/create.html', {
-        'service_choices': Vendor.SERVICE_CHOICES
+        'service_choices': [(service.name, service.name) for service in all_services]
     })
-
 # Edit vendor
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
@@ -644,6 +655,12 @@ def edit_vendor(request, vendor_id):
         combined_services = selected_services
         if additional_service:
             additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
+            
+            # Add new services to the VendorService model
+            for service_name in additional_list:
+                if service_name:
+                    VendorService.objects.get_or_create(name=service_name)
+                    
             combined_services += additional_list
 
         # Save combined service string (e.g. comma-separated)
@@ -653,17 +670,18 @@ def edit_vendor(request, vendor_id):
         return redirect('adminmanager:vendor_list')
 
     # Prepare existing services for form pre-checking
-    existing_services = vendor.service.split(',') if vendor.service else []
+    existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
+
+    # Get all services for the dropdown
+    all_services = VendorService.objects.all().order_by('name')
 
     context = {
         'vendor': vendor,
-        'selected_services': [s.strip() for s in existing_services],
-        'service_choices': Vendor.SERVICE_CHOICES,
+        'selected_services': existing_services,
+        'service_choices': [(service.name, service.name) for service in all_services],
     }
 
     return render(request, 'adminmanager/vendor/edit.html', context)
-
-
 
 # Delete vendor
 def delete_vendor(request, vendor_id):
@@ -1177,23 +1195,47 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt  # Optional if you already use {% csrf_token %}
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.core.mail import EmailMessage, get_connection
+from adminmanager.mail_config import get_mail_settings  # adjust 'core' to your app name
+from django.http import HttpResponse
+
+@csrf_exempt
 def send_email_view(request):
     if request.method == 'POST':
         to_email = request.POST.get('to_email')
         subject = request.POST.get('subject')
         message = request.POST.get('message')
 
+        mail_settings = get_mail_settings()
+        if not mail_settings:
+            return render(request, 'adminmanager/success/success_mail.html', {'status': 'error', 'message': 'Email configuration missing!'})
+
         try:
-            send_mail(
+            # Create a custom email connection
+            connection = get_connection(
+                backend=mail_settings['EMAIL_BACKEND'],
+                host=mail_settings['EMAIL_HOST'],
+                port=mail_settings['EMAIL_PORT'],
+                username=mail_settings['EMAIL_HOST_USER'],
+                password=mail_settings['EMAIL_HOST_PASSWORD'],
+                use_tls=mail_settings['EMAIL_USE_TLS'],
+                use_ssl=mail_settings['EMAIL_USE_SSL'],
+            )
+
+            email = EmailMessage(
                 subject,
                 message,
-                'noreplys2000@gmail.com',  # From Email
-                [to_email],  # To Email
-                fail_silently=False,
+                mail_settings['DEFAULT_FROM_EMAIL'],
+                [to_email],
+                connection=connection,  # important fix
             )
-            # Stay on the same page and show success message
+            email.fail_silently = False
+            email.send()
+
             return render(request, 'adminmanager/success/success_mail.html', {'status': 'success', 'message': 'Email sent successfully!'})
         except Exception as e:
-            # Stay on the same page and show error message
-            return render(request, 'adminmanager/success/success_mail.html', {'status': 'success', 'message': 'Email sent successfully!'})
+            # Directly show the error without template
+            return HttpResponse(f"Failed to send email: {str(e)}", status=500)

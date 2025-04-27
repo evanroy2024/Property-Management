@@ -128,41 +128,14 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
         return f"{self.first_name} {self.last_name} ({self.username})"
 
 
+
+class VendorService(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return self.name
+    
 class Vendor(models.Model):
-    SERVICE_CHOICES = [
-    ('Appliance Repair', 'Appliance Repair'),
-    ('Artificial Turf', 'Artificial Turf'),
-    ('AV', 'AV'),
-    ('Car Detailer', 'Car Detailer'),
-    ('Carpet Cleaning', 'Carpet Cleaning'),
-    ('Caterer / Chef', 'Caterer / Chef'),
-    ('Countertops', 'Countertops'),
-    ('Drywall', 'Drywall'),
-    ('Electrician', 'Electrician'),
-    ('Fencing', 'Fencing'),
-    ('Finish Carpentry', 'Finish Carpentry'),
-    ('Flooring, Carpet', 'Flooring, Carpet'),
-    ('Flooring, Epoxy', 'Flooring, Epoxy'),
-    ('Flooring, Resilient', 'Flooring, Resilient'),
-    ('Flooring, Tile', 'Flooring, Tile'),
-    ('Furniture Movers', 'Furniture Movers'),
-    ('Garage Door', 'Garage Door'),
-    ('Glass, Installation', 'Glass, Installation'),
-    ('Glass, Repair', 'Glass, Repair'),
-    ('HVAC', 'HVAC'),
-    ('Landscape', 'Landscape'),
-    ('Locksmith', 'Locksmith'),
-    ('Millwork', 'Millwork'),
-    ('Painting', 'Painting'),
-    ('Plumbing', 'Plumbing'),
-    ('Plumbing Repair', 'Plumbing Repair'),
-    ('Pool Maintenance / Repair', 'Pool Maintenance / Repair'),
-    ('Pressure Washer', 'Pressure Washer'),
-    ('Roofing', 'Roofing'),
-    ('Security', 'Security'),
-    ('Wall Covering', 'Wall Covering'),
-    ('Window Treatments', 'Window Treatments'),
-    ]
 
     company_name = models.CharField(max_length=255)
     username = models.CharField(max_length=150)

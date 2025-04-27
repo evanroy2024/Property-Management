@@ -181,12 +181,15 @@
     </div>
   </div>
   {% if messages %}
-  <div class="error-message">
-      {% for message in messages %}
+  {% for message in messages %}
+    {% if 'login_error' in message.tags %}
+      <div class="error-message">
           <p>{{ message }}</p>
-      {% endfor %}
-  </div>
-  {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
