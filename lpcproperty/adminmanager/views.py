@@ -312,6 +312,28 @@ def property_create_view(request):
                     new_email = request.POST.get('new_email', '')
                     new_password = request.POST.get('new_password', '')
                     new_phone = request.POST.get('new_phone', '')
+                    contact1_name = request.POST.get('contact1_name', '')
+                    contact1_last_name = request.POST.get('contact1_last_name', '')
+                    contact1_email = request.POST.get('contact1_email', '')
+                    contact1_phone = request.POST.get('contact1_phone', '')
+                    contact1_office_phone = request.POST.get('contact1_office_phone', '')
+                    contact1_buisness_adress = request.POST.get('contact1_buisness_adress', '')
+
+                    # Contact 2 (Secondary)
+                    contact2_name = request.POST.get('contact2_name', '')
+                    contact2_last_name = request.POST.get('contact2_last_name', '')
+                    contact2_email = request.POST.get('contact2_email', '')
+                    contact2_phone = request.POST.get('contact2_phone', '')
+                    contact2_office_phone = request.POST.get('contact2_office_phone', '')
+                    contact2_buisness_adress = request.POST.get('contact2_buisness_adress', '')
+
+                    # Contact 3 (Tertiary)
+                    contact3_name = request.POST.get('contact3_name', '')
+                    contact3_last_name = request.POST.get('contact3_last_name', '')
+                    contact3_email = request.POST.get('contact3_email', '')
+                    contact3_phone = request.POST.get('contact3_phone', '')
+                    contact3_office_phone = request.POST.get('contact3_office_phone', '')
+                    contact3_buisness_adress = request.POST.get('contact3_buisness_adress', '')
 
                     if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
                         raise ValueError("Fill all required fields for new client")
@@ -322,7 +344,28 @@ def property_create_view(request):
                         username=new_username,
                         email=new_email,
                         password=new_password,  # storing plain for now
-                        phone_number=new_phone
+                        phone_number=new_phone,
+
+                        contact1_name=contact1_name,
+                        contact1_last_name=contact1_last_name,
+                        contact1_email=contact1_email,
+                        contact1_phone=contact1_phone,
+                        contact1_office_phone=contact1_office_phone,
+                        contact1_buisness_adress=contact1_buisness_adress,
+
+                        contact2_name=contact2_name,
+                        contact2_last_name=contact2_last_name,
+                        contact2_email=contact2_email,
+                        contact2_phone=contact2_phone,
+                        contact2_office_phone=contact2_office_phone,
+                        contact2_buisness_adress=contact2_buisness_adress,
+
+                        contact3_name=contact3_name,
+                        contact3_last_name=contact3_last_name,
+                        contact3_email=contact3_email,
+                        contact3_phone=contact3_phone,
+                        contact3_office_phone=contact3_office_phone,
+                        contact3_buisness_adress=contact3_buisness_adress,
                     )
                     client_id = new_client.id
 
@@ -349,6 +392,7 @@ def property_create_view(request):
                     preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
                     state=request.POST.get('state', ''),  # Added state
                     city=request.POST.get('city', ''),    # Added city
+                    
                 )
 
                 # Loop through each floor and room
@@ -996,6 +1040,10 @@ class WalkthroughReportForm(forms.ModelForm):
     class Meta:
         model = WalkthroughReport
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name} {obj.first_name}"
 
 def walkthrough_report_view(request):
     if request.method == 'POST':

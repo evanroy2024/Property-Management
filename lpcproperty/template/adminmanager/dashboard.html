@@ -144,12 +144,13 @@
     <div class="container">
         
         <!-- Property Management -->
-        <div class="menu-item property-management">
+        <div class="menu-item property-management" onclick="window.location.href='{% url 'adminmanager:property_list' %}'">
            Manage Client / Properties
         </div>
         
         <div class="sub-menu">
-            <div class="sub-item" style="text-align: center;" onclick="window.location.href='{% url 'adminmanager:property_list' %}'">Manage Client / Properties</div>
+            
+        </div>
             <div class="sub-item"> <i class="fas fa-chart-line"></i> Walk-Thru </div>
             <div class="sub-sub-menu">
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:walkthrough-form' %}'">Create New Walk-Thru Report</div>
@@ -181,8 +182,6 @@
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_completed_requests' %}'">Completed Requests</div>
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_denied_requests' %}'">Denied Requests</div>
             </div>
-        </div>
-        
         <!-- Pre-Arrival Info -->
         <div class="menu-item pre-arrival" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">
             Pre-Arrival Info

@@ -153,85 +153,12 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stats-card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Properties</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ properties|length }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-home fa-2x icon-gray"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stats-card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Occupied Properties</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">82%</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-check-circle fa-2x icon-gray"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stats-card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Maintenance Requests</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-tools fa-2x icon-gray"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stats-card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Pending Inspections</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x icon-gray"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Properties Table Card -->
     <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold">Property Listings</h6>
-            <div class="dropdown">
-                <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter mr-1"></i> Filter Client
-                </button>
-            </div>
+         
         </div>
     
         <!-- Live Filters -->
@@ -263,10 +190,10 @@
                         <tr>
                             <th>Client Name</th>
                             <th>City</th>
+                            <th>Property Address</th>
+                            <th>property State</th>
+                            <th>Size of Home</th>
                             <th>CM Name</th>
-                            <th>Address</th>
-                            <th>State</th>
-                            <th>Size (sq ft)</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -278,22 +205,38 @@
                             data-address="{{ prop.client_manager|lower }}"
                             data-city="{{ prop.city|lower }}"
                             data-state="{{ prop.state|lower }}">
-                            <td><strong>{{ prop.client.last_name }}  {{ prop.client.first_name }} ({{ prop.client.username }})</strong></td>
+                            <td><strong>{{ prop.client.last_name }}  {{ prop.client.first_name }} </strong></td>
                             <td>{{ prop.city }}</td>
-                            <td>{{ prop.client_manager }}</td>
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
+                            <td>{{ prop.client_manager }}</td>
                             <td>
                                 <a href="{% url 'adminmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                    View
                                 </a>
                                 <a href="{% url 'adminmanager:property_edit' prop.pk %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
-                                    <i class="fas fa-edit"></i>
+                                    Edit
                                 </a>
-                                <a href="{% url 'adminmanager:property_delete' prop.pk %}" class="btn btn-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Property">
-                                    <i class="fas fa-trash"></i>
+                                <a href="#" class="btn btn-success btn-sm action-btn open-con-modal"
+                                    data-contact='{
+                                        "name1": "{{ prop.client.contact1_name|escapejs }}",
+                                        "lname1": "{{ prop.client.contact1_last_name|escapejs }}",
+                                        "email1": "{{ prop.client.contact1_email|escapejs }}",
+                                        "phone1": "{{ prop.client.contact1_phone|escapejs }}",
+                                        "officephone1": "{{ prop.client.contact1_office_phone|escapejs }}",
+                                        "preferred1": "{{ prop.client.contact1_preferred|escapejs }}",
+                                        "name2": "{{ prop.client.contact2_name|escapejs }}",
+                                        "lname2": "{{ prop.client.contact2_last_name|escapejs }}",
+                                        "email2": "{{ prop.client.contact2_email|escapejs }}",
+                                        "phone2": "{{ prop.client.contact2_phone|escapejs }}",
+                                        "officephone2": "{{ prop.client.contact2_office_phone|escapejs }}",
+                                        "preferred2": "{{ prop.client.contact2_preferred|escapejs }}"
+                                    }'
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Contact Person">
+                                    Contact
                                 </a>
+
                             </td>
                         </tr>
                         {% empty %}
@@ -367,8 +310,170 @@
 <!-- <hr style="background-color: none; margin: 0.001rem 0; margin-left: 20px;"> -->
 
 <!-- Client starts here --------------------------------------------------------------------------------- -->
-<div class="content-wrapper">
-    <!-- Page Header -->
+ <!-- Unique Contact Modal -->
+<!-- Add this CSS for the improved layout and styling -->
+<style>
+    .con-modal-content {
+      background-color: #fff;
+      border-radius: 12px;
+      color: #333; /* Ensures text is black */
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+    }
+  
+    .con-modal-header {
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #dee2e6;
+      border-radius: 12px 12px 0 0;
+    }
+  
+    .con-modal-title {
+      font-weight: bold;
+      color: #333;
+    }
+  
+    .con-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+    }
+  
+    .con-modal-body {
+      padding: 1rem;
+      color: #333;
+    }
+  
+    .con-modal-body strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #222;
+    }
+  
+    .contact-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+  
+    .contact-column {
+      flex: 0 0 48%;
+    }
+  
+    .contact-column p {
+      margin: 2px 0 8px;
+      font-size: 0.95rem;
+    }
+  
+    .modal-dialog {
+      max-width: 600px;
+    }
+  
+    .modal-body .contact-section {
+      margin-bottom: 20px;
+    }
+  
+    .modal-body .contact-section h5 {
+      font-size: 1.2rem;
+      color: #444;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+  
+    .modal-body .contact-section .contact-info {
+      margin: 5px 0;
+    }
+  
+    .contact-info strong {
+      font-weight: bold;
+      color: #0056b3; /* Color for the headings */
+    }
+  </style>
+  
+  <!-- Modal HTML Structure -->
+  <div class="modal fade con-modal" id="conModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered con-modal-dialog">
+      <div class="modal-content con-modal-content">
+        <div class="modal-header con-modal-header">
+          <h5 class="modal-title con-modal-title">Contact Information</h5>
+          <button type="button" class="btn-close con-close-btn" data-bs-dismiss="modal" aria-label="Close">
+            <span style="color: red; ">&times;</span> <!-- Red Cross Icon -->
+        </button>
+        
+        </div>
+        <div class="modal-body con-modal-body" id="conModalBody">
+          Loading...
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add this JavaScript to handle the modal opening and data injection -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const modalBody = document.getElementById("conModalBody");
+  
+      document.querySelectorAll(".open-con-modal").forEach(button => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+  
+          const contactData = this.getAttribute("data-contact");
+          if (!contactData) return;
+  
+          let data;
+          try {
+            data = JSON.parse(contactData);  // Parse the contact info from the button's data attribute
+          } catch (err) {
+            console.error("Invalid JSON in contact data", err);
+            return;
+          }
+  
+          // Update modal content with better design
+          modalBody.innerHTML = `
+            <!-- Primary Contact Section -->
+            <div class="contact-section">
+              <h5>Primary Contact</h5>
+              <div class="contact-row">
+                <div class="contact-column">
+                  <p class="contact-info"><strong>Name:</strong> ${data.name1 || '-'} ${data.lname1 || ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${data.email1 || '-'}</p>
+                </div>
+                <div class="contact-column">
+                  <p class="contact-info"><strong>Phone:</strong> ${data.phone1 || '-'}</p>
+                  <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone1 || '-'}</p>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Secondary Contact Section -->
+            <div class="contact-section">
+              <h5>Secondary Contact</h5>
+              <div class="contact-row">
+                <div class="contact-column">
+                  <p class="contact-info"><strong>Name:</strong> ${data.name2 || '-'} ${data.lname2 || ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${data.email2 || '-'}</p>
+                </div>
+                <div class="contact-column">
+                  <p class="contact-info"><strong>Phone:</strong> ${data.phone2 || '-'}</p>
+                  <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone2 || '-'}</p>
+                </div>
+              </div>
+            </div>
+          `;
+  
+          // Show the modal
+          const modal = new bootstrap.Modal(document.getElementById("conModal"));
+          modal.show();
+        });
+      });
+    });
+  </script>
+  
+    
+      
+<!-- <div class="content-wrapper">
     <div class="page-header">
         <h1 class="h3 mb-0 text-black-800">Manage Clients</h1>
         <a href="{% url 'adminmanager:client_create_view' %}" class="btn btn-primary">
@@ -376,9 +481,6 @@
         </a>
     </div>
 
-   
-
-    <!-- Properties Table Card -->
     <div class="card shadow mb-4">
         <div class="card-header">
             <h6 class="m-0 font-weight-bold">Client Listings</h6>
@@ -404,7 +506,6 @@
                             <th>Email</th>
                             <th>Client Cell</th>
                             <th>Address</th>
-                            <!-- <th>Status</th> -->
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -416,8 +517,6 @@
                             <td>{{ client.email }}</td>
                             <th>{{ client.phone_number }}</th>
                             <th>{{ client.address  }}</th>
-                            <!-- <td>{{ prop.year_built }}</td> -->
-                            <!-- <td><span class="badge bg-success">Active</span></td> -->
                             <td>
                                 <a href="{% url 'adminmanager:client_edit_page' client.id %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                                     <i class="fas fa-eye"></i>
@@ -425,9 +524,6 @@
                                 <a href="{% url 'adminmanager:client_edit_page' client.id %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <!-- <a href="/" class="btn btn-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Property">
-                                    <i class="fas fa-trash"></i>
-                                </a> -->
                             </td>
                         </tr>
                         {% empty %}
@@ -449,7 +545,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- Client Ends here ----------------------------------------------------------------------------------- -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

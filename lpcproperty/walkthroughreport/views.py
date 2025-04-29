@@ -288,7 +288,50 @@ def completed_reports_view(request):
 def denied_reports_view(request):
     reports = WalkthroughReport.objects.filter(status='Denied')
     return render(request, 'walkthrough/denied_reports.html', {'reports': reports})
+import copy
+# def report_open_detail_view(request, pk):
+#     report = get_object_or_404(WalkthroughReport, pk=pk)
+    
+#     # Create a modified version for the template
+#     filtered_report = copy.deepcopy(report)
+    
+#     # Dynamically find all fields with prefix 'gie'
+#     for field_name in dir(filtered_report):
+#         # Check if it's a gie field but not a remarks field
+#         if field_name.startswith('gie') and not field_name.endswith('_remarks'):
+#             field_value = getattr(filtered_report, field_name, None)
+#             # If the field exists and is not "Non-Compliant", set it to None
+#             if field_value is not None and field_value != "Non-Compliant":
+#                 setattr(filtered_report, field_name, None)
+    
+#     return render(request, 'walkthrough/report_open_detail.html', {'report': filtered_report})
+import copy
+from django.shortcuts import render, get_object_or_404
+from .models import WalkthroughReport
+
+def report_open_detail_view(request, pk):
+    report = get_object_or_404(WalkthroughReport, pk=pk)
+    
+    # Create a modified version for the template
+    filtered_report = copy.deepcopy(report)
+    
+    # Loop through all fields in the model
+    for field_name in dir(filtered_report):
+        # Skip private/internal attributes and remarks fields
+        if field_name.startswith('_') or field_name.endswith('_remarks'):
+            continue
+        
+        field_value = getattr(filtered_report, field_name, None)
+        # Set to None if not "Non-Compliant"
+        if field_value is not None and field_value != "Non-Compliant":
+            setattr(filtered_report, field_name, None)
+    
+    # Ensure the report object still has a valid pk (ID) for URL generation
+    if not filtered_report.pk:
+        filtered_report.pk = report.pk
+    
+    return render(request, 'walkthrough/report_open_detail.html', {'report': filtered_report})
 
 def open_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Open')
+    reports = WalkthroughReport.objects.all()
     return render(request, 'walkthrough/open_reports.html', {'reports': reports})
