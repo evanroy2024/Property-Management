@@ -535,7 +535,7 @@
                                 {% for room in floor.rooms.all %}
                                 <div class="room-group" id="room-group-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
                                     <input class="form-control" type="text" name="room_name_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_name }}" placeholder="Room Name">
-                                    <input class="form-control" type="text" name="room_size_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_size }}" placeholder="Room Size">
+                                    <input class="form-control" type="text" name="room_size_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_size }}" placeholder="Room Size" style="display: none;">
                                     <!-- No image input for rooms -->
                                 </div>
                                 {% endfor %}
@@ -780,13 +780,35 @@
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary btn-icon">
-                        <i class="fas fa-save"></i> Update Property
-                    </button>
-                    <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon">
+                    <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
                         <i class="fas fa-times"></i> Cancel
-                    </a>
-                </div>
+                      </a>
+                    <button type="submit" class="btn btn-primary btn-icon" id="updateBtn">
+                      <i class="fas fa-save"></i> Update
+                    </button>
+                   
+                  </div>
+                  
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      const cancelBtn = document.getElementById('cancelBtn');
+                      const updateBtn = document.getElementById('updateBtn');
+                      const form = cancelBtn.closest('form');
+                  
+                      cancelBtn.addEventListener('click', function(event) {
+                        event.preventDefault();
+                  
+                        if (confirm('Do you want to save changes before leaving?')) {
+                          // User clicked "Yes" - submit the form
+                          form.submit();
+                        } else {
+                          // User clicked "No" - redirect to the cancel URL
+                          window.location.href = cancelBtn.href;
+                        }
+                      });
+                    });
+                  </script>
+                  
             </form>
             <form method="POST" enctype="multipart/form-data" class="client-manager-form">
                 {% csrf_token %}
@@ -955,14 +977,14 @@
 
     <script>
         let floorCount = 1;
-        
+    
         // Add new floor function
         function addFloor() {
             floorCount++;
             const floorSection = document.createElement("div");
             floorSection.className = "floor-section";
             floorSection.id = `floor-section-${floorCount}`;
-            
+    
             floorSection.innerHTML = `
                 <h2>Floor ${floorCount}</h2>
                 <div class="form-row">
@@ -985,29 +1007,27 @@
                     <h3>Rooms for Floor ${floorCount}</h3>
                     <div class="room-group" id="room-group-${floorCount}-1">
                         <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                        <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
-                        <!-- No room image input -->
+                        <!-- No room size or image input -->
                     </div>
                 </div>
                 <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
             `;
-            
+    
             document.getElementById("floors-container").appendChild(floorSection);
         }
-        
+    
         // Add new room function for a specific floor
         function addRoom(floorId) {
             const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
             const roomGroup = document.createElement("div");
             roomGroup.className = "room-group";
             roomGroup.id = `room-group-${floorId}-${roomCount}`;
-            
+    
             roomGroup.innerHTML = `
                 <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-                <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
-                <!-- No room image input -->
+                <!-- No room size or image input -->
             `;
-            
+    
             document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
         }
     </script>

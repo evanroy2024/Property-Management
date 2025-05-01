@@ -15,6 +15,8 @@ class Client(models.Model):
     state = models.CharField(max_length=100, blank=True, null=True)
     zipcode = models.CharField(max_length=10, blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
+    office_phone = models.CharField(max_length=15, blank=True, null=True)
+    buisness_adress = models.CharField(max_length=15, blank=True, null=True)
 
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),
@@ -25,7 +27,11 @@ class Client(models.Model):
     preferred_contact_method = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, default='email'
     )
-
+    PRIORITY_CHOICES = [
+    ('primary', 'Primary'),
+    ('secondary', 'Secondary'),
+    ('tertiary', 'Tertiary'),
+    ]
     # Contact Person 1
     contact1_name = models.CharField(max_length=150, blank=True, null=True)
     contact1_last_name = models.CharField(max_length=150, blank=True, null=True)
@@ -35,6 +41,9 @@ class Client(models.Model):
     contact1_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
     contact1_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
+    )
+    contact1_priority = models.CharField(
+    max_length=10, choices=PRIORITY_CHOICES, blank=True, null=True
     )
 
     # Contact Person 2
@@ -47,6 +56,10 @@ class Client(models.Model):
     contact2_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
+    contact2_priority = models.CharField(
+    max_length=10, choices=PRIORITY_CHOICES, blank=True, null=True
+    )
+
 
     # Contact Person 3
     contact3_name = models.CharField(max_length=150, blank=True, null=True)
@@ -58,7 +71,9 @@ class Client(models.Model):
     contact3_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
-
+    contact3_priority = models.CharField(
+    max_length=10, choices=PRIORITY_CHOICES, blank=True, null=True
+    )
     # Contact Person 3
     contact4_name = models.CharField(max_length=150, blank=True, null=True)
     contact4_last_name = models.CharField(max_length=150, blank=True, null=True)
@@ -68,6 +83,9 @@ class Client(models.Model):
     contact4_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
     contact4_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
+    )
+    contact4_priority = models.CharField(
+    max_length=10, choices=PRIORITY_CHOICES, blank=True, null=True
     )
 
     # Contact Person 3
@@ -79,6 +97,9 @@ class Client(models.Model):
     contact5_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
     contact5_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
+    )
+    contact5_priority = models.CharField(
+    max_length=10, choices=PRIORITY_CHOICES, blank=True, null=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -111,7 +132,8 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     zipcode = models.CharField(max_length=10, blank=True, null=True)
-
+    office_phone = models.CharField(max_length=15, null=True, blank=True)
+    business_address = models.TextField(null=True, blank=True)
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),
         ('phone', 'Phone'),

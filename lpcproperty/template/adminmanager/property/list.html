@@ -4,6 +4,8 @@
 
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-VzLcLQpQClj9TVXbN4y6U5V9r/0WvEylXyAVFZgmnNFEwW9Z6u3qx7wG+jGgpJjG+YrRy7v0Sk1tw5V5J9BkIA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
     /* Custom Styles */
     .content-wrapper {
@@ -140,7 +142,19 @@
     color: #888; /* Lighter placeholder color */
     font-style: italic; /* Slightly italicized placeholder */
 }
+.sort-icon {
+    font-size: 0.65rem;       /* Smaller size */
+    color: #6c757d;           /* Bootstrap's muted text color */
+    margin-left: 4px;
+    vertical-align: middle;
+}
 
+th.sortable:hover .sort-icon {
+    color: #000;
+}
+#sortable-table:hover {
+    cursor: pointer;
+}
 </style>
 
 <div class="content-wrapper">
@@ -164,36 +178,47 @@
         <!-- Live Filters -->
         <div class="p-3">
             <div class="row g-2">
-                <div class="col-md-2">
-                    <input type="text" id="search-last-name" class="form-control" placeholder="Client Last Name">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" id="search-first-name" class="form-control" placeholder="Client First Name">
-                </div>
-               
-                <div class="col-md-2">
-                    <input type="text" id="search-address" class="form-control" placeholder="CM Name ">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" id="search-city" class="form-control" placeholder="Property City">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" id="search-state" class="form-control" placeholder="Property State">
-                </div>
+              <div class="col-md-2">
+                <select id="filter-last-name" class="form-select">
+                  <option value="">Last Names</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select id="filter-first-name" class="form-select">
+                  <option value="">First Names</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select id="filter-address" class="form-select">
+                  <option value="">CM Names</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select id="filter-city" class="form-select">
+                  <option value="">Cities</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select id="filter-state" class="form-select">
+                  <option value="">States</option>
+                </select>
+              </div>
             </div>
-        </div>
+          </div>
+          
     
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="sortable-table">
                     <thead>
                         <tr>
-                            <th>Client Name</th>
-                            <th>City</th>
-                            <th>Property Address</th>
-                            <th>property State</th>
-                            <th>Size of Home</th>
-                            <th>CM Name</th>
+                            <th class="sortable" data-index="0">Client Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="1">City <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="2">Property Address <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="3">Property State <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="4">Size of Home <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="5">CM Name <i class="fas fa-sort sort-icon"></i></th>
+
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -213,10 +238,7 @@
                             <td>{{ prop.client_manager }}</td>
                             <td>
                                 <a href="{% url 'adminmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                                    View
-                                </a>
-                                <a href="{% url 'adminmanager:property_edit' prop.pk %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
-                                    Edit
+                                    Details
                                 </a>
                                 <a href="#" class="btn btn-success btn-sm action-btn open-con-modal"
                                     data-contact='{
@@ -255,59 +277,129 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
     
     <!-- JavaScript for Live Filtering -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchFirstName = document.getElementById("search-first-name");
-            const searchLastName = document.getElementById("search-last-name");
-            const searchAddress = document.getElementById("search-address");
-            const searchCity = document.getElementById("search-city");
-            const searchState = document.getElementById("search-state");
-            const tableRows = document.querySelectorAll(".property-row");
-    
-            function filterTable() {
-                const firstName = searchFirstName.value.toLowerCase();
-                const lastName = searchLastName.value.toLowerCase();
-                const address = searchAddress.value.toLowerCase();
-                const city = searchCity.value.toLowerCase();
-                const state = searchState.value.toLowerCase();
-    
-                tableRows.forEach(row => {
-                    const rowFirstName = row.getAttribute("data-firstname");
-                    const rowLastName = row.getAttribute("data-lastname");
-                    const rowAddress = row.getAttribute("data-address");
-                    const rowCity = row.getAttribute("data-city");
-                    const rowState = row.getAttribute("data-state");
-    
-                    const matchesFirstName = rowFirstName.includes(firstName);
-                    const matchesLastName = rowLastName.includes(lastName);
-                    const matchesAddress = rowAddress.includes(address);
-                    const matchesCity = rowCity.includes(city);
-                    const matchesState = rowState.includes(state);
-    
-                    if (matchesFirstName && matchesLastName && matchesAddress && matchesCity && matchesState) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
+        document.addEventListener("DOMContentLoaded", function () {
+            const filters = {
+                firstName: document.getElementById("filter-first-name"),
+                lastName: document.getElementById("filter-last-name"),
+                address: document.getElementById("filter-address"),
+                city: document.getElementById("filter-city"),
+                state: document.getElementById("filter-state"),
+            };
+        
+            const rows = document.querySelectorAll(".property-row");
+        
+            // Populate filter dropdowns with unique values from table rows
+            function populateDropdown(filterKey, dataAttr) {
+                const values = new Set();
+                rows.forEach(row => values.add(row.getAttribute(dataAttr)));
+        
+                [...values].sort().forEach(val => {
+                    const opt = document.createElement("option");
+                    opt.value = val;
+                    opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                    filters[filterKey].appendChild(opt);
                 });
             }
-    
-            searchFirstName.addEventListener("input", filterTable);
-            searchLastName.addEventListener("input", filterTable);
-            searchAddress.addEventListener("input", filterTable);
-            searchCity.addEventListener("input", filterTable);
-            searchState.addEventListener("input", filterTable);
+        
+            populateDropdown("firstName", "data-firstname");
+            populateDropdown("lastName", "data-lastname");
+            populateDropdown("address", "data-address");
+            populateDropdown("city", "data-city");
+            populateDropdown("state", "data-state");
+        
+            // Filtering function
+            function filterTable() {
+                const selected = {
+                    firstName: filters.firstName.value,
+                    lastName: filters.lastName.value,
+                    address: filters.address.value,
+                    city: filters.city.value,
+                    state: filters.state.value,
+                };
+        
+                rows.forEach(row => {
+                    const matches =
+                        (!selected.firstName || row.getAttribute("data-firstname") === selected.firstName) &&
+                        (!selected.lastName || row.getAttribute("data-lastname") === selected.lastName) &&
+                        (!selected.address || row.getAttribute("data-address") === selected.address) &&
+                        (!selected.city || row.getAttribute("data-city") === selected.city) &&
+                        (!selected.state || row.getAttribute("data-state") === selected.state);
+        
+                    row.style.display = matches ? "" : "none";
+                });
+            }
+        
+            // Attach change listeners
+            Object.values(filters).forEach(select => {
+                select.addEventListener("change", filterTable);
+            });
         });
-    </script>
+        </script>
+        
     
+
+    <!-- JavaScript for Sorting -->
+                    
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const table = document.getElementById("property-table");
+        const headers = document.querySelectorAll("th.sortable");
+    
+        let currentSort = {
+            index: null,
+            direction: 1 // 1 for ascending, -1 for descending
+        };
+    
+        headers.forEach(header => {
+            header.addEventListener("click", function () {
+                const index = parseInt(this.getAttribute("data-index"));
+    
+                if (currentSort.index === index) {
+                    currentSort.direction *= -1;
+                } else {
+                    currentSort.index = index;
+                    currentSort.direction = 1;
+                }
+    
+                const rows = Array.from(table.querySelectorAll("tr"));
+    
+                rows.sort((a, b) => {
+                    const aText = a.children[index].innerText.trim().toLowerCase();
+                    const bText = b.children[index].innerText.trim().toLowerCase();
+    
+                    if (!isNaN(aText) && !isNaN(bText)) {
+                        return currentSort.direction * (parseFloat(aText) - parseFloat(bText));
+                    }
+    
+                    return currentSort.direction * aText.localeCompare(bText);
+                });
+    
+                // Update sort icons
+                headers.forEach(h => {
+                    const icon = h.querySelector(".sort-icon");
+                    icon.className = "fas fa-sort sort-icon";
+                });
+    
+                const icon = this.querySelector(".sort-icon");
+                icon.className = currentSort.direction === 1
+                    ? "fas fa-sort-up sort-icon"
+                    : "fas fa-sort-down sort-icon";
+    
+                // Re-append sorted rows
+                rows.forEach(row => table.appendChild(row));
+            });
+        });
+    });
+    </script>
 </div>
 
-<!-- <hr style="background-color: none; margin: 0.001rem 0; margin-left: 20px;"> -->
 
 <!-- Client starts here --------------------------------------------------------------------------------- -->
  <!-- Unique Contact Modal -->

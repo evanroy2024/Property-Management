@@ -1,4 +1,4 @@
-{% extends "cmbase.html" %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 
 {% block content %}
@@ -110,7 +110,7 @@
         </div>
         <h2>Walkthrough Report Submitted Successfully!</h2>
         <p>Your report has been received and will be processed shortly. Thank you for your submission.</p>
-        <a href="{% url 'clientmanager:walkthrough-form' %}" class="btn">Submit Another Report</a>
+        <a href="{% url 'adminmanager:walkthrough-form' %}" class="btn">Submit Another Report</a>
         <div class="decoration"></div>
     </div>
 </div>
