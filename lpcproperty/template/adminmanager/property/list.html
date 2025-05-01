@@ -179,13 +179,8 @@ th.sortable:hover .sort-icon {
         <div class="p-3">
             <div class="row g-2">
               <div class="col-md-2">
-                <select id="filter-last-name" class="form-select">
-                  <option value="">Last Names</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <select id="filter-first-name" class="form-select">
-                  <option value="">First Names</option>
+                <select id="filter-full-name" class="form-select">
+                  <option value="">Full Name</option>
                 </select>
               </div>
               <div class="col-md-2">
@@ -227,7 +222,7 @@ th.sortable:hover .sort-icon {
                         <tr class="property-row"
                             data-firstname="{{ prop.client.first_name|lower }}"
                             data-lastname="{{ prop.client.last_name|lower }}"
-                            data-address="{{ prop.client_manager|lower }}"
+                            data-address=" {{ prop.client_manager.last_name }}, {{ prop.client_manager.first_name }}"
                             data-city="{{ prop.city|lower }}"
                             data-state="{{ prop.state|lower }}">
                             <td><strong>{{ prop.client.last_name }}  {{ prop.client.first_name }} </strong></td>
@@ -235,7 +230,7 @@ th.sortable:hover .sort-icon {
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
-                            <td>{{ prop.client_manager }}</td>
+                            <td>{{ prop.client_manager.last_name }} , {{ prop.client_manager.first_name }} </td>
                             <td>
                                 <a href="{% url 'adminmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                                     Details
@@ -279,70 +274,86 @@ th.sortable:hover .sort-icon {
                 </table>
 
             </div>
+            
         </div>
     </div>
     
     <!-- JavaScript for Live Filtering -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const filters = {
-                firstName: document.getElementById("filter-first-name"),
-                lastName: document.getElementById("filter-last-name"),
-                address: document.getElementById("filter-address"),
-                city: document.getElementById("filter-city"),
-                state: document.getElementById("filter-state"),
-            };
-        
-            const rows = document.querySelectorAll(".property-row");
-        
-            // Populate filter dropdowns with unique values from table rows
-            function populateDropdown(filterKey, dataAttr) {
-                const values = new Set();
-                rows.forEach(row => values.add(row.getAttribute(dataAttr)));
-        
-                [...values].sort().forEach(val => {
-                    const opt = document.createElement("option");
-                    opt.value = val;
-                    opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
-                    filters[filterKey].appendChild(opt);
-                });
-            }
-        
-            populateDropdown("firstName", "data-firstname");
-            populateDropdown("lastName", "data-lastname");
-            populateDropdown("address", "data-address");
-            populateDropdown("city", "data-city");
-            populateDropdown("state", "data-state");
-        
-            // Filtering function
-            function filterTable() {
-                const selected = {
-                    firstName: filters.firstName.value,
-                    lastName: filters.lastName.value,
-                    address: filters.address.value,
-                    city: filters.city.value,
-                    state: filters.state.value,
-                };
-        
-                rows.forEach(row => {
-                    const matches =
-                        (!selected.firstName || row.getAttribute("data-firstname") === selected.firstName) &&
-                        (!selected.lastName || row.getAttribute("data-lastname") === selected.lastName) &&
-                        (!selected.address || row.getAttribute("data-address") === selected.address) &&
-                        (!selected.city || row.getAttribute("data-city") === selected.city) &&
-                        (!selected.state || row.getAttribute("data-state") === selected.state);
-        
-                    row.style.display = matches ? "" : "none";
-                });
-            }
-        
-            // Attach change listeners
-            Object.values(filters).forEach(select => {
-                select.addEventListener("change", filterTable);
-            });
-        });
-        </script>
-        
+      document.addEventListener("DOMContentLoaded", function () {
+          const filters = {
+              fullName: document.getElementById("filter-full-name"),
+              address: document.getElementById("filter-address"),
+              city: document.getElementById("filter-city"),
+              state: document.getElementById("filter-state"),
+          };
+      
+          const rows = document.querySelectorAll(".property-row");
+      
+          // Populate Full Name dropdown in "Last, First" format
+          const fullNames = new Set();
+          rows.forEach(row => {
+              const first = row.getAttribute("data-firstname") || "";
+              const last = row.getAttribute("data-lastname") || "";
+              const fullName = `${last}, ${first}`;
+              fullNames.add(fullName);
+              row.setAttribute("data-fullname", fullName); // Set for filtering
+          });
+      
+          [...fullNames].sort().forEach(val => {
+              const opt = document.createElement("option");
+              opt.value = val;
+              opt.textContent = val;
+              filters.fullName.appendChild(opt);
+          });
+      
+          // Populate other dropdowns
+          function populateDropdown(filterKey, dataAttr) {
+              const values = new Set();
+              rows.forEach(row => {
+                  const val = row.getAttribute(dataAttr);
+                  if (val) values.add(val);
+              });
+      
+              [...values].sort().forEach(val => {
+                  const opt = document.createElement("option");
+                  opt.value = val;
+                  opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                  filters[filterKey].appendChild(opt);
+              });
+          }
+      
+          populateDropdown("address", "data-address");
+          populateDropdown("city", "data-city");
+          populateDropdown("state", "data-state");
+      
+          // Filtering function
+          function filterTable() {
+              const selected = {
+                  fullName: filters.fullName.value,
+                  address: filters.address.value,
+                  city: filters.city.value,
+                  state: filters.state.value,
+              };
+      
+              rows.forEach(row => {
+                  const matches =
+                      (!selected.fullName || row.getAttribute("data-fullname") === selected.fullName) &&
+                      (!selected.address || row.getAttribute("data-address") === selected.address) &&
+                      (!selected.city || row.getAttribute("data-city") === selected.city) &&
+                      (!selected.state || row.getAttribute("data-state") === selected.state);
+      
+                  row.style.display = matches ? "" : "none";
+              });
+          }
+      
+          // Attach change listeners
+          Object.values(filters).forEach(select => {
+              select.addEventListener("change", filterTable);
+          });
+      });
+      </script>
+      
     
 
     <!-- JavaScript for Sorting -->

@@ -135,11 +135,39 @@
     .action-buttons .btn {
         margin-right: 0.5rem;
     }
+
+.property-features .features-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.property-features label {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.property-features label span {
+    margin-right: 10px;
+}
+
+.property-features input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #007bff; /* Blue tick */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    pointer-events: none;
+}
 </style>
 <div class="content-wrapper">
     <!-- Page Header -->
     <div class="page-header">
-        <h1 class="h3 mb-0 text-gray-800">Property Detail</h1>
+        <h1 class="h3 mb-0 text-800" style="color: black;">Property Detail</h1>
         <a href="{% url 'adminmanager:property_list' %}" class="btn btn-back">
             <i class="fas fa-arrow-left fa-sm mr-2"></i> Back to Properties
         </a>
@@ -154,7 +182,6 @@
                 </div>
                 <div class="card-body">
                     <h4 class="property-address">{{ property.address }}</h4>
-                    <span class="badge bg-success mb-3">Active</span>
 
                     <div class="property-info">
                         <div class="info-item">
@@ -184,6 +211,27 @@
                         <div class="info-item">
                             <span class="info-label">Preferred Contact Method</span>
                             <div class="info-value">{{ property.preferred_contact_method }}</div>
+                        </div>
+                        
+                    </div>
+                    <div class="property-features">
+                        <h5 style="margin-top: 10px; margin-bottom: 10px;">Property Features</h5>
+                        <div class="features-row">
+                            <label><span>Pool</span>
+                                <input type="checkbox" {% if property.has_pool %}checked{% endif %} disabled>
+                            </label>
+                            <label><span>Gated Community</span>
+                                <input type="checkbox" {% if property.gated_community %}checked{% endif %} disabled>
+                            </label>
+                            <label><span>Impact Windows</span>
+                                <input type="checkbox" {% if property.impact_windows %}checked{% endif %} disabled>
+                            </label>
+                            <label><span>HOA</span>
+                                <input type="checkbox" {% if property.has_hoa %}checked{% endif %} disabled>
+                            </label>
+                            <label><span>Gated Property</span>
+                                <input type="checkbox" {% if property.gated_property %}checked{% endif %} disabled>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -299,7 +347,7 @@
                 <div class="room-list">
                     {% for room in floor.rooms.all %}
                         <div class="room-item">
-                            <p class="room-caption text-left">{{ forloop.counter }}. {{ room.room_name }} ({{ room.room_size }})</p>
+                            <p class="room-caption text-left">{{ forloop.counter }}. {{ room.room_name }} </p>
                         </div>
                     {% endfor %}
                 </div>
@@ -310,6 +358,365 @@
         {% endif %}
     </div>
 </div>
+<div class="container mt-4">
+    <!-- Contact Information Section -->
+    <div class="row mb-4" style="color: black;">
+        <div class="col-12">
+            <h3 class="section-title">Clients Information</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name :</strong> {{ property.client.last_name }} , {{ property.client.first_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client.email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Username : </strong> {{ property.client.username }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client.phone_number }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Offile Phone :</strong> {{ property.client.office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buisness Address :</strong> {{ property.client.buisness_adress }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type :</strong> {{ property.client.preferred_contact_method }}
+            </div>
+        </div>
+  
+    </div>
+
+    <!-- Additional Contact 1 Section -->
+    <div class="row mb-4" style="color: black;" id="additional-contact-1">
+        <div class="col-12">
+            <h3 class="section-title">Additional Contact 1</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name : </strong> {{ property.client.contact1_last_name }} , {{ property.client.contact1_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client.contact1_email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client.contact1_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Office Phone:</strong> {{ property.client.contact1_office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buiness Address :</strong> {{ property.client.contact1_buisness_adress }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type :</strong> {{ property.client.contact1_preferred  }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Priority :</strong> {{ property.client.contact1_priority  }}
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4" style="color: black;" id="additional-contact-2">
+        <div class="col-12">
+            <h3 class="section-title">Additional Contact 2</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name : </strong> {{ property.client.contact2_last_name }} , {{ property.client.contact2_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client.contact2_email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client.contact2_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Office Phone:</strong> {{ property.client.contact2_office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buiness Address :</strong> {{ property.client.contact2_buisness_adress }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type :</strong> {{ property.client.contact2_preferred  }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Priority :</strong> {{ property.client.contact2_priority  }}
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4" style="color: black;" id="additional-contact-3">
+        <div class="col-12">
+            <h3 class="section-title">Additional Contact 3</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name : </strong> {{ property.client.contact3_last_name }} , {{ property.client.contact3_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client.contact3_email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client.contact3_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Office Phone:</strong> {{ property.client.contact3_office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buiness Address :</strong> {{ property.client.contact3_buisness_adress }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type :</strong> {{ property.client.contact3_preferred  }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Priority :</strong> {{ property.client.contact3_priority  }}
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4" style="color: black;" id="additional-contact-4">
+        <div class="col-12">
+            <h3 class="section-title">Additional Contact 4</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name : </strong> {{ property.client.contact4_last_name }} , {{ property.client.contact4_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client.contact4_email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client.contact4_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Office Phone:</strong> {{ property.client.contact4_office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buiness Address :</strong> {{ property.client.contact4_buisness_adress }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Priority :</strong> {{ property.client.contact4_preferred  }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type :</strong> {{ property.client.contact4_priority  }}
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4" style="color: black;" id="additional-contact-5">
+        <div class="col-12">
+            <h3 class="section-title">Additional Contact 5</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name : </strong> {{ property.client.contact5_last_name }} , {{ property.client.contact5_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client.contact5_email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client.contact5_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Office Phone:</strong> {{ property.client.contact5_office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buiness Address :</strong> {{ property.client.contact5_buisness_adress }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type :</strong> {{ property.client.contact5_preferred  }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Priority :</strong> {{ property.client.contact5_priority  }}
+            </div>
+        </div>
+    </div>
+    <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
+
+<style>
+    #additional-contact-1, #additional-contact-2, #additional-contact-3, #additional-contact-4, #additional-contact-5 {
+    display: none;
+}
+</style>
+<script>
+    let currentContactIndex = 0;
+
+document.getElementById("revealContactsBtn").addEventListener("click", function() {
+    var contacts = [
+        "additional-contact-1",
+        "additional-contact-2",
+        "additional-contact-3",
+        "additional-contact-4",
+        "additional-contact-5"
+    ];
+
+    if (currentContactIndex < contacts.length) {
+        document.getElementById(contacts[currentContactIndex]).style.display = 'flex';
+        currentContactIndex++;
+    } else {
+        document.getElementById("revealContactsBtn").style.display = 'none';
+    }
+});
+
+</script>
+</div>
+<div class="container mt-4">
+    <!-- Contact Information Section -->
+    <div class="row mb-4" style="color: black;">
+        <div class="col-12">
+            <h3 class="section-title">Client Manager Information</h3>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name :</strong> {{ property.client_manager.last_name }} , {{ property.client_manager.first_name }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email :</strong> {{ property.client_manager.email }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Username : </strong> {{ property.client_manager.username }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone :</strong> {{ property.client_manager.phone_number }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Offile Phone :</strong> {{ property.client_manager.office_phone }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Buisness Address :</strong> {{ property.client_manager.business_address }}
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Contact Type:</strong> {{ property.client_manager.preferred_contact_method }}
+            </div>
+        </div>
+  
+    </div>
+</div>
+<!-- CSS for Styling -->
+<style>
+    /* Basic styling for info-box */
+    .info-box {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-box strong {
+        color: #333;
+    }
+
+    /* Title styling */
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #4b4b4b;
+    }
+
+    /* Styling for each section */
+    .row .col-md-6 .info-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Responsive styling */
+    @media (max-width: 767px) {
+        .row .col-md-6 {
+            flex: 0 0 100%;
+        }
+
+        .row .col-sm-12 {
+            margin-bottom: 20px;
+        }
+    }
+</style>
 
 <!-- Modal for displaying larger images -->
 <div id="imageModal" class="image-modal">

@@ -755,20 +755,55 @@ def property_update_view(request, pk):
             client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
 
             # Update contact persons info (if necessary)
+            # Contact Person 1
             client.contact1_name = request.POST.get('contact1_name', '')
+            client.contact1_last_name = request.POST.get('contact1_last_name', '')
             client.contact1_email = request.POST.get('contact1_email', '')
             client.contact1_phone = request.POST.get('contact1_phone', '')
+            client.contact1_office_phone = request.POST.get('contact1_office_phone', '')
+            client.contact1_buisness_adress = request.POST.get('contact1_buisness_adress', '')
             client.contact1_preferred = request.POST.get('contact1_preferred', '')
+            client.contact1_priority = request.POST.get('contact1_priority', '')
 
+            # Contact Person 2 Update
             client.contact2_name = request.POST.get('contact2_name', '')
+            client.contact2_last_name = request.POST.get('contact2_last_name', '')
             client.contact2_email = request.POST.get('contact2_email', '')
             client.contact2_phone = request.POST.get('contact2_phone', '')
+            client.contact2_office_phone = request.POST.get('contact2_office_phone', '')
+            client.contact2_buisness_adress = request.POST.get('contact2_buisness_adress', '')
             client.contact2_preferred = request.POST.get('contact2_preferred', '')
+            client.contact2_priority = request.POST.get('contact2_priority', '')
 
+            # Contact Person 3 Update
             client.contact3_name = request.POST.get('contact3_name', '')
+            client.contact3_last_name = request.POST.get('contact3_last_name', '')
             client.contact3_email = request.POST.get('contact3_email', '')
             client.contact3_phone = request.POST.get('contact3_phone', '')
+            client.contact3_office_phone = request.POST.get('contact3_office_phone', '')
+            client.contact3_buisness_adress = request.POST.get('contact3_buisness_adress', '')
             client.contact3_preferred = request.POST.get('contact3_preferred', '')
+            client.contact3_priority = request.POST.get('contact3_priority', '')
+
+            # Contact Person 4 Update
+            client.contact4_name = request.POST.get('contact4_name', '')
+            client.contact4_last_name = request.POST.get('contact4_last_name', '')
+            client.contact4_email = request.POST.get('contact4_email', '')
+            client.contact4_phone = request.POST.get('contact4_phone', '')
+            client.contact4_office_phone = request.POST.get('contact4_office_phone', '')
+            client.contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
+            client.contact4_preferred = request.POST.get('contact4_preferred', '')
+            client.contact4_priority = request.POST.get('contact4_priority', '')
+
+            # Contact Person 4 Update
+            client.contact4_name = request.POST.get('contact4_name', '')
+            client.contact4_last_name = request.POST.get('contact4_last_name', '')
+            client.contact4_email = request.POST.get('contact4_email', '')
+            client.contact4_phone = request.POST.get('contact4_phone', '')
+            client.contact4_office_phone = request.POST.get('contact4_office_phone', '')
+            client.contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
+            client.contact4_preferred = request.POST.get('contact4_preferred', '')
+            client.contact4_priority = request.POST.get('contact4_priority', '')
 
             client.save()
 

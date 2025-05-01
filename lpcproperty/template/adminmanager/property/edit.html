@@ -385,6 +385,27 @@
                 gap: 0.5rem;
             }
         }
+        #toggleButtonContact {
+    background-color: #6e8efb;  /* Light blue background */
+    color: white;               /* White text */
+    padding: 10px 20px;         /* Padding for spacing */
+    font-size: 16px;            /* Font size */
+    border: none;               /* No border */
+    border-radius: 8px;         /* Rounded corners */
+    cursor: pointer;           /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    width: 20%;
+}
+
+#toggleButoggleButtonContact:hover {
+    background-color: #a777e3;  /* Darker blue on hover */
+    transform: scale(1.05);      /* Slightly enlarge on hover */
+}
+
+#toggleButtonContact:focus {
+    outline: none;              /* Remove outline when clicked */
+}
+
     </style>
 
     <div class="container">
@@ -613,13 +634,23 @@
                       </div>
                     </div>
                   
-                    <h3 class="sub-title">Contact Person 1</h3>
                   
-                    <div class="form-row">
+                    <!-- Addtional contacts adding  -->
+                     <div class="additional-contact-1" style="display: none;">
+                    <h3 class="sub-title">Contact Person 1</h3>
+
+                    <div class="form-row" style="gap: 20px;">
                       <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" name="contact1_name" value="{{ client.contact1_name }}" placeholder="Name">
+                        <label>First Name</label>
+                        <input type="text" name="contact1_name" value="{{ client.contact1_name }}" placeholder="First Name">
                       </div>
+                      <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="contact1_last_name" value="{{ client.contact1_last_name }}" placeholder="Last Name">
+                      </div>
+                    </div>
+                    
+                    <div class="form-row " style="gap: 20px;">
                       <div class="form-group">
                         <label>Email</label>
                         <input type="email" name="contact1_email" value="{{ client.contact1_email }}" placeholder="Email">
@@ -628,15 +659,287 @@
                         <label>Phone</label>
                         <input type="text" name="contact1_phone" value="{{ client.contact1_phone }}" placeholder="Phone">
                       </div>
+                    </div>
+                    
+                    <div class="form-row" style="gap: 20px;">
                       <div class="form-group">
-                        <label>Preferred</label>
+                        <label>Office Phone</label>
+                        <input type="text" name="contact1_office_phone" value="{{ client.contact1_office_phone }}" placeholder="Office Phone">
+                      </div>
+                      <div class="form-group">
+                        <label>Business Address</label>
+                        <input type="text" name="contact1_buisness_adress" value="{{ client.contact1_buisness_adress }}" placeholder="Business Address">
+                      </div>
+                    </div>
+                    
+                    <div class="form-row" style="gap: 20px;">
+                      <div class="form-group">
+                        <label>Preferred Contact Method</label>
                         <select name="contact1_preferred">
                           {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
                           <option value="{{ value }}" {% if client.contact1_preferred == value %}selected{% endif %}>{{ label }}</option>
                           {% endfor %}
                         </select>
                       </div>
+                      <div class="form-group">
+                        <label>Priority</label>
+                        <select name="contact1_priority">
+                          {% for value, label in client.PRIORITY_CHOICES %}
+                          <option value="{{ value }}" {% if client.contact1_priority == value %}selected{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
                     </div>
+                    </div>
+                    <div class="additional-contact-2" style="display: none;">
+                        <h3 class="sub-title">Contact Person 2</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact2_name" value="{{ client.contact2_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact2_last_name" value="{{ client.contact2_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact2_email" value="{{ client.contact2_email }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact2_phone" value="{{ client.contact2_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact2_office_phone" value="{{ client.contact2_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact2_buisness_adress" value="{{ client.contact2_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact2_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact2_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact2_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact2_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="additional-contact-3" style="display: none;">
+                        <h3 class="sub-title">Contact Person 3</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact3_name" value="{{ client.contact3_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact3_last_name" value="{{ client.contact3_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact3_email" value="{{ client.contact3_email }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact3_phone" value="{{ client.contact3_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact3_office_phone" value="{{ client.contact3_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact3_buisness_adress" value="{{ client.contact3_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact3_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact3_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact3_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact3_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="additional-contact-4" style="display: none;">
+                        <h3 class="sub-title">Contact Person 4</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact4_name" value="{{ client.contact4_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact4_last_name" value="{{ client.contact4_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact4_email" value="{{ client.contact4_email }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact4_phone" value="{{ client.contact4_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact4_office_phone" value="{{ client.contact4_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact4_buisness_adress" value="{{ client.contact4_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact4_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact4_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact4_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact4_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="additional-contact-5" style="display: none;">
+                        <h3 class="sub-title">Contact Person 5</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact5_name" value="{{ client.contact5_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact5_last_name" value="{{ client.contact5_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact5_email" value="{{ client.contact5_email }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact5_phone" value="{{ client.contact5_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact5_office_phone" value="{{ client.contact5_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact5_buisness_adress" value="{{ client.contact5_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact5_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact5_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact5_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact5_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                                                                                        
+                    <!-- Button to toggle visibility -->
+<button id="toggleButtonContact" onclick="toggleVisibility()">Client Contact 1</button>
+<script>
+    let currentContact = 1; // To track the current contact form being displayed
+
+function toggleVisibility() {
+    // Hide the previous contact form
+    if (currentContact > 1) {
+        document.querySelector(`.additional-contact-${currentContact - 1}`).style.display = 'none';
+    }
+
+    // Show the current contact form
+    document.querySelector(`.additional-contact-${currentContact}`).style.display = 'block';
+
+    // Move to the next contact form
+    currentContact++;
+
+    // If we've reached beyond the 5th contact, hide the button
+    if (currentContact > 5) {
+        document.getElementById('toggleButtonContact').style.display = 'none';
+    } else {
+        // Update the button text to show the next contact
+        document.getElementById('toggleButtonContact').textContent = `Client Contact ${currentContact}`;
+    }
+}
+
+</script>
+
                   </div>
                   
                 <!-- Client manager Details start -->
