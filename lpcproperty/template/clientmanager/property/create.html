@@ -364,9 +364,12 @@
                         <label class="form-label" for="client_id">Select Existing Client</label>
                         <select class="form-control" name="client_id" id="client_id" required>
                             {% for client in clients %}
-                                <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
+                                <option value="{{ client.id }}">{{ client.last_name }} {{ client.first_name }} </option>
                             {% endfor %}
                         </select>
+                        
+                       
+                        
                     </div>
                     
                     <!-- Toggle Button -->
@@ -398,25 +401,196 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="new_phone" placeholder="Phone">
                             </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="office_phone" name="office_phone" placeholder="Enter office phone" value="{{ form.office_phone.value }}">
+                              </div>
+                              
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="buisness_adress" name="buisness_adress" placeholder="Enter business address" value="{{ form.buisness_adress.value }}">
+                            </div>
+                              
                         </div>
+                        <!-- Single Button -->
+
+                        <div class="form-row-flex" id="contact-f1" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 1</h5>
+
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact1_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact1_priority" id="contact1_priority">
+                                      <option value="" selected disabled>Select priority</option>
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                      <option value="tertiary">Tertiary</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row-flex" id="contact-f2" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 2</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact2_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact2_priority" id="contact2_priority">
+                                      <option value="" selected disabled>Select priority</option>
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                      <option value="tertiary">Tertiary</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row-flex" id="contact-f3" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 3</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact3_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact3_priority" id="contact3_priority">
+                                      <option value="" selected disabled>Select priority</option>
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                      <option value="tertiary">Tertiary</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 4 -->
+                        <div class="form-row-flex" id="contact-f4" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 4</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact4_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact4_priority" id="contact4_priority" >
+                                        <option value="" selected disabled>Select priority</option>
+                                        <option value="primary">Primary</option>
+                                        <option value="secondary">Secondary</option>
+                                        <option value="tertiary">Tertiary</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 5 -->
+                        <div class="form-row-flex" id="contact-f5" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 5</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact5_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact5_priority" id="contact5_priority">
+                                        <option value="" selected disabled>Select priority</option>
+                                        <option value="primary">Primary</option>
+                                        <option value="secondary">Secondary</option>
+                                        <option value="tertiary">Tertiary</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="showNextContact()">Additonal Contacts</button>
+
+                        <script>
+                            let currentContact = 1;
+
+                                function showNextContact() {
+                                    // Show the next contact form
+                                    if (currentContact <= 5) {
+                                        document.getElementById("contact-f" + currentContact).style.display = "flex";
+                                        currentContact++;
+                                    } else {
+                                        alert("All contact forms are shown!");
+                                    }
+                                }
+                        </script>
                     </div>
-                    
-                    <script>
-                        const toggleBtn = document.getElementById('toggle-new-client');
-                        const newClientForm = document.getElementById('new-client-form');
-                        const existingClientSelect = document.getElementById('client_id');
-                    
-                        let showForm = false;
-                    
-                        toggleBtn.addEventListener('click', () => {
-                            showForm = !showForm;
-                            newClientForm.style.display = showForm ? 'block' : 'none';
-                            existingClientSelect.classList.toggle('disabled-select', showForm);
-                            existingClientSelect.disabled = showForm;
-                    
-                            toggleBtn.innerText = showForm ? '← Use Existing ' : '+ Add New Client';
-                        });
-                    </script>
+              
 
 <!-- adding new client ends here  -->
                 
@@ -428,11 +602,72 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <!-- Toggle Button -->
+                    <div>
+                        <button type="button" id="toggle-new-cm" class="toggle-btn-cm" style="margin-top: 31%;  background: linear-gradient(135deg, #6e8efb, #a777e3);">+ Add CM</button>
+                    </div>
+                    
+                    <!-- Add this wrapper -->
+                    <div id="new-cm-form" style="display: none;">
+                        <div class="form-row-flex">
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_first_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_username" placeholder="Username">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="new_cm_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="password" class="form-control" name="new_cm_password" placeholder="Password">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="office_cm_phone" placeholder="Enter office phone" >
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="buisness_cm_adress" placeholder="Enter business address" >
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .form-row-flex {
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 10px;
+                                margin-top: 10px;
+                            }
+                            #new-cm-form {
+                                background-color: #eef7ff;
+                                padding: 20px;
+                                border: 1px solid  #e1f0fd;
+                                border-radius: 10px;
+                            }
+                            .form-group.flex-33 {
+                                flex: 1 1 calc(33.33% - 10px);
+                                box-sizing: border-box;
+                            }
+
+                        </style>
+
                     
                     <div class="form-group half">
                         <label class="form-label" for="address">Property Address</label>
                         <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the property address">
                     </div>
+                    <div class="form-group half">
+                        <label class="form-label" for="city">City</label>
+                        <input class="form-control" type="text" id="city" name="city" required placeholder="Enter the City Name">
+                        <label class="form-label" for="state">State</label>
+                        <input class="form-control" type="text" id="state" name="state" required placeholder="Enter the State Name">
+                    </div>
+                   
                     
                     <div class="form-group half">
                         <label class="form-label" for="size_of_home">Size of Home</label>
@@ -490,41 +725,87 @@
                         <select class="form-control" id="preferred_contact_method" name="preferred_contact_method">
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="text">Text</option>
                         </select>
                     </div>
                 </div>
             </div>
-            
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
-                
+            
                 <div id="floors-container">
                     <div class="floor-section" id="floor-section-1">
                         <h2>Floor 1</h2>
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="floor_name_1">Floor Name</label>
-                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor">
+                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor" required>
                             </div>
                         </div>
-                        
+                            <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="floor_image_1">Floor Image</label>
+                            <input class="form-control" type="file" id="floor_image_1" name="floor_image_1" accept="image/*">
+                        </div>
+                    </div>
                         <div class="rooms-container" id="rooms-container-1">
                             <h3>Rooms for Floor 1</h3>
                             <div class="room-group" id="room-group-1-1">
-                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name">
-                                <input class="form-control" type="text" name="room_size_1_1" placeholder="Room Size">
-                                <input class="form-control" type="file" name="room_image_1_1" accept="image/*">
+                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name" required>
                             </div>
                         </div>
-                        
+            
                         <button type="button" onclick="addRoom(1)">Add Room</button>
-
                     </div>
                 </div>
-                
+            
                 <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
-                
+            
             </div>
+            <script>
+                let floorCount = 1;
+            
+                function addFloor() {
+                    floorCount++;
+                    const floorSection = document.createElement("div");
+                    floorSection.className = "floor-section";
+                    floorSection.id = `floor-section-${floorCount}`;
+            
+                    floorSection.innerHTML = `
+                        <h2>Floor ${floorCount}</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                                <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                            </div>
+                        </div>
+                        <div class="rooms-container" id="rooms-container-${floorCount}">
+                            <h3>Rooms for Floor ${floorCount}</h3>
+                            <div class="room-group" id="room-group-${floorCount}-1">
+                                <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+                    `;
+            
+                    document.getElementById("floors-container").appendChild(floorSection);
+                }
+            
+                function addRoom(floorId) {
+                    const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+                    const roomGroup = document.createElement("div");
+                    roomGroup.className = "room-group";
+                    roomGroup.id = `room-group-${floorId}-${roomCount}`;
+            
+                    roomGroup.innerHTML = `
+                        <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+                    `;
+            
+                    document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+                }
+            </script>
+            
+            
             <style>
 
 /* Headings */
@@ -616,52 +897,7 @@ button:disabled {
                 </button>
             </div>
         </form>
-        <script>
-            let floorCount = 1;
-            
-            function addFloor() {
-                floorCount++;
-                const floorSection = document.createElement("div");
-                floorSection.className = "floor-section";
-                floorSection.id = `floor-section-${floorCount}`;
-                
-                floorSection.innerHTML = `
-                    <h2>Floor ${floorCount}</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                            <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
-                        </div>
-                    </div>
-                    <div class="rooms-container" id="rooms-container-${floorCount}">
-                        <h3>Rooms for Floor ${floorCount}</h3>
-                        <div class="room-group" id="room-group-${floorCount}-1">
-                            <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                            <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
-                            <input class="form-control" type="file" name="room_image_${floorCount}_1" accept="image/*" required>
-                        </div>
-                    </div>
-                    <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
-                `;
-                
-                document.getElementById("floors-container").appendChild(floorSection);
-            }
-            
-            function addRoom(floorId) {
-                const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
-                const roomGroup = document.createElement("div");
-                roomGroup.className = "room-group";
-                roomGroup.id = `room-group-${floorId}-${roomCount}`;
-                
-                roomGroup.innerHTML = `
-                    <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-                    <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
-                    <input class="form-control" type="file" name="room_image_${floorId}_${roomCount}" accept="image/*" required>
-                `;
-                
-                document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
-            }
-            </script>
+  
     </div>
 
     <script>
@@ -680,5 +916,64 @@ button:disabled {
             });
         });
     </script>
-    
+                            <script>
+                            window.onload = function() {
+                                var select = document.getElementById("client_id");
+                                var options = Array.from(select.options);
+                        
+                                // Sort the options alphabetically based on last name
+                                options.sort(function(a, b) {
+                                    var lastNameA = a.text.split(' ')[1].toUpperCase(); // Get the last name and convert to uppercase
+                                    var lastNameB = b.text.split(' ')[1].toUpperCase(); // Get the last name and convert to uppercase
+                        
+                                    return lastNameA.localeCompare(lastNameB); // Compare last names
+                                });
+                        
+                                // Remove all existing options
+                                select.innerHTML = "";
+                        
+                                // Re-add sorted options
+                                options.forEach(function(option) {
+                                    select.add(option);
+                                });
+                            };
+                        </script>
+                         <script>
+                            // Toggle New Client
+                            const toggleClientBtn = document.getElementById('toggle-new-client');
+                            const newClientForm = document.getElementById('new-client-form');
+                            const existingClientSelect = document.getElementById('client_id');
+
+                            let showClientForm = false;
+
+                            toggleClientBtn.addEventListener('click', () => {
+                                showClientForm = !showClientForm;
+                                newClientForm.style.display = showClientForm ? 'block' : 'none';
+                                existingClientSelect.classList.toggle('disabled-select', showClientForm);
+                                existingClientSelect.disabled = showClientForm;
+
+                                toggleClientBtn.innerText = showClientForm ? '← Use Existing' : '+ Add New Client';
+                            });
+
+                            // Toggle New Client Manager (CM)
+                            const toggleCMBtn = document.getElementById('toggle-new-cm');
+                            const newCMForm = document.getElementById('new-cm-form');
+                            const existingClientManagerSelect = document.getElementById('client_manager_id'); // Existing CM dropdown
+
+                            let showCMForm = false;
+
+                            toggleCMBtn.addEventListener('click', () => {
+                                showCMForm = !showCMForm;
+                                
+                                // Show or hide the new CM form
+                                newCMForm.style.display = showCMForm ? 'block' : 'none';
+                                
+                                // Disable the existing client manager dropdown when the "Add CM" button is clicked
+                                existingClientManagerSelect.disabled = showCMForm;
+
+                                // Change the button text based on form visibility
+                                toggleCMBtn.innerText = showCMForm ? '← Use Existing CM' : '+ Add CM';
+                            });
+
+                         </script>
 {% endblock content %}

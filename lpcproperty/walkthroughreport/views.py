@@ -69,6 +69,8 @@ MCQ_CHOICES = [
     ("Heads-Up", "Heads-Up"),
     ("Non-Compliant", "Non-Compliant"),
 ]
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 def get_verbose_data(report):
     data = []
     for field in report._meta.fields:
@@ -79,15 +81,11 @@ def get_verbose_data(report):
 
             if answer:
                 verbose = field.verbose_name or name.replace('_', ' ').capitalize()
-                prefix = ''.join(filter(str.isalpha, name)).upper()  # extract 'GIE' from 'gie1'
+                prefix = ''.join(filter(str.isalpha, name)).upper()
                 data.append((verbose, answer, remark, prefix))
     return data
 
-
 def export_pdf(request, report_id):
-    from reportlab.lib.styles import ParagraphStyle
-    from reportlab.platypus import TableStyle
-
     report = WalkthroughReport.objects.get(pk=report_id)
     data = get_verbose_data(report)
 
@@ -106,34 +104,42 @@ def export_pdf(request, report_id):
     elements = []
     styles = getSampleStyleSheet()
 
-    # Title with green color
+    # Reduced font size for the main title
     styles.add(ParagraphStyle(
         name='GreenTitle',
-        fontSize=18,
-        leading=22,
+        fontSize=16,  # Reduced font size
+        leading=18,
         textColor=colors.HexColor("#2e7d32"),
         fontName="Helvetica-Bold",
-        alignment=1,  # Center
+        alignment=1,
         spaceAfter=6
     ))
 
+    # Reduced font size for section titles
     styles.add(ParagraphStyle(
         name='SectionTitle',
-        fontSize=13,
-        leading=16,
+        fontSize=11,  # Reduced font size
+        leading=14,
         spaceAfter=10,
         textColor=colors.HexColor("#003366"),
         fontName="Helvetica-Bold"
     ))
+
+    wrap_style = ParagraphStyle(
+        name='wrapped',
+        fontName='Helvetica',
+        fontSize=9,
+        leading=11,
+        wordWrap='CJK',  # Ensure text wraps
+    )
 
     # Top Title
     elements.append(Paragraph("🏠 Walkthrough Report", styles['GreenTitle']))
 
     # Underline
     elements.append(Table([[""]], colWidths=[6.3 * inch], style=[
-        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor("#2e7d32")),
-    ]))
-
+        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor("#2e7d32"))],
+    ))
     elements.append(Spacer(1, 12))
 
     # Grouping data by category
@@ -153,14 +159,15 @@ def export_pdf(request, report_id):
         table_data = [["Question", "N/A", "Compliant", "Heads-Up", "Non-Compliant", "Remarks"]]
 
         for i, (question, answer, remark) in enumerate(rows):
-            row = [question]
+            row = [Paragraph(question, wrap_style)]
             for choice, _ in MCQ_CHOICES:
                 row.append("✔" if answer == choice else "")
-            row.append(remark or "-")
+            row.append(Paragraph(remark or "-", wrap_style))
             table_data.append(row)
 
+        # Adjusted column widths to avoid overlapping
         table = Table(table_data, colWidths=[
-            2.3 * inch, 0.7 * inch, 0.8 * inch, 0.9 * inch, 0.9 * inch, 2 * inch
+            2.6 * inch, 0.7 * inch, 0.8 * inch, 0.9 * inch, 1.2 * inch, 2.2 * inch  # Wider "Non-Compliant" and "Remarks"
         ])
 
         style = TableStyle([
@@ -186,6 +193,7 @@ def export_pdf(request, report_id):
 
     doc.build(elements)
     return response
+
 
 from django.http import HttpResponse
 from openpyxl import Workbook

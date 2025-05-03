@@ -739,6 +739,8 @@ def property_update_view(request, pk):
             prop.impact_windows = 'impact_windows' in request.POST
             prop.has_hoa = 'has_hoa' in request.POST
             prop.gated_property = 'gated_property' in request.POST
+            prop.state = request.POST.get('property_state', '')   # Added state
+            prop.city = request.POST.get('property_city', '')     # Added City 
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
             prop.save()
 

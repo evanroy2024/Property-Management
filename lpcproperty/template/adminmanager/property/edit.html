@@ -469,6 +469,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="form-row">
+                          <div class="form-col form-col-md">
+                              <div class="form-group">
+                                  <label class="form-label" for="number_of_stories">Property State</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-building input-icon"></i>
+                                      <input type="text" id="property_state" name="property_state" class="form-control" value="{{ property.state }}" placeholder="Enter State">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-col form-col-md">
+                              <div class="form-group">
+                                  <label class="form-label" for="year_built">Property City</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-calendar-alt input-icon"></i>
+                                      <input type="text" id="property_city" name="property_city" class="form-control" value="{{ property.city }}" placeholder="Enter Property City ">
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                         
                         <div class="form-group">
                             <label class="form-label" for="construction_type">Construction Type</label>
@@ -477,6 +498,8 @@
                                 <input type="text" id="construction_type" name="construction_type" class="form-control" value="{{ property.construction_type }}" placeholder="E.g., Wood frame, Concrete block, etc.">
                             </div>
                         </div>
+                        
+                        
                     </div>
                 </div>
                 
@@ -653,7 +676,7 @@
                     <div class="form-row " style="gap: 20px;">
                       <div class="form-group">
                         <label>Email</label>
-                        <input type="email" name="contact1_email" value="{{ client.contact1_email }}" placeholder="Email">
+                        <input type="email" name="contact1_email" value="{{ client.contact1_email|default:'' }}" placeholder="Email">
                       </div>
                       <div class="form-group">
                         <label>Phone</label>
@@ -708,7 +731,7 @@
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>Email</label>
-                            <input type="email" name="contact2_email" value="{{ client.contact2_email }}" placeholder="Email">
+                            <input type="email" name="contact2_email" value="{{ client.contact2_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
                             <label>Phone</label>
@@ -763,7 +786,7 @@
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>Email</label>
-                            <input type="email" name="contact3_email" value="{{ client.contact3_email }}" placeholder="Email">
+                            <input type="email" name="contact3_email" value="{{ client.contact3_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
                             <label>Phone</label>
@@ -818,7 +841,7 @@
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>Email</label>
-                            <input type="email" name="contact4_email" value="{{ client.contact4_email }}" placeholder="Email">
+                            <input type="text" name="contact4_email" value="{{ client.contact4_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
                             <label>Phone</label>
@@ -873,7 +896,7 @@
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>Email</label>
-                            <input type="email" name="contact5_email" value="{{ client.contact5_email }}" placeholder="Email">
+                            <input type="email" name="contact5_email" value="{{ client.contact5_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
                             <label>Phone</label>
@@ -913,7 +936,7 @@
                       </div>
                                                                                         
                     <!-- Button to toggle visibility -->
-<button id="toggleButtonContact" onclick="toggleVisibility()">Client Contact 1</button>
+<button id="toggleButtonContact" type="button" onclick="toggleVisibility()">Client Contact 1</button>
 <script>
     let currentContact = 1; // To track the current contact form being displayed
 
@@ -1019,75 +1042,13 @@ function toggleVisibility() {
                 
                 
                 
-                  
-                <div class="client-manager-card">
-                    <h3 style="text-align: center; font-weight: bold;">Client Manager Inf0ormation</h3>
-                
-                    <input type="hidden" name="new_cm" value="{{ selected_client_manager.id }}">
-                
-                    <div class="form-row">
-                        <div class="row1" style="display: flex; width: 100%; gap: 20px;">
-                        <div class="form-group">
-                            <label>First Name:</label>
-                            <input type="text" name="cm_first_name" value="{{ selected_client_manager.first_name }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name:</label>
-                            <input type="text" name="cm_last_name" value="{{ selected_client_manager.last_name }}">
-                        </div>
-                    </div>
-                    <div class="row1" style="display: flex; width: 100%; gap: 20px;">
-                        <div class="form-group">
-                            <label>Username:</label>
-                            <input type="text" name="cm_username" value="{{ selected_client_manager.username }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Email:</label>
-                            <input type="email" name="cm_email" value="{{ selected_client_manager.email }}">
-                        </div>
-                    </div>
-                    <div class="row1" style="display: flex; width: 100%; gap: 20px;">
-                        <div class="form-group">
-                            <label>Phone Number:</label>
-                            <input type="text" name="cm_phone_number" value="{{ selected_client_manager.phone_number }}">
-                        </div>
-                        <div class="form-group">
-                            <label>City:</label>
-                            <input type="text" name="cm_city" value="{{ selected_client_manager.city }}">
-                        </div>
-                    </div>
-                    <div class="row1" style="display: flex; width: 100%; gap: 20px;">
-                        <div class="form-group">
-                            <label>State:</label>
-                            <input type="text" name="cm_state" value="{{ selected_client_manager.state }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Zipcode:</label>
-                            <input type="text" name="cm_zipcode" value="{{ selected_client_manager.zipcode }}">
-                        </div>
-                    </div>
-                        <div class="form-group">
-                            <label>Preferred Contact Method:</label>
-                            <select name="cm_preferred_contact_method">
-                                <option value="email" {% if selected_client_manager.preferred_contact_method == "email" %}selected{% endif %}>Email</option>
-                                <option value="phone" {% if selected_client_manager.preferred_contact_method == "phone" %}selected{% endif %}>Phone</option>
-                                <option value="text" {% if selected_client_manager.preferred_contact_method == "text" %}selected{% endif %}>Text</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                
-                
-                
-                
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
                         <i class="fas fa-times"></i> Cancel
                       </a>
                     <button type="submit" class="btn btn-primary btn-icon" id="updateBtn">
-                      <i class="fas fa-save"></i> Update
+                      <i class="fas fa-save"></i> Save
                     </button>
                    
                   </div>

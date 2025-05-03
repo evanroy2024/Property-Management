@@ -225,12 +225,12 @@ th.sortable:hover .sort-icon {
                             data-address=" {{ prop.client_manager.last_name }}, {{ prop.client_manager.first_name }}"
                             data-city="{{ prop.city|lower }}"
                             data-state="{{ prop.state|lower }}">
-                            <td><strong>{{ prop.client.last_name }}  {{ prop.client.first_name }} </strong></td>
+                            <td><strong>{{ prop.client.last_name }}, {{ prop.client.first_name }} </strong></td>
                             <td>{{ prop.city }}</td>
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
-                            <td>{{ prop.client_manager.last_name }} , {{ prop.client_manager.first_name }} </td>
+                            <td>{{ prop.client_manager.last_name }}, {{ prop.client_manager.first_name }} </td>
                             <td>
                                 <a href="{% url 'adminmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                                     Details

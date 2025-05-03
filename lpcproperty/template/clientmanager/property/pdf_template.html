@@ -8,12 +8,12 @@
             font-family: "Arial", sans-serif;
             font-size: 13px;
             color: #2c3e50;
-            padding: 30px;
+            padding: 20px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 5px;
         }
 
         header h1 {
@@ -23,7 +23,7 @@
         }
 
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 5px;
         }
 
         .section h2 {
@@ -62,13 +62,12 @@
         }
 
         .image-box {
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         img {
-            max-width: 400px;
-            width: 100%;
-            height: auto;
+            width: 450px; /* Adjust width automatically based on its original size */
+            height: auto; /* Ensures the height is automatically adjusted to maintain aspect ratio */
             border: 1px solid #ddd;
             margin-top: 5px;
         }
@@ -116,23 +115,37 @@
         <div class="info-row"><span class="label">Gated Property:</span><span class="value">{{ property.gated_property|yesno:"Yes,No" }}</span></div>
     </div>
 
-    {% for floor in property.floors.all %}
-    <div class="section">
-        <h2>🧱 Floor: {{ floor.floor_name }}</h2>
-        {% for room in floor.rooms.all %}
-        <div class="room">
-            <h4>{{ room.room_name }}</h4>
-            <div class="info-row"><span class="label">Size:</span><span class="value">{{ room.room_size }}</span></div>
-            {% if room.room_image %}
-            <div class="image-box">
-                <img src="{{ room.room_image.url }}" alt="Image of {{ room.room_name }}">
-            </div>
+    <div class="property-container">
+        <h2>Floor Plans Overview</h2>
+        <div class="property-card">
+            <h3 class="property-address">{{ property.address }}</h3>
+    
+            {% if property.floors.all %}
+                {% for floor in property.floors.all %}
+                    <div class="floor-card">
+                        <h4 class="floor-title">{{ floor.floor_name }}</h4>
+    
+                        {% if floor.floor_imgae %}
+                            <div class="floor-overview-image text-center">
+                                <a href="{{ floor.floor_imgae.url }}" download>
+                                    <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}">
+                                </a>
+                            </div>
+                        {% endif %}
+    
+                        <div class="room-list">
+                            {% for room in floor.rooms.all %}
+                                <div class="room-item">{{ forloop.counter }}. {{ room.room_name }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No floor plans available for this property.</p>
             {% endif %}
         </div>
-        {% endfor %}
     </div>
-    {% endfor %}
-
+    
     <footer>
         &copy; {{ property.created_at|date:"Y" }} LPC Property Management
     </footer>

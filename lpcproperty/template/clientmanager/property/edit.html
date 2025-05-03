@@ -385,6 +385,27 @@
                 gap: 0.5rem;
             }
         }
+        #toggleButtonContact {
+    background-color: #6e8efb;  /* Light blue background */
+    color: white;               /* White text */
+    padding: 10px 20px;         /* Padding for spacing */
+    font-size: 16px;            /* Font size */
+    border: none;               /* No border */
+    border-radius: 8px;         /* Rounded corners */
+    cursor: pointer;           /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    width: 20%;
+}
+
+#toggleButoggleButtonContact:hover {
+    background-color: #a777e3;  /* Darker blue on hover */
+    transform: scale(1.05);      /* Slightly enlarge on hover */
+}
+
+#toggleButtonContact:focus {
+    outline: none;              /* Remove outline when clicked */
+}
+
     </style>
 
     <div class="container">
@@ -395,8 +416,10 @@
                     <i class="fas fa-arrow-left"></i> Back to Properties
                 </a>
             </div>
+          
             
             <form method="POST" enctype="multipart/form-data">
+                
                 {% csrf_token %}
                 
                 <!-- Property Information Card -->
@@ -446,6 +469,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="form-row">
+                          <div class="form-col form-col-md">
+                              <div class="form-group">
+                                  <label class="form-label" for="number_of_stories">Property State</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-building input-icon"></i>
+                                      <input type="text" id="property_state" name="property_state" class="form-control" value="{{ property.state }}" placeholder="Enter State">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-col form-col-md">
+                              <div class="form-group">
+                                  <label class="form-label" for="year_built">Property City</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-calendar-alt input-icon"></i>
+                                      <input type="text" id="property_city" name="property_city" class="form-control" value="{{ property.city }}" placeholder="Enter Property City ">
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                         
                         <div class="form-group">
                             <label class="form-label" for="construction_type">Construction Type</label>
@@ -454,6 +498,8 @@
                                 <input type="text" id="construction_type" name="construction_type" class="form-control" value="{{ property.construction_type }}" placeholder="E.g., Wood frame, Concrete block, etc.">
                             </div>
                         </div>
+                        
+                        
                     </div>
                 </div>
                 
@@ -507,33 +553,46 @@
                         {% for floor in floors %}
                         <div class="floor-section" id="floor-section-{{ forloop.counter }}">
                             <h2>Floor {{ forloop.counter }}</h2>
+                            
+                            <!-- Floor Name -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label" for="floor_name_{{ forloop.counter }}">Floor Name</label>
                                     <input class="form-control" type="text" id="floor_name_{{ forloop.counter }}" name="floor_name_{{ forloop.counter }}" value="{{ floor.floor_name }}">
                                 </div>
                             </div>
+
+                            <!-- Floor Image -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="floor_image_{{ forloop.counter }}">Floor Image</label>
+                                    <input class="form-control" type="file" name="floor_image_{{ forloop.counter }}" accept="image/*">
+                                    {% if floor.floor_imgae %}
+                                        <small class="text-success">Current image: {{ floor.floor_imgae.name }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
                             
+                            <!-- Rooms for this Floor -->
                             <div class="rooms-container" id="rooms-container-{{ forloop.counter }}">
                                 <h3>Rooms for Floor {{ forloop.counter }}</h3>
                                 {% for room in floor.rooms.all %}
                                 <div class="room-group" id="room-group-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
                                     <input class="form-control" type="text" name="room_name_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_name }}" placeholder="Room Name">
-                                    <input class="form-control" type="text" name="room_size_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_size }}" placeholder="Room Size">
-                                    <input class="form-control" type="file" name="room_image_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" accept="image/*">
-                                    {% if room.room_image %}
-                                        <small class="text-success">Current image: {{ room.room_image.name }}</small>
-                                    {% endif %}
+                                    <input class="form-control" type="text" name="room_size_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="{{ room.room_size }}" placeholder="Room Size" style="display: none;">
+                                    <!-- No image input for rooms -->
                                 </div>
                                 {% endfor %}
                             </div>
+
                             <button type="button" onclick="addRoom({{ forloop.counter }})">Add Room</button>
                         </div>
                         {% endfor %}
                     </div>
-                
-                    <button type="button" style="width: 25%;"  class="add-room-btn"  onclick="addFloor()">Add Another Floor</button>
+
+                    <button type="button" style="width: 25%;" class="add-room-btn" onclick="addFloor()">Add Another Floor</button>
                 </div>
+
 
                 <!-- Client Details start -->
                 <div class="card client-info-card">
@@ -598,47 +657,566 @@
                       </div>
                     </div>
                   
-                    <h3 class="sub-title">Contact Person 1</h3>
                   
-                    <div class="form-row">
+                    <!-- Addtional contacts adding  -->
+                     <div class="additional-contact-1" style="display: none;">
+                    <h3 class="sub-title">Contact Person 1</h3>
+
+                    <div class="form-row" style="gap: 20px;">
                       <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" name="contact1_name" value="{{ client.contact1_name }}" placeholder="Name">
+                        <label>First Name</label>
+                        <input type="text" name="contact1_name" value="{{ client.contact1_name }}" placeholder="First Name">
                       </div>
                       <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="contact1_last_name" value="{{ client.contact1_last_name }}" placeholder="Last Name">
+                      </div>
+                    </div>
+                    
+                    <div class="form-row " style="gap: 20px;">
+                      <div class="form-group">
                         <label>Email</label>
-                        <input type="email" name="contact1_email" value="{{ client.contact1_email }}" placeholder="Email">
+                        <input type="email" name="contact1_email" value="{{ client.contact1_email|default:'' }}" placeholder="Email">
                       </div>
                       <div class="form-group">
                         <label>Phone</label>
                         <input type="text" name="contact1_phone" value="{{ client.contact1_phone }}" placeholder="Phone">
                       </div>
+                    </div>
+                    
+                    <div class="form-row" style="gap: 20px;">
                       <div class="form-group">
-                        <label>Preferred</label>
+                        <label>Office Phone</label>
+                        <input type="text" name="contact1_office_phone" value="{{ client.contact1_office_phone }}" placeholder="Office Phone">
+                      </div>
+                      <div class="form-group">
+                        <label>Business Address</label>
+                        <input type="text" name="contact1_buisness_adress" value="{{ client.contact1_buisness_adress }}" placeholder="Business Address">
+                      </div>
+                    </div>
+                    
+                    <div class="form-row" style="gap: 20px;">
+                      <div class="form-group">
+                        <label>Preferred Contact Method</label>
                         <select name="contact1_preferred">
                           {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
                           <option value="{{ value }}" {% if client.contact1_preferred == value %}selected{% endif %}>{{ label }}</option>
                           {% endfor %}
                         </select>
                       </div>
+                      <div class="form-group">
+                        <label>Priority</label>
+                        <select name="contact1_priority">
+                          {% for value, label in client.PRIORITY_CHOICES %}
+                          <option value="{{ value }}" {% if client.contact1_priority == value %}selected{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
                     </div>
+                    </div>
+                    <div class="additional-contact-2" style="display: none;">
+                        <h3 class="sub-title">Contact Person 2</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact2_name" value="{{ client.contact2_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact2_last_name" value="{{ client.contact2_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact2_email" value="{{ client.contact2_email|default:'' }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact2_phone" value="{{ client.contact2_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact2_office_phone" value="{{ client.contact2_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact2_buisness_adress" value="{{ client.contact2_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact2_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact2_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact2_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact2_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="additional-contact-3" style="display: none;">
+                        <h3 class="sub-title">Contact Person 3</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact3_name" value="{{ client.contact3_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact3_last_name" value="{{ client.contact3_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact3_email" value="{{ client.contact3_email|default:'' }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact3_phone" value="{{ client.contact3_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact3_office_phone" value="{{ client.contact3_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact3_buisness_adress" value="{{ client.contact3_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact3_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact3_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact3_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact3_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="additional-contact-4" style="display: none;">
+                        <h3 class="sub-title">Contact Person 4</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact4_name" value="{{ client.contact4_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact4_last_name" value="{{ client.contact4_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" name="contact4_email" value="{{ client.contact4_email|default:'' }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact4_phone" value="{{ client.contact4_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact4_office_phone" value="{{ client.contact4_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact4_buisness_adress" value="{{ client.contact4_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact4_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact4_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact4_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact4_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="additional-contact-5" style="display: none;">
+                        <h3 class="sub-title">Contact Person 5</h3>
+                      
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="contact5_name" value="{{ client.contact5_name }}" placeholder="First Name">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="contact5_last_name" value="{{ client.contact5_last_name }}" placeholder="Last Name">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="contact5_email" value="{{ client.contact5_email|default:'' }}" placeholder="Email">
+                          </div>
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="contact5_phone" value="{{ client.contact5_phone }}" placeholder="Phone">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Office Phone</label>
+                            <input type="text" name="contact5_office_phone" value="{{ client.contact5_office_phone }}" placeholder="Office Phone">
+                          </div>
+                          <div class="form-group">
+                            <label>Business Address</label>
+                            <input type="text" name="contact5_buisness_adress" value="{{ client.contact5_buisness_adress }}" placeholder="Business Address">
+                          </div>
+                        </div>
+                        
+                        <div class="form-row" style="gap: 20px;">
+                          <div class="form-group">
+                            <label>Preferred Contact Method</label>
+                            <select name="contact5_preferred">
+                              {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact5_preferred == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Priority</label>
+                            <select name="contact5_priority">
+                              {% for value, label in client.PRIORITY_CHOICES %}
+                                <option value="{{ value }}" {% if client.contact5_priority == value %}selected{% endif %}>{{ label }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                                                                                        
+                    <!-- Button to toggle visibility -->
+<button id="toggleButtonContact" type="button" onclick="toggleVisibility()">Client Contact 1</button>
+<script>
+    let currentContact = 1; // To track the current contact form being displayed
+
+function toggleVisibility() {
+    // Hide the previous contact form
+    if (currentContact > 1) {
+        document.querySelector(`.additional-contact-${currentContact - 1}`).style.display = 'none';
+    }
+
+    // Show the current contact form
+    document.querySelector(`.additional-contact-${currentContact}`).style.display = 'block';
+
+    // Move to the next contact form
+    currentContact++;
+
+    // If we've reached beyond the 5th contact, hide the button
+    if (currentContact > 5) {
+        document.getElementById('toggleButtonContact').style.display = 'none';
+    } else {
+        // Update the button text to show the next contact
+        document.getElementById('toggleButtonContact').textContent = `Client Contact ${currentContact}`;
+    }
+}
+
+</script>
+
                   </div>
                   
-                <!-- Client Details start -->
-                  
+                <!-- Client manager Details start -->
+                <style>
+                    .client-manager-card {
+                        background: #fff;
+                        border-radius: 16px;
+                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                        padding: 24px;
+                        margin-bottom: 24px;
+                        font-family: 'Segoe UI', sans-serif;
+                    }
+                
+                    .client-manager-card h3 {
+                        font-size: 1.3rem;
+                        margin-bottom: 20px;
+                        color: #333;
+                    }
+                
+                    .client-manager-card .form-row {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 20px;
+                    }
+                
+                    .client-manager-card .form-group {
+                        flex: 1 1 100%;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                
+                    .client-manager-card label {
+                        font-weight: 600;
+                        margin-bottom: 5px;
+                        color: #555;
+                    }
+                
+                    .client-manager-card input,
+                    .client-manager-card select {
+                        padding: 10px 12px;
+                        border-radius: 8px;
+                        border: 1px solid #ccc;
+                        font-size: 0.95rem;
+                        transition: border-color 0.2s;
+                    }
+                
+                    .client-manager-card input:focus,
+                    .client-manager-card select:focus {
+                        border-color: #6e8efb;
+                        outline: none;
+                    }
+                    
+                </style>
+                
+                <!-- <div class="client-manager-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Select Client Manager</label>
+                            <select name="new_cm">
+                                <option value="" disabled selected>Select a Client Manager</option>
+                                {% for cm in client_managers %}
+                                    <option value="{{ cm.id }}" {% if cm.id == property.client_manager.id %}selected{% endif %}>
+                                        {{ cm.first_name }} {{ cm.last_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- <select class="form-control" id="client_manager" name="new_cm">
+                    {% for cm in client_managers %}
+                        <option value="{{ cm.id }}" {% if cm.id == selected_client_manager.id %}selected{% endif %}>
+                            {{ cm.first_name }} {{ cm.last_name }}
+                        </option>
+                    {% endfor %}
+                </select> -->
                 
                 
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary btn-icon">
-                        <i class="fas fa-save"></i> Update Property
-                    </button>
-                    <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon">
+                    <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
                         <i class="fas fa-times"></i> Cancel
-                    </a>
-                </div>
+                      </a>
+                    <button type="submit" class="btn btn-primary btn-icon" id="updateBtn">
+                      <i class="fas fa-save"></i> Save
+                    </button>
+                   
+                  </div>
+                  
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      const cancelBtn = document.getElementById('cancelBtn');
+                      const updateBtn = document.getElementById('updateBtn');
+                      const form = cancelBtn.closest('form');
+                  
+                      cancelBtn.addEventListener('click', function(event) {
+                        event.preventDefault();
+                  
+                        if (confirm('Do you want to save changes before leaving?')) {
+                          // User clicked "Yes" - submit the form
+                          form.submit();
+                        } else {
+                          // User clicked "No" - redirect to the cancel URL
+                          window.location.href = cancelBtn.href;
+                        }
+                      });
+                    });
+                  </script>
+                  
             </form>
+            <form method="POST" enctype="multipart/form-data" class="client-manager-form">
+                {% csrf_token %}
+                
+                <h3>Update Client Manager for Property</h3>
+                <p class="lead">Choose a new Client Manager for this property, and press save.</p>
+                
+                <div class="form-group mb-4">
+                    <label for="client_manager" class="form-label">Choose a Client Manager</label>
+                    <select class="form-select" id="client_manager" name="new_cm" required>
+                        <option value="" disabled>Select Client Manager</option>
+                        {% for cm in client_managers %}
+                            <option value="{{ cm.id }}" {% if cm.id == property.client_manager.id %}selected{% endif %}>
+                                {{ cm.first_name }} {{ cm.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Update Client Manager</button>
+            </form>
+<style>
+    /* Form Container */
+.client-manager-form {
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+/* Form Title and Description */
+.client-manager-form h3 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.client-manager-form .lead {
+    font-size: 1.1rem;
+    text-align: center;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+/* Label Styling */
+.client-manager-form label {
+    font-weight: 600;
+    color: #4e4e4e;
+    font-size: 1.1rem;
+}
+
+/* Dropdown Menu Styling */
+.client-manager-form .form-select {
+    padding: 12px 15px;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border 0.3s ease, background-color 0.3s ease;
+}
+
+/* Dropdown Hover Effect */
+.client-manager-form .form-select:hover,
+.client-manager-form .form-select:focus {
+    border-color: #4e73df;
+    background-color: #e9f1ff;
+}
+.client-manager-form:hover{
+    cursor: pointer;
+}
+/* Button Styling */
+.client-manager-form .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #4e73df;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-transform: uppercase;
+}
+
+/* Button Hover Effect */
+.client-manager-form .btn:hover {
+    background-color: #3a5ad5;
+    transform: translateY(-2px);
+}
+
+/* Button Active Effect */
+.client-manager-form .btn:active {
+    background-color: #2e49b0;
+    transform: translateY(1px);
+}
+
+/* Margin between form elements */
+.client-manager-form .form-select,
+.client-manager-form .btn {
+    margin-bottom: 20px;
+}
+
+/* Error Message Styling */
+.client-manager-form .error-message {
+    color: #d9534f;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Success Message Styling */
+.client-manager-form .success-message {
+    color: #28a745;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+    .client-manager-form {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .client-manager-form h3 {
+        font-size: 1.6rem;
+    }
+
+    .client-manager-form .btn {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
+
+</style>            
+            
         </div>
     </div>
     
@@ -661,52 +1239,63 @@
         });
     </script> -->
 
-<script>
-    let floorCount = 1;
+    <script>
+        let floorCount = 1;
     
-    function addFloor() {
-        floorCount++;
-        const floorSection = document.createElement("div");
-        floorSection.className = "floor-section";
-        floorSection.id = `floor-section-${floorCount}`;
-        
-        floorSection.innerHTML = `
-            <h2>Floor ${floorCount}</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                    <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
-                </div>
-            </div>
-            <div class="rooms-container" id="rooms-container-${floorCount}">
-                <h3>Rooms for Floor ${floorCount}</h3>
-                <div class="room-group" id="room-group-${floorCount}-1">
-                    <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                    <input class="form-control" type="text" name="room_size_${floorCount}_1" placeholder="Room Size" required>
-                    <input class="form-control" type="file" name="room_image_${floorCount}_1" accept="image/*" required>
-                </div>
-            </div>
-            <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
-        `;
-        
-        document.getElementById("floors-container").appendChild(floorSection);
-    }
+        // Add new floor function
+        function addFloor() {
+            floorCount++;
+            const floorSection = document.createElement("div");
+            floorSection.className = "floor-section";
+            floorSection.id = `floor-section-${floorCount}`;
     
-    function addRoom(floorId) {
-        const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
-        const roomGroup = document.createElement("div");
-        roomGroup.className = "room-group";
-        roomGroup.id = `room-group-${floorId}-${roomCount}`;
-        
-        roomGroup.innerHTML = `
-            <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-            <input class="form-control" type="text" name="room_size_${floorId}_${roomCount}" placeholder="Room Size" required>
-            <input class="form-control" type="file" name="room_image_${floorId}_${roomCount}" accept="image/*" required>
-        `;
-        
-        document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
-    }
+            floorSection.innerHTML = `
+                <h2>Floor ${floorCount}</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                        <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                    </div>
+                </div>
+    
+                <!-- Floor Image -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="floor_image_${floorCount}">Floor Image</label>
+                        <input class="form-control" type="file" name="floor_image_${floorCount}" accept="image/*">
+                    </div>
+                </div>
+                
+                <!-- Rooms for the new floor -->
+                <div class="rooms-container" id="rooms-container-${floorCount}">
+                    <h3>Rooms for Floor ${floorCount}</h3>
+                    <div class="room-group" id="room-group-${floorCount}-1">
+                        <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                        <!-- No room size or image input -->
+                    </div>
+                </div>
+                <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+            `;
+    
+            document.getElementById("floors-container").appendChild(floorSection);
+        }
+    
+        // Add new room function for a specific floor
+        function addRoom(floorId) {
+            const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+            const roomGroup = document.createElement("div");
+            roomGroup.className = "room-group";
+            roomGroup.id = `room-group-${floorId}-${roomCount}`;
+    
+            roomGroup.innerHTML = `
+                <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+                <!-- No room size or image input -->
+            `;
+    
+            document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+        }
     </script>
+    
 
     <style>
         #floors-container {
