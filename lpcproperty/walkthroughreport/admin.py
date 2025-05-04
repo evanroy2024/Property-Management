@@ -53,20 +53,4 @@ class WalkthroughReportForm(forms.ModelForm):
 
 @admin.register(WalkthroughReport)
 class WalkthroughReportAdmin(admin.ModelAdmin):
-    form = WalkthroughReportForm
-
-    fieldsets = (
-        ('Client Info', {
-            'fields': ('user','name', 'description','cost','status','updatedate')
-        }),
-        ('General Items - Interior', {
-            'fields': [
-                (f'gie{i}', f'gie{i}_remarks') for i in range(1, 16)
-            ]
-        }),
-        ('General Items - Exterior', {
-            'fields': [
-                (f'gii{i}', f'gii{i}_remarks') for i in range(1, 10)  # Fixed this part
-            ]
-        }),
-    )
+    pass

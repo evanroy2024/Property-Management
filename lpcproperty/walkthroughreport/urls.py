@@ -18,6 +18,9 @@ urlpatterns = [
     path('reports/denied/', views.denied_reports_view, name='denied_reports'),
     path('reports/open/', views.open_reports_view, name='open_reports'),
 
+    path('walkthrough/update/<int:report_id>/', views.update_walkthrough_report, name='update_walkthrough_report'),
+
+
 ]
 
 

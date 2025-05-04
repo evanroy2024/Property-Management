@@ -71,6 +71,20 @@ MCQ_CHOICES = [
 ]
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
+from django.http import HttpResponse
+
+CATEGORY_LABELS = {
+    "GIE": "General Items - Exterior",
+    "GII": "General Items - Interior",
+    "GUESTHOUSEBATH": "Guest House Bath",
+    "THEATER": "Theatre / Music Room",
+    # Add more mappings as needed
+}
+
 def get_verbose_data(report):
     data = []
     for field in report._meta.fields:
@@ -80,12 +94,35 @@ def get_verbose_data(report):
             remark = getattr(report, f"{name}_remarks", '')
 
             if answer:
-                verbose = field.verbose_name or name.replace('_', ' ').capitalize()
-                prefix = ''.join(filter(str.isalpha, name)).upper()
-                data.append((verbose, answer, remark, prefix))
+                field_instance = field
+                verbose = field_instance.verbose_name or name.replace('_', ' ').capitalize()
+                
+                # Get the category directly from the field
+                if hasattr(field_instance, 'category'):
+                    category = field_instance.category
+                else:
+                    # If no category attribute exists, extract from field name
+                    # This is a more robust way to handle bathroom fields
+                    if 'bathroom' in name:
+                        # Extract bathroom number (bathroom1, bathroom2, etc.)
+                        bathroom_match = re.search(r'bathroom(\d+)', name)
+                        if bathroom_match:
+                            bathroom_num = bathroom_match.group(1)
+                            category = f"Bathroom {bathroom_num}"
+                        else:
+                            category = "Bathroom"
+                    else:
+                        # Fall back to the original method for other fields
+                        prefix = ''.join(filter(str.isalpha, name)).upper()
+                        category = CATEGORY_LABELS.get(prefix, prefix)
+                
+                data.append((verbose, answer, remark, category))
     return data
 
 def export_pdf(request, report_id):
+    # Import regex module at the top of the file
+    import re
+    
     report = WalkthroughReport.objects.get(pk=report_id)
     data = get_verbose_data(report)
 
@@ -118,11 +155,15 @@ def export_pdf(request, report_id):
     # Reduced font size for section titles
     styles.add(ParagraphStyle(
         name='SectionTitle',
-        fontSize=11,  # Reduced font size
-        leading=14,
+        fontSize=12,  # Slightly larger for better readability
+        leading=15,
         spaceAfter=10,
         textColor=colors.HexColor("#003366"),
-        fontName="Helvetica-Bold"
+        fontName="Helvetica-Bold",
+        borderPadding=(0, 0, 0, 4),  # Add padding at bottom
+        borderWidth=0,
+        borderColor=colors.HexColor("#003366"),
+        borderRadius=None
     ))
 
     wrap_style = ParagraphStyle(
@@ -142,18 +183,37 @@ def export_pdf(request, report_id):
     ))
     elements.append(Spacer(1, 12))
 
-    # Grouping data by category
+    # Grouping data by exact category name while preserving order
     grouped = {}
+    category_order = []
+    
     for question, answer, remark, category in data:
         if category not in grouped:
             grouped[category] = []
+            category_order.append(category)
         grouped[category].append((question, answer, remark))
+    
+    # We'll use the original appearance order of categories from the data
 
-    for category_code, rows in grouped.items():
-        label = CATEGORY_LABELS.get(category_code, category_code)
+    for category in category_order:
+        rows = grouped[category]
 
         elements.append(Spacer(1, 14))
-        elements.append(Paragraph(f"📌 {label}", styles['SectionTitle']))
+        # Create section header with appropriate icon for each category
+        if "Bedroom" in category:
+            icon = "🛏️"
+        elif "Bathroom" in category:
+            icon = "🚿"
+        elif "Kitchen" in category:
+            icon = "🍳"
+        elif "Living" in category:
+            icon = "🛋️"
+        elif "Dining" in category:
+            icon = "🍽️"
+        else:
+            icon = "📌"
+        
+        elements.append(Paragraph(f"{icon} {category}", styles['SectionTitle']))  # Use the full category name
         elements.append(Spacer(1, 4))
 
         table_data = [["Question", "N/A", "Compliant", "Heads-Up", "Non-Compliant", "Remarks"]]
@@ -174,7 +234,7 @@ def export_pdf(request, report_id):
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d9eaf7")),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#e8f0f8")),  # Lighter header background
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#003366")),
             ('ALIGN', (1, 1), (-2, -1), 'CENTER'),
             ('FONTSIZE', (0, 1), (-1, -1), 9),
@@ -182,6 +242,8 @@ def export_pdf(request, report_id):
             ('RIGHTPADDING', (0, 0), (-1, -1), 6),
             ('TOPPADDING', (0, 0), (-1, -1), 4),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Vertically center all cell content
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor("#003366")),  # Add border around table
         ])
 
         for i in range(1, len(table_data)):
@@ -193,8 +255,6 @@ def export_pdf(request, report_id):
 
     doc.build(elements)
     return response
-
-
 from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import WalkthroughReport
@@ -296,6 +356,31 @@ def completed_reports_view(request):
 def denied_reports_view(request):
     reports = WalkthroughReport.objects.filter(status='Denied')
     return render(request, 'walkthrough/denied_reports.html', {'reports': reports})
+
+
+def update_walkthrough_report(request, report_id):
+    report = get_object_or_404(WalkthroughReport, id=report_id)
+
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        cost = request.POST.get('cost')
+
+        if status:
+            report.status = status
+        if cost:
+            try:
+                report.cost = int(cost)
+            except ValueError:
+                pass
+
+        report.save()
+        return redirect('walkthroughreport:all_reports')
+
+    return render(request, 'walkthrough/update_report.html', {
+        'report': report,
+        'base_template': 'cmbase.html'
+    })
+
 import copy
 # def report_open_detail_view(request, pk):
 #     report = get_object_or_404(WalkthroughReport, pk=pk)

@@ -375,7 +375,7 @@
                 {% csrf_token %}
 
                 <!-- Progress indicator -->
-                <div class="progress-container">
+                <div class="progress-container" style="display: none;">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
@@ -587,9 +587,12 @@
 
                         <div class="item-row">
                             <div class="item-label">{{ form.gie15.label_tag }}</div>
-                            <div class="item-control">{{ form.gie15 }}</div>
+                            <div class="item-control">
+                                {{ form.gie15 }}
+                            </div>
                             <div class="item-remarks">{{ form.gie15_remarks }}</div>
                         </div>
+                       
                                         </div>
                                         
                                         <div class="tab-content" id="GII">
@@ -1612,7 +1615,7 @@
                         <button type="button" class="btn" style="background-color: #6c757d;" onclick="backToBasic()">
                             <i class="fas fa-arrow-left"></i> Back to Basic Info
                         </button>
-                        <button type="submit" class="btn">
+                        <button type="submit" class="btn" id="submit-btn" disabled>
                             <i class="fas fa-check"></i> Submit Report
                         </button>
                     </div>
@@ -1622,105 +1625,248 @@
     </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+    // Select all tab buttons and tab content areas
     const tabs = document.querySelectorAll('.tab-link');
     const contents = document.querySelectorAll('.tab-content');
     const progressFill = document.getElementById('progress-fill');
     const prevTabBtn = document.getElementById('prev-tab');
     const nextTabBtn = document.getElementById('next-tab');
     const tabIndicator = document.getElementById('tab-indicator');
+    const form = document.getElementById('walkthrough-form') || document.querySelector('form');
     
     const totalTabs = tabs.length;
     let currentTabIndex = 0;
 
-    // Retrieve the saved tab from localStorage, if any
-    const savedTabs = JSON.parse(localStorage.getItem('activeTabs')) || [];
-
-    // Mark tabs as active (green) if they were previously clicked
-    savedTabs.forEach(tabId => {
-        const activeTab = document.getElementById(tabId);
-        if (activeTab) activeTab.classList.add('active');
-    });
-
-    updateProgressSteps();
-    progressFill.style.width = '5%';
-    updateTabIndicator();
-    
-    // Handle tab click based on ID matching
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabId = tab.getAttribute('id');
-            const targetContentId = tab.dataset.tab;
-
-            // Deactivate all contents
-            contents.forEach(content => content.classList.remove('active'));
-
-            // Activate clicked tab and corresponding content
-            tab.classList.add('active');
-            document.getElementById(targetContentId).classList.add('active');
-
-            // Save the active tab in localStorage
-            if (!savedTabs.includes(tabId)) {
-                savedTabs.push(tabId);
-                localStorage.setItem('activeTabs', JSON.stringify(savedTabs));
+    // Initialize tab state
+    function initializeTabs() {
+        // Lock all tabs except the first one
+        tabs.forEach((tab, index) => {
+            if (index === 0) {
+                // First tab is current (active)
+                tab.classList.add('current');
+                
+                // Make sure the first tab is also marked active for Django template compatibility
+                if (!tab.classList.contains('active')) {
+                    tab.classList.add('active');
+                }
+            } else {
+                // All other tabs are locked
+                tab.classList.add('locked');
+                
+                // Remove active class if present from Django template
+                tab.classList.remove('active');
             }
+        });
 
-            // Update currentTabIndex for progress and buttons
-            currentTabIndex = Array.from(tabs).findIndex(t => t.id === tabId);
-    
-            updateInspectionProgress();
-            updateTabIndicator();
-            animateTabContent();
-    
-            tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    
-            prevTabBtn.disabled = currentTabIndex === 0;
-            nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
+        // Show only the first content tab
+        contents.forEach((content, index) => {
+            if (index === 0) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        });
+
+        // Disable next button initially (until all fields are filled)
+        nextTabBtn.disabled = true;
+        prevTabBtn.disabled = true; // First tab has no previous
+
+        updateProgressSteps();
+        updateTabIndicator();
+        progressFill.style.width = '5%';
+    }
+
+    // Check if all required fields in the current tab are filled
+    function checkCurrentTabCompletion() {
+        const currentTab = contents[currentTabIndex];
+        const inputFields = currentTab.querySelectorAll('input, select, textarea');
+        let allFilled = true;
+        
+        // Skip check if there are no input fields
+        if (inputFields.length === 0) {
+            return true;
+        }
+
+        inputFields.forEach(field => {
+            // Check if field is required and empty
+            if ((field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
+                (field.value === '' || field.value === null)) {
+                allFilled = false;
+            }
+            
+            // For checkboxes and radio buttons, check if they're checked when required
+            if ((field.type === 'checkbox' || field.type === 'radio') && 
+                (field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
+                !field.checked) {
+                
+                // For radio groups, check if any radio in the group is checked
+                if (field.type === 'radio') {
+                    const radioGroup = document.querySelectorAll(`input[name="${field.name}"]`);
+                    let radioGroupChecked = false;
+                    
+                    radioGroup.forEach(radio => {
+                        if (radio.checked) {
+                            radioGroupChecked = true;
+                        }
+                    });
+                    
+                    if (!radioGroupChecked) {
+                        allFilled = false;
+                    }
+                } else {
+                    allFilled = false;
+                }
+            }
+            
+            // For select elements, ensure a valid option is selected
+            if (field.tagName === 'SELECT' && 
+                (field.getAttribute('required') !== null || field.classList.contains('required-field')) &&
+                (field.value === '' || field.selectedIndex === 0)) {
+                allFilled = false;
+            }
+        });
+
+        // Enable/disable next button based on completion
+        nextTabBtn.disabled = !allFilled;
+        console.log(`Tab ${currentTabIndex + 1} completion check: ${allFilled ? 'COMPLETE' : 'INCOMPLETE'}`);
+        return allFilled;
+    }
+
+    // Track field changes to check completion
+    function trackFieldChanges() {
+        const currentTab = contents[currentTabIndex];
+        const inputFields = currentTab.querySelectorAll('input, select, textarea');
+
+        inputFields.forEach(field => {
+            // Remove any existing event listeners first to avoid duplicates
+            field.removeEventListener('change', checkCurrentTabCompletion);
+            field.removeEventListener('input', checkCurrentTabCompletion);
+            field.removeEventListener('blur', checkCurrentTabCompletion);
+            
+            // Add event listeners
+            field.addEventListener('change', checkCurrentTabCompletion);
+            field.addEventListener('input', checkCurrentTabCompletion);
+            field.addEventListener('blur', checkCurrentTabCompletion);
+        });
+    }
+
+    // Handle tab click - only if not locked
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            if (!tab.classList.contains('locked')) {
+                navigateToTab(index);
+            } else {
+                // Visual indication that the tab is locked
+                tab.classList.add('shake');
+                setTimeout(() => {
+                    tab.classList.remove('shake');
+                }, 500);
+            }
         });
     });
+    
+    // Navigate to specific tab
+    function navigateToTab(index) {
+        // Only allow navigation if the tab isn't locked
+        if (tabs[index].classList.contains('locked')) {
+            console.log(`Cannot navigate to locked tab ${index + 1}`);
+            return false;
+        }
+        
+        // Deactivate current tab styles
+        tabs[currentTabIndex].classList.remove('current');
+        
+        // Mark current tab as completed if all fields are filled
+        if (checkCurrentTabCompletion()) {
+            tabs[currentTabIndex].classList.add('completed');
+        }
+        
+        // Update content tabs
+        contents.forEach(content => content.classList.remove('active'));
+        contents[index].classList.add('active');
+        
+        // Update current tab index
+        currentTabIndex = index;
+        
+        // Set new current tab
+        tabs[currentTabIndex].classList.add('current');
+        tabs[currentTabIndex].classList.remove('locked');
+        
+        // Additional class handling for Django template compatibility
+        tabs.forEach((t, i) => {
+            if (i === currentTabIndex) {
+                t.classList.add('active');
+            } else {
+                t.classList.remove('active');
+            }
+        });
+        
+        // Update UI elements
+        updateTabIndicator();
+        updateInspectionProgress();
+        animateTabContent();
+        
+        // Scroll tab into view
+        tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        
+        // Update button states
+        prevTabBtn.disabled = currentTabIndex === 0;
+        checkCurrentTabCompletion(); // Check to enable/disable next button
+        
+        // Track field changes in the new tab
+        trackFieldChanges();
+        
+        console.log(`Navigated to tab ${currentTabIndex + 1}`);
+        return true;
+    }
     
     // Previous tab button
     prevTabBtn.addEventListener('click', () => {
         if (currentTabIndex > 0) {
-            currentTabIndex--;
-            updateActiveTab();
-    
-            const activeContent = document.querySelector('.tab-content.active');
-            activeContent.classList.remove('slide-left');
-            activeContent.classList.add('slide-right');
+            navigateToTab(currentTabIndex - 1);
         }
     });
     
     // Next tab button
     nextTabBtn.addEventListener('click', () => {
-        if (currentTabIndex < totalTabs - 1) {
+        if (currentTabIndex < totalTabs - 1 && !nextTabBtn.disabled) {
+            // Mark current tab as completed
+            tabs[currentTabIndex].classList.add('completed');
+            tabs[currentTabIndex].classList.remove('current');
+            
+            // Move to next tab
             currentTabIndex++;
-            updateActiveTab();
-    
-            const activeContent = document.querySelector('.tab-content.active');
-            activeContent.classList.remove('slide-right');
-            activeContent.classList.add('slide-left');
+            
+            // Unlock and make current the next tab
+            tabs[currentTabIndex].classList.remove('locked');
+            tabs[currentTabIndex].classList.add('current');
+            tabs[currentTabIndex].classList.add('active'); // For Django compatibility
+            
+            // Update content visibility
+            contents.forEach(content => content.classList.remove('active'));
+            contents[currentTabIndex].classList.add('active');
+            
+            // Update UI elements
+            updateTabIndicator();
+            updateInspectionProgress();
+            animateTabContent();
+            
+            // Scroll new tab into view
+            tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            
+            // Update button states
+            prevTabBtn.disabled = false;
+            checkCurrentTabCompletion(); // This will set the next button state
+            
+            // Track field changes in the new tab
+            trackFieldChanges();
+            
+            // Optionally store progress in localStorage (uncomment if needed)
+            // saveProgress();
+            
+            console.log(`Moved to next tab: ${currentTabIndex + 1}`);
         }
     });
-    
-    function updateActiveTab() {
-        tabs.forEach(btn => btn.classList.remove('active'));
-        contents.forEach(content => content.classList.remove('active'));
-    
-        const activeTab = tabs[currentTabIndex];
-        const targetContentId = activeTab.dataset.tab;
-    
-        activeTab.classList.add('active');
-        document.getElementById(targetContentId).classList.add('active');
-    
-        updateTabIndicator();
-        updateInspectionProgress();
-        animateTabContent();
-    
-        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    
-        prevTabBtn.disabled = currentTabIndex === 0;
-        nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
-    }
     
     function updateTabIndicator() {
         tabIndicator.innerHTML = `Tab ${currentTabIndex + 1} of ${totalTabs} <span class="tab-badge">${currentTabIndex + 1}</span>`;
@@ -1733,122 +1879,467 @@
     
     function updateProgressSteps() {
         const progressSteps = document.getElementById('progress-steps');
-        progressSteps.innerHTML = `
-            <span>Basic Info</span>
-            <span>Inspection (${totalTabs} areas)</span>
-            <span>Review & Submit</span>
-        `;
+        if (progressSteps) {
+            progressSteps.innerHTML = `
+                <span>Basic Info</span>
+                <span>Inspection (${totalTabs} areas)</span>
+                <span>Review & Submit</span>
+            `;
+        }
     }
     
     function animateTabContent() {
         const items = document.querySelectorAll('.tab-content.active .item-row');
-        items.forEach(item => {
+        items.forEach((item, index) => {
             item.style.opacity = 0;
-            void item.offsetWidth; // Force reflow
-            item.style.opacity = 1;
+            setTimeout(() => {
+                item.style.opacity = 1;
+            }, index * 100);
         });
     }
-});
 
-</script>
-    <style>
-        .model-content{
-            display: flex;
-            width: 100%;
+    // Handle form submission
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Check if all tabs have been visited and completed
+            const completedTabs = document.querySelectorAll('.tab-link.completed');
+            if (completedTabs.length < totalTabs - 1) { // Minus 1 for the current tab
+                e.preventDefault();
+                alert('Please complete all inspection areas before submitting.');
+            }
+        });
+    }
+
+    // Add required class to Django form fields that should be required
+    function markRequiredFields() {
+        // Add the required-field class to elements that should be required
+        const allInputs = document.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            // Check if the field has a label with * or is marked as required in Django
+            const labelElement = document.querySelector(`label[for="${input.id}"]`);
+            if (labelElement && labelElement.textContent.includes('*')) {
+                input.classList.add('required-field');
+            }
+            
+            // For Django forms, add required class based on field type
+            // This is just an example - adjust based on your specific fields
+            if (input.id && (
+                input.id.includes('_condition') || 
+                input.id.match(/^id_[a-z]+\d+$/) // Basic form fields like gii1, gie2, etc.
+            )) {
+                input.classList.add('required-field');
+            }
+        });
+    }
+
+    // For debugging - temporarily add a demo button to fill fields
+    function addDemoTools() {
+        // Only add in development environments
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            contents.forEach((content, index) => {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'demo-button-container';
+                buttonContainer.innerHTML = `<button type="button" class="btn btn-sm btn-info" 
+                    onclick="fillTabFields('${content.id}')">Fill Tab ${index + 1} Fields (Demo)</button>`;
+                content.appendChild(buttonContainer);
+            });
+            
+            // Add global function to fill fields
+            window.fillTabFields = function(tabId) {
+                const tab = document.getElementById(tabId);
+                const inputFields = tab.querySelectorAll('input, select, textarea');
+                
+                inputFields.forEach(field => {
+                    if (field.type === 'text' || field.tagName === 'TEXTAREA') {
+                        field.value = 'Demo value';
+                    } else if (field.tagName === 'SELECT') {
+                        if (field.options.length > 1) {
+                            field.selectedIndex = 1;
+                        } else if (field.options.length > 0) {
+                            field.selectedIndex = 0;
+                        }
+                    } else if (field.type === 'checkbox') {
+                        field.checked = true;
+                    } else if (field.type === 'radio') {
+                        field.checked = true;
+                    }
+                });
+                
+                // Force recheck of tab completion
+                checkCurrentTabCompletion();
+            };
         }
-        .tab-buttons {
-  display: flex;
-  flex-direction: column;
-  width: 20%;
-  gap: 8px;
-  margin-right: 10px;
+    }
+
+    // Initialize the page
+    markRequiredFields();
+    initializeTabs();
+    checkCurrentTabCompletion(); // Initial check of first tab
+    trackFieldChanges();
+    addDemoTools(); // Add demo tools for development
+    
+    console.log('Walkthrough form initialized');
+});
+</script>
+<style>
+    /* Enhanced styles for form walkthrough */
+.model-content {
+    display: flex;
+    width: 100%;
 }
 
+.tab-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    gap: 8px;
+    margin-right: 10px;
+    overflow-y: auto;
+    max-height: 200vh; /* Limit height to prevent excessive scrolling */
+}
+
+/* Basic tab styles */
 .tab-link {
-  width: 100%;
-  padding: 10px 12px;
-  border: none;
-  text-align: left;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-sizing: border-box;
-  transition: background-color 0.3s ease;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    position: relative;
+    background-color: white;
 }
 
-.tab-link:hover,
-.tab-link.active {
-  background-color: #dcdcdc;
+/* Default tab hover */
+.tab-link:hover:not(.locked) {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
 }
 
-.tab-icon {
-  width: 20px;
+/* Locked state for tabs */
+.tab-link.locked {
+    background-color: #f0f0f0;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: auto; /* We'll handle the click event in JS */
 }
 
-.section-title {
-    min-width: 870px; /* Keeps it 870px wide on your laptop */
+/* Make lock icon more visible */
+.tab-link.locked::after {
+    content: "\f023"; /* Font Awesome lock icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #666;
 }
 
-/* For smaller devices like mobile (max-width: 480px) */
-@media screen and (max-width: 480px) {
-    .section-title {
-        min-width: 100%; /* Ensure full width for small screens */
-    }
+/* Current/active tab (orange) */
+.tab-link.current {
+    background-color: #fd7e14; /* Orange color */
+    color: white;
+    border-color: #e65c00;
+    font-weight: bold;
+    border-left: 4px solid #e65c00;
 }
 
-/* For tablets (min-width: 481px and max-width: 768px) */
-@media screen and (min-width: 481px) and (max-width: 768px) {
-    .section-title {
-        min-width: 100%; /* Ensure full width on tablets */
-    }
-}
-
-/* For small laptops (min-width: 769px and max-width: 1024px) */
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-    .section-title {
-        min-width: 100%; /* Ensure full width */
-    }
-}
-
-/* For larger screens, such as desktop (min-width: 1025px) */
-@media screen and (min-width: 1025px) {
-    .section-title {
-        font-size: 1.6rem; /* Larger font size */
-        min-width: 870px; /* Ensures 870px minimum width */
-        width: 100%; /* Ensures full width of the container */
-    }
-}
-
-/* For extra-large screens (min-width: 1440px and above) */
-@media screen and (min-width: 1440px) {
-    .section-title {
-        font-size: 1.8rem; /* Larger font size for big screens */
-        min-width: 870px; /* Keep it 870px wide */
-        width: 100%; /* Keep it full width */
-    }
-}
-
-
-/* Turning green  */
-/* Styling for active tab */
-.tab-link.active {
-    background-color: #28a745; /* Bootstrap "success" green */
+/* Compatible with Django template's active state */
+.tab-link.active:not(.current):not(.locked) {
+    background-color: #28a745; /* Bootstrap success green */
     color: white;
 }
 
-
-/* Default state for tabs */
-.tab-link {
-    padding: 10px 20px;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: white; /* Default background - No green initially */
-    transition: background-color 0.3s ease, color 0.3s ease;
+/* Completed tab (green) */
+.tab-link.completed {
+    background-color: #28a745; /* Bootstrap success green */
+    color: white;
+    border-left: 4px solid #1e7e34;
+    border-color: #1e7e34;
 }
 
-    </style>
+/* Tab content styles */
+.tab-content {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Animation for when a locked tab is clicked */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.tab-link.shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+/* Navigation buttons */
+.tab-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 10px 0;
+    border-top: 1px solid #e9ecef;
+}
+
+#tab-indicator {
+    flex-grow: 1;
+    text-align: center;
+    font-weight: bold;
+    color: #495057;
+}
+
+.tab-badge {
+    display: inline-block;
+    background-color: #fd7e14;
+    color: white;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+/* Make disabled next button more obviously disabled */
+#next-tab:disabled, 
+#prev-tab:disabled {
+    background-color: #dcdcdc !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    border-color: #ccc !important;
+}
+
+/* Form fields */
+.item-row {
+    display: flex;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: opacity 0.5s ease;
+}
+
+.item-label {
+    width: 30%;
+    padding-right: 15px;
+    font-weight: 500;
+}
+
+.item-control {
+    width: 20%;
+}
+
+.item-remarks {
+    width: 50%;
+    padding-left: 15px;
+}
+
+/* Required field indicator */
+.required-field:not(:focus):invalid,
+select.required-field:invalid {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Progress bar */
+.progress-container {
+    margin: 20px 0;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #28a745;
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Demo tools */
+.demo-button-container {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px dashed #ddd;
+}
+
+/* Form actions */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Item animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-content.active .item-row {
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+/* Section title */
+.section-title {
+    min-width: 870px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #fd7e14;
+    color: #495057;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 992px) {
+    .model-content {
+        flex-direction: column;
+    }
+    
+    .tab-buttons {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-height: unset;
+        margin-bottom: 20px;
+    }
+    
+    .tab-link {
+        width: auto;
+        min-width: 120px;
+    }
+    
+    .section-title {
+        min-width: 100%;
+    }
+    
+    .item-row {
+        flex-direction: column;
+    }
+    
+    .item-label, .item-control, .item-remarks {
+        width: 100%;
+        padding: 5px 0;
+    }
+}
+
+/* All tablets and below */
+@media screen and (max-width: 768px) {
+    .section-title {
+        min-width: 100%;
+        font-size: 1.3rem;
+    }
+}
+
+/* All mobile devices */
+@media screen and (max-width: 480px) {
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .tab-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #tab-indicator {
+        order: -1;
+        margin-bottom: 10px;
+    }
+}
+
+/* Default state of the button (disabled) */
+.btn[disabled] {
+    background-color: #ccc;   /* Light grey to indicate disabled state */
+    color: #777;              /* Darker grey text */
+    border: 1px solid #aaa;   /* Border color to match disabled theme */
+    cursor: not-allowed;      /* Change cursor to show it's locked */
+    opacity: 0.6;             /* Reduce opacity to give a faded effect */
+}
+
+/* Hover effect for disabled button */
+.btn[disabled]:hover {
+    background-color: #ccc;   /* No hover effect, stays the same */
+    cursor: not-allowed;
+}
+
+/* Active state of the button (when enabled) */
+.btn {
+    background-color: #6e8efb; /* Original blue color */
+    color: #fff;               /* White text */
+    border: 1px solid #6e8efb; /* Same border color as button */
+    cursor: pointer;           /* Cursor changes to pointer */
+    opacity: 1;                 /* Fully opaque when active */
+    transition: background-color 0.3s, opacity 0.3s; /* Smooth transition */
+}
+
+/* Hover effect for the active button */
+.btn:hover {
+    background-color: #a777e3;  /* Change color on hover */
+    opacity: 0.9;               /* Slightly reduce opacity on hover */
+}
+
+/* Add a lock icon when the button is disabled */
+.btn[disabled] i {
+    margin-right: 5px; /* Space between the icon and text */
+}
+
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const submitButton = document.getElementById('submit-btn');
+        const gie15Field = document.querySelector('[name="guest_house_bath_8"]'); // Assuming the field name is 'gie15'
+        
+        // Initially disable the submit button
+        submitButton.disabled = true;
+
+        // Function to enable submit button when field is interacted with
+        function enableSubmitButton() {
+            submitButton.disabled = false;
+        }
+
+        // Monitor the 'gie15' field for changes
+        if (gie15Field) {
+            // Enable submit button when the field is clicked or selected
+            gie15Field.addEventListener('change', enableSubmitButton);
+            gie15Field.addEventListener('click', enableSubmitButton);
+        }
+    });
+</script>
 {% endblock content %}

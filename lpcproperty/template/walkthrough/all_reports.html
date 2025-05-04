@@ -377,7 +377,6 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Name</th>
                         <th>Description</th>
                         <th>Total Cost</th>
                         <th>Action</th>
@@ -386,14 +385,16 @@
                 <tbody>
                     {% for report in reports %}
                     <tr class="{% if request.status == 'open' %}active{% endif %}">
-                        <td>{{ report.updatedate  }}</td>
-                        <td>{{ report.name }}</td>
+                        <td>{{ report.datetime  }}</td>
                         <td>{{ report.description }}</td>
                         <td>{{ report.cost }}</td>
-                        <td>
-                            <a href="{% url 'walkthroughreport:report_detail' report.pk %}" style="color: #007bff; text-decoration: none;">
-                                👁️ View
+                        <td style="display: flex;">
+                            <a href="{% url 'walkthroughreport:report_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
+                                 View
                             </a>
+                            <a href="{% url 'walkthroughreport:update_walkthrough_report' report.id %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">Update</a>
+
+                            
                         </td>
                         
                     </tr>

@@ -1,0 +1,74 @@
+{% extends 'cmbase.html' %}
+
+{% block content %}
+<style>
+    body{
+        background-color: #f8f9fa;
+    }
+</style>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8" style="border: 1px solid;">
+      <div class="card shadow-sm border-0 rounded-lg">
+        <div class="card-header bg-white border-bottom border-light">
+          <h3 class="text-center font-weight-bold text-primary mb-0">Update Walkthrough Report</h3>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-4">
+              <label for="status" class="form-label fw-bold text-secondary">Status</label>
+              <select name="status" id="status" class="form-select form-control-lg" required>
+                <option value="Pending" {% if report.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Open" {% if report.status == 'Open' %}selected{% endif %}>Open</option>
+                <option value="Completed" {% if report.status == 'Completed' %}selected{% endif %}>Completed</option>
+                <option value="Denied" {% if report.status == 'Denied' %}selected{% endif %}>Denied</option>
+              </select>
+              <div class="invalid-feedback">Please select a status.</div>
+            </div>
+            
+            
+            <div class="mb-4">
+              <label for="cost" class="form-label fw-bold text-secondary">Cost</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" id="cost" name="cost" value="{{ report.cost }}" class="form-control form-control-lg" required>
+                <div class="invalid-feedback">Please enter a valid cost.</div>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">Update Report</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer bg-white text-center border-top border-light py-3">
+          <a href="{% url 'clientmanager:all_reports' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Reports
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Form validation script
+  (function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
+{% endblock %}

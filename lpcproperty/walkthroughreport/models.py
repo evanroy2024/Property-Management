@@ -283,7 +283,7 @@ class WalkthroughReport(models.Model):
     hallways_main5 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Main Level", verbose_name="Furniture: Note any damage")
     hallways_main5_remarks = models.CharField(max_length=500, blank=True, null=True)
 
-    # 13. Hallways - Upper Level
+    # 14. Hallways - Upper Level
     hallways_upper1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Upper Level", verbose_name="Lights: Any burnt out requiring replacement?")
     hallways_upper1_remarks = models.CharField(max_length=500, blank=True, null=True)
     hallways_upper2 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Upper Level", verbose_name="Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings")
@@ -410,21 +410,21 @@ class WalkthroughReport(models.Model):
     bathroom4_8 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Doors: Hardware working properly")
     bathroom4_8_remarks = models.CharField(max_length=500, blank=True, null=True)
 
-    bathroom5_1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Sinks: Faucet leaking, drain acceptable, overall condition")
+    bathroom5_1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Sinks: Faucet leaking, drain acceptable, overall condition")
     bathroom5_1_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_2 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Cabinets / Tops: Visual Check of cabinets, countertops")
+    bathroom5_2 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Cabinets / Tops: Visual Check of cabinets, countertops")
     bathroom5_2_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_3 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Shower: Faucet leaking, drain acceptable, overall condition")
+    bathroom5_3 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Shower: Faucet leaking, drain acceptable, overall condition")
     bathroom5_3_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_4 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition")
+    bathroom5_4 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition")
     bathroom5_4_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_5 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Toilet: Tank refills properly, Handle operational")
+    bathroom5_5 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Toilet: Tank refills properly, Handle operational")
     bathroom5_5_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_6 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Lights: Any burnt out requiring replacement?")
+    bathroom5_6 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Lights: Any burnt out requiring replacement?")
     bathroom5_6_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_7 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings")
+    bathroom5_7 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings")
     bathroom5_7_remarks = models.CharField(max_length=500, blank=True, null=True)
-    bathroom5_8 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 4 (Powder Room)", verbose_name="Doors: Hardware working properly")
+    bathroom5_8 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Bathroom 5 (Powder Room)", verbose_name="Doors: Hardware working properly")
     bathroom5_8_remarks = models.CharField(max_length=500, blank=True, null=True)
 
     # Gym 

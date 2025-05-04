@@ -1353,7 +1353,7 @@ class WalkthroughReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name} {obj.first_name}"
+        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
 
 def walkthrough_report_view(request):
     if request.method == 'POST':

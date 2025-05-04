@@ -1060,6 +1060,9 @@ class WalkthroughReportForm(forms.ModelForm):
     class Meta:
         model = WalkthroughReport
         fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
 
 def walkthrough_report_view(request):
     if request.method == 'POST':
@@ -1074,7 +1077,51 @@ def walkthrough_report_view(request):
 def walkthrough_success_view(request):
     return render(request, 'walkthrough_success.html')
 
+def update_walkthrough_report(request, report_id):
+    report = get_object_or_404(WalkthroughReport, id=report_id)
 
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        cost = request.POST.get('cost')
+
+        if status:
+            report.status = status
+        if cost:
+            try:
+                report.cost = int(cost)
+            except ValueError:
+                pass
+
+        report.save()
+        return redirect('clientmanager:all_reports')
+
+    return render(request, 'clientmanager/walkthrough/update_report.html', {
+        'report': report,
+        'base_template': 'cmbase.html'
+    })
+import copy
+def report_open_detail_view(request, pk):
+    report = get_object_or_404(WalkthroughReport, pk=pk)
+    
+    # Create a modified version for the template
+    filtered_report = copy.deepcopy(report)
+    
+    # Loop through all fields in the model
+    for field_name in dir(filtered_report):
+        # Skip private/internal attributes and remarks fields
+        if field_name.startswith('_') or field_name.endswith('_remarks'):
+            continue
+        
+        field_value = getattr(filtered_report, field_name, None)
+        # Set to None if not "Non-Compliant"
+        if field_value is not None and field_value != "Non-Compliant":
+            setattr(filtered_report, field_name, None)
+    
+    # Ensure the report object still has a valid pk (ID) for URL generation
+    if not filtered_report.pk:
+        filtered_report.pk = report.pk
+    
+    return render(request, 'clientmanager/walkthrough/report_open_detail.html', {'report': filtered_report})
 
 # Client Management 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1204,7 +1251,7 @@ def open_reports_view(request):
     if not manager_id:
         return redirect('clientmanager:client_login')
 
-    reports = WalkthroughReport.objects.filter(status='Open')
+    reports = WalkthroughReport.objects.all()
     return render(request, 'clientmanager/walkthrough/open_reports.html', {
         'reports': reports,
         'base_template': 'cmbase.html'

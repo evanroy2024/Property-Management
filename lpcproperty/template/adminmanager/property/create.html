@@ -364,7 +364,7 @@
                         <label class="form-label" for="client_id">Select Existing Client</label>
                         <select class="form-control" name="client_id" id="client_id" required>
                             {% for client in clients %}
-                                <option value="{{ client.id }}">{{ client.last_name }} {{ client.first_name }} </option>
+                                <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }} </option>
                             {% endfor %}
                         </select>
                         
@@ -598,7 +598,7 @@
                         <label class="form-label" for="client_manager_id">Select Client Manager</label>
                         <select class="form-control" name="client_manager_id" id="client_manager_id" required>
                             {% for manager in managers %}
-                                <option value="{{ manager.id }}">{{ manager.first_name }} {{ manager.last_name }}</option>
+                                <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }} </option>
                             {% endfor %}
                         </select>
                     </div>

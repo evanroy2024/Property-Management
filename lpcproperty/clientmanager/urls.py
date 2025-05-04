@@ -78,10 +78,15 @@ urlpatterns = [
     path('reports/completed/', views.completed_reports_view, name='completed_reports'),
     path('reports/denied/', views.denied_reports_view, name='denied_reports'),
     path('reports/open/', views.open_reports_view, name='open_reports'),
+    path('reports_open/<int:pk>/', views.report_open_detail_view, name='report_open_detail'),
+    
 
 
     path('export_pdf/<int:report_id>/', views.walk_export_pdf, name='export_pdf'),
     path('export/excel/<int:report_id>/', views.walk_export_excel, name='export_excel'),
     path('export/csv/<int:report_id>/', views.walk_export_csv, name='export_csv'),
+
+    path('walkthrough/update/<int:report_id>/', views.update_walkthrough_report, name='update_walkthrough_report'),
+
 
 ]

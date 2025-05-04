@@ -16,9 +16,13 @@
                 <h1 class="report-title"> Report Name : {% if report.name %}{{ report.name }}{% else %}Inspection Report{% endif %}</h1>
                 {% if report.description %}
                     <p class="report-description">{{ report.description }}</p>
-                    <p class="report-description">Publist Date : {{ report.datetime }}</p>
-
                 {% endif %}
+                <div class="user-thing" style="display: flex; margin-top: 20px; justify-content: space-between;">
+                    <h4 class="report-title" style="font-size: 22px;"> Client Name : {{ report.user.last_name }}, {{ report.user.first_name }}</h4>
+                <h4 class="report-title" style="font-size: 22px;"> Date : {{ report.datetime }}</h4>
+
+
+                </div>
             </div>
             <table class="questionnaire-table">
                 <thead>
