@@ -28,6 +28,7 @@
 
                 </div>
             </div>
+            {% if report.gie1 is not None %}
             <table class="questionnaire-table">
                 <thead>
                     <tr>
@@ -286,7 +287,8 @@
                 
                 
             </table>
-
+{% endif %}
+            {% if report.gie1 is not None %}
             <table class="questionnaire-table">
                 <thead>
                     <tr>
@@ -451,7 +453,8 @@
                 
                 
             </table>
-
+{% endif %}
+            {% if report.garage1 is not None %}
             <!-- For garage  -->
             <table class="questionnaire-table">
                 <thead>
@@ -549,7 +552,9 @@
                     
                 </tbody>
             </table>
+            {% endif %}
             
+            {% if report.laundry1 is not None %}
             <!-- For Laundery  -->
             <table class="questionnaire-table">
                 <thead>
@@ -660,7 +665,9 @@
                     {% endif %}
                 </tbody>
             </table>
+            {% endif %}
             
+            {% if report.kitchen1 is not None %}
             <!-- For kitchen      -->
             <table class="questionnaire-table">
                 <thead>
@@ -792,8 +799,10 @@
                     {% endif %}
                 </tbody>
             </table>
-            <!-- for Bustelers              -->
+            {% endif %}
             
+            <!-- for Bustelers              -->
+            {% if report.butlers1 is not None %}
             <table class="questionnaire-table">
                 <thead>
                     <tr>
@@ -999,7 +1008,9 @@
                     {% endif %}
                 </tbody>
             </table>
+            {% endif %}
             
+            {% if report.breakfast1 is not None %}
             <!-- Break fast  -->
             <table class="questionnaire-table">
                 <thead>
@@ -1079,7 +1090,9 @@
                     {% endif %}
                 </tbody>
             </table>
+            {% endif %}
             
+            {% if report.entry1 is not None %}
 
             <!-- Entry  -->
             <table class="questionnaire-table">
@@ -1147,7 +1160,9 @@
                     {% endif %}
                 </tbody>
             </table>
-
+{% endif %}
+            
+            {% if report.greatroom1 is not None %}
             <!-- Great Room / Family Room -->
             <table class="questionnaire-table">
                 <thead>
@@ -1228,7 +1243,9 @@
                     {% endif %}
                 </tbody>
             </table>
-
+{% endif %}
+            
+            {% if report.dining1 is not None %}
             <!-- Dining Room / Area -->
 <table class="questionnaire-table">
     <thead>
@@ -1308,6 +1325,8 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+{% if report.closets1 is not None %}
 
 <!-- Closets - Main Level -->
 <table class="questionnaire-table">
@@ -1388,7 +1407,9 @@
         {% endif %}
     </tbody>
 </table>
-
+{% endif %}
+            
+            {% if report.closets_upper1 is not None %}
 <!-- Closets - Upper Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1468,7 +1489,9 @@
         {% endif %}
     </tbody>
 </table>
-
+{% endif %}
+            
+            {% if report.hallways_main1 is not None %}
 <!-- Hallways - Main Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1548,6 +1571,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.hallways_upper1 is not None %}
 <!-- Hallways - Upper Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1627,6 +1653,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bedroom1_1 is not None %}
 <!-- Bedroom 1 (Master Bedroom) -->
 <table class="questionnaire-table">
     <thead>
@@ -1693,6 +1722,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bedroom2_1 is not None %}
 <!-- Bedroom 2 -->
 <table class="questionnaire-table">
     <thead>
@@ -1759,6 +1791,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bedroom3_1 is not None %}
 <!-- Bedroom 3 -->
 <table class="questionnaire-table">
     <thead>
@@ -1825,6 +1860,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bedroom4_1 is not None %}
 <!-- Bedroom 4 -->
 <table class="questionnaire-table">
     <thead>
@@ -1891,6 +1929,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bathroom1_1 is not None %}
 <!-- Bathroom 1 -->
 <table class="questionnaire-table">
     <thead>
@@ -2009,6 +2050,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bathroom2_1 is not None %}
 <!-- Bathroom 2 -->
 <table class="questionnaire-table">
     <thead>
@@ -2127,6 +2171,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bathroom3_1 is not None %}
 <!-- Bathroom 3 (Guest Bath) -->
 <table class="questionnaire-table">
     <thead>
@@ -2245,6 +2292,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bathroom4_1 is not None %}
 <!-- Bathroom 4 (Powder Room) -->
 <table class="questionnaire-table">
     <thead>
@@ -2363,6 +2413,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.bathroom4_1 is not None %}
 <!-- Bathroom 4 (Powder Room) -->
 <table class="questionnaire-table">
     <thead>
@@ -2481,6 +2534,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.gym_1 is not None %}
 <!-- Gym -->
 <table class="questionnaire-table">
     <thead>
@@ -2586,6 +2642,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.theatre_1 is not None %}
 <!-- Theatre / Music Room -->
 <!-- Theatre / Music Room -->
 <table class="questionnaire-table">
@@ -2666,7 +2725,9 @@
         {% endif %}
     </tbody>
 </table>
-
+{% endif %}
+            
+            {% if report.guest_house_1 is not None %}
 <!-- Guest House - Sleeping / Living -->
 <table class="questionnaire-table">
     <thead>
@@ -2746,6 +2807,9 @@
         {% endif %}
     </tbody>
 </table>
+{% endif %}
+            
+            {% if report.guest_house_bath_1 is not None %}
 <!-- Guest House - Bathroom -->
 <table class="questionnaire-table">
     <thead>
@@ -2864,8 +2928,8 @@
         {% endif %}
     </tbody>
 </table>
-
-
+{% endif %}
+            
             
             <!-- <a href="{% url 'walkthroughreport:export_pdf' report.id %}" class="btn btn-primary" target="_blank">
                 Download PDF

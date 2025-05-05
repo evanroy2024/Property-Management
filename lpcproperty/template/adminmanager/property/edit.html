@@ -1086,7 +1086,7 @@ function toggleVisibility() {
                         <option value="" disabled>Select Client Manager</option>
                         {% for cm in client_managers %}
                             <option value="{{ cm.id }}" {% if cm.id == property.client_manager.id %}selected{% endif %}>
-                                {{ cm.first_name }} {{ cm.last_name }}
+                              {{ cm.last_name }}, {{ cm.first_name }} 
                             </option>
                         {% endfor %}
                     </select>

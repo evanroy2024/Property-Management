@@ -49,7 +49,7 @@ urlpatterns = [
     path('reports/completed/', views.completed_reports_view, name='completed_reports'),
     path('reports/denied/', views.denied_reports_view, name='denied_reports'),
     path('reports/open/', views.open_reports_view, name='open_reports'),
-
+    path('report/<int:report_id>/status/<str:status>/', views.update_report_status, name='update_report_status'),
 
     # path('', views.home, name='home'),
     # path('dashboard/', views.dashboard, name='dashboard'),

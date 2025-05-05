@@ -659,3 +659,23 @@ def open_reports_view(request):
 
 
 # Sending emails 
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+
+def update_report_status(request, report_id, status):
+    """
+    Update the status of a WalkthroughReport to either 'Completed' or 'Denied'
+    """
+    # Get the report object or return 404
+    report = get_object_or_404(WalkthroughReport, pk=report_id)
+    
+    # Validate the status
+    if status in ['Completed', 'Denied']:
+        report.status = status
+        report.save()
+        messages.success(request, f"Report status updated to {status}")
+    else:
+        messages.error(request, "Invalid status option")
+    
+    # Redirect back to the previous page
+    return redirect(request.META.get('HTTP_REFERER', 'mainapp:report_list'))

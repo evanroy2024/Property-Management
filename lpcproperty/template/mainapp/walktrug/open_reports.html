@@ -381,6 +381,7 @@
                         <th>Description</th>
                         <th>Total Cost</th>
                         <th>Action</th>
+                        <th>Approval</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -392,6 +393,16 @@
                         <td>
                             <a href="{% url 'mainapp:report_detail' report.pk %}" style="color: #007bff; text-decoration: none;">
                                 👁️ View
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'mainapp:update_report_status' report.pk 'Completed' %}" 
+                               class="btn btn-sm {% if report.status == 'Completed' %}btn-success disabled{% else %}btn-outline-success{% endif %}">
+                                YES
+                            </a>
+                            <a href="{% url 'mainapp:update_report_status' report.pk 'Denied' %}"
+                               class="btn btn-sm {% if report.status == 'Denied' %}btn-danger disabled{% else %}btn-outline-danger{% endif %}">
+                                NO
                             </a>
                         </td>
                         
