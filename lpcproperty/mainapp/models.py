@@ -159,8 +159,6 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
 
-
-
 class VendorService(models.Model):
     name = models.CharField(max_length=100, unique=True)
     
@@ -168,7 +166,6 @@ class VendorService(models.Model):
         return self.name
     
 class Vendor(models.Model):
-
     company_name = models.CharField(max_length=255)
     username = models.CharField(max_length=150)
     address = models.TextField()
