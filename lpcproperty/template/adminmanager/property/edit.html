@@ -498,6 +498,12 @@
                                 <input type="text" id="construction_type" name="construction_type" class="form-control" value="{{ property.construction_type }}" placeholder="E.g., Wood frame, Concrete block, etc.">
                             </div>
                         </div>
+
+                         <div class="form-group half">
+                        <label class="form-label" for="year_built">Zipcode</label>
+                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" placeholder="{{ property.zipcode }}">
+                    </div>
+                    
                         
                         
                     </div>
@@ -535,7 +541,7 @@
                             </div>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <label class="form-label" for="preferred_contact_method">Preferred Contact Method</label>
                             <select id="preferred_contact_method" name="preferred_contact_method" class="form-select">
                                 <option value="email" {% if property.preferred_contact_method == "email" %}selected{% endif %}>Email</option>

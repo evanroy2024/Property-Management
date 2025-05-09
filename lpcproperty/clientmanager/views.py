@@ -40,7 +40,7 @@ def client_dashboard_view(request):
 
 def client_logout_view(request):
     request.session.flush()
-    return redirect('clientmanager:client_login')
+    return redirect('mainapp:client_login')
 
 
 # Building Property  ---------------------------------------------------------------------------------------------------------------

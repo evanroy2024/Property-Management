@@ -30,7 +30,7 @@ def admin_dashboard(request):
 
 def admin_logout(request):
     logout(request)
-    return redirect('adminmanager:admin_login')
+    return redirect('mainapp:client_login')
 
 
 # Faq Section View Starts Here 
@@ -470,6 +470,7 @@ def property_create_view(request):
                     preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
                     state=request.POST.get('state', ''),  # Added state
                     city=request.POST.get('city', ''),    # Added city
+                    zipcode=request.POST.get('property_zipcode', ''),  # Added zipcode
                     
                 )
 
@@ -517,6 +518,8 @@ def property_create_view(request):
         'clients': clients,
         'managers': managers
     })
+
+
 # def property_create_view(request):
 #     clients = Client.objects.all()
 #     managers = ClientManagers.objects.all()
@@ -742,6 +745,7 @@ def property_update_view(request, pk):
             prop.state = request.POST.get('property_state', '')   # Added state
             prop.city = request.POST.get('property_city', '')     # Added City 
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
+            prop.zipcode = request.POST.get('property_zipcode', '')     # Added City 
             prop.save()
 
             # Update Client info
@@ -1502,6 +1506,7 @@ def clientmanager_create_view(request):
             city=data.get('city'),
             state=data.get('state'),
             zipcode=data.get('zipcode'),
+            office_phone=data.get('office_phone'),
             preferred_contact_method=data.get('preferred_contact_method'),
         )
         cm.set_password(data.get('password'))
@@ -1526,6 +1531,8 @@ def clientmanager_edit_view(request, pk):
         cm.city = data.get('city')
         cm.state = data.get('state')
         cm.zipcode = data.get('zipcode')
+        cm.office_phone=data.get('office_phone'),
+
         cm.preferred_contact_method = data.get('preferred_contact_method')
         if data.get('password'):
             cm.set_password(data.get('password'))

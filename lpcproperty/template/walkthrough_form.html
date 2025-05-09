@@ -1636,26 +1636,25 @@
     
     const totalTabs = tabs.length;
     let currentTabIndex = 0;
+    
+    // Array to track completed tabs
+    let completedTabs = new Array(totalTabs).fill(false);
 
     // Initialize tab state
     function initializeTabs() {
-        // Lock all tabs except the first one
+        // Make first tab active initially
         tabs.forEach((tab, index) => {
             if (index === 0) {
                 // First tab is current (active)
                 tab.classList.add('current');
-                
-                // Make sure the first tab is also marked active for Django template compatibility
-                if (!tab.classList.contains('active')) {
-                    tab.classList.add('active');
-                }
+                tab.classList.add('active');
             } else {
-                // All other tabs are locked
-                tab.classList.add('locked');
-                
-                // Remove active class if present from Django template
+                // Remove active class from other tabs
                 tab.classList.remove('active');
+                tab.classList.remove('current');
             }
+            // Remove any locked classes that might exist
+            tab.classList.remove('locked');
         });
 
         // Show only the first content tab
@@ -1667,13 +1666,15 @@
             }
         });
 
-        // Disable next button initially (until all fields are filled)
-        nextTabBtn.disabled = true;
-        prevTabBtn.disabled = true; // First tab has no previous
-
         updateProgressSteps();
         updateTabIndicator();
         progressFill.style.width = '5%';
+        
+        // Initial check of tab completion
+        checkCurrentTabCompletion();
+        
+        // Set up previous/next button states
+        updateNavigationButtons();
     }
 
     // Check if all required fields in the current tab are filled
@@ -1684,50 +1685,57 @@
         
         // Skip check if there are no input fields
         if (inputFields.length === 0) {
-            return true;
-        }
-
-        inputFields.forEach(field => {
-            // Check if field is required and empty
-            if ((field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
-                (field.value === '' || field.value === null)) {
-                allFilled = false;
-            }
-            
-            // For checkboxes and radio buttons, check if they're checked when required
-            if ((field.type === 'checkbox' || field.type === 'radio') && 
-                (field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
-                !field.checked) {
-                
-                // For radio groups, check if any radio in the group is checked
-                if (field.type === 'radio') {
-                    const radioGroup = document.querySelectorAll(`input[name="${field.name}"]`);
-                    let radioGroupChecked = false;
-                    
-                    radioGroup.forEach(radio => {
-                        if (radio.checked) {
-                            radioGroupChecked = true;
-                        }
-                    });
-                    
-                    if (!radioGroupChecked) {
-                        allFilled = false;
-                    }
-                } else {
+            allFilled = true;
+        } else {
+            inputFields.forEach(field => {
+                // Check if field is required and empty
+                if ((field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
+                    (field.value === '' || field.value === null)) {
                     allFilled = false;
                 }
-            }
-            
-            // For select elements, ensure a valid option is selected
-            if (field.tagName === 'SELECT' && 
-                (field.getAttribute('required') !== null || field.classList.contains('required-field')) &&
-                (field.value === '' || field.selectedIndex === 0)) {
-                allFilled = false;
-            }
-        });
+                
+                // For checkboxes and radio buttons, check if they're checked when required
+                if ((field.type === 'checkbox' || field.type === 'radio') && 
+                    (field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
+                    !field.checked) {
+                    
+                    // For radio groups, check if any radio in the group is checked
+                    if (field.type === 'radio') {
+                        const radioGroup = document.querySelectorAll(`input[name="${field.name}"]`);
+                        let radioGroupChecked = false;
+                        
+                        radioGroup.forEach(radio => {
+                            if (radio.checked) {
+                                radioGroupChecked = true;
+                            }
+                        });
+                        
+                        if (!radioGroupChecked) {
+                            allFilled = false;
+                        }
+                    } else {
+                        allFilled = false;
+                    }
+                }
+                
+                // For select elements, ensure a valid option is selected
+                if (field.tagName === 'SELECT' && 
+                    (field.getAttribute('required') !== null || field.classList.contains('required-field')) &&
+                    (field.value === '' || field.selectedIndex === 0)) {
+                    allFilled = false;
+                }
+            });
+        }
 
-        // Enable/disable next button based on completion
-        nextTabBtn.disabled = !allFilled;
+        // Update tab completion status
+        if (allFilled) {
+            completedTabs[currentTabIndex] = true;
+            tabs[currentTabIndex].classList.add('completed');
+        } else {
+            completedTabs[currentTabIndex] = false;
+            tabs[currentTabIndex].classList.remove('completed');
+        }
+        
         console.log(`Tab ${currentTabIndex + 1} completion check: ${allFilled ? 'COMPLETE' : 'INCOMPLETE'}`);
         return allFilled;
     }
@@ -1739,47 +1747,34 @@
 
         inputFields.forEach(field => {
             // Remove any existing event listeners first to avoid duplicates
-            field.removeEventListener('change', checkCurrentTabCompletion);
-            field.removeEventListener('input', checkCurrentTabCompletion);
-            field.removeEventListener('blur', checkCurrentTabCompletion);
+            field.removeEventListener('change', onFieldChange);
+            field.removeEventListener('input', onFieldChange);
+            field.removeEventListener('blur', onFieldChange);
             
             // Add event listeners
-            field.addEventListener('change', checkCurrentTabCompletion);
-            field.addEventListener('input', checkCurrentTabCompletion);
-            field.addEventListener('blur', checkCurrentTabCompletion);
+            field.addEventListener('change', onFieldChange);
+            field.addEventListener('input', onFieldChange);
+            field.addEventListener('blur', onFieldChange);
         });
     }
+    
+    // Field change handler
+    function onFieldChange() {
+        checkCurrentTabCompletion();
+        updateNavigationButtons();
+    }
 
-    // Handle tab click - only if not locked
+    // Handle tab click - allow navigation to any tab
     tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => {
-            if (!tab.classList.contains('locked')) {
-                navigateToTab(index);
-            } else {
-                // Visual indication that the tab is locked
-                tab.classList.add('shake');
-                setTimeout(() => {
-                    tab.classList.remove('shake');
-                }, 500);
-            }
+            navigateToTab(index);
         });
     });
     
     // Navigate to specific tab
     function navigateToTab(index) {
-        // Only allow navigation if the tab isn't locked
-        if (tabs[index].classList.contains('locked')) {
-            console.log(`Cannot navigate to locked tab ${index + 1}`);
-            return false;
-        }
-        
         // Deactivate current tab styles
         tabs[currentTabIndex].classList.remove('current');
-        
-        // Mark current tab as completed if all fields are filled
-        if (checkCurrentTabCompletion()) {
-            tabs[currentTabIndex].classList.add('completed');
-        }
         
         // Update content tabs
         contents.forEach(content => content.classList.remove('active'));
@@ -1790,7 +1785,6 @@
         
         // Set new current tab
         tabs[currentTabIndex].classList.add('current');
-        tabs[currentTabIndex].classList.remove('locked');
         
         // Additional class handling for Django template compatibility
         tabs.forEach((t, i) => {
@@ -1809,15 +1803,23 @@
         // Scroll tab into view
         tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         
-        // Update button states
-        prevTabBtn.disabled = currentTabIndex === 0;
-        checkCurrentTabCompletion(); // Check to enable/disable next button
+        // Update navigation buttons
+        updateNavigationButtons();
         
         // Track field changes in the new tab
         trackFieldChanges();
         
+        // Check completion of the new tab
+        checkCurrentTabCompletion();
+        
         console.log(`Navigated to tab ${currentTabIndex + 1}`);
         return true;
+    }
+    
+    // Update navigation button states
+    function updateNavigationButtons() {
+        prevTabBtn.disabled = currentTabIndex === 0;
+        nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
     }
     
     // Previous tab button
@@ -1829,42 +1831,8 @@
     
     // Next tab button
     nextTabBtn.addEventListener('click', () => {
-        if (currentTabIndex < totalTabs - 1 && !nextTabBtn.disabled) {
-            // Mark current tab as completed
-            tabs[currentTabIndex].classList.add('completed');
-            tabs[currentTabIndex].classList.remove('current');
-            
-            // Move to next tab
-            currentTabIndex++;
-            
-            // Unlock and make current the next tab
-            tabs[currentTabIndex].classList.remove('locked');
-            tabs[currentTabIndex].classList.add('current');
-            tabs[currentTabIndex].classList.add('active'); // For Django compatibility
-            
-            // Update content visibility
-            contents.forEach(content => content.classList.remove('active'));
-            contents[currentTabIndex].classList.add('active');
-            
-            // Update UI elements
-            updateTabIndicator();
-            updateInspectionProgress();
-            animateTabContent();
-            
-            // Scroll new tab into view
-            tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            
-            // Update button states
-            prevTabBtn.disabled = false;
-            checkCurrentTabCompletion(); // This will set the next button state
-            
-            // Track field changes in the new tab
-            trackFieldChanges();
-            
-            // Optionally store progress in localStorage (uncomment if needed)
-            // saveProgress();
-            
-            console.log(`Moved to next tab: ${currentTabIndex + 1}`);
+        if (currentTabIndex < totalTabs - 1) {
+            navigateToTab(currentTabIndex + 1);
         }
     });
     
@@ -1873,7 +1841,9 @@
     }
     
     function updateInspectionProgress() {
-        const inspectionProgress = 33 + ((currentTabIndex / (totalTabs - 1)) * 33);
+        // Calculate progress based on number of completed tabs
+        const completedCount = completedTabs.filter(Boolean).length;
+        const inspectionProgress = 33 + ((completedCount / totalTabs) * 33);
         progressFill.style.width = inspectionProgress + '%';
     }
     
@@ -1901,11 +1871,17 @@
     // Handle form submission
     if (form) {
         form.addEventListener('submit', function(e) {
-            // Check if all tabs have been visited and completed
-            const completedTabs = document.querySelectorAll('.tab-link.completed');
-            if (completedTabs.length < totalTabs - 1) { // Minus 1 for the current tab
+            // Check if all tabs have been completed
+            const incompleteTabsExist = completedTabs.includes(false);
+            if (incompleteTabsExist) {
                 e.preventDefault();
                 alert('Please complete all inspection areas before submitting.');
+                
+                // Find first incomplete tab and navigate to it
+                const firstIncompleteIndex = completedTabs.findIndex(complete => !complete);
+                if (firstIncompleteIndex !== -1) {
+                    navigateToTab(firstIncompleteIndex);
+                }
             }
         });
     }
@@ -1967,6 +1943,7 @@
                 
                 // Force recheck of tab completion
                 checkCurrentTabCompletion();
+                updateInspectionProgress();
             };
         }
     }
@@ -1974,11 +1951,10 @@
     // Initialize the page
     markRequiredFields();
     initializeTabs();
-    checkCurrentTabCompletion(); // Initial check of first tab
     trackFieldChanges();
     addDemoTools(); // Add demo tools for development
     
-    console.log('Walkthrough form initialized');
+    console.log('Walkthrough form initialized with free navigation');
 });
 </script>
 <style>
@@ -2323,23 +2299,61 @@ select.required-field:invalid {
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const submitButton = document.getElementById('submit-btn');
-        const gie15Field = document.querySelector('[name="guest_house_bath_8"]'); // Assuming the field name is 'gie15'
+    const submitButton = document.getElementById('submit-btn');
+    const formFields = document.querySelectorAll('input, select, textarea');
+    
+    // Initially disable the submit button
+    submitButton.disabled = true;
+
+    // Function to check if all fields are filled
+    function validateAllFields() {
+        let allFieldsValid = true;
         
-        // Initially disable the submit button
-        submitButton.disabled = true;
+        // Check each field
+        formFields.forEach(field => {
+            // Skip fields that might be intentionally empty or hidden
+            if (field.type === 'button' || field.type === 'submit' || field.type === 'reset' || 
+                field.type === 'hidden' || field.hasAttribute('data-optional')) {
+                return;
+            }
+            
+            // Check if the field is empty
+            if (!field.value.trim()) {
+                allFieldsValid = false;
+                // Highlight empty fields with a red border (optional)
+                field.style.border = '1px solid red';
+            } else {
+                // Reset border for filled fields
+                field.style.border = '';
+            }
+        });
+        
+        // Enable or disable submit button based on validation
+        submitButton.disabled = !allFieldsValid;
+        
+        return allFieldsValid;
+    }
 
-        // Function to enable submit button when field is interacted with
-        function enableSubmitButton() {
-            submitButton.disabled = false;
-        }
-
-        // Monitor the 'gie15' field for changes
-        if (gie15Field) {
-            // Enable submit button when the field is clicked or selected
-            gie15Field.addEventListener('change', enableSubmitButton);
-            gie15Field.addEventListener('click', enableSubmitButton);
-        }
+    // Add event listeners to all form fields
+    formFields.forEach(field => {
+        field.addEventListener('change', validateAllFields);
+        field.addEventListener('input', validateAllFields);
+        field.addEventListener('blur', validateAllFields);
     });
+    
+    // Optional: Add form submission handler
+    const form = submitButton.closest('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!validateAllFields()) {
+                event.preventDefault();
+                alert('Please fill in all required fields before submitting.');
+            }
+        });
+    }
+    
+    // Initial validation check
+    validateAllFields();
+});
 </script>
 {% endblock content %}

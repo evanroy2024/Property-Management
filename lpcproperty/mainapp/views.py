@@ -23,23 +23,44 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from .models import Client ,ClientManagers
 
+from mainapp.models import Client, ClientManagers
+from django.contrib.auth import authenticate, login as django_login
+
 def client_login(request):
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
+        # 1. Admin check (Django default users)
+        user = authenticate(request, username=username, password=password)
+        if user and user.is_staff:
+            django_login(request, user)
+            return redirect('adminmanager:admin_dashboard')
+
+        # 2. Client Manager check
+        try:
+            manager = ClientManagers.objects.get(username=username)
+            if manager.check_password(password):
+                request.session.flush()
+                request.session['manager_id'] = manager.id
+                return redirect('clientmanager:client_dashboard')
+        except ClientManagers.DoesNotExist:
+            pass
+
+        # 3. Client check
         try:
             client = Client.objects.get(username=username)
             if client.check_password(password):
-                request.session['client_id'] = client.id  # Store user session
-                return redirect('mainapp:dashboard')  # Redirect to start page
-            else:
-                messages.error(request, "Invalid credentials!")
+                request.session.flush()
+                request.session['client_id'] = client.id
+                return redirect('mainapp:dashboard')
         except Client.DoesNotExist:
-            messages.error(request, "User not found!")
+            pass
+
+        # If all checks fail
+        messages.error(request, "Invalid credentials or user type not found.")
 
     return render(request, "mainapp/login.html")
-
 @client_login_required
 def dashboard(request):
     client_id = request.session.get('client_id')
@@ -667,7 +688,7 @@ def update_report_status(request, report_id, status):
     report = get_object_or_404(WalkthroughReport, pk=report_id)
     
     # Validate the status
-    if status in ['Completed', 'Denied']:
+    if status in ['Pending', 'Denied']:
         report.status = status
         report.save()
         messages.success(request, f"Report status updated to {status}")

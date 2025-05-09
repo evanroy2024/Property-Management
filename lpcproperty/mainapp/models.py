@@ -16,8 +16,7 @@ class Client(models.Model):
     zipcode = models.CharField(max_length=10, blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     office_phone = models.CharField(max_length=15, blank=True, null=True)
-    buisness_adress = models.CharField(max_length=15, blank=True, null=True)
-
+    business_address = models.CharField(max_length=255, blank=True, null=True)
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),
         ('phone', 'Phone'),

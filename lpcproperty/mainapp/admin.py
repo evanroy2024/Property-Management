@@ -39,12 +39,12 @@ from .models import ClientManagers
 
 @admin.register(ClientManagers)
 class ClientManagersAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'username', 'email', 'phone_number', 'city', 'preferred_contact_method', 'created_at')
+    list_display = ('first_name', 'last_name','office_phone', 'username', 'email', 'phone_number', 'city', 'preferred_contact_method', 'created_at')
     search_fields = ('username', 'email', 'phone_number')
     list_filter = ('city', 'preferred_contact_method', 'created_at')
     ordering = ('-created_at',)
     fieldsets = (
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'username', 'email', 'password', 'phone_number')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'office_phone', 'username', 'email', 'password', 'phone_number')}),
         ('Address', {'fields': ('city', 'state', 'zipcode')}),
         ('Preferences', {'fields': ('preferred_contact_method',)}),
     )

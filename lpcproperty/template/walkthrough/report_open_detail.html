@@ -13,17 +13,19 @@
 
         <div class="container report-container" id="report-{{ report.id }}">
             <div class="report-header">
-                <h1 class="report-title"> Report Name : {% if report.name %}{{ report.name }}{% else %}Inspection Report{% endif %}</h1>
+                <h2 class="report-title" style="font-size: 25px;"> <b>Inspection Name </b> :{{ report_description }}</h2>
                 
                 {% if report.description %}
                     <p class="report-description">{{ report.description }}</p>
-                    <p class="report-description">Publist Date : {{ report.datetime }}</p>
+                    <p class="report-description">Publist Date :  {{ report_datetime }}</p>
 
                 {% endif %}
+<!-- <p class="report-description">Publish Date : {{ report_datetime }}</p> -->
 
                 <div class="user-thing" style="display: flex; margin-top: 20px; justify-content: space-between;">
-                    <h4 class="report-title" style="font-size: 22px;"> Client Name : {{ report.user.last_name }}, {{ report.user.first_name }}</h4>
-                <h4 class="report-title" style="font-size: 22px;"> Date : {{ report.datetime }}</h4>
+                    <h4 class="report-title" style="font-size: 22px;"> Client Name :  {{ client_last_name }}, {{ client_first_name }}</h4>
+                <h4 class="report-title" style="font-size: 22px;"> Date :  {{ report_datetime }}</h4>
+                <!-- <h4 class="report-title" style="font-size: 22px;"> Date :  </h4> -->
 
 
                 </div>
@@ -2946,7 +2948,7 @@
                     <!-- <button onclick="generatePDF('report-{{ report.id }}')" class="btn btn-danger download-btn">
                         <i class="fa fa-file-pdf-o"></i> Download PDF
                     </button> -->
-                    <a href="{% url 'walkthroughreport:export_pdf' report.id %}" class="btn btn-success">
+                    <a href="{% url 'walkthroughreport:open_export_pdf' report.id %}" class="btn btn-success">
                         <i class="fa fa-file-excel-o"></i> Download PDF
                     </a>
                     <a href="{% url 'walkthroughreport:export_csv' report.id %}" class="btn btn-primary">

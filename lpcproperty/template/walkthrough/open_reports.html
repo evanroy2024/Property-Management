@@ -379,6 +379,7 @@
                         <th>Date</th>
                         <th>Description</th>
                         <th>Total Cost</th>
+                        <th>Client Approval</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -388,6 +389,23 @@
                         <td>{{ report.datetime }}</td>
                         <td>{{ report.description }}</td>
                         <td>{{ report.cost }}</td>
+<td>
+  {% if report.status == "Pending" %}
+    <span style="display:inline-block; padding:4px 10px; background-color:#f1c40f; color:#000; border-radius:5px; font-weight:bold;">
+      Yes
+    </span>
+  {% elif report.status == "Open" %}
+    <span style="display:inline-block; padding:4px 10px; background-color:#2ecc71; color:white; border-radius:5px; font-weight:bold;">
+      Pending
+    </span>
+  {% else %}
+    <span style="display:inline-block; padding:4px 10px; background-color:#bdc3c7; color:#2c3e50; border-radius:5px; font-weight:bold;">
+      {{ report.status }}
+    </span>
+  {% endif %}
+</td>
+
+
                         <td style="display: flex; justify-content: space-between;">
                             <a href="{% url 'walkthroughreport:report_open_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
                                 View

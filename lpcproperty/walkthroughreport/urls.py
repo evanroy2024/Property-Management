@@ -11,6 +11,8 @@ urlpatterns = [
     path('export/excel/<int:report_id>/', views.export_excel, name='export_excel'),
     path('export/csv/<int:report_id>/', views.export_csv, name='export_csv'),
 
+    path('open_export_pdf/<int:report_id>/', views.open_export_pdf, name='open_export_pdf'),
+
     path('reports/', views.all_reports_view, name='all_reports'),
     path('reports/<int:pk>/', views.report_detail_view, name='report_detail'),
     path('reports_open/<int:pk>/', views.report_open_detail_view, name='report_open_detail'),

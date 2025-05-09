@@ -396,7 +396,7 @@
                             </a>
                         </td>
                         <td>
-                            <a href="{% url 'mainapp:update_report_status' report.pk 'Completed' %}" 
+                            <a href="{% url 'mainapp:update_report_status' report.pk 'Pending' %}" 
                                class="btn btn-sm {% if report.status == 'Completed' %}btn-success disabled{% else %}btn-outline-success{% endif %}">
                                 YES
                             </a>

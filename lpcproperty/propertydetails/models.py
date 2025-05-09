@@ -20,7 +20,7 @@ class PropertyManagement(models.Model):
 
     city = models.CharField(max_length=20, null=True, blank=True)
     state = models.CharField(max_length=20, null=True, blank=True)
-
+    zipcode = models.CharField(max_length=10, null=True, blank=True)
 
     PREFERRED_CONTACT_CHOICES = [
         ('email', 'Email'),

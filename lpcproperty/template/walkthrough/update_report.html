@@ -19,7 +19,7 @@
             <div class="mb-4">
               <label for="status" class="form-label fw-bold text-secondary">Status</label>
               <select name="status" id="status" class="form-select form-control-lg" required>
-                <option value="Pending" {% if report.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <!-- <option value="Pending" {% if report.status == 'Pending' %}selected{% endif %}>Pending</option> -->
                 <option value="Open" {% if report.status == 'Open' %}selected{% endif %}>Open</option>
                 <option value="Completed" {% if report.status == 'Completed' %}selected{% endif %}>Completed</option>
                 <option value="Denied" {% if report.status == 'Denied' %}selected{% endif %}>Denied</option>
