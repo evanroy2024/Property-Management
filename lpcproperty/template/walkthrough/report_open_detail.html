@@ -13,11 +13,10 @@
 
         <div class="container report-container" id="report-{{ report.id }}">
             <div class="report-header">
-                <h2 class="report-title" style="font-size: 25px;"> <b>Inspection Name </b> :{{ report_description }}</h2>
+                 <h1 class="report-title"> Property Name :{{ report.property.address }} </h1>
                 
                 {% if report.description %}
-                    <p class="report-description">{{ report.description }}</p>
-                    <p class="report-description">Publist Date :  {{ report_datetime }}</p>
+                    <p class="report-description"><b>Inspection Note :</b> {{ report.description }}</p>
 
                 {% endif %}
 <!-- <p class="report-description">Publish Date : {{ report_datetime }}</p> -->
@@ -30,7 +29,7 @@
 
                 </div>
             </div>
-            {% if report.gie1 is not None %}
+           {% if report.gie1 or report.gie2 or report.gie3 or report.gie4 or report.gie5 or report.gie6 or report.gie7 or report.gie8 or report.gie9 or report.gie10 or report.gie11 or report.gie12 or report.gie13 or report.gie14 or report.gie15 %}
             <table class="questionnaire-table">
                 <thead>
                     <tr>
@@ -290,7 +289,7 @@
                 
             </table>
 {% endif %}
-            {% if report.gie1 is not None %}
+            {% if report.gie1 or report.gie2 or report.gie3 or report.gie4 or report.gie5 or report.gie6 or report.gie7 or report.gie8 or report.gie9 %}
             <table class="questionnaire-table">
                 <thead>
                     <tr>
@@ -456,7 +455,7 @@
                 
             </table>
 {% endif %}
-            {% if report.garage1 is not None %}
+           {% if report.garage1 or report.garage2 or report.garage3 or report.garage4 or report.garage5 or report.garage6 or report.garage7 or report.garage8 or report.garage9 %}
             <!-- For garage  -->
             <table class="questionnaire-table">
                 <thead>
@@ -556,7 +555,7 @@
             </table>
             {% endif %}
             
-            {% if report.laundry1 is not None %}
+           {% if report.laundry1 or report.laundry2 or report.laundry3 or report.laundry4 or report.laundry5 or report.laundry6 %}
             <!-- For Laundery  -->
             <table class="questionnaire-table">
                 <thead>
@@ -669,7 +668,7 @@
             </table>
             {% endif %}
             
-            {% if report.kitchen1 is not None %}
+            {% if report.kitchen1 or report.kitchen2 or report.kitchen3 or report.kitchen4 or report.kitchen5 or report.kitchen6 or report.kitchen7 or report.kitchen8 or report.kitchen9 or report.kitchen10 or report.kitchen11 or report.kitchen12 %}
             <!-- For kitchen      -->
             <table class="questionnaire-table">
                 <thead>
@@ -804,7 +803,7 @@
             {% endif %}
             
             <!-- for Bustelers              -->
-            {% if report.butlers1 is not None %}
+           {% if report.butlers1 or report.butlers2 or report.butlers3 or report.butlers4 or report.butlers5 or report.butlers6 or report.butlers7 or report.butlers8 or report.butlers9 or report.butlers10 or report.butlers11 or report.butlers12 %}
             <table class="questionnaire-table">
                 <thead>
                     <tr>
@@ -1012,7 +1011,7 @@
             </table>
             {% endif %}
             
-            {% if report.breakfast1 is not None %}
+           {% if report.breakfast1 or report.breakfast2 or report.breakfast3 or report.breakfast4 or report.breakfast5 or report.breakfast6 %}
             <!-- Break fast  -->
             <table class="questionnaire-table">
                 <thead>
@@ -1094,8 +1093,7 @@
             </table>
             {% endif %}
             
-            {% if report.entry1 is not None %}
-
+           {% if report.entry1 or report.entry2 or report.entry3 or report.entry4 %}
             <!-- Entry  -->
             <table class="questionnaire-table">
                 <thead>
@@ -1162,9 +1160,9 @@
                     {% endif %}
                 </tbody>
             </table>
-{% endif %}
+            {% endif %}
             
-            {% if report.greatroom1 is not None %}
+            {% if report.greatroom1 or report.greatroom2 or report.greatroom3 or report.greatroom4 or report.greatroom5 %}
             <!-- Great Room / Family Room -->
             <table class="questionnaire-table">
                 <thead>
@@ -1247,7 +1245,8 @@
             </table>
 {% endif %}
             
-            {% if report.dining1 is not None %}
+           {% if report.dining1 or report.dining2 or report.dining3 or report.dining4 or report.dining5 %}
+
             <!-- Dining Room / Area -->
 <table class="questionnaire-table">
     <thead>
@@ -1328,8 +1327,8 @@
     </tbody>
 </table>
 {% endif %}
-{% if report.closets1 is not None %}
 
+{% if report.closets1 or report.closets2 or report.closets3 or report.closets4 or report.closets5 %}
 <!-- Closets - Main Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1411,7 +1410,7 @@
 </table>
 {% endif %}
             
-            {% if report.closets_upper1 is not None %}
+{% if report.closets_upper1 or report.closets_upper2 or report.closets_upper3 or report.closets_upper4 or report.closets_upper5 %}
 <!-- Closets - Upper Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1493,7 +1492,7 @@
 </table>
 {% endif %}
             
-            {% if report.hallways_main1 is not None %}
+{% if report.hallways_main1 or report.hallways_main2 or report.hallways_main3 or report.hallways_main4 or report.hallways_main5 %}
 <!-- Hallways - Main Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1575,7 +1574,7 @@
 </table>
 {% endif %}
             
-            {% if report.hallways_upper1 is not None %}
+{% if report.hallways_upper1 or report.hallways_upper2 or report.hallways_upper3 or report.hallways_upper4 or report.hallways_upper5 %}
 <!-- Hallways - Upper Level -->
 <table class="questionnaire-table">
     <thead>
@@ -1657,7 +1656,7 @@
 </table>
 {% endif %}
             
-            {% if report.bedroom1_1 is not None %}
+{% if report.bedroom1_1 or report.bedroom1_2 or report.bedroom1_3 or report.bedroom1_4 %}
 <!-- Bedroom 1 (Master Bedroom) -->
 <table class="questionnaire-table">
     <thead>
@@ -1726,7 +1725,7 @@
 </table>
 {% endif %}
             
-            {% if report.bedroom2_1 is not None %}
+{% if report.bedroom2_1 or report.bedroom2_2 or report.bedroom2_3 or report.bedroom2_4 %}
 <!-- Bedroom 2 -->
 <table class="questionnaire-table">
     <thead>
@@ -1795,7 +1794,7 @@
 </table>
 {% endif %}
             
-            {% if report.bedroom3_1 is not None %}
+{% if report.bedroom3_1 or report.bedroom3_2 or report.bedroom3_3 or report.bedroom3_4 %}
 <!-- Bedroom 3 -->
 <table class="questionnaire-table">
     <thead>
@@ -1864,7 +1863,7 @@
 </table>
 {% endif %}
             
-            {% if report.bedroom4_1 is not None %}
+{% if report.bedroom4_1 or report.bedroom4_2 or report.bedroom4_3 or report.bedroom4_4 %}
 <!-- Bedroom 4 -->
 <table class="questionnaire-table">
     <thead>
@@ -1933,7 +1932,7 @@
 </table>
 {% endif %}
             
-            {% if report.bathroom1_1 is not None %}
+{% if report.bathroom1_1 or report.bathroom1_2 or report.bathroom1_3 or report.bathroom1_4 or report.bathroom1_5 or report.bathroom1_6 or report.bathroom1_7 or report.bathroom1_8 %}
 <!-- Bathroom 1 -->
 <table class="questionnaire-table">
     <thead>
@@ -2054,7 +2053,7 @@
 </table>
 {% endif %}
             
-            {% if report.bathroom2_1 is not None %}
+{% if report.bathroom2_1 or report.bathroom2_2 or report.bathroom2_3 or report.bathroom2_4 or report.bathroom2_5 or report.bathroom2_6 or report.bathroom2_7 or report.bathroom2_8 %}
 <!-- Bathroom 2 -->
 <table class="questionnaire-table">
     <thead>
@@ -2175,7 +2174,7 @@
 </table>
 {% endif %}
             
-            {% if report.bathroom3_1 is not None %}
+{% if report.bathroom3_1 or report.bathroom3_2 or report.bathroom3_3 or report.bathroom3_4 or report.bathroom3_5 or report.bathroom3_6 or report.bathroom3_7 or report.bathroom3_8 %}
 <!-- Bathroom 3 (Guest Bath) -->
 <table class="questionnaire-table">
     <thead>
@@ -2296,7 +2295,7 @@
 </table>
 {% endif %}
             
-            {% if report.bathroom4_1 is not None %}
+{% if report.bathroom4_1 or report.bathroom4_2 or report.bathroom4_3 or report.bathroom4_4 or report.bathroom4_5 or report.bathroom4_6 or report.bathroom4_7 or report.bathroom4_8 %}
 <!-- Bathroom 4 (Powder Room) -->
 <table class="questionnaire-table">
     <thead>
@@ -2417,8 +2416,8 @@
 </table>
 {% endif %}
             
-            {% if report.bathroom4_1 is not None %}
-<!-- Bathroom 4 (Powder Room) -->
+{% if report.bathroom5_1 is not None or report.bathroom5_2 is not None or report.bathroom5_3 is not None or report.bathroom5_4 is not None or report.bathroom5_7 or report.bathroom5_8 %}
+<!-- Bathroom 5 (Powder Room) -->
 <table class="questionnaire-table">
     <thead>
         <tr>
@@ -2538,7 +2537,7 @@
 </table>
 {% endif %}
             
-            {% if report.gym_1 is not None %}
+{% if report.gym_1 is not None or report.gym_2 is not None or report.gym_3 is not None or report.gym_4 is not None or report.gym_5 is not None or report.gym_6 is not None or report.gym_7 is not None %}
 <!-- Gym -->
 <table class="questionnaire-table">
     <thead>
@@ -2646,8 +2645,7 @@
 </table>
 {% endif %}
             
-            {% if report.theatre_1 is not None %}
-<!-- Theatre / Music Room -->
+{% if report.theatre_1 is not None or report.theatre_2 is not None or report.theatre_3 is not None or report.theatre_4 is not None or report.theatre_5 is not None %}
 <!-- Theatre / Music Room -->
 <table class="questionnaire-table">
     <thead>
@@ -2729,7 +2727,7 @@
 </table>
 {% endif %}
             
-            {% if report.guest_house_1 is not None %}
+{% if report.guest_house_1 is not None or report.guest_house_2 is not None or report.guest_house_3 is not None or report.guest_house_4 is not None or report.guest_house_5 is not None %}
 <!-- Guest House - Sleeping / Living -->
 <table class="questionnaire-table">
     <thead>
@@ -2811,7 +2809,7 @@
 </table>
 {% endif %}
             
-            {% if report.guest_house_bath_1 is not None %}
+{% if report.guest_house_bath_1 is not None or report.guest_house_bath_2 is not None or report.guest_house_bath_3 is not None or report.guest_house_bath_4 is not None or report.guest_house_bath_5 is not None or report.guest_house_bath_6 is not None or report.guest_house_bath_7 is not None or report.guest_house_bath_8 is not None %}
 <!-- Guest House - Bathroom -->
 <table class="questionnaire-table">
     <thead>

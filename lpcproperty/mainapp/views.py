@@ -659,9 +659,43 @@ def all_reports_view(request):
     reports = WalkthroughReport.objects.all()
     return render(request, 'mainapp/walktrug/all_reports.html', {'reports': reports})
 
+# def report_detail_view(request, pk):
+#     report = get_object_or_404(WalkthroughReport, pk=pk)
+#     return render(request, 'mainapp/walktrug/report_detail.html', {'report': report})
+import copy
 def report_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
-    return render(request, 'mainapp/walktrug/report_detail.html', {'report': report})
+    
+    # Create a modified version for the template
+    filtered_report = copy.deepcopy(report)
+    
+    # Loop through all fields in the model
+    for field_name in dir(filtered_report):
+        # Skip private/internal attributes and remarks fields
+        if field_name.startswith('_') or field_name.endswith('_remarks'):
+            continue
+        
+        field_value = getattr(filtered_report, field_name, None)
+        # Set to None if not "Non-Compliant"
+        if field_value is not None and field_value != "Non-Compliant":
+            setattr(filtered_report, field_name, None)
+    
+    # Ensure the report object still has a valid pk (ID) for URL generation
+    if not filtered_report.pk:
+        filtered_report.pk = report.pk
+     # Access the user's first and last name via the foreign key
+    client_first_name = report.user.first_name if report.user else ''
+    client_last_name = report.user.last_name if report.user else ''
+    report_description = report.description if report.description else 'Walkthrough Report'
+    report_property = report.property if report.property else 'Walkthrough Report'
+
+    # Access the datetime field
+   # Modify the datetime format to show only the date (Year-Month-Day)
+    report_datetime = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'No Datetime Available'
+
+    return render(request, 'mainapp/walktrug/report_detail.html', {'report': filtered_report,'client_first_name': client_first_name,
+        'client_last_name': client_last_name,'report_datetime': report_datetime,'report_description':report_description,'report_property':report_property}) 
+
 
 def completed_reports_view(request):
     reports = WalkthroughReport.objects.filter(status='Completed')

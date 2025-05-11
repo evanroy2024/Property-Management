@@ -390,31 +390,68 @@
         </div>
     </div>
     {% endif %}
-    <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
+ <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
 
 <style>
     #additional-contact-1, #additional-contact-2, #additional-contact-3, #additional-contact-4, #additional-contact-5 {
-    display: none;
-}
+        display: none;
+    }
 </style>
+
 <script>
-    document.getElementById("revealContactsBtn").addEventListener("click", function() {
-        var contacts = [
-            "additional-contact-1",
-            "additional-contact-2",
-            "additional-contact-3",
-            "additional-contact-4",
-            "additional-contact-5"
-        ];
+// Simple toggle state variable
+let contactsShown = false;
+
+// Get the button element
+const button = document.getElementById("revealContactsBtn");
+
+// Add click event listener
+button.addEventListener("click", function() {
+    // List of contacts
+    const contacts = [
+        "additional-contact-1",
+        "additional-contact-2",
+        "additional-contact-3",
+        "additional-contact-4",
+        "additional-contact-5"
+    ];
     
-        contacts.forEach(function(id) {
-            document.getElementById(id).style.display = 'flex';
-        });
+    // Toggle the state
+    contactsShown = !contactsShown;
     
-        // Hide the button after showing all
-        this.style.display = 'none';
+    // Change display based on new state
+    const displayValue = contactsShown ? 'flex' : 'none';
+    
+    // Count of contacts that have data and are shown
+    let contactsWithData = 0;
+    
+    // Update only contacts that have data
+    contacts.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            // Check if the element has content (not empty)
+            // We'll consider an element to have data if it has text content or child elements
+            const hasData = element.textContent.trim() !== '' || element.children.length > 0;
+            
+            if (hasData) {
+                element.style.display = displayValue;
+                if (contactsShown) contactsWithData++;
+            } else {
+                // Keep empty contacts hidden regardless of state
+                element.style.display = 'none';
+            }
+        } else {
+            console.warn(`Element with ID '${id}' not found in the document`);
+        }
     });
-    </script>
+    
+    // Update button text based on state
+    button.textContent = contactsShown ? 'Hide Contacts' : 'Show Contacts';
+    
+    console.log("Button clicked. Contacts shown:", contactsShown);
+    console.log("Button text is now:", button.textContent);
+});
+</script>
     
 </div>
 <!-- Client Manager Information with 3 fields per row -->
@@ -543,8 +580,8 @@
                 
                 <div class="room-list">
                     {% for room in floor.rooms.all %}
-                        <div class="room-item">
-                            <p class="room-caption text-left">{{ forloop.counter }}. {{ room.room_name }} </p>
+                        <div class="room-item" style="border: 1px solid rgb(227, 227, 227); height: 50px;">
+                            <p class="text-left" style="display: flex; align-items: center; ">{{ room.room_name }} </p>
                         </div>
                     {% endfor %}
                 </div>

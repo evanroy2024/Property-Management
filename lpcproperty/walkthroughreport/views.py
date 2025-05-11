@@ -334,42 +334,73 @@ def export_excel(request, report_id):
 
 
 
-
 def export_csv(request, report_id):
     report = WalkthroughReport.objects.get(pk=report_id)
-    data = get_verbose_data(report)
-
+    
+    # Get all data
+    all_data = get_verbose_data(report)
+    # Get client name details
+    client_first_name = report.user.first_name if report.user else ''
+    client_last_name = report.user.last_name if report.user else ''
+    client_name = f"{client_first_name} {client_last_name}".strip() or "N/A"
+    
+    # Format report date
+    report_date = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'N/A'
+    
+    # Get property information if available
+    property_info = report.property.name if report.property.address and hasattr(report.property, 'name') else getattr(report.property.address, '__str__', lambda: 'N/A')()
+    
+    # Get report description (inspection note)
+    inspection_note = getattr(report, 'description', '')
     response = HttpResponse(content_type='text/csv')
     filename = f"walkthrough_report_{report_id}.csv"
     response['Content-Disposition'] = f'attachment; filename={filename}'
-
     writer = csv.writer(response)
     
-    # Adding a title row
-    writer.writerow(["🏠 Walkthrough Report"])
+    # Adding title with property name
+    writer.writerow([property_info])
     writer.writerow([])  # Blank row for spacing
     
-    # Add headers (emphasizing structure)
-    writer.writerow(['Category', 'Question', 'Answer', 'Remarks'])
-
-    # Group data by category and write to the CSV
-    grouped = {}
-    for question, answer, remark, category in data:
-        if category not in grouped:
-            grouped[category] = []
-        grouped[category].append((question, answer, remark))
-
-    # Add each category and its rows without unwanted emoji or label
-    for category, rows in grouped.items():
-        # Get category label without any unwanted prefix (emoji or special chars)
-        label = CATEGORY_LABELS.get(category, category).replace("📌", "").strip()  # Remove unwanted parts
-
-        writer.writerow([label])  # Only the clean category name
-        for question, answer, remark in rows:
-            writer.writerow([category, question, answer, remark or "-"])
-        writer.writerow([])  # Blank row to separate categories
-
+    # Report details
+    writer.writerow(["Report Details:"])
+    writer.writerow(["Client:", client_name])
+    writer.writerow(["Date:", report_date])
+    writer.writerow(["Inspection Note:", inspection_note])
+    writer.writerow([])  # Blank row for spacing
+    
+    # Filter for only non-compliant items (similar to PDF function)
+    non_compliant_data = [item for item in all_data if item[1] == "Non-Compliant"]
+    
+    # Section for non-compliant items
+    writer.writerow(["Non-Compliant Items"])
+    writer.writerow([])  # Blank row for spacing
+    
+    if not non_compliant_data:
+        writer.writerow(["No non-compliant items found in this report."])
+    else:
+        # Group data by category while preserving order
+        grouped = {}
+        category_order = []
+        
+        for question, answer, remark, category in non_compliant_data:
+            if category not in grouped:
+                grouped[category] = []
+                category_order.append(category)
+            grouped[category].append((question, answer, remark))
+        
+        # Add data organized by category
+        for category in category_order:
+            rows = grouped[category]
+            
+            writer.writerow([category])
+            writer.writerow(["Issue", "Status", "Remarks"])  # Headers for this category
+            
+            for question, answer, remark in rows:
+                writer.writerow([question, "Non-Compliant", remark or "-"])
+            
+            writer.writerow([])  # Blank row to separate categories
     return response
+
 # Creating Reports 
 from django.shortcuts import render, get_object_or_404
 def report_detail_view(request, pk):
@@ -494,8 +525,11 @@ def open_export_pdf(request, report_id):
     # Format report date
     report_date = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'N/A'
     
-    # Get report description if available
-    report_description = getattr(report, 'description', 'Walkthrough Report')
+    # Get property information if available
+    property_info = report.property.name if report.property.address and hasattr(report.property, 'name') else getattr(report.property.address, '__str__', lambda: 'N/A')()
+    
+    # Get report description (inspection note)
+    inspection_note = getattr(report, 'description', '')
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=walkthrough_report_{report_id}.pdf'
@@ -552,9 +586,8 @@ def open_export_pdf(request, report_id):
         wordWrap='CJK',
     )
 
-    # Report Description as top heading (assuming it exists in the model)
-    report_description = getattr(report, 'description', 'Walkthrough Report')
-    elements.append(Paragraph(f"🏠 {report_description}", styles['GreenTitle']))
+    # Main heading with property name
+    elements.append(Paragraph(f"🏠 {property_info}", styles['GreenTitle']))
 
     # Underline
     elements.append(Table([[""]], colWidths=[6.3 * inch], style=[
@@ -566,6 +599,7 @@ def open_export_pdf(request, report_id):
     elements.append(Paragraph("Report Details:", styles['SectionTitle']))
     elements.append(Paragraph(f"<b>Client:</b> {client_name}", styles['ReportInfo']))
     elements.append(Paragraph(f"<b>Date:</b> {report_date}", styles['ReportInfo']))
+    elements.append(Paragraph(f"<b>Inspection Note:</b> {inspection_note}", styles['ReportInfo']))
     
     elements.append(Spacer(1, 20))
     
@@ -651,3 +685,4 @@ def open_export_pdf(request, report_id):
 
     doc.build(elements)
     return response
+    

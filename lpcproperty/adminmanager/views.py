@@ -297,6 +297,10 @@ from django.core.exceptions import ValidationError
 def property_create_view(request):
     clients = Client.objects.all()
     managers = ClientManagers.objects.all()
+    context = {
+        'clients': clients,
+        'managers': managers
+    }
 
     if request.method == 'POST':
         try:
@@ -313,7 +317,11 @@ def property_create_view(request):
                     new_password = request.POST.get('new_password', '')
                     new_phone = request.POST.get('new_phone', '')
                     office_phone = request.POST.get('office_phone', '')  
-                    business_address = request.POST.get('business_address', '') 
+                    business_address = request.POST.get('business_address', '')
+                    address = request.POST.get('client_address', '')
+                    city = request.POST.get('client_city', '')
+                    state = request.POST.get('client_state', '')
+                    zipcode = request.POST.get('client_zipcode', '')
 
                     contact1_name = request.POST.get('contact1_name', '')
                     contact1_last_name = request.POST.get('contact1_last_name', '')
@@ -322,7 +330,6 @@ def property_create_view(request):
                     contact1_office_phone = request.POST.get('contact1_office_phone', '')
                     contact1_buisness_adress = request.POST.get('contact1_buisness_adress', '')
                     contact1_priority = request.POST.get('contact1_priority', '')
-
 
                     # Contact 2 (Secondary)
                     contact2_name = request.POST.get('contact2_name', '')
@@ -333,7 +340,6 @@ def property_create_view(request):
                     contact2_buisness_adress = request.POST.get('contact2_buisness_adress', '')
                     contact2_priority = request.POST.get('contact2_priority', '')
 
-
                     # Contact 3 (Tertiary)
                     contact3_name = request.POST.get('contact3_name', '')
                     contact3_last_name = request.POST.get('contact3_last_name', '')
@@ -343,7 +349,7 @@ def property_create_view(request):
                     contact3_buisness_adress = request.POST.get('contact3_buisness_adress', '')
                     contact3_priority = request.POST.get('contact3_priority', '')
 
-                    # **Contact 4**
+                    # Contact 4
                     contact4_name = request.POST.get('contact4_name', '')
                     contact4_last_name = request.POST.get('contact4_last_name', '')
                     contact4_email = request.POST.get('contact4_email', '')
@@ -352,7 +358,7 @@ def property_create_view(request):
                     contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
                     contact4_priority = request.POST.get('contact4_priority', '')
 
-                    # **Contact 5**
+                    # Contact 5
                     contact5_name = request.POST.get('contact5_name', '')
                     contact5_last_name = request.POST.get('contact5_last_name', '')
                     contact5_email = request.POST.get('contact5_email', '')
@@ -361,64 +367,69 @@ def property_create_view(request):
                     contact5_buisness_adress = request.POST.get('contact5_buisness_adress', '')
                     contact5_priority = request.POST.get('contact5_priority', '')
 
-                    if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
-                        raise ValueError("Fill all required fields for new client")
+                    # Only require basic client information if creating a new client
+                    if new_first_name or new_last_name or new_username or new_email:
+                        if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
+                            error_message = "Please complete all required fields for the new client"
+                            context['error_message'] = error_message
+                            return render(request, 'adminmanager/property/create.html', context)
 
-                    new_client = Client.objects.create(
-                        first_name=new_first_name,
-                        last_name=new_last_name,
-                        username=new_username,
-                        email=new_email,
-                        password=new_password,  # storing plain for now
-                        phone_number=new_phone,
-                        office_phone=office_phone,  
-                        business_address=business_address,  
+                        # Create new client
+                        new_client = Client.objects.create(
+                            first_name=new_first_name,
+                            last_name=new_last_name,
+                            username=new_username,
+                            email=new_email,
+                            password=new_password,
+                            phone_number=new_phone,
+                            office_phone=office_phone,
+                            business_address=business_address,
+                            address=address,
+                            city=city,
+                            state=state,
+                            zipcode=zipcode,
+                            
+                            contact1_name=contact1_name,
+                            contact1_last_name=contact1_last_name,
+                            contact1_email=contact1_email,
+                            contact1_phone=contact1_phone,
+                            contact1_office_phone=contact1_office_phone,
+                            contact1_buisness_adress=contact1_buisness_adress,
+                            contact1_priority=contact1_priority,
 
-                        contact1_name=contact1_name,
-                        contact1_last_name=contact1_last_name,
-                        contact1_email=contact1_email,
-                        contact1_phone=contact1_phone,
-                        contact1_office_phone=contact1_office_phone,
-                        contact1_buisness_adress=contact1_buisness_adress,
-                        contact1_priority=contact1_priority,
+                            contact2_name=contact2_name,
+                            contact2_last_name=contact2_last_name,
+                            contact2_email=contact2_email,
+                            contact2_phone=contact2_phone,
+                            contact2_office_phone=contact2_office_phone,
+                            contact2_buisness_adress=contact2_buisness_adress,
+                            contact2_priority=contact2_priority,
 
-                        contact2_name=contact2_name,
-                        contact2_last_name=contact2_last_name,
-                        contact2_email=contact2_email,
-                        contact2_phone=contact2_phone,
-                        contact2_office_phone=contact2_office_phone,
-                        contact2_buisness_adress=contact2_buisness_adress,
-                        contact2_priority=contact2_priority,
+                            contact3_name=contact3_name,
+                            contact3_last_name=contact3_last_name,
+                            contact3_email=contact3_email,
+                            contact3_phone=contact3_phone,
+                            contact3_office_phone=contact3_office_phone,
+                            contact3_buisness_adress=contact3_buisness_adress,
+                            contact3_priority=contact3_priority,
 
-                        contact3_name=contact3_name,
-                        contact3_last_name=contact3_last_name,
-                        contact3_email=contact3_email,
-                        contact3_phone=contact3_phone,
-                        contact3_office_phone=contact3_office_phone,
-                        contact3_buisness_adress=contact3_buisness_adress,
-                        contact3_priority=contact3_priority,
+                            contact4_name=contact4_name,
+                            contact4_last_name=contact4_last_name,
+                            contact4_email=contact4_email,
+                            contact4_phone=contact4_phone,
+                            contact4_office_phone=contact4_office_phone,
+                            contact4_buisness_adress=contact4_buisness_adress,
+                            contact4_priority=contact4_priority,
 
-                        # Contact 4
-                        contact4_name=contact4_name,
-                        contact4_last_name=contact4_last_name,
-                        contact4_email=contact4_email,
-                        contact4_phone=contact4_phone,
-                        contact4_office_phone=contact4_office_phone,
-                        contact4_buisness_adress=contact4_buisness_adress,
-                        contact4_priority=contact4_priority,
-
-                        # Contact 5
-                        contact5_name=contact5_name,
-                        contact5_last_name=contact5_last_name,
-                        contact5_email=contact5_email,
-                        contact5_phone=contact5_phone,
-                        contact5_office_phone=contact5_office_phone,
-                        contact5_buisness_adress=contact5_buisness_adress,
-                        contact5_priority=contact5_priority,
-                        
-                    )
-                    client_id = new_client.id
-                
+                            contact5_name=contact5_name,
+                            contact5_last_name=contact5_last_name,
+                            contact5_email=contact5_email,
+                            contact5_phone=contact5_phone,
+                            contact5_office_phone=contact5_office_phone,
+                            contact5_buisness_adress=contact5_buisness_adress,
+                            contact5_priority=contact5_priority,
+                        )
+                        client_id = new_client.id
                 
                 # Handle client manager - either get existing or create new
                 client_manager_id = request.POST.get('client_manager_id')
@@ -434,24 +445,41 @@ def property_create_view(request):
                 buisness_cm_adress = request.POST.get('buisness_cm_adress', '')
                 
                 # If new client manager details were provided, create a new client manager
-                if new_cm_first_name and new_cm_last_name and new_cm_username and new_cm_email and new_cm_password:
+                if new_cm_first_name or new_cm_last_name or new_cm_username or new_cm_email:
+                    if not all([new_cm_first_name, new_cm_last_name, new_cm_username, new_cm_email, new_cm_password]):
+                        error_message = "Please complete all required fields for the new client manager"
+                        context['error_message'] = error_message
+                        return render(request, 'adminmanager/property/create.html', context)
+                    
                     # Create new client manager
                     new_manager = ClientManagers.objects.create(
                         first_name=new_cm_first_name,
                         last_name=new_cm_last_name,
                         username=new_cm_username,
                         email=new_cm_email,
-                        password=new_cm_password,  # storing plain for now
+                        password=new_cm_password,
                         phone_number=new_cm_phone,
                         office_phone=office_cm_phone,
                         business_address=buisness_cm_adress,
                     )
                     client_manager_id = new_manager.id
                 
-                # Validate required fields
+                # Validate property fields
                 address = request.POST.get('address')
-                if not all([client_id, client_manager_id, address]):
-                    raise ValueError("Client, Client Manager, and Address are required")
+                if not address:
+                    error_message = "Property address is required"
+                    context['error_message'] = error_message
+                    return render(request, 'adminmanager/property/create.html', context)
+                
+                if not client_id:
+                    error_message = "Please select or create a client"
+                    context['error_message'] = error_message
+                    return render(request, 'adminmanager/property/create.html', context)
+                    
+                if not client_manager_id:
+                    error_message = "Please select or create a client manager"
+                    context['error_message'] = error_message
+                    return render(request, 'adminmanager/property/create.html', context)
 
                 # Create the Property
                 prop = PropertyManagement.objects.create(
@@ -468,10 +496,9 @@ def property_create_view(request):
                     has_hoa='has_hoa' in request.POST,
                     gated_property='gated_property' in request.POST,
                     preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
-                    state=request.POST.get('state', ''),  # Added state
-                    city=request.POST.get('city', ''),    # Added city
-                    zipcode=request.POST.get('property_zipcode', ''),  # Added zipcode
-                    
+                    state=request.POST.get('state', ''),
+                    city=request.POST.get('city', ''),
+                    zipcode=request.POST.get('property_zipcode', ''),
                 )
 
                 # Loop through each floor and room
@@ -488,7 +515,7 @@ def property_create_view(request):
                     floor = Floor.objects.create(
                         property=prop,
                         floor_name=floor_name,
-                        floor_imgae=floor_image,  # Adding floor image
+                        floor_imgae=floor_image,  # Keeping original field name
                     )
 
                     # Now handle rooms under this floor
@@ -507,218 +534,13 @@ def property_create_view(request):
                 return redirect('adminmanager:property_list')
 
         except Exception as e:
-            print("Error occurred:", str(e))  # Shows error in terminal
-            return render(request, 'adminmanager/property/create.html', {
-                'clients': clients,
-                'managers': managers,
-                'error_message': str(e)
-            })
+            import traceback
+            print("Error occurred:", str(e))
+            print(traceback.format_exc())  # More detailed error for debugging
+            context['error_message'] = f"Error: {str(e)}"
+            return render(request, 'adminmanager/property/create.html', context)
 
-    return render(request, 'adminmanager/property/create.html', {
-        'clients': clients,
-        'managers': managers
-    })
-
-
-# def property_create_view(request):
-#     clients = Client.objects.all()
-#     managers = ClientManagers.objects.all()
-
-#     if request.method == 'POST':
-#         try:
-#             with transaction.atomic():
-#                 # Get client_id if selected
-#                 client_id = request.POST.get('client_id')
-                
-#                 # If no existing client selected, try creating a new one
-#                 if not client_id:
-#                     new_first_name = request.POST.get('new_first_name', '')
-#                     new_last_name = request.POST.get('new_last_name', '')
-#                     new_username = request.POST.get('new_username', '')
-#                     new_email = request.POST.get('new_email', '')
-#                     new_password = request.POST.get('new_password', '')
-#                     new_phone = request.POST.get('new_phone', '')
-#                     office_phone = request.POST.get('office_phone', '')  
-#                     business_address = request.POST.get('business_address', '') 
-
-#                     contact1_name = request.POST.get('contact1_name', '')
-#                     contact1_last_name = request.POST.get('contact1_last_name', '')
-#                     contact1_email = request.POST.get('contact1_email', '')
-#                     contact1_phone = request.POST.get('contact1_phone', '')
-#                     contact1_office_phone = request.POST.get('contact1_office_phone', '')
-#                     contact1_buisness_adress = request.POST.get('contact1_buisness_adress', '')
-#                     contact1_priority = request.POST.get('contact1_priority', '')
-
-
-#                     # Contact 2 (Secondary)
-#                     contact2_name = request.POST.get('contact2_name', '')
-#                     contact2_last_name = request.POST.get('contact2_last_name', '')
-#                     contact2_email = request.POST.get('contact2_email', '')
-#                     contact2_phone = request.POST.get('contact2_phone', '')
-#                     contact2_office_phone = request.POST.get('contact2_office_phone', '')
-#                     contact2_buisness_adress = request.POST.get('contact2_buisness_adress', '')
-#                     contact2_priority = request.POST.get('contact2_priority', '')
-
-
-#                     # Contact 3 (Tertiary)
-#                     contact3_name = request.POST.get('contact3_name', '')
-#                     contact3_last_name = request.POST.get('contact3_last_name', '')
-#                     contact3_email = request.POST.get('contact3_email', '')
-#                     contact3_phone = request.POST.get('contact3_phone', '')
-#                     contact3_office_phone = request.POST.get('contact3_office_phone', '')
-#                     contact3_buisness_adress = request.POST.get('contact3_buisness_adress', '')
-#                     contact3_priority = request.POST.get('contact3_priority', '')
-
-#                     # **Contact 4**
-#                     contact4_name = request.POST.get('contact4_name', '')
-#                     contact4_last_name = request.POST.get('contact4_last_name', '')
-#                     contact4_email = request.POST.get('contact4_email', '')
-#                     contact4_phone = request.POST.get('contact4_phone', '')
-#                     contact4_office_phone = request.POST.get('contact4_office_phone', '')
-#                     contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
-#                     contact4_priority = request.POST.get('contact4_priority', '')
-
-#                     # **Contact 5**
-#                     contact5_name = request.POST.get('contact5_name', '')
-#                     contact5_last_name = request.POST.get('contact5_last_name', '')
-#                     contact5_email = request.POST.get('contact5_email', '')
-#                     contact5_phone = request.POST.get('contact5_phone', '')
-#                     contact5_office_phone = request.POST.get('contact5_office_phone', '')
-#                     contact5_buisness_adress = request.POST.get('contact5_buisness_adress', '')
-#                     contact5_priority = request.POST.get('contact5_priority', '')
-
-#                     if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
-#                         raise ValueError("Fill all required fields for new client")
-
-#                     new_client = Client.objects.create(
-#                         first_name=new_first_name,
-#                         last_name=new_last_name,
-#                         username=new_username,
-#                         email=new_email,
-#                         password=new_password,  # storing plain for now
-#                         phone_number=new_phone,
-#                         office_phone=office_phone,  
-#                         business_address=business_address,  
-
-#                         contact1_name=contact1_name,
-#                         contact1_last_name=contact1_last_name,
-#                         contact1_email=contact1_email,
-#                         contact1_phone=contact1_phone,
-#                         contact1_office_phone=contact1_office_phone,
-#                         contact1_buisness_adress=contact1_buisness_adress,
-#                         contact1_priority=contact1_priority,
-
-#                         contact2_name=contact2_name,
-#                         contact2_last_name=contact2_last_name,
-#                         contact2_email=contact2_email,
-#                         contact2_phone=contact2_phone,
-#                         contact2_office_phone=contact2_office_phone,
-#                         contact2_buisness_adress=contact2_buisness_adress,
-#                         contact2_priority=contact2_priority,
-
-#                         contact3_name=contact3_name,
-#                         contact3_last_name=contact3_last_name,
-#                         contact3_email=contact3_email,
-#                         contact3_phone=contact3_phone,
-#                         contact3_office_phone=contact3_office_phone,
-#                         contact3_buisness_adress=contact3_buisness_adress,
-#                         contact3_priority=contact3_priority,
-
-#                         # Contact 4
-#                         contact4_name=contact4_name,
-#                         contact4_last_name=contact4_last_name,
-#                         contact4_email=contact4_email,
-#                         contact4_phone=contact4_phone,
-#                         contact4_office_phone=contact4_office_phone,
-#                         contact4_buisness_adress=contact4_buisness_adress,
-#                         contact4_priority=contact4_priority,
-
-#                         # Contact 5
-#                         contact5_name=contact5_name,
-#                         contact5_last_name=contact5_last_name,
-#                         contact5_email=contact5_email,
-#                         contact5_phone=contact5_phone,
-#                         contact5_office_phone=contact5_office_phone,
-#                         contact5_buisness_adress=contact5_buisness_adress,
-#                         contact5_priority=contact5_priority,
-                        
-#                     )
-#                     client_id = new_client.id
-                
-                
-                
-#                 # Validate required fields
-#                 client_manager_id = request.POST.get('client_manager_id')
-#                 address = request.POST.get('address')
-#                 if not all([client_id, client_manager_id, address]):
-#                     raise ValueError("Client Manager and Address are required")
-
-#                 # Create the Property
-#                 prop = PropertyManagement.objects.create(
-#                     client_id=client_id,
-#                     client_manager_id=client_manager_id,
-#                     address=address,
-#                     size_of_home=request.POST.get('size_of_home', ''),
-#                     number_of_stories=request.POST.get('number_of_stories', ''),
-#                     construction_type=request.POST.get('construction_type', ''),
-#                     year_built=request.POST.get('year_built', ''),
-#                     has_pool='has_pool' in request.POST,
-#                     gated_community='gated_community' in request.POST,
-#                     impact_windows='impact_windows' in request.POST,
-#                     has_hoa='has_hoa' in request.POST,
-#                     gated_property='gated_property' in request.POST,
-#                     preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
-#                     state=request.POST.get('state', ''),  # Added state
-#                     city=request.POST.get('city', ''),    # Added city
-                    
-#                 )
-
-#                 # Loop through each floor and room
-#                 floor_count = len([k for k in request.POST if k.startswith('floor_name_')])
-#                 for i in range(1, floor_count + 1):
-#                     floor_name = request.POST.get(f'floor_name_{i}')
-#                     if not floor_name:
-#                         continue
-                    
-#                     # Handle floor image
-#                     floor_image = request.FILES.get(f'floor_image_{i}')
-
-#                     # Create floor with image handling
-#                     floor = Floor.objects.create(
-#                         property=prop,
-#                         floor_name=floor_name,
-#                         floor_imgae=floor_image,  # Adding floor image
-#                     )
-
-#                     # Now handle rooms under this floor
-#                     room_count = len([k for k in request.POST if k.startswith(f'room_name_{i}_')])
-
-#                     for j in range(1, room_count + 1):
-#                         room_name = request.POST.get(f'room_name_{i}_{j}')
-#                         room_size = request.POST.get(f'room_size_{i}_{j}')
-
-#                         if room_name:
-#                             Room.objects.create(
-#                                 floor=floor,
-#                                 room_name=room_name,
-#                             )
-
-#                 return redirect('adminmanager:property_list')
-
-#         except Exception as e:
-#             print("Error occurred:", str(e))  # Shows error in terminal
-#             return render(request, 'adminmanager/property/create.html', {
-#                 'clients': clients,
-#                 'managers': managers,
-#                 'error_message': str(e)
-#             })
-
-#     return render(request, 'adminmanager/property/create.html', {
-#         'clients': clients,
-#         'managers': managers
-#     })
-
-
+    return render(request, 'adminmanager/property/create.html', context)
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1358,6 +1180,7 @@ class WalkthroughReportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
+        self.fields['property'].label_from_instance = lambda obj: obj.address  # Only show address
 
 def walkthrough_report_view(request):
     if request.method == 'POST':

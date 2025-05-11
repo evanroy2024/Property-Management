@@ -42,12 +42,12 @@ GUEST_HOUSE_SLEEPING_LIVING = "Guest House - Sleeping / Living"
 GUEST_HOUSE_BATHROOM = "Guest House - Bathroom"
 
 STATUS_CHOICES = [
-    ('Pending', 'Pending'),
+    ('Pending', 'Pending'),    # We see this as client approval 
     ('Open', 'Open'),
     ('Completed', 'Completed'),
     ('Denied', 'Denied'),
 ]
-
+from propertydetails.models import PropertyManagement
 # Dummy custom field if needed
 class CategoryCharField(models.CharField):
     def __init__(self, *args, category=None, **kwargs):
@@ -56,12 +56,13 @@ class CategoryCharField(models.CharField):
 
 class WalkthroughReport(models.Model):
     user = models.ForeignKey(Client, on_delete=models.CASCADE)  # Use Client from mainapp
+    property = models.ForeignKey(PropertyManagement,on_delete=models.CASCADE,blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=200,blank=True, null=True, )
     updatedate = models.DateField(blank=True, null=True)
     datetime = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     cost = models.IntegerField(default=0,blank=True, null=True,)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending',blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open',blank=True, null=True)
     client_approval = models.BooleanField(default=False)  # Yes/No approval field
     gie1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GIE, verbose_name="Visual Inspection: Exterior of House")
     gie1_remarks = models.CharField(max_length=500, blank=True, null=True)
@@ -484,3 +485,6 @@ class WalkthroughReport(models.Model):
     guest_house_bath_7_remarks = models.CharField(max_length=500, blank=True, null=True)
     guest_house_bath_8 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Guest House - Bathroom", verbose_name="Doors: Hardware working properly")
     guest_house_bath_8_remarks = models.CharField(max_length=500, blank=True, null=True)
+
+    def __str__(self):
+        return self.description if self.name else f"Walkthrough by {self.user}"

@@ -8,7 +8,7 @@ urlpatterns = [
     path("departure/", departure_form_view, name="departure_form"),
     path("service_request/", service_request, name="service_request"),
 
-    path("Concierge_request/", Concierge_request, name="Concierge_request"),
+    path("concierge_request/", Concierge_request, name="Concierge_request"),
 
     path("request-success/", prearrival_form_success, name="request_form_success"),
     

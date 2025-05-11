@@ -8,13 +8,13 @@ class Client(models.Model):
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     username = models.CharField(max_length=150, unique=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     password = models.CharField(max_length=255)  # Store hashed passwords
     address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     zipcode = models.CharField(max_length=10, blank=True, null=True)
-    phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
+    phone_number = models.CharField(max_length=15,blank=True, null=True)
     office_phone = models.CharField(max_length=15, blank=True, null=True)
     business_address = models.CharField(max_length=255, blank=True, null=True)
     PREFERRED_CONTACT_CHOICES = [

@@ -392,7 +392,10 @@
                         <label for="id_user">Client :</label>
                         {{ form.user }}
                     </div>
-
+                    <div class="form-group">
+                        <label for="id_description">Property :</label>
+                        {{ form.property }}
+                    </div>
                     <div class="form-group">
                         <label for="id_description">Inspection Notes :</label>
                         {{ form.description }}
@@ -1637,24 +1640,33 @@
     const totalTabs = tabs.length;
     let currentTabIndex = 0;
     
-    // Array to track completed tabs
+    // Array to track completed tabs - initialize as all incomplete
     let completedTabs = new Array(totalTabs).fill(false);
+
+    // For debugging - log all tabs and their indices
+    console.log('Total tabs found:', totalTabs);
+    tabs.forEach((tab, idx) => {
+        console.log(`Tab ${idx}: ${tab.textContent.trim()}`);
+    });
 
     // Initialize tab state
     function initializeTabs() {
-        // Make first tab active initially
+        // Clear the completed state from localStorage if it exists
+        localStorage.removeItem('completedTabs');
+        
+        // Make first tab active initially, ensure all other tabs are inactive
         tabs.forEach((tab, index) => {
-            if (index === 0) {
-                // First tab is current (active)
-                tab.classList.add('current');
-                tab.classList.add('active');
-            } else {
-                // Remove active class from other tabs
-                tab.classList.remove('active');
-                tab.classList.remove('current');
-            }
-            // Remove any locked classes that might exist
+            // Clear all statuses
+            tab.classList.remove('active');
+            tab.classList.remove('current');
+            tab.classList.remove('completed');
             tab.classList.remove('locked');
+            
+            // Set first tab as active
+            if (index === 0) {
+                tab.classList.add('active');
+                tab.classList.add('current');
+            }
         });
 
         // Show only the first content tab
@@ -1670,16 +1682,31 @@
         updateTabIndicator();
         progressFill.style.width = '5%';
         
-        // Initial check of tab completion
-        checkCurrentTabCompletion();
-        
         // Set up previous/next button states
         updateNavigationButtons();
+        
+        // Attach debug event listeners to all tabs
+        attachTabClickDebugging();
+    }
+    
+    // Additional debugging
+    function attachTabClickDebugging() {
+        tabs.forEach((tab, idx) => {
+            tab.addEventListener('click', function(e) {
+                console.log(`Clicked tab ${idx}: ${tab.textContent.trim()}`);
+                console.log('Tab classes before navigation:', tab.className);
+            });
+        });
     }
 
     // Check if all required fields in the current tab are filled
     function checkCurrentTabCompletion() {
         const currentTab = contents[currentTabIndex];
+        if (!currentTab) {
+            console.error('Current tab content not found for index:', currentTabIndex);
+            return false;
+        }
+        
         const inputFields = currentTab.querySelectorAll('input, select, textarea');
         let allFilled = true;
         
@@ -1727,22 +1754,30 @@
             });
         }
 
-        // Update tab completion status
-        if (allFilled) {
-            completedTabs[currentTabIndex] = true;
-            tabs[currentTabIndex].classList.add('completed');
-        } else {
-            completedTabs[currentTabIndex] = false;
-            tabs[currentTabIndex].classList.remove('completed');
-        }
+        // Keep track of completion status in array
+        completedTabs[currentTabIndex] = allFilled;
         
+        // Log completion status but DON'T update UI here
         console.log(`Tab ${currentTabIndex + 1} completion check: ${allFilled ? 'COMPLETE' : 'INCOMPLETE'}`);
         return allFilled;
+    }
+
+    // This function applies the UI updates based on completed status
+    function updateTabCompletionUI() {
+        tabs.forEach((tab, index) => {
+            if (completedTabs[index]) {
+                tab.classList.add('completed');
+            } else {
+                tab.classList.remove('completed');
+            }
+        });
     }
 
     // Track field changes to check completion
     function trackFieldChanges() {
         const currentTab = contents[currentTabIndex];
+        if (!currentTab) return;
+        
         const inputFields = currentTab.querySelectorAll('input, select, textarea');
 
         inputFields.forEach(field => {
@@ -1760,87 +1795,116 @@
     
     // Field change handler
     function onFieldChange() {
-        checkCurrentTabCompletion();
+        const isComplete = checkCurrentTabCompletion();
+        console.log('Field change detected, tab complete:', isComplete);
+        
+        // Only update completion UI if fields are complete
+        if (isComplete) {
+            updateTabCompletionUI();
+        }
+        
         updateNavigationButtons();
     }
 
-    // Handle tab click - allow navigation to any tab
+    // Handle tab click - carefully manage state transitions
     tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => {
+            console.log(`Tab click handler for tab ${index}`);
             navigateToTab(index);
         });
     });
     
-    // Navigate to specific tab
+    // Navigate to specific tab - focus on keeping state transitions clean
     function navigateToTab(index) {
-        // Deactivate current tab styles
-        tabs[currentTabIndex].classList.remove('current');
+        if (index < 0 || index >= totalTabs) {
+            console.error('Invalid tab index:', index);
+            return false;
+        }
         
-        // Update content tabs
-        contents.forEach(content => content.classList.remove('active'));
-        contents[index].classList.add('active');
+        console.log(`Navigating to tab ${index + 1}`);
         
-        // Update current tab index
-        currentTabIndex = index;
-        
-        // Set new current tab
-        tabs[currentTabIndex].classList.add('current');
-        
-        // Additional class handling for Django template compatibility
-        tabs.forEach((t, i) => {
-            if (i === currentTabIndex) {
-                t.classList.add('active');
-            } else {
-                t.classList.remove('active');
-            }
+        // Step 1: Remove current/active status from all tabs
+        tabs.forEach((tab) => {
+            tab.classList.remove('current');
+            tab.classList.remove('active');
         });
         
-        // Update UI elements
+        // Step 2: Hide all content
+        contents.forEach(content => content.classList.remove('active'));
+        
+        // Step 3: Update current tab index
+        currentTabIndex = index;
+        
+        // Step 4: Set new current tab status
+        const tabElement = tabs[currentTabIndex];
+        tabElement.classList.add('current');
+        tabElement.classList.add('active');
+        console.log(`Tab ${currentTabIndex + 1} classes after setting active:`, tabElement.className);
+        
+        // Step 5: Show current content
+        const contentElement = contents[currentTabIndex];
+        if (contentElement) {
+            contentElement.classList.add('active');
+        } else {
+            console.error('Content element not found for tab:', currentTabIndex);
+        }
+        
+        // Step 6: Update UI elements
         updateTabIndicator();
         updateInspectionProgress();
         animateTabContent();
         
-        // Scroll tab into view
-        tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        // Step 7: Scroll tab into view
+        tabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         
-        // Update navigation buttons
+        // Step 8: Update navigation buttons
         updateNavigationButtons();
         
-        // Track field changes in the new tab
+        // Step 9: Setup field tracking
         trackFieldChanges();
         
-        // Check completion of the new tab
+        // Step 10: Check tab completion - but don't immediately update UI
         checkCurrentTabCompletion();
         
-        console.log(`Navigated to tab ${currentTabIndex + 1}`);
+        // Step 11: Update completion UI based on stored state
+        updateTabCompletionUI();
+        
         return true;
     }
     
     // Update navigation button states
     function updateNavigationButtons() {
-        prevTabBtn.disabled = currentTabIndex === 0;
-        nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
+        if (prevTabBtn) prevTabBtn.disabled = currentTabIndex === 0;
+        if (nextTabBtn) nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
     }
     
     // Previous tab button
-    prevTabBtn.addEventListener('click', () => {
-        if (currentTabIndex > 0) {
-            navigateToTab(currentTabIndex - 1);
-        }
-    });
+    if (prevTabBtn) {
+        prevTabBtn.addEventListener('click', () => {
+            if (currentTabIndex > 0) {
+                navigateToTab(currentTabIndex - 1);
+            }
+        });
+    }
     
     // Next tab button
-    nextTabBtn.addEventListener('click', () => {
-        if (currentTabIndex < totalTabs - 1) {
-            navigateToTab(currentTabIndex + 1);
-        }
-    });
+    if (nextTabBtn) {
+        nextTabBtn.addEventListener('click', () => {
+            if (currentTabIndex < totalTabs - 1) {
+                navigateToTab(currentTabIndex + 1);
+            }
+        });
+    }
     
     function updateTabIndicator() {
-        tabIndicator.innerHTML = `Tab ${currentTabIndex + 1} of ${totalTabs} <span class="tab-badge">${currentTabIndex + 1}</span>`;
+        if (tabIndicator) {
+            tabIndicator.innerHTML = `Tab ${currentTabIndex + 1} of ${totalTabs} <span class="tab-badge">${currentTabIndex + 1}</span>`;
+        }
     }
     
     function updateInspectionProgress() {
+        if (!progressFill) return;
+        
         // Calculate progress based on number of completed tabs
         const completedCount = completedTabs.filter(Boolean).length;
         const inspectionProgress = 33 + ((completedCount / totalTabs) * 33);
@@ -1898,7 +1962,6 @@
             }
             
             // For Django forms, add required class based on field type
-            // This is just an example - adjust based on your specific fields
             if (input.id && (
                 input.id.includes('_condition') || 
                 input.id.match(/^id_[a-z]+\d+$/) // Basic form fields like gii1, gie2, etc.
@@ -1913,6 +1976,8 @@
         // Only add in development environments
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             contents.forEach((content, index) => {
+                if (!content) return;
+                
                 const buttonContainer = document.createElement('div');
                 buttonContainer.className = 'demo-button-container';
                 buttonContainer.innerHTML = `<button type="button" class="btn btn-sm btn-info" 
@@ -1923,11 +1988,13 @@
             // Add global function to fill fields
             window.fillTabFields = function(tabId) {
                 const tab = document.getElementById(tabId);
+                if (!tab) return;
+                
                 const inputFields = tab.querySelectorAll('input, select, textarea');
                 
                 inputFields.forEach(field => {
                     if (field.type === 'text' || field.tagName === 'TEXTAREA') {
-                        field.value = 'Demo value';
+                        field.value = '';
                     } else if (field.tagName === 'SELECT') {
                         if (field.options.length > 1) {
                             field.selectedIndex = 1;
@@ -1943,18 +2010,48 @@
                 
                 // Force recheck of tab completion
                 checkCurrentTabCompletion();
+                updateTabCompletionUI();
                 updateInspectionProgress();
             };
         }
     }
 
+    // Add CSS to ensure proper styling for tab states
+    function addTabStateStyling() {
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Force orange color for active/current tab */
+            .tab-link.active, .tab-link.current {
+                background-color: #F89542 !important;
+                color: white !important;
+                border-color: #F89542 !important;
+            }
+            
+            /* Only apply green color after completion */
+            .tab-link.completed:not(.active):not(.current) {
+                background-color: #4CAF50 !important;
+                color: white !important;
+                border-color: #4CAF50 !important;
+            }
+            
+            /* Ensure active always takes precedence over completed */
+            .tab-link.active.completed, .tab-link.current.completed {
+                background-color: #F89542 !important;
+                color: white !important;
+                border-color: #F89542 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     // Initialize the page
     markRequiredFields();
+    addTabStateStyling();
     initializeTabs();
     trackFieldChanges();
     addDemoTools(); // Add demo tools for development
     
-    console.log('Walkthrough form initialized with free navigation');
+    console.log('Walkthrough form initialized with improved free navigation');
 });
 </script>
 <style>
@@ -2298,62 +2395,52 @@ select.required-field:invalid {
 
 </style>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const submitButton = document.getElementById('submit-btn');
-    const formFields = document.querySelectorAll('input, select, textarea');
-    
-    // Initially disable the submit button
-    submitButton.disabled = true;
+    const mcqGroups = new Set();
 
-    // Function to check if all fields are filled
-    function validateAllFields() {
-        let allFieldsValid = true;
-        
-        // Check each field
-        formFields.forEach(field => {
-            // Skip fields that might be intentionally empty or hidden
-            if (field.type === 'button' || field.type === 'submit' || field.type === 'reset' || 
-                field.type === 'hidden' || field.hasAttribute('data-optional')) {
-                return;
-            }
-            
-            // Check if the field is empty
-            if (!field.value.trim()) {
-                allFieldsValid = false;
-                // Highlight empty fields with a red border (optional)
-                field.style.border = '1px solid red';
-            } else {
-                // Reset border for filled fields
-                field.style.border = '';
-            }
-        });
-        
-        // Enable or disable submit button based on validation
-        submitButton.disabled = !allFieldsValid;
-        
-        return allFieldsValid;
-    }
+    // Get all radio buttons and selects (MCQs)
+    const mcqFields = document.querySelectorAll('input[type="radio"], select');
 
-    // Add event listeners to all form fields
-    formFields.forEach(field => {
-        field.addEventListener('change', validateAllFields);
-        field.addEventListener('input', validateAllFields);
-        field.addEventListener('blur', validateAllFields);
+    // Identify unique radio button name groups
+    mcqFields.forEach(field => {
+        if (field.type === 'radio') {
+            mcqGroups.add(field.name);
+        }
     });
-    
-    // Optional: Add form submission handler
-    const form = submitButton.closest('form');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            if (!validateAllFields()) {
-                event.preventDefault();
-                alert('Please fill in all required fields before submitting.');
+
+    function checkMCQsFilled() {
+        let allAnswered = true;
+
+        // Check radio groups
+        mcqGroups.forEach(groupName => {
+            const selected = document.querySelector(`input[name="${groupName}"]:checked`);
+            if (!selected) {
+                allAnswered = false;
             }
         });
+
+        // Check all selects
+        mcqFields.forEach(field => {
+            if (field.tagName.toLowerCase() === 'select' && !field.value.trim()) {
+                allAnswered = false;
+            }
+        });
+
+        submitButton.disabled = !allAnswered;
     }
-    
-    // Initial validation check
-    validateAllFields();
+
+    // Event listeners for manual input
+    mcqFields.forEach(field => {
+        field.addEventListener('change', checkMCQsFilled);
+    });
+
+    // Regular interval check for programmatic changes
+    setInterval(checkMCQsFilled, 500); // check every 500ms
+
+    checkMCQsFilled(); // Initial check
 });
 </script>
+
+
 {% endblock content %}
