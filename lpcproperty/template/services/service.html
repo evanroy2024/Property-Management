@@ -67,17 +67,22 @@
     <p class="text-xl font-semibold mb-4">Floor Plans</p>
 
     {% for property in properties %}
-    {% for floor in property.floors.all %}
-      {% for room in floor.rooms.all %}
-        {% if room.room_image %}
-          <div>
-            <img src="{{ room.room_image.url }}" alt="{{ room.room_name }}" class="w-full h-auto rounded">
-            <p class="text-center text-sm mt-1">{{ room.room_name }} - {{ room.room_size }}</p>
-          </div>
-        {% endif %}
-      {% endfor %}
-    {% endfor %}
+  {% for floor in property.floors.all %}
+    <div class="mb-4">
+      {% if floor.floor_imgae %}
+        <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="w-full h-auto rounded">
+      {% endif %}
+      <h2 class="text-lg font-semibold mt-2">{{ floor.floor_name }}</h2>
+
+      <ul class="list-disc list-inside">
+        {% for room in floor.rooms.all %}
+          <li>{{ room.room_name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
   {% endfor %}
+{% endfor %}
+
   
   </div>
 </div>
@@ -186,17 +191,16 @@
               <select name="floor-plan-selection" class="block w-full rounded-md border border-lotus-border bg-white py-3 px-4 text-gray-800 appearance-none focus:outline-none focus:ring-1 focus:ring-lotus-gold focus:border-lotus-gold">
                 <option value="" disabled selected>Select a floor plan...</option>
                 
-                {% for property in properties %}
-                    {% for floor in property.floors.all %}
-                        {% for room in floor.rooms.all %}
-                            {% if room.room_image %}
-                                <option value="{{ floor.floor_name }} - {{ room.room_name }} - {{ room.room_size }}">
-                                    Floor {{ floor.floor_name }} - {{ room.room_name }} ({{ room.room_size }})
-                                </option>
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                {% endfor %}
+              {% for property in properties %}
+  {% for floor in property.floors.all %}
+    {% for room in floor.rooms.all %}
+      <option value="{{ floor.floor_name }} - {{ room.room_name }}">
+        Floor {{ floor.floor_name }} - {{ room.room_name }}
+      </option>
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+
             </select>
             
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-lotus-gold">

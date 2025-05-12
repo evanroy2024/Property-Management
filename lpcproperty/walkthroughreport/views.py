@@ -120,10 +120,11 @@ def get_verbose_data(report):
     return data
 
 def export_pdf(request, report_id):
-    # Import regex module at the top of the file
     import re
     
     report = WalkthroughReport.objects.get(pk=report_id)
+    
+    # Get all data (no filtering)
     data = get_verbose_data(report)
     
     # Get client name details
@@ -134,8 +135,13 @@ def export_pdf(request, report_id):
     # Format report date
     report_date = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'N/A'
     
-    # Get report description if available
-    report_description = getattr(report, 'description', 'Walkthrough Report')
+    # Get property information if available
+    property_info = report.property.name if hasattr(report.property, 'name') else getattr(report.property, 'address', 'N/A')
+    if callable(property_info):
+        property_info = property_info()
+    
+    # Get report description (inspection note)
+    inspection_note = getattr(report, 'description', '')
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=walkthrough_report_{report_id}.pdf'
@@ -192,8 +198,8 @@ def export_pdf(request, report_id):
         wordWrap='CJK',
     )
 
-    # Report Description as top heading
-    elements.append(Paragraph(f"🏠 {report_description}", styles['GreenTitle']))
+    # Main heading with property name
+    elements.append(Paragraph(f"🏠 {property_info}", styles['GreenTitle']))
 
     # Underline
     elements.append(Table([[""]], colWidths=[6.3 * inch], style=[
@@ -205,6 +211,7 @@ def export_pdf(request, report_id):
     elements.append(Paragraph("Report Details:", styles['SectionTitle']))
     elements.append(Paragraph(f"<b>Client:</b> {client_name}", styles['ReportInfo']))
     elements.append(Paragraph(f"<b>Date:</b> {report_date}", styles['ReportInfo']))
+    elements.append(Paragraph(f"<b>Inspection Note:</b> {inspection_note}", styles['ReportInfo']))
     
     elements.append(Spacer(1, 20))
     
@@ -289,7 +296,6 @@ def export_pdf(request, report_id):
 
     doc.build(elements)
     return response
-
 from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import WalkthroughReport
@@ -495,9 +501,10 @@ def report_open_detail_view(request, pk):
     # Access the datetime field
    # Modify the datetime format to show only the date (Year-Month-Day)
     report_datetime = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'No Datetime Available'
+    report_property = report.property if report.property else 'Walkthrough Report'
 
     return render(request, 'walkthrough/report_open_detail.html', {'report': filtered_report,'client_first_name': client_first_name,
-        'client_last_name': client_last_name,'report_datetime': report_datetime,'report_description':report_description}) 
+        'client_last_name': client_last_name,'report_datetime': report_datetime,'report_description':report_description,'report_property':report_property}) 
 
 from django.db.models import Q
 def open_reports_view(request):

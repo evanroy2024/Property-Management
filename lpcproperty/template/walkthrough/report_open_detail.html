@@ -13,12 +13,10 @@
 
         <div class="container report-container" id="report-{{ report.id }}">
             <div class="report-header">
-                 <h1 class="report-title"> Property Name :{{ report.property.address }} </h1>
+                  <h2 class="report-title" style="font-size: 25px;"> <b>Inspection Name </b> :{{ report_property.address }}</h2>
                 
-                {% if report.description %}
-                    <p class="report-description"><b>Inspection Note :</b> {{ report.description }}</p>
+                    <p class="report-description">{{ report_description }}</p>
 
-                {% endif %}
 <!-- <p class="report-description">Publish Date : {{ report_datetime }}</p> -->
 
                 <div class="user-thing" style="display: flex; margin-top: 20px; justify-content: space-between;">

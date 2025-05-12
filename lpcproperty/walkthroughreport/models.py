@@ -288,7 +288,7 @@ class WalkthroughReport(models.Model):
     hallways_upper1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Upper Level", verbose_name="Lights: Any burnt out requiring replacement?")
     hallways_upper1_remarks = models.CharField(max_length=500, blank=True, null=True)
     hallways_upper2 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Upper Level", verbose_name="Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings")
-    hallways_upper1_remarks = models.CharField(max_length=500, blank=True, null=True)
+    hallways_upper2_remarks = models.CharField(max_length=500, blank=True, null=True)
     hallways_upper3 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Upper Level", verbose_name="Doors: Hardware working properly")
     hallways_upper3_remarks = models.CharField(max_length=500, blank=True, null=True)
     hallways_upper4 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Hallways - Upper Level", verbose_name="Cabinets / Tops: Visual Check of cabinets, countertops")
