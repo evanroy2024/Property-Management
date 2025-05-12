@@ -359,6 +359,7 @@ def property_update_view(request, pk):
             prop.state = request.POST.get('property_state', '')   # Added state
             prop.city = request.POST.get('property_city', '')     # Added City 
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
+            prop.zipcode = request.POST.get('property_zipcode', '')     # Added City 
             prop.save()
 
             # Update Client info
@@ -1063,6 +1064,9 @@ class WalkthroughReportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
+        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
+        self.fields['property'].label_from_instance = lambda obj: obj.address  # Only show address
+
 
 def walkthrough_report_view(request):
     if request.method == 'POST':
@@ -1075,7 +1079,7 @@ def walkthrough_report_view(request):
     return render(request, 'clientmanager/walkthrough/walkthrough_form.html', {'form': form})
 
 def walkthrough_success_view(request):
-    return render(request, 'walkthrough_success.html')
+    return render(request, 'clientmanager/walkthrough_success.html')
 
 def update_walkthrough_report(request, report_id):
     report = get_object_or_404(WalkthroughReport, id=report_id)
@@ -1120,8 +1124,18 @@ def report_open_detail_view(request, pk):
     # Ensure the report object still has a valid pk (ID) for URL generation
     if not filtered_report.pk:
         filtered_report.pk = report.pk
+     # Access the user's first and last name via the foreign key
+    client_first_name = report.user.first_name if report.user else ''
+    client_last_name = report.user.last_name if report.user else ''
+    report_description = report.description if report.description else 'Walkthrough Report'
+    # Access the datetime field
+   # Modify the datetime format to show only the date (Year-Month-Day)
+    report_datetime = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'No Datetime Available'
+    report_property = report.property if report.property else 'Walkthrough Report'
+
+    return render(request, 'clientmanager/walkthrough/report_open_detail.html', {'report': filtered_report,'client_first_name': client_first_name,
+        'client_last_name': client_last_name,'report_datetime': report_datetime,'report_description':report_description,'report_property':report_property}) 
     
-    return render(request, 'clientmanager/walkthrough/report_open_detail.html', {'report': filtered_report})
 
 # Client Management 
 from django.shortcuts import render, get_object_or_404, redirect

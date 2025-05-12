@@ -392,7 +392,10 @@
                         <label for="id_user">Client :</label>
                         {{ form.user }}
                     </div>
-
+                    <div class="form-group">
+                        <label for="id_description">Property :</label>
+                        {{ form.property }}
+                    </div>
                     <div class="form-group">
                         <label for="id_description">Inspection Notes :</label>
                         {{ form.description }}
@@ -1624,7 +1627,7 @@
         </div>
     </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     // Select all tab buttons and tab content areas
     const tabs = document.querySelectorAll('.tab-link');
     const contents = document.querySelectorAll('.tab-content');
@@ -1636,258 +1639,199 @@
     
     const totalTabs = tabs.length;
     let currentTabIndex = 0;
+    
+    // Custom required field counts for each tab
+    const requiredFieldCounts = [
+        { min: 15, max: 15 },  // First 5 tabs require 4 questions
+        { min: 9, max: 9 },
+        { min: 9, max: 9 },
+        { min: 6, max: 6 },
+        { min: 12, max: 12 },
+        { min: 12, max: 12},  
+        { min: 5, max: 5 },
+        { min: 4, max: 4 },  
+        { min: 5, max: 5 },
+        { min: 5, max: 5 },       // 10th done 
+        { min: 5, max: 5 },
+        { min: 5, max: 5 },
+        { min: 5, max: 5 },  
+        { min: 5, max: 5 },
+        { min: 4, max: 4 },  
+        { min: 4, max: 4 },
+        { min: 4, max: 4 },
+        { min: 4, max: 4 },
+        { min: 8, max: 8 },
+        { min: 8, max: 8 },    // 20th  
+        { min: 8, max: 8 },
+        { min: 8, max: 8 },
+        { min: 8, max: 8 },    
+        { min: 7, max: 7 },
+        { min: 5, max: 5 },
+        { min: 5, max: 5 },  
+        { min: 8, max: 8 },
+    ];
+    
+    // Array to track completed tabs - initialize as all incomplete
+    let completedTabs = new Array(totalTabs).fill(false);
 
-    // Initialize tab state
-    function initializeTabs() {
-        // Lock all tabs except the first one
-        tabs.forEach((tab, index) => {
-            if (index === 0) {
-                // First tab is current (active)
-                tab.classList.add('current');
-                
-                // Make sure the first tab is also marked active for Django template compatibility
-                if (!tab.classList.contains('active')) {
-                    tab.classList.add('active');
-                }
-            } else {
-                // All other tabs are locked
-                tab.classList.add('locked');
-                
-                // Remove active class if present from Django template
-                tab.classList.remove('active');
+    // Strict field validation function with dynamic requirements
+    function validateTabFields(tabContent, tabIndex) {
+        if (!tabContent) return false;
+
+        // Get the required field count for this specific tab
+        const tabRequirements = requiredFieldCounts[tabIndex] || { min: 4, max: 6 };
+
+        // Select all input, select, and textarea fields within this tab
+        const inputFields = tabContent.querySelectorAll('input:not([type="hidden"]), select, textarea');
+        
+        // If no fields, consider it incomplete
+        if (inputFields.length === 0) return false;
+
+        // Track filled fields
+        let filledFieldsCount = 0;
+
+        inputFields.forEach(field => {
+            // Determine if field is required
+            const isRequired = field.hasAttribute('required') || 
+                               field.classList.contains('required-field') ||
+                               field.closest('.item-row')?.querySelector('label')?.textContent.includes('*');
+
+            // Check for meaningful input based on field type
+            switch(field.type) {
+                case 'text':
+                case 'textarea':
+                case 'email':
+                case 'tel':
+                case 'password':
+                    if (field.value.trim()) filledFieldsCount++;
+                    break;
+                case 'select-one':
+                case 'select-multiple':
+                    if (field.value && field.value !== '' && field.selectedIndex !== 0) filledFieldsCount++;
+                    break;
+                case 'checkbox':
+                case 'radio':
+                    if (field.checked) filledFieldsCount++;
+                    break;
+                default:
+                    if (field.value) filledFieldsCount++;
             }
         });
 
-        // Show only the first content tab
-        contents.forEach((content, index) => {
-            if (index === 0) {
-                content.classList.add('active');
-            } else {
-                content.classList.remove('active');
-            }
-        });
-
-        // Disable next button initially (until all fields are filled)
-        nextTabBtn.disabled = true;
-        prevTabBtn.disabled = true; // First tab has no previous
-
-        updateProgressSteps();
-        updateTabIndicator();
-        progressFill.style.width = '5%';
+        // Check if filled fields meet the tab-specific requirements
+        return filledFieldsCount >= tabRequirements.min && 
+               filledFieldsCount <= tabRequirements.max;
     }
 
-    // Check if all required fields in the current tab are filled
-    function checkCurrentTabCompletion() {
-        const currentTab = contents[currentTabIndex];
-        const inputFields = currentTab.querySelectorAll('input, select, textarea');
-        let allFilled = true;
-        
-        // Skip check if there are no input fields
-        if (inputFields.length === 0) {
-            return true;
+    // Update tab completion status
+    function updateTabCompletion(index) {
+        if (index < 0 || index >= totalTabs) return;
+
+        const tabContent = contents[index];
+        const tabElement = tabs[index];
+
+        // Validate fields in this specific tab
+        const isComplete = validateTabFields(tabContent, index);
+
+        // Update completion tracking
+        completedTabs[index] = isComplete;
+
+        // Update visual indication
+        if (isComplete) {
+            tabElement.classList.add('completed');
+        } else {
+            tabElement.classList.remove('completed');
         }
 
-        inputFields.forEach(field => {
-            // Check if field is required and empty
-            if ((field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
-                (field.value === '' || field.value === null)) {
-                allFilled = false;
-            }
-            
-            // For checkboxes and radio buttons, check if they're checked when required
-            if ((field.type === 'checkbox' || field.type === 'radio') && 
-                (field.getAttribute('required') !== null || field.classList.contains('required-field')) && 
-                !field.checked) {
-                
-                // For radio groups, check if any radio in the group is checked
-                if (field.type === 'radio') {
-                    const radioGroup = document.querySelectorAll(`input[name="${field.name}"]`);
-                    let radioGroupChecked = false;
-                    
-                    radioGroup.forEach(radio => {
-                        if (radio.checked) {
-                            radioGroupChecked = true;
-                        }
-                    });
-                    
-                    if (!radioGroupChecked) {
-                        allFilled = false;
-                    }
-                } else {
-                    allFilled = false;
-                }
-            }
-            
-            // For select elements, ensure a valid option is selected
-            if (field.tagName === 'SELECT' && 
-                (field.getAttribute('required') !== null || field.classList.contains('required-field')) &&
-                (field.value === '' || field.selectedIndex === 0)) {
-                allFilled = false;
-            }
-        });
+        // Update progress indicator
+        updateInspectionProgress();
 
-        // Enable/disable next button based on completion
-        nextTabBtn.disabled = !allFilled;
-        console.log(`Tab ${currentTabIndex + 1} completion check: ${allFilled ? 'COMPLETE' : 'INCOMPLETE'}`);
-        return allFilled;
+        return isComplete;
     }
 
-    // Track field changes to check completion
-    function trackFieldChanges() {
-        const currentTab = contents[currentTabIndex];
-        const inputFields = currentTab.querySelectorAll('input, select, textarea');
-
-        inputFields.forEach(field => {
-            // Remove any existing event listeners first to avoid duplicates
-            field.removeEventListener('change', checkCurrentTabCompletion);
-            field.removeEventListener('input', checkCurrentTabCompletion);
-            field.removeEventListener('blur', checkCurrentTabCompletion);
+    // Enhanced field change tracking
+    function attachFieldChangeTracking() {
+        contents.forEach((tabContent, tabIndex) => {
+            const inputFields = tabContent.querySelectorAll('input:not([type="hidden"]), select, textarea');
             
-            // Add event listeners
-            field.addEventListener('change', checkCurrentTabCompletion);
-            field.addEventListener('input', checkCurrentTabCompletion);
-            field.addEventListener('blur', checkCurrentTabCompletion);
+            inputFields.forEach(field => {
+                // Remove existing listeners to prevent duplicates
+                field.removeEventListener('change', () => updateTabCompletion(tabIndex));
+                field.removeEventListener('input', () => updateTabCompletion(tabIndex));
+                field.removeEventListener('blur', () => updateTabCompletion(tabIndex));
+
+                // Add new listeners
+                field.addEventListener('change', () => updateTabCompletion(tabIndex));
+                field.addEventListener('input', () => updateTabCompletion(tabIndex));
+                field.addEventListener('blur', () => updateTabCompletion(tabIndex));
+            });
         });
     }
 
-    // Handle tab click - only if not locked
-    tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => {
-            if (!tab.classList.contains('locked')) {
-                navigateToTab(index);
-            } else {
-                // Visual indication that the tab is locked
-                tab.classList.add('shake');
-                setTimeout(() => {
-                    tab.classList.remove('shake');
-                }, 500);
-            }
-        });
-    });
-    
-    // Navigate to specific tab
+    // Navigate to tab with enhanced completion checking
     function navigateToTab(index) {
-        // Only allow navigation if the tab isn't locked
-        if (tabs[index].classList.contains('locked')) {
-            console.log(`Cannot navigate to locked tab ${index + 1}`);
+        if (index < 0 || index >= totalTabs) {
+            console.error('Invalid tab index:', index);
             return false;
         }
         
-        // Deactivate current tab styles
-        tabs[currentTabIndex].classList.remove('current');
+        // Reset tab and content states
+        tabs.forEach(tab => {
+            tab.classList.remove('current', 'active');
+        });
+        contents.forEach(content => {
+            content.classList.remove('active');
+        });
         
-        // Mark current tab as completed if all fields are filled
-        if (checkCurrentTabCompletion()) {
-            tabs[currentTabIndex].classList.add('completed');
-        }
+        // Set current tab active
+        const tabElement = tabs[index];
+        const contentElement = contents[index];
         
-        // Update content tabs
-        contents.forEach(content => content.classList.remove('active'));
-        contents[index].classList.add('active');
+        tabElement.classList.add('current', 'active');
+        contentElement.classList.add('active');
         
         // Update current tab index
         currentTabIndex = index;
         
-        // Set new current tab
-        tabs[currentTabIndex].classList.add('current');
-        tabs[currentTabIndex].classList.remove('locked');
-        
-        // Additional class handling for Django template compatibility
-        tabs.forEach((t, i) => {
-            if (i === currentTabIndex) {
-                t.classList.add('active');
-            } else {
-                t.classList.remove('active');
-            }
-        });
-        
         // Update UI elements
         updateTabIndicator();
-        updateInspectionProgress();
+        updateNavigationButtons();
+        
+        // Check and update tab completion
+        updateTabCompletion(index);
+        
+        // Animate content
         animateTabContent();
         
         // Scroll tab into view
-        tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        tabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         
-        // Update button states
-        prevTabBtn.disabled = currentTabIndex === 0;
-        checkCurrentTabCompletion(); // Check to enable/disable next button
-        
-        // Track field changes in the new tab
-        trackFieldChanges();
-        
-        console.log(`Navigated to tab ${currentTabIndex + 1}`);
         return true;
     }
-    
-    // Previous tab button
-    prevTabBtn.addEventListener('click', () => {
-        if (currentTabIndex > 0) {
-            navigateToTab(currentTabIndex - 1);
-        }
-    });
-    
-    // Next tab button
-    nextTabBtn.addEventListener('click', () => {
-        if (currentTabIndex < totalTabs - 1 && !nextTabBtn.disabled) {
-            // Mark current tab as completed
-            tabs[currentTabIndex].classList.add('completed');
-            tabs[currentTabIndex].classList.remove('current');
-            
-            // Move to next tab
-            currentTabIndex++;
-            
-            // Unlock and make current the next tab
-            tabs[currentTabIndex].classList.remove('locked');
-            tabs[currentTabIndex].classList.add('current');
-            tabs[currentTabIndex].classList.add('active'); // For Django compatibility
-            
-            // Update content visibility
-            contents.forEach(content => content.classList.remove('active'));
-            contents[currentTabIndex].classList.add('active');
-            
-            // Update UI elements
-            updateTabIndicator();
-            updateInspectionProgress();
-            animateTabContent();
-            
-            // Scroll new tab into view
-            tabs[currentTabIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            
-            // Update button states
-            prevTabBtn.disabled = false;
-            checkCurrentTabCompletion(); // This will set the next button state
-            
-            // Track field changes in the new tab
-            trackFieldChanges();
-            
-            // Optionally store progress in localStorage (uncomment if needed)
-            // saveProgress();
-            
-            console.log(`Moved to next tab: ${currentTabIndex + 1}`);
-        }
-    });
-    
-    function updateTabIndicator() {
-        tabIndicator.innerHTML = `Tab ${currentTabIndex + 1} of ${totalTabs} <span class="tab-badge">${currentTabIndex + 1}</span>`;
+
+    // Update navigation button states
+    function updateNavigationButtons() {
+        if (prevTabBtn) prevTabBtn.disabled = currentTabIndex === 0;
+        if (nextTabBtn) nextTabBtn.disabled = currentTabIndex === totalTabs - 1;
     }
-    
+
+    // Update progress based on completed tabs
     function updateInspectionProgress() {
-        const inspectionProgress = 33 + ((currentTabIndex / (totalTabs - 1)) * 33);
-        progressFill.style.width = inspectionProgress + '%';
+        if (!progressFill) return;
+        
+        const completedCount = completedTabs.filter(Boolean).length;
+        const inspectionProgress = 33 + ((completedCount / totalTabs) * 33);
+        progressFill.style.width = `${inspectionProgress}%`;
     }
-    
-    function updateProgressSteps() {
-        const progressSteps = document.getElementById('progress-steps');
-        if (progressSteps) {
-            progressSteps.innerHTML = `
-                <span>Basic Info</span>
-                <span>Inspection (${totalTabs} areas)</span>
-                <span>Review & Submit</span>
-            `;
+
+    // Tab indicator update
+    function updateTabIndicator() {
+        if (tabIndicator) {
+            tabIndicator.innerHTML = `Tab ${currentTabIndex + 1} of ${totalTabs} <span class="tab-badge">${currentTabIndex + 1}</span>`;
         }
     }
-    
+
+    // Content animation
     function animateTabContent() {
         const items = document.querySelectorAll('.tab-content.active .item-row');
         items.forEach((item, index) => {
@@ -1898,88 +1842,214 @@
         });
     }
 
-    // Handle form submission
+    // Form submission validation
     if (form) {
         form.addEventListener('submit', function(e) {
-            // Check if all tabs have been visited and completed
-            const completedTabs = document.querySelectorAll('.tab-link.completed');
-            if (completedTabs.length < totalTabs - 1) { // Minus 1 for the current tab
+            // Check if all tabs have been completed
+            const incompleteTabsExist = completedTabs.includes(false);
+            if (incompleteTabsExist) {
                 e.preventDefault();
                 alert('Please complete all inspection areas before submitting.');
+                
+                // Find first incomplete tab and navigate to it
+                const firstIncompleteIndex = completedTabs.findIndex(complete => !complete);
+                if (firstIncompleteIndex !== -1) {
+                    navigateToTab(firstIncompleteIndex);
+                }
             }
         });
     }
 
-    // Add required class to Django form fields that should be required
-    function markRequiredFields() {
-        // Add the required-field class to elements that should be required
-        const allInputs = document.querySelectorAll('input, select, textarea');
-        allInputs.forEach(input => {
-            // Check if the field has a label with * or is marked as required in Django
-            const labelElement = document.querySelector(`label[for="${input.id}"]`);
-            if (labelElement && labelElement.textContent.includes('*')) {
-                input.classList.add('required-field');
-            }
-            
-            // For Django forms, add required class based on field type
-            // This is just an example - adjust based on your specific fields
-            if (input.id && (
-                input.id.includes('_condition') || 
-                input.id.match(/^id_[a-z]+\d+$/) // Basic form fields like gii1, gie2, etc.
-            )) {
-                input.classList.add('required-field');
+    // Tab click navigation
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            navigateToTab(index);
+        });
+    });
+
+    // Previous and Next tab buttons
+    if (prevTabBtn) {
+        prevTabBtn.addEventListener('click', () => {
+            if (currentTabIndex > 0) {
+                navigateToTab(currentTabIndex - 1);
             }
         });
     }
 
-    // For debugging - temporarily add a demo button to fill fields
-    function addDemoTools() {
-        // Only add in development environments
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            contents.forEach((content, index) => {
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'demo-button-container';
-                buttonContainer.innerHTML = `<button type="button" class="btn btn-sm btn-info" 
-                    onclick="fillTabFields('${content.id}')">Fill Tab ${index + 1} Fields (Demo)</button>`;
-                content.appendChild(buttonContainer);
-            });
-            
-            // Add global function to fill fields
-            window.fillTabFields = function(tabId) {
-                const tab = document.getElementById(tabId);
-                const inputFields = tab.querySelectorAll('input, select, textarea');
-                
-                inputFields.forEach(field => {
-                    if (field.type === 'text' || field.tagName === 'TEXTAREA') {
-                        field.value = 'Demo value';
-                    } else if (field.tagName === 'SELECT') {
-                        if (field.options.length > 1) {
-                            field.selectedIndex = 1;
-                        } else if (field.options.length > 0) {
-                            field.selectedIndex = 0;
-                        }
-                    } else if (field.type === 'checkbox') {
-                        field.checked = true;
-                    } else if (field.type === 'radio') {
-                        field.checked = true;
-                    }
-                });
-                
-                // Force recheck of tab completion
-                checkCurrentTabCompletion();
-            };
+    if (nextTabBtn) {
+        nextTabBtn.addEventListener('click', () => {
+            if (currentTabIndex < totalTabs - 1) {
+                navigateToTab(currentTabIndex + 1);
+            }
+        });
+    }
+
+    // Initialize page
+    function initializePage() {
+        // Reset completed tabs
+        completedTabs = new Array(totalTabs).fill(false);
+        
+        // Set first tab as active
+        if (tabs.length > 0) {
+            tabs[0].classList.add('current', 'active');
+            contents[0].classList.add('active');
         }
+        
+        // Attach field change tracking
+        attachFieldChangeTracking();
+        
+        // Update initial states
+        updateTabIndicator();
+        updateNavigationButtons();
+        updateInspectionProgress();
     }
 
-    // Initialize the page
-    markRequiredFields();
-    initializeTabs();
-    checkCurrentTabCompletion(); // Initial check of first tab
-    trackFieldChanges();
-    addDemoTools(); // Add demo tools for development
-    
-    console.log('Walkthrough form initialized');
+    // Run initialization
+    initializePage();
 });
+
+////////////////////////////////////////
+// Function to mark all fields in the current tab as N/A or None
+function markAllFieldsNA() {
+    const activeTabContent = document.querySelector('.tab-content.active');
+    if (!activeTabContent) {
+        console.error('No active tab content found');
+        return;
+    }
+
+    // Select input, select, and textarea fields
+    const selectFields = activeTabContent.querySelectorAll('select');
+    const regularInputFields = activeTabContent.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"])');
+    const checkboxFields = activeTabContent.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+    const textareaFields = activeTabContent.querySelectorAll('textarea');
+
+    // Mark select fields as "N/A"
+    selectFields.forEach(field => {
+        field.value = 'N/A';
+    });
+
+    // Mark regular input fields as "None"
+    regularInputFields.forEach(field => {
+        field.value = '';
+    });
+
+    // Mark textarea fields as "None"
+    textareaFields.forEach(field => {
+        field.value = '';
+    });
+
+    // Uncheck checkboxes and radio buttons
+    checkboxFields.forEach(field => {
+        field.checked = false;
+    });
+
+    // Trigger change events to update validation
+    selectFields.forEach(field => {
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    regularInputFields.forEach(field => {
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    textareaFields.forEach(field => {
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    checkboxFields.forEach(field => {
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // Update tab completion status for the current tab
+    updateTabCompletion(currentTabIndex);
+}
+
+// Add 'Mark All N/A' button to the page
+function addMarkNAButton() {
+    // Check if button already exists
+    if (document.getElementById('mark-na-button')) return;
+
+    // Create the button
+    const markNAButton = document.createElement('button');
+    markNAButton.type = 'button';
+    markNAButton.id = 'mark-na-button';
+    markNAButton.textContent = 'Mark All N/A';
+    markNAButton.classList.add('mark-na-btn');
+    
+ // Base style
+markNAButton.style.position = 'fixed';
+markNAButton.style.bottom = '20px';
+markNAButton.style.right = '20px';
+markNAButton.style.zIndex = '1000';
+markNAButton.style.background = 'linear-gradient(135deg, #4e54c8, #8f94fb)';  // Professional cool tones
+markNAButton.style.color = '#ffffff';
+markNAButton.style.padding = '12px 20px';
+markNAButton.style.border = 'none';
+markNAButton.style.borderRadius = '8px';
+markNAButton.style.cursor = 'pointer';
+markNAButton.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+markNAButton.style.fontSize = '15px';
+markNAButton.style.fontWeight = '500';
+markNAButton.style.transition = 'all 0.3s ease';
+markNAButton.style.outline = 'none';
+
+// Add hover animation using a CSS class
+markNAButton.classList.add('mark-na-button-hover');
+
+// Append the hover effect style to the document
+const style = document.createElement('style');
+style.innerHTML = `
+  .mark-na-button-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+`;
+document.head.appendChild(style);
+
+
+    // Add hover effects
+    markNAButton.addEventListener('mouseover', () => {
+        markNAButton.style.backgroundColor = '#d32f2f';
+    });
+    markNAButton.addEventListener('mouseout', () => {
+        markNAButton.style.backgroundColor = '#f44336';
+    });
+
+    // Add click event listener
+    markNAButton.addEventListener('click', markAllFieldsNA);
+
+    // Append to body to ensure visibility
+    document.body.appendChild(markNAButton);
+
+    console.log('Mark N/A button added to the page');
+}
+
+// Enhanced initialization to ensure button is added
+function initMarkNAButton() {
+    // Try multiple methods to ensure button is added
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addMarkNAButton);
+    } else {
+        // Try immediate addition
+        addMarkNAButton();
+
+        // Fallback with slight delay
+        setTimeout(addMarkNAButton, 500);
+    }
+
+    // Additional fallback with MutationObserver
+    const observer = new MutationObserver((mutations, obs) => {
+        if (document.body) {
+            addMarkNAButton();
+            obs.disconnect();
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
+}
+
+// Call initialization function
+initMarkNAButton();
 </script>
 <style>
     /* Enhanced styles for form walkthrough */
@@ -2322,24 +2392,52 @@ select.required-field:invalid {
 
 </style>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const submitButton = document.getElementById('submit-btn');
-        const gie15Field = document.querySelector('[name="guest_house_bath_8"]'); // Assuming the field name is 'gie15'
-        
-        // Initially disable the submit button
-        submitButton.disabled = true;
+document.addEventListener('DOMContentLoaded', function () {
+    const submitButton = document.getElementById('submit-btn');
+    const mcqGroups = new Set();
 
-        // Function to enable submit button when field is interacted with
-        function enableSubmitButton() {
-            submitButton.disabled = false;
-        }
+    // Get all radio buttons and selects (MCQs)
+    const mcqFields = document.querySelectorAll('input[type="radio"], select');
 
-        // Monitor the 'gie15' field for changes
-        if (gie15Field) {
-            // Enable submit button when the field is clicked or selected
-            gie15Field.addEventListener('change', enableSubmitButton);
-            gie15Field.addEventListener('click', enableSubmitButton);
+    // Identify unique radio button name groups
+    mcqFields.forEach(field => {
+        if (field.type === 'radio') {
+            mcqGroups.add(field.name);
         }
     });
+
+    function checkMCQsFilled() {
+        let allAnswered = true;
+
+        // Check radio groups
+        mcqGroups.forEach(groupName => {
+            const selected = document.querySelector(`input[name="${groupName}"]:checked`);
+            if (!selected) {
+                allAnswered = false;
+            }
+        });
+
+        // Check all selects
+        mcqFields.forEach(field => {
+            if (field.tagName.toLowerCase() === 'select' && !field.value.trim()) {
+                allAnswered = false;
+            }
+        });
+
+        submitButton.disabled = !allAnswered;
+    }
+
+    // Event listeners for manual input
+    mcqFields.forEach(field => {
+        field.addEventListener('change', checkMCQsFilled);
+    });
+
+    // Regular interval check for programmatic changes
+    setInterval(checkMCQsFilled, 500); // check every 500ms
+
+    checkMCQsFilled(); // Initial check
+});
 </script>
+
+
 {% endblock content %}

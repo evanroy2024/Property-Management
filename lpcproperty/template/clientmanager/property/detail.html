@@ -4,166 +4,7 @@
 
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    /* Custom Styles */
-    .content-wrapper {
-        padding: 1.5rem;
-        background-color: #f8f9fc;
-    }
-    
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    .card {
-        border: none;
-        border-radius: 0.35rem;
-        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-        margin-bottom: 1.5rem;
-    }
-    
-    .card-header {
-        background-color: #f8f9fc;
-        border-bottom: 1px solid #e3e6f0;
-        padding: 0.75rem 1.25rem;
-    }
-    
-    .card-header h6 {
-        font-weight: 700;
-        margin: 0;
-        color: #4e73df;
-    }
-    
-    .property-info {
-        display: flex;
-        flex-wrap: wrap;
-    }
-    
-    .info-item {
-        margin-bottom: 1rem;
-        padding-right: 2rem;
-        width: 50%;
-    }
-    
-    @media (max-width: 768px) {
-        .info-item {
-            width: 100%;
-        }
-    }
-    
-    .info-label {
-        font-weight: 600;
-        color: #5a5c69;
-        margin-bottom: 0.25rem;
-        display: block;
-    }
-    
-    .info-value {
-        font-size: 1rem;
-        color: #3a3b45;
-    }
-    
-    .btn-primary {
-        background-color: #4e73df;
-        border-color: #4e73df;
-    }
-    
-    .btn-primary:hover {
-        background-color: #2e59d9;
-        border-color: #2653d4;
-    }
-    
-    .btn-back {
-        background-color: #f8f9fc;
-        border-color: #d1d3e2;
-        color: #6e707e;
-    }
-    
-    .btn-back:hover {
-        background-color: #e2e6f3;
-        border-color: #d1d3e2;
-        color: #6e707e;
-    }
-    
-    .file-item {
-        background-color: #f8f9fc;
-        border: 1px solid #e3e6f0;
-        border-radius: 0.35rem;
-        padding: 0.75rem;
-        margin-bottom: 0.75rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .file-name {
-        display: flex;
-        align-items: center;
-    }
-    
-    .file-icon {
-        color: #4e73df;
-        margin-right: 0.75rem;
-        font-size: 1.25rem;
-    }
-    
-    .badge {
-        font-weight: 600;
-        padding: 0.25em 0.6em;
-    }
-    
-    .property-image {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        border-radius: 0.35rem;
-    }
-    
-    .property-address {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-    
-    .action-buttons {
-        margin-top: 1.5rem;
-    }
-    
-    .action-buttons .btn {
-        margin-right: 0.5rem;
-    }
 
-.property-features .features-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.property-features label {
-    display: flex;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-
-.property-features label span {
-    margin-right: 10px;
-}
-
-.property-features input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #007bff; /* Blue tick */
-    background-color: #fff;
-    border: 1px solid #ccc;
-    pointer-events: none;
-}
-</style>
 <div class="content-wrapper">
     <!-- Page Header -->
     <div class="page-header">
@@ -175,7 +16,7 @@
 
     <div class="row">
         <!-- Property Overview Card -->
-        <div class="col-lg-8">
+        <div class="col-lg-80">
             <div class="card shadow mb-4">
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Property Information</h6>
@@ -209,6 +50,10 @@
                             <div class="info-value">{{ property.state }}</div>
                         </div>
                         <div class="info-item">
+                            <span class="info-label">Zipcode</span>
+                            <div class="info-value">{{ property.zipcode }}</div>
+                        </div>
+                        <div class="info-item">
                             <span class="info-label">Preferred Contact Method</span>
                             <div class="info-value">{{ property.preferred_contact_method }}</div>
                         </div>
@@ -238,136 +83,101 @@
             </div>
         </div>
 
-        <!-- Floor Plans Card -->
-        <div class="col-lg-4">
-            <div class="card shadow mb-4">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Floor Plans</h6>
+       
+    </div>
+ <!-- Floor Plans Card -->
+<div class="col-lg-40">
+    <!-- Quick Actions Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-2 mb-md-0">
+                    <a href="{% url 'clientmanager:property_edit' property.pk %}" class="btn btn-primary d-block" style="height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                        <i class="fas fa-pen-to-square me-1"></i> Edit
+                    </a>
                 </div>
-                <div class="card-body">
-                    {% if property.floor_plan_1_file or property.floor_plan_2_file or property.floor_plan_3_file or property.floor_plan_4_file %}
-                        {% if property.floor_plan_1_file %}
-                        <div class="file-item">
-                            <div class="file-name">
-                                <i class="fas fa-file-pdf file-icon"></i>
-                                <span>{{ property.floor_plan_1_name }}</span>
-                            </div>
-                            <a href="{{ property.floor_plan_1_file.url }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-download mr-1"></i> Download
-                            </a>
-                        </div>
-                        {% endif %}
-                        
-                        {% if property.floor_plan_2_file %}
-                        <div class="file-item">
-                            <div class="file-name">
-                                <i class="fas fa-file-pdf file-icon"></i>
-                                <span>{{ property.floor_plan_2_name }}</span>
-                            </div>
-                            <a href="{{ property.floor_plan_2_file.url }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-download mr-1"></i> Download
-                            </a>
-                        </div>
-                        {% endif %}
-                        
-                        {% if property.floor_plan_3_file %}
-                        <div class="file-item">
-                            <div class="file-name">
-                                <i class="fas fa-file-pdf file-icon"></i>
-                                <span>{{ property.floor_plan_3_name }}</span>
-                            </div>
-                            <a href="{{ property.floor_plan_3_file.url }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-download mr-1"></i> Download
-                            </a>
-                        </div>
-                        {% endif %}
-                        
-                        {% if property.floor_plan_4_file %}
-                        <div class="file-item">
-                            <div class="file-name">
-                                <i class="fas fa-file-pdf file-icon"></i>
-                                <span>{{ property.floor_plan_4_name }}</span>
-                            </div>
-                            <a href="{{ property.floor_plan_4_file.url }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-download mr-1"></i> Download
-                            </a>
-                        </div>
-                        {% endif %}
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-file-alt fa-3x text-gray-300 mb-3"></i>
-                            <p class="mb-0 text-gray-600">Click on Export PDF to see all Floor Plans Briefly also Full Property Information </p>
-                        </div>
-                    {% endif %}
+                <div class="col-md-4 mb-2 mb-md-0">
+                    <a href="{% url 'clientmanager:export_property_pdf' property.id %}" class="btn btn-success d-block" style="height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                        <i class="fas fa-file-download me-1"></i> PDF
+                    </a>
                 </div>
-            </div>
-
-            <!-- Additional Card for Other Information -->
-            <div class="card shadow mb-4">
-                <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'clientmanager:property_edit' property.pk %}" class="btn btn-primary mb-2 me-2">
-                          <i class="fas fa-pen-to-square me-2"></i> Edit Property
-                        </a>
-                        <a href="{% url 'clientmanager:export_property_pdf' property.id %}" class="btn btn-success">
-                            <i class="fas fa-file-download"></i> Export PDF
-                        </a>        
-                        <a href="{% url 'clientmanager:property_delete' property.pk %}" class="btn btn-danger mb-2">
-                          <i class="fas fa-trash-alt me-2"></i> Delete Property
-                        </a>
-                    </div>
+                <div class="col-md-4 mb-2 mb-md-0">
+                    <a href="{% url 'clientmanager:property_delete' property.pk %}" class="btn btn-danger d-block" style="height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                        <i class="fas fa-trash-alt me-1"></i> Delete
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 <div class="container mt-4">
     <!-- Contact Information Section -->
-    <div class="row mb-4" style="color: black;">
-        <div class="col-12">
+    <!-- Client Information with 3 fields per row -->
+<div class="">
+    <!-- Header -->
+    <div class="row">
+        <div class="col-12 mb-3">
             <h3 class="section-title">Clients Information</h3>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Name :</strong> {{ property.client.last_name }} , {{ property.client.first_name }}
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Email :</strong> {{ property.client.email }}
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Username : </strong> {{ property.client.username }}
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.phone_number }}
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Offile Phone :</strong> {{ property.client.office_phone }}
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Buisness Address :</strong> {{ property.client.buisness_adress }}
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12 mb-3">
-            <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Contact Type :</strong> {{ property.client.preferred_contact_method }}
-            </div>
-        </div>
-  
     </div>
+    
+    <!-- Client info grid - 3 items per row -->
+    <div class="row">
+        <!-- Row 1: First 3 items -->
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Name:</strong> {{ property.client.last_name }}, {{ property.client.first_name }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Email:</strong> {{ property.client.email }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Username:</strong> {{ property.client.username }}
+            </div>
+        </div>
+        
+        <!-- Row 2: Next 3 items -->
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Phone:</strong> {{ property.client.phone_number }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Address:</strong> {{ property.client.address }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>City:</strong> {{ property.client.city }}
+            </div>
+        </div>
+        
+        <!-- Row 3: Last 3 items -->
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>State:</strong> {{ property.client.state }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Zipcode:</strong> {{ property.client.zipcode }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <!-- Empty placeholder or could add another field here -->
+        </div>
+    </div>
+</div>
 
     <!-- Additional Contact 1 Section -->
     {% if property.client.contact1_name or property.client.contact1_last_name or property.client.contact1_email or property.client.contact1_phone %}
@@ -580,70 +390,131 @@
         </div>
     </div>
     {% endif %}
-    <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
+ <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
 
 <style>
     #additional-contact-1, #additional-contact-2, #additional-contact-3, #additional-contact-4, #additional-contact-5 {
-    display: none;
-}
+        display: none;
+    }
 </style>
+
 <script>
-    document.getElementById("revealContactsBtn").addEventListener("click", function() {
-        var contacts = [
-            "additional-contact-1",
-            "additional-contact-2",
-            "additional-contact-3",
-            "additional-contact-4",
-            "additional-contact-5"
-        ];
+// Simple toggle state variable
+let contactsShown = false;
+
+// Get the button element
+const button = document.getElementById("revealContactsBtn");
+
+// Add click event listener
+button.addEventListener("click", function() {
+    // List of contacts
+    const contacts = [
+        "additional-contact-1",
+        "additional-contact-2",
+        "additional-contact-3",
+        "additional-contact-4",
+        "additional-contact-5"
+    ];
     
-        contacts.forEach(function(id) {
-            document.getElementById(id).style.display = 'flex';
-        });
+    // Toggle the state
+    contactsShown = !contactsShown;
     
-        // Hide the button after showing all
-        this.style.display = 'none';
+    // Change display based on new state
+    const displayValue = contactsShown ? 'flex' : 'none';
+    
+    // Count of contacts that have data and are shown
+    let contactsWithData = 0;
+    
+    // Update only contacts that have data
+    contacts.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            // Check if the element has content (not empty)
+            // We'll consider an element to have data if it has text content or child elements
+            const hasData = element.textContent.trim() !== '' || element.children.length > 0;
+            
+            if (hasData) {
+                element.style.display = displayValue;
+                if (contactsShown) contactsWithData++;
+            } else {
+                // Keep empty contacts hidden regardless of state
+                element.style.display = 'none';
+            }
+        } else {
+            console.warn(`Element with ID '${id}' not found in the document`);
+        }
     });
-    </script>
+    
+    // Update button text based on state
+    button.textContent = contactsShown ? 'Hide Contacts' : 'Show Contacts';
+    
+    console.log("Button clicked. Contacts shown:", contactsShown);
+    console.log("Button text is now:", button.textContent);
+});
+</script>
     
 </div>
-<div class="container mt-4">
-    <!-- Contact Information Section -->
-    <div class="row mb-4" style="color: black;">
-        <div class="col-12">
+<!-- Client Manager Information with 3 fields per row -->
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row">
+        <div class="col-12 mb-3">
             <h3 class="section-title">Client Manager Information</h3>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+    </div>
+    
+    <!-- Client Manager info grid - 3 items per row -->
+    <div class="row">
+        <!-- Row 1: First 3 items -->
+        <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Name :</strong> {{ property.client_manager.last_name }} , {{ property.client_manager.first_name }}
+                <strong>Name:</strong> {{ property.client_manager.last_name }}, {{ property.client_manager.first_name }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Email :</strong> {{ property.client_manager.email }}
+                <strong>Email:</strong> {{ property.client_manager.email }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Username : </strong> {{ property.client_manager.username }}
+                <strong>Username:</strong> {{ property.client_manager.username }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        
+        <!-- Row 2: Next 3 items -->
+        <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client_manager.phone_number }}
+                <strong>Phone:</strong> {{ property.client_manager.phone_number }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Office Phone :</strong> {{ property.client_manager.office_phone }}
+                <strong>Office Phone:</strong> {{ property.client_manager.office_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Contact Type:</strong> {{ property.client_manager.preferred_contact_method }}
             </div>
         </div>
-  
+        
+        <!-- Row 3: Last 3 items -->
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>City:</strong> {{ property.client_manager.city }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>State:</strong> {{ property.client_manager.state }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="info-box p-3 rounded shadow-sm bg-light">
+                <strong>Zipcode:</strong> {{ property.client_manager.zipcode }}
+            </div>
+        </div>
     </div>
 </div>
 <!-- CSS for Styling -->
@@ -709,8 +580,8 @@
                 
                 <div class="room-list">
                     {% for room in floor.rooms.all %}
-                        <div class="room-item">
-                            <p class="room-caption text-left">{{ forloop.counter }}. {{ room.room_name }} </p>
+                        <div class="room-item" style="border: 1px solid rgb(227, 227, 227); height: 50px;">
+                            <p class="text-left" style="display: flex; align-items: center; ">{{ room.room_name }} </p>
                         </div>
                     {% endfor %}
                 </div>
@@ -1016,7 +887,977 @@
 }
 
 </style>
+<style>
+    /* Improved Property Detail Page CSS - Compact and Well-Aligned */
 
+/* Base styles and variables */
+:root {
+  --primary-color: #4a6cf7;
+  --primary-hover: #3151d3;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --border-color: #dee2e6;
+  --card-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+  --transition: all 0.25s ease;
+  --border-radius: 0.375rem;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background-color: #f9fafb;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Layout optimization */
+.content-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.col-lg-8, .col-lg-4, .col-md-4, .col-md-6, .col-sm-12 {
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.col-lg-8 {
+  width: 66.666667%;
+}
+
+.col-lg-4 {
+  width: 33.333333%;
+}
+
+.col-md-4 {
+  width: 33.333333%;
+}
+
+.col-md-6 {
+  width: 50%;
+}
+
+.col-sm-12 {
+  width: 100%;
+}
+
+/* Page Header - Compact */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.5rem;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  background-color: var(--light-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background-color: #e2e6ea;
+}
+
+/* Cards - Optimized */
+.card {
+  background-color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #fff;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header h6 {
+  font-weight: 700;
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 0.938rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+/* Property Information - Compact Grid */
+.property-address {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: var(--text-color);
+  border-left: 3px solid var(--primary-color);
+  padding-left: 0.75rem;
+}
+
+.property-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.info-item:hover {
+  background-color: #f1f3f5;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 0.938rem;
+  font-weight: 500;
+}
+
+/* Property Features - Compact Display */
+.property-features {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.property-features h5 {
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.features-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.features-row label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.375rem 0.625rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.features-row label:hover {
+  background-color: #f1f3f5;
+}
+
+.features-row input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.25rem;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.features-row input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.features-row input[type="checkbox"]:checked:after {
+  content: '\2714';
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+}
+
+/* Floor Plans - Compact */
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.5rem;
+  transition: var(--transition);
+}
+
+.file-item:hover {
+  background-color: #f1f3f5;
+}
+
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.file-icon {
+  color: var(--primary-color);
+  font-size: 1.125rem;
+}
+
+.btn-primary, .btn-success, .btn-danger {
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.875rem;
+  border: none;
+  color: white;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.text-gray-300 {
+  color: #dee2e6;
+}
+
+.text-gray-600 {
+  color: #6c757d;
+}
+
+/* Clients Information - Better Layout */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  padding-bottom: 0.375rem;
+  border-bottom: 2px solid var(--primary-color);
+  display: inline-block;
+}
+
+/* Info Box - Compact Design */
+.info-box {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  padding: 0.875rem;
+  box-shadow: var(--card-shadow);
+  height: 100%;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.info-box:hover {
+  box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+.info-box strong {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.813rem;
+  margin-right: 0.5rem;
+  min-width: 75px;
+}
+
+/* Show Contacts Button */
+#revealContactsBtn {
+  margin: 1rem 0;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.938rem;
+}
+
+/* Floor Plans Overview - Optimized */
+.property-container {
+  margin: 2rem 0;
+}
+
+.property-card {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+}
+
+.floor-card {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.floor-card:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.floor-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+}
+
+.floor-title:before {
+  content: '';
+  display: inline-block;
+  width: 0.375rem;
+  height: 1rem;
+  background-color: var(--primary-color);
+  margin-right: 0.625rem;
+  border-radius: 2px;
+}
+
+.floor-img {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  max-height: 250px;
+  object-fit: cover;
+}
+
+.floor-img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+.room-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.625rem;
+  margin-top: 1.25rem;
+}
+
+.room-item {
+  background-color: #f8f9fa;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.room-item:hover {
+  background-color: #f1f3f5;
+  transform: translateX(2px);
+}
+
+.room-caption {
+  margin: 0;
+  font-weight: 600 !important;
+  color: var(--text-color) !important;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.room-caption:before {
+  content: '';
+  display: inline-block;
+  width: 0.313rem;
+  height: 0.313rem;
+  background-color: var(--primary-color);
+  margin-right: 0.375rem;
+  border-radius: 50%;
+}
+
+/* Modal Styles - Optimized */
+.image-modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.85);
+  transition: var(--transition);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  margin: 2% auto;
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-img {
+  width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3);
+}
+
+.modal-caption {
+  margin: 1.25rem auto;
+  display: block;
+  width: 80%;
+  text-align: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.close-modal {
+  position: absolute;
+  top: 1.25rem;
+  right: 2.25rem;
+  color: #f1f1f1;
+  font-size: 2rem;
+  font-weight: 700;
+  transition: var(--transition);
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.close-modal:hover,
+.close-modal:focus {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+}
+
+/* Full Screen Modal - Optimized */
+.full-screen-img {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+
+#full-screen-img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+  animation: zoomIn 0.3s;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 2.25rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Spacing Utilities */
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 0.75rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 0.75rem !important; }
+.mt-4 { margin-top: 1rem !important; }
+.mr-1 { margin-right: 0.25rem !important; }
+.mr-2 { margin-right: 0.5rem !important; }
+.py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+
+.d-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+
+/* Font Icons Enhancement */
+.fas {
+  display: inline-block;
+  margin-right: 0.375rem;
+  vertical-align: middle;
+}
+
+.fa-arrow-left {
+  font-size: 0.875rem;
+}
+
+.fa-download,
+.fa-file-download,
+.fa-pen-to-square,
+.fa-trash-alt {
+  margin-right: 0.375rem;
+}
+
+/* Button Group Styling */
+.d-grid .btn {
+  width: 100%;
+  margin-bottom: 0.375rem;
+  padding: 0.625rem 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* Client Information Compact Layout */
+#additional-contact-1,
+#additional-contact-2,
+#additional-contact-3,
+#additional-contact-4,
+#additional-contact-5 {
+  display: none;
+}
+
+/* Client Information Grid Layout */
+.client-info-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .client-info-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .client-info-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive Design - Optimized */
+@media (max-width: 1199.98px) {
+  .col-lg-8, .col-lg-4 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .property-info {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  
+  .room-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .col-md-4 {
+    width: 50%;
+  }
+  
+  .property-info {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .features-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .col-md-4 {
+    width: 100%;
+  }
+  
+  .property-info,
+  .features-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .room-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .property-address {
+    font-size: 1.125rem;
+  }
+  
+  .section-title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .btn-back, .btn, .close-modal, .close-btn, #revealContactsBtn {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd;
+  }
+  
+  .info-box {
+    box-shadow: none !important;
+    border: 1px solid #ddd;
+  }
+  
+  body {
+    font-size: 10pt;
+  }
+  
+  .property-address {
+    font-size: 14pt;
+  }
+  
+  .section-title {
+    font-size: 12pt;
+  }
+  
+  #additional-contact-1, 
+  #additional-contact-2, 
+  #additional-contact-3, 
+  #additional-contact-4, 
+  #additional-contact-5 {
+    display: flex !important;
+  }
+}
+
+/* Additional styles for better client information display */
+.clients-section {
+  margin-bottom: 2rem;
+}
+
+/* Horizontal client info display */
+.client-main-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.client-info-item {
+  display: flex;
+  align-items: center;
+}
+
+.client-info-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 0.5rem;
+  font-size: 0.813rem;
+}
+
+.client-info-value {
+  font-weight: 500;
+  font-size: 0.938rem;
+}
+
+/* Contact groups with toggle */
+.contact-group {
+  margin-bottom: 1rem;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.contact-header {
+  padding: 0.75rem 1rem;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.contact-header:after {
+  content: '+';
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.contact-header.active:after {
+  content: '−';
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+/* Table view for property data */
+.property-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 1.5rem;
+}
+
+.property-table th,
+.property-table td {
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.property-table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.813rem;
+  background-color: #f8f9fa;
+}
+
+.property-table tr:last-child td {
+  border-bottom: none;
+}
+
+.property-table tr:hover td {
+  background-color: #f8f9fa;
+}
+
+/* Compact feature display */
+.feature-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.feature-pill {
+  background-color: #f8f9fa;
+  border-radius: 9999px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.813rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.feature-pill.active {
+  background-color: #e8f0fe;
+  color: var(--primary-color);
+}
+
+.feature-pill.active:before {
+  content: '✓';
+  margin-right: 0.375rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.property-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* Adds space between items */
+    justify-content: space-between; /* Ensures even spacing between items */
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff; /* White background */
+    padding: 1rem;
+    border-radius: 12px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition on hover */
+    flex: 1 1 calc(25% - 1.5rem); /* Makes each item take 25% of the row */
+    border: 1px solid #ddd; /* Light border */
+}
+
+.info-item:hover {
+    transform: translateY(-5px); /* Lifts the item on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.info-label {
+    font-weight: bold;
+    color: #333; /* Dark text for labels */
+    margin-bottom: 0.5rem; /* Spacing between label and value */
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #555; /* Slightly lighter text for values */
+    line-height: 1.4; /* Better line spacing for readability */
+}
+
+@media (max-width: 767px) {
+    .info-item {
+        flex: 1 1 100%; /* Stacks items on smaller screens */
+    }
+}
+
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock content %}

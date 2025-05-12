@@ -1,0 +1,120 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+
+{% block content %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f9f9f9, #f1f1f1);
+        }
+        .full-page{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5%;
+            margin-bottom: 10%;
+        }
+        .success-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .success-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: #e19540;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(225, 149, 64, 0.1);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #e19540;
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #e19540;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(225, 149, 64, 0.3);
+        }
+        
+        .btn:hover {
+            background-color: #d68630;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(225, 149, 64, 0.4);
+        }
+        
+        .decoration {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: rgba(225, 149, 64, 0.05);
+            z-index: 0;
+        }
+    </style>
+    <div class="full-page">
+    <div class="success-card">
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+        </div>
+        <h2>Walkthrough Report Submitted Successfully!</h2>
+        <p>Your report has been received and will be processed shortly. Thank you for your submission.</p>
+        <div class="all-buttons">
+        <a href="{% url 'clientmanager:client_dashboard' %}" class="btn" style="background-color:#a0a0a0; border: 1px solid #a0a0a0;">Go Back Home</a>
+        <a href="{% url 'clientmanager:walkthrough-form' %}" class="btn">Submit Another Report</a>
+</div>
+        <div class="decoration"></div>
+    </div>
+</div>
+    {% endblock content %}

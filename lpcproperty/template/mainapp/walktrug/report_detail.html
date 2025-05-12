@@ -666,7 +666,7 @@
             </table>
             {% endif %}
             
-            {% if report.kitchen1 or report.kitchen2 or report.kitchen3 or report.kitchen4 or report.kitchen5 or report.kitchen6 or report.kitchen7 or report.kitchen8 or report.kitchen9 %}
+            {% if report.kitchen1 or report.kitchen2 or report.kitchen3 or report.kitchen4 or report.kitchen5 or report.kitchen6 or report.kitchen7 or report.kitchen8 or report.kitchen9 or report.kitchen10 or report.kitchen11 or report.kitchen12 %}
             <!-- For kitchen      -->
             <table class="questionnaire-table">
                 <thead>
@@ -794,6 +794,54 @@
                         <td class="option-cell">{% if report.kitchen9 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen9 == "Non-Compliant" %}✓{% endif %}</td>
                         <td class="remarks-cell">{{ report.kitchen9_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                      {% if report.kitchen9 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot and cold water; Check underneath for signs of leaks
+                        </td>
+                        <td class="option-cell">{% if report.kitchen9 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen9 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen9 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen9 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen9_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if report.kitchen10 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot and cold water; Check underneath for signs of leaks
+                        </td>
+                        <td class="option-cell">{% if report.kitchen10 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen10 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen10 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen10 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen10_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if report.kitchen11 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot and cold water; Check underneath for signs of leaks
+                        </td>
+                        <td class="option-cell">{% if report.kitchen11 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen11 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen11 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen11 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen11_remarks }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if report.kitchen12 is not None %}
+                    <tr>
+                        <td class="question-cell">
+                            Sinks: Run hot and cold water; Check underneath for signs of leaks
+                        </td>
+                        <td class="option-cell">{% if report.kitchen12 == "N/A" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen12 == "Compliant" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen12 == "Heads-Up" %}✓{% endif %}</td>
+                        <td class="option-cell">{% if report.kitchen12 == "Non-Compliant" %}✓{% endif %}</td>
+                        <td class="remarks-cell">{{ report.kitchen12_remarks }}</td>
                     </tr>
                     {% endif %}
                 </tbody>

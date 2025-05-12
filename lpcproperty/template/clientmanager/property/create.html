@@ -334,7 +334,7 @@
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">Create Property</h1>
-            <a href="{% url 'clientmanager:property_list' %}" class="back-link">
+            <a href="{% url 'adminmanager:property_list' %}" class="back-link">
                 <i class="fas fa-arrow-left"></i> Back to Properties
             </a>
         </div>
@@ -364,7 +364,7 @@
                         <label class="form-label" for="client_id">Select Existing Client</label>
                         <select class="form-control" name="client_id" id="client_id" required>
                             {% for client in clients %}
-                                <option value="{{ client.id }}">{{ client.last_name }} {{ client.first_name }} </option>
+                                <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }} </option>
                             {% endfor %}
                         </select>
                         
@@ -404,10 +404,26 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="office_phone" name="office_phone" placeholder="Enter office phone" value="{{ form.office_phone.value }}">
                               </div>
-                              
+
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="buisness_adress" name="buisness_adress" placeholder="Enter business address" value="{{ form.buisness_adress.value }}">
                             </div>
+
+
+
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_address" name="client_address" placeholder="Enter address" >
+                            </div>
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_city" name="client_city" placeholder="Enter City" >
+                            </div>
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_state" name="client_state" placeholder="Enter State " >
+                            </div>
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_zipcode" name="client_zipcode" placeholder="Enter Zipcode" >
+                            </div>
+                            
                               
                         </div>
                         <!-- Single Button -->
@@ -598,7 +614,7 @@
                         <label class="form-label" for="client_manager_id">Select Client Manager</label>
                         <select class="form-control" name="client_manager_id" id="client_manager_id" required>
                             {% for manager in managers %}
-                                <option value="{{ manager.id }}">{{ manager.first_name }} {{ manager.last_name }}</option>
+                                <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }} </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -688,6 +704,12 @@
                         <label class="form-label" for="year_built">Year Built</label>
                         <input class="form-control" type="number" id="year_built" name="year_built" placeholder="e.g. 1995">
                     </div>
+
+                     <div class="form-group half">
+                        <label class="form-label" for="year_built">Zipcode</label>
+                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" placeholder="Enter Zipcode">
+                    </div>
+                    
                 </div>
             </div>
             
@@ -717,7 +739,7 @@
                 </div>
             </div>
             
-            <div class="card">
+            <div class="card" style="display: none;">
                 <h2 class="card-title"><i class="fas fa-envelope"></i> Contact Preference</h2>
                 <div class="form-row">
                     <div class="form-group">
