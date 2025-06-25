@@ -21,10 +21,12 @@ class ServiceRequest(models.Model):
     user = models.ForeignKey(Client, on_delete=models.CASCADE)  # Use Client from mainapp
     request_type = models.CharField(max_length=50, choices=REQUEST_TYPE_CHOICES)  # Updated field
     description = models.TextField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)  # Use Vendor from mainapp
     created_at = models.DateTimeField(auto_now_add=True)
     floor_plan_name = models.CharField(max_length=100, blank=True, null=True)
+    completation_denied_date = models.DateField(blank=True, null=True)
+
 
     def __str__(self):
         return self.request_type
@@ -107,9 +109,11 @@ class ConciergeServiceRequest(models.Model):
 
     user = models.ForeignKey(Client, on_delete=models.CASCADE)
     description = models.TextField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    completation_denied_date = models.DateField(blank=True, null=True)
+
 
     def __str__(self):
         return f"{self.user} - {self.status}"

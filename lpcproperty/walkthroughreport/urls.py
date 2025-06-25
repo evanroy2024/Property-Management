@@ -22,6 +22,11 @@ urlpatterns = [
 
     path('walkthrough/update/<int:report_id>/', views.update_walkthrough_report, name='update_walkthrough_report'),
 
+    # cost status etc updates 
+    path('update-cost/<int:report_id>/', views.update_cost_ajax, name='update-cost-ajax'),
+    path('update-approval/<int:report_id>/', views.update_client_approval, name='update-client-approval'),
+    path('update-status/<int:report_id>/', views.update_status, name='update-status'),
+
 
 ]
 

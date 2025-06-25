@@ -109,5 +109,7 @@ urlpatterns = [
 
     path('send-email/', views.send_email_view, name='send_email'),
 
+    # For services updates 
+
 
 ]

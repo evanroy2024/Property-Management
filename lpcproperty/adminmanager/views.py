@@ -1000,24 +1000,46 @@ def denied_requests(request):
     requests = ServiceRequest.objects.filter(status='denied')
     return render(request, 'adminmanager/servicerequests/denied.html', {'requests': requests})
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.dateparse import parse_date
+from django.contrib import messages
+
 def update_service_request(request, request_id):
     request_obj = get_object_or_404(ServiceRequest, id=request_id)
     vendors = Vendor.objects.all()
 
     if request.method == 'POST':
         request_obj.status = request.POST.get('status')
+
+        # Handle vendor
         vendor_id = request.POST.get('vendor')
         if vendor_id:
             request_obj.vendor = Vendor.objects.get(id=vendor_id)
         else:
             request_obj.vendor = None
+
+        # Get and validate completation_denied_date
+        date_str = request.POST.get('completation_denied_date')
+        print("DEBUG - Received date:", date_str)  # For debugging in terminal
+
+        parsed_date = parse_date(date_str)
+        if not parsed_date:
+            messages.error(request, "Completation Denied Date is required and must be valid.")
+            return render(request, 'adminmanager/servicerequests/update.html', {
+                'request_obj': request_obj,
+                'vendors': vendors,
+            })
+
+        request_obj.completation_denied_date = parsed_date
         request_obj.save()
-        return redirect('adminmanager:clientmanager_pending_requests')
+
+        return redirect('adminmanager:clientmanager_open_requests')
 
     return render(request, 'adminmanager/servicerequests/update.html', {
         'request_obj': request_obj,
         'vendors': vendors,
     })
+
 
 def service_request_detail(request, request_id):
     request_obj = get_object_or_404(ServiceRequest, id=request_id)
@@ -1050,25 +1072,45 @@ def concierge_denied_requests(request):
     requests = ConciergeServiceRequest.objects.filter(status='denied')
     return render(request, 'adminmanager/conciergerequests/denied.html', {'requests': requests})
 
-# Update
+from django.utils.dateparse import parse_date
+from django.contrib import messages
+
 def update_concierge_request(request, request_id):
     request_obj = get_object_or_404(ConciergeServiceRequest, id=request_id)
     vendors = Vendor.objects.all()
 
     if request.method == 'POST':
         request_obj.status = request.POST.get('status')
+
+        # Handle vendor
         vendor_id = request.POST.get('vendor')
         if vendor_id:
             request_obj.vendor = Vendor.objects.get(id=vendor_id)
         else:
             request_obj.vendor = None
+
+        # Get and validate date
+        date_str = request.POST.get('completation_denied_date')
+        print("DEBUG: Got date:", date_str)
+        parsed_date = parse_date(date_str)
+
+        if not parsed_date:
+            messages.error(request, "Completation Denied Date is required and must be valid.")
+            return render(request, 'adminmanager/conciergerequests/update.html', {
+                'request_obj': request_obj,
+                'vendors': vendors,
+            })
+
+        request_obj.completation_denied_date = parsed_date
         request_obj.save()
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('adminmanager:concierge_open_requests')
 
     return render(request, 'adminmanager/conciergerequests/update.html', {
         'request_obj': request_obj,
         'vendors': vendors,
     })
+
 
 # View
 def view_concierge_request(request, request_id):
@@ -1427,3 +1469,6 @@ def send_email_view(request):
         except Exception as e:
             # Directly show the error without template
             return HttpResponse(f"Failed to send email: {str(e)}", status=500)
+
+
+# services updates html -------------------------------------------------------------------------------------

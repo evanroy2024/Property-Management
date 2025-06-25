@@ -693,3 +693,61 @@ def open_export_pdf(request, report_id):
     doc.build(elements)
     return response
     
+
+# Report Updates ----------------------------------------------------------------------
+from django.http import JsonResponse
+from .models import WalkthroughReport
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+
+
+@csrf_exempt
+def update_cost_ajax(request, report_id):
+    if request.method == 'POST':
+        cost = request.POST.get('cost')
+        report = WalkthroughReport.objects.get(id=report_id)
+        report.cost = int(cost)
+        report.save()
+        return JsonResponse({'success': True, 'new_cost': report.cost})
+    return JsonResponse({'success': False})
+@csrf_exempt
+def update_client_approval(request, report_id):
+    if request.method == 'POST':
+        status = request.POST.get('approval')
+        if status not in ['Approved', 'Denied']:
+            return JsonResponse({'success': False})
+        try:
+            report = WalkthroughReport.objects.get(id=report_id)
+            report.client_approval = status
+            report.save()
+            return JsonResponse({'success': True, 'new_status': report.client_approval})
+        except:
+            return JsonResponse({'success': False})
+    return JsonResponse({'success': False})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import WalkthroughReport
+from datetime import datetime
+
+@csrf_exempt
+def update_status(request, report_id):
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        date_str = request.POST.get('date')
+
+        if new_status not in ['Completed', 'Denied'] or not date_str:
+            return JsonResponse({'success': False})
+
+        try:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            report = WalkthroughReport.objects.get(id=report_id)
+            report.status = new_status
+            report.completation_denied_date = date_obj
+            report.save()
+            return JsonResponse({'success': True, 'new_status': new_status, 'new_date': str(date_obj)})
+        except:
+            return JsonResponse({'success': False})
+
+    return JsonResponse({'success': False})

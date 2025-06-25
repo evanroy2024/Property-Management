@@ -269,120 +269,121 @@
 </style>
 
 <div class="dashboard-container">
-    <!-- Header -->
-    <div class="d-flex justify-content-center align-items-center mb-4 text-center flex-column flex-md-row gap-3">
-        <!-- Left Image -->
-        <img src="{% static 'img/smalllogo.png' %}" alt="Concierge Icon" style="width: auto; height: 50px; margin-top: -10px;">
-    
-        <!-- Centered Text -->
-        <div>
-            <h1 class="page-title mb-1">Pending Service Requests</h1>
-            <p class="page-subtitle">Track and manage your client service requests</p>
-        </div>
-    </div>
-    
-
-    <!-- Stats Row -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <a href="{% url 'adminmanager:clientmanager_pending_requests' %}" class="text-decoration-none">
-                <div class="stats-card primary">
-                    <div>
-                        <div class="stats-value text-black">Pending</div>
-                        <div class="stats-label text-black">Requests</div>
-                    </div>
-                    <div class="stats-icon primary">
-                        <i class="bi bi-list-check"></i>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{% url 'adminmanager:clientmanager_open_requests' %}" class="text-decoration-none">
-                <div class="stats-card warning">
-                    <div>
-                        <div class="stats-value text-black">Open</div>
-                        <div class="stats-label text-black">Requests</div>
-                    </div>
-                    <div class="stats-icon warning">
-                        <i class="bi bi-clock-history"></i>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{% url 'adminmanager:clientmanager_completed_requests' %}" class="text-decoration-none">
-                <div class="stats-card success">
-                    <div>
-                        <div class="stats-value text-black">Completed</div>
-                        <div class="stats-label text-black">Requests</div>
-                    </div>
-                    <div class="stats-icon success">
-                        <i class="bi bi-check-circle"></i>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{% url 'adminmanager:clientmanager_denied_requests' %}" class="text-decoration-none">
-                <div class="stats-card danger">
-                    <div>
-                        <div class="stats-value text-black">Denied</div>
-                        <div class="stats-label text-black">Requests</div>
-                    </div>
-                    <div class="stats-icon danger">
-                        <i class="bi bi-x-circle"></i>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-    
-    
-
     <!-- Table -->
     <div class="table-container">
         <div class="table-responsive">
             <table class="table modern-table">
-                <thead>
+                <thead class="custom-thead">
                     <tr>
                         <th>#</th>
-                        <th>Client</th>
-                        <th>Type</th>
-                        <th>Vendor</th>
+                        <th style="position: relative;">
+                            Request Date
+                            <span class="sort-arrows" data-column="date" onclick="sortTable('date')">
+                                <i class="bi bi-chevron-up sort-up"></i>
+                                <i class="bi bi-chevron-down sort-down"></i>
+                            </span>
+                        </th>
+                        <th style="position: relative;"  >
+                            Client
+                            <span class="sort-arrows" data-column="client" onclick="sortTable('client')">
+                                <i class="bi bi-chevron-up sort-up"></i>
+                                <i class="bi bi-chevron-down sort-down"></i>
+                            </span>
+                            <div class="client-filter-container">
+                                <button class="client-filter-btn" onclick="toggleClientFilter()">
+                                    <i class="bi bi-funnel"></i>
+                                </button>
+                                <div class="client-dropdown" id="clientDropdown">
+                                    <div class="dropdown-item" onclick="filterByClient('all')">All Clients</div>
+                                    {% for req in requests %}
+                                        {% if req.user.username not in displayed_clients %}
+                                            <div class="dropdown-item" onclick="filterByClient('{{ req.user.username }}')">{{ req.user.username }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </th>
+                        
                         <th>Description</th>
-                        <th>Created At</th>
                         <th>Status</th>
-                        <!-- <th>Update</th> -->
-                        <th class="text-center action-col">Actions</th>
+                        <!-- <th class="text-center action-col">Actions</th> -->
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tableBody">
                     {% for req in requests %}
-                    <tr>
+                    <tr data-client="{{ req.user.last_name }}, {{ req.user.first_name }}" data-date="{{ req.created_at|date:'Y-m-d' }}">
                         <td>{{ forloop.counter }}</td>
-            <td>{{ req.user.username }}</td>
-            <td>{{ req.get_request_type_display }}</td>
-            <td>
-                {% if req.vendor %}
-                    {{ req.vendor.company_name }}
-                {% else %}
-                    Not Assigned
-                {% endif %}
-            </td>
-            
-            <td>{{ req.description|truncatechars:40 }}</td>
-            <td>{{ req.created_at|date:"Y-m-d" }}</td>
-                        <td> {% if req.get_status_display == "Pending" %}
-                            <span class="badge-custom badge-pending">{{ req.get_status_display }}</span>
-                        {% elif req.get_status_display == "Completed" %}
-                            <span class="badge-custom badge-completed">{{ req.get_status_display }}</span>
-                        {% elif req.get_status_display == "Cancelled" %}
-                            <span class="badge-custom badge-cancelled">{{ req.get_status_display }}</span>
-                        {% else %}
-                            <span class="badge-custom badge-default">{{ req.get_status_display }}</span>
-                        {% endif %}</td>
-                        <td class="text-end">
+                        <td>{{ req.created_at|date:"Y-m-d" }}</td>
+                        <td onclick="window.location.href='{% url 'adminmanager:clientmanager_view_request' req.id %}'">{{ req.user.last_name }}, {{ req.user.first_name }}</td>
+                        <td>{{ req.description|truncatechars:40 }}</td>
+                       <td>
+                   <a href="{% url 'adminmanager:clientmanager_update_request' req.id %}" onclick="openUpdateModal({{ req.id }}, '{{ req.status }}', '{{ req.vendor.id|default:'' }}')">
+    {% if req.get_status_display == "Pending" or req.get_status_display == "Open" %}
+        <span class="badge-custom" style="
+            background-color: #FFD700;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #e6c200;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% elif req.get_status_display == "Completed" %}
+        <span class="badge-custom" style="
+            background-color: #28a745;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #1e7e34;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% elif req.get_status_display == "Cancelled" or req.get_status_display == "Denied" %}
+        <span class="badge-custom" style="
+            background-color: #dc3545;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #bd2130;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% else %}
+        <span class="badge-custom" style="
+            background-color: #6c757d;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #545b62;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% endif %}
+</a>
+
+                    </td>
+
+                        <!-- <td class="text-end"  onclick="window.location.href='{% url 'adminmanager:clientmanager_view_request' req.id %}'"></td>>
                             <div class="d-flex gap-2 justify-content-end">
                                 <a href="{% url 'adminmanager:clientmanager_view_request' req.id %}" class="btn btn-custom btn-view">
                                     <i class="bi bi-eye me-1"></i> 
@@ -391,7 +392,7 @@
                                     <i class="bi bi-pencil me-1"></i> 
                                 </a>
                             </div>
-                        </td>
+                        </td> -->
                     </tr>
                     {% empty %}
                     <tr>
@@ -423,3 +424,246 @@
         {% endif %}
     </div>
 </div>
+
+<style>
+.sort-arrows {
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.sort-arrows i {
+    margin: -2px 0;
+    color: #cbd5e1;
+    transition: color 0.2s;
+}
+
+.sort-arrows.asc .sort-up {
+    color: #3b82f6;
+}
+
+.sort-arrows.desc .sort-down {
+    color: #3b82f6;
+}
+
+.client-filter-container {
+    display: inline-block;
+    margin-left: 8px;
+    position: relative;
+}
+
+.client-filter-btn {
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.client-filter-btn:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.client-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    min-width: 150px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.client-dropdown.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item.active {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+.table-container {
+    background: white;
+    width: 85%;
+    border-radius: 12px;
+    margin: 0 auto;
+}
+
+/* Responsive: 95% width on screens smaller than 600px */
+@media screen and (max-width: 600px) {
+    .table-container {
+        width: 95%;
+    }
+}
+td:hover{
+    cursor: pointer;
+}
+</style>
+
+<script>
+let sortStates = {
+    client: 'normal', // normal, asc, desc
+    date: 'normal'
+};
+
+let currentFilter = 'all';
+
+function sortTable(column) {
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.querySelectorAll('tr:not(:last-child)')); // Exclude empty state row
+    
+    // Cycle through sort states: normal -> asc -> desc -> normal
+    if (sortStates[column] === 'normal') {
+        sortStates[column] = 'asc';
+    } else if (sortStates[column] === 'asc') {
+        sortStates[column] = 'desc';
+    } else {
+        sortStates[column] = 'normal';
+    }
+    
+    // Reset other column states
+    Object.keys(sortStates).forEach(key => {
+        if (key !== column) {
+            sortStates[key] = 'normal';
+            document.querySelector(`[data-column="${key}"]`).className = 'sort-arrows';
+        }
+    });
+    
+    // Update arrow visual state
+    const arrows = document.querySelector(`[data-column="${column}"]`);
+    arrows.className = `sort-arrows ${sortStates[column]}`;
+    
+    if (sortStates[column] === 'normal') {
+        // Restore original order - you might need to store original order
+        location.reload(); // Simple approach, or implement original order storage
+        return;
+    }
+    
+    // Sort the rows
+    rows.sort((a, b) => {
+        let aValue, bValue;
+        
+        if (column === 'client') {
+            aValue = a.dataset.client.toLowerCase();
+            bValue = b.dataset.client.toLowerCase();
+        } else if (column === 'date') {
+            aValue = new Date(a.dataset.date);
+            bValue = new Date(b.dataset.date);
+        }
+        
+        if (sortStates[column] === 'asc') {
+            return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+        } else {
+            return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+        }
+    });
+    
+    // Re-append sorted rows
+    rows.forEach(row => tableBody.appendChild(row));
+    
+    // Update row numbers
+    updateRowNumbers();
+}
+
+function toggleClientFilter() {
+    const dropdown = document.getElementById('clientDropdown');
+    
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        // Populate dropdown with unique clients
+        populateClientDropdown();
+        dropdown.style.display = 'block';
+    } else {
+        dropdown.style.display = 'none';
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function closeDropdown(e) {
+        if (!e.target.closest('.client-filter-container')) {
+            dropdown.style.display = 'none';
+            document.removeEventListener('click', closeDropdown);
+        }
+    });
+}
+
+function populateClientDropdown() {
+    const dropdown = document.getElementById('clientDropdown');
+    const rows = document.querySelectorAll('#tableBody tr[data-client]');
+    const clients = new Set();
+    
+    rows.forEach(row => {
+        clients.add(row.dataset.client);
+    });
+    
+    dropdown.innerHTML = '<div class="dropdown-item" onclick="filterByClient(\'all\')">All Clients</div>';
+    
+    Array.from(clients).sort().forEach(client => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.onclick = () => filterByClient(client);
+        item.textContent = client;
+        dropdown.appendChild(item);
+    });
+}
+
+function filterByClient(clientName) {
+    currentFilter = clientName;
+    const rows = document.querySelectorAll('#tableBody tr[data-client]');
+    
+    rows.forEach(row => {
+        if (clientName === 'all' || row.dataset.client === clientName) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Update active state in dropdown
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.classList.remove('active');
+        if ((clientName === 'all' && item.textContent === 'All Clients') || 
+            item.textContent === clientName) {
+            item.classList.add('active');
+        }
+    });
+    
+    // Close dropdown
+    document.getElementById('clientDropdown').style.display = 'none';
+    
+    // Update row numbers
+    updateRowNumbers();
+}
+
+function updateRowNumbers() {
+    const visibleRows = document.querySelectorAll('#tableBody tr[data-client]:not([style*="display: none"])');
+    visibleRows.forEach((row, index) => {
+        row.cells[0].textContent = index + 1;
+    });
+}
+</script>

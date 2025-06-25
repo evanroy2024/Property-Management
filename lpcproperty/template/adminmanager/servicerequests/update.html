@@ -85,38 +85,58 @@
                         </h3>
                     </div>
                     <div class="card-body p-4 p-lg-5">
-                        <form method="post" class="needs-validation" novalidate>{% csrf_token %}
-                            <div class="mb-4">
-                                <label for="status" class="form-label">Request Status</label>
-                                <select name="status" class="form-select">
-                                    {% for val, label in request_obj.STATUS_CHOICES %}
-                                        <option value="{{ val }}" {% if val == request_obj.status %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="vendor" class="form-label">Assign Vendor</label>
-                                <select name="vendor" class="form-select">
-                                    <option value="">-- Select Vendor --</option>
-                                    {% for vendor in vendors %}
-                                        <option value="{{ vendor.id }}" {% if request_obj.vendor == vendor %}selected{% endif %}>
-                                            {{ vendor.company_name }} ({{ vendor.service }})
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
-                            
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
-                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                                    </svg>
-                                    Save Changes
-                                </button>
-                            </div>
-                        </form>
+                        {% if messages %}
+  <div class="alert alert-danger">
+    {% for message in messages %}
+      {{ message }}
+    {% endfor %}
+  </div>
+{% endif %}
+                      <form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-4">
+        <label for="status" class="form-label">Request Status</label>
+        <select name="status" class="form-select">
+            {% for val, label in request_obj.STATUS_CHOICES %}
+                <option value="{{ val }}" {% if val == request_obj.status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-4">
+        <label for="completation_denied_date" class="form-label">Completation Denied Date</label>
+        <input
+            type="date"
+            name="completation_denied_date"
+            class="form-control"
+            value="{{ request_obj.completation_denied_date|date:'Y-m-d' }}"
+            required
+        />
+    </div>
+
+    <div class="mb-4">
+        <label for="vendor" class="form-label">Assign Vendor</label>
+        <select name="vendor" class="form-select">
+            <option value="">-- Select Vendor --</option>
+            {% for vendor in vendors %}
+                <option value="{{ vendor.id }}" {% if request_obj.vendor == vendor %}selected{% endif %}>
+                    {{ vendor.company_name }} ({{ vendor.service }})
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="d-grid">
+        <button type="submit" class="btn btn-submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+            Save Changes
+        </button>
+    </div>
+</form>
+
                     </div>
                 </div>
             </div>

@@ -28,6 +28,25 @@
                 </div>
               </div>
             </div>
+
+            <div class="form-floating mb-4 input-animation" style="animation-delay: 0.15s; position: relative;">
+  <input style="padding-left: 60px;"
+    type="date"
+    name="completation_denied_date"
+    id="completation_denied_date"
+    class="form-control pe-5"
+    value="{{ request_obj.completation_denied_date|date:'Y-m-d' }}"
+    required
+  />
+  <label for="completation_denied_date">Completation Denied Date</label>
+  <div class="icon-container">
+    <div class="icon-circle">
+      <i class="bi bi-calendar-event-fill"></i>
+    </div>
+  </div>
+</div>
+
+
             
             <div class="form-floating mb-4 input-animation" style="animation-delay: 0.2s">
               <select name="vendor" id="vendor" class="form-select custom-select" required>
@@ -45,10 +64,11 @@
                 </div>
               </div>
             </div>
+
             
             <div class="d-flex justify-content-between align-items-center mt-5 button-animation w-100">
                 <!-- Left Button -->
-                <button type="button" class="btn custom-btn px-5 py-3"  onclick="window.location.href='{% url 'adminmanager:concierge_pending_requests' %}'">
+                <button type="button" class="btn custom-btn px-5 py-3"  onclick="window.location.href='{% url 'adminmanager:concierge_open_requests' %}'">
                     <i class="bi bi-arrow-left-circle-fill me-2"></i>
                     <span>Go Back</span>
                 </button>
