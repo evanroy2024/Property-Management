@@ -41,7 +41,7 @@ class PrearrivalInformation(models.Model):
         ('completed', 'Completed'),
         ('denied', 'Denied'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     arrival_date = models.DateField(null=True, blank=True)
@@ -81,7 +81,7 @@ class DepartureInformation(models.Model):
         ('completed', 'Completed'),
         ('denied', 'Denied'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     departure_date = models.DateField(null=True, blank=True)

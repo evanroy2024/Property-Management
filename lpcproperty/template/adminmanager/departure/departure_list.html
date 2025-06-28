@@ -1,5 +1,6 @@
 {% extends 'adminmanager/adminbase.html' %}
 {% block content %}
+{% load static %}
 <style>
     body {
         background-color: white;
@@ -85,7 +86,7 @@
     }
 
     .card-header {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(90deg, #3b82f6, #60a5fa); /* use background instead */
         padding: 24px 30px;
         position: relative;
         overflow: hidden;
@@ -338,13 +339,16 @@
    <!-- Include Font Awesome CDN -->
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-   <div class="d-flex align-items-center mt-4" style="margin-bottom: 20px;">
-       <!-- Back Arrow and Heading Text -->
-       <a href="{% url 'adminmanager:admin_dashboard' %}" class="d-flex align-items-center text-decoration-none" style="display: flex; align-items: center; color: inherit;">
-           <i class="fas fa-arrow-left me-3" style="font-size: 20px; color: #007bff;"></i> <!-- Font Awesome Arrow -->
-           <h1 class="page-title mb-0" style="font-size: 1.5rem; font-weight: bold; color: #333;">Departure Info</h1>
-       </a>
-   </div>
+
+<div style="margin-top: 2%; margin-bottom: 2%; font-size: 1.5rem;" class="d-flex justify-content-center align-items-center mb-4 text-center flex-column flex-md-row gap-3">
+    <!-- Left Image -->
+    <img src="{% static 'img/smalllogo.png' %}" alt="Concierge Icon" style="width: auto; height: 50px; margin-top: -10px;">
+
+    <!-- Centered Text -->
+    <div>
+        <h1 class="page-title mb-1" style="font-size: 2.5rem; color: #1f2937; font-weight: 700;">Departure Notifications </h1>
+    </div>
+</div>
     <div class="requests-card">
         <div class="card-header">
             <h2>
@@ -364,10 +368,10 @@
 <div class="filter-container" style="padding-left: 20px; padding-right: 20px;">
     <label for="status-filter">Filter by Status:</label>
     <select id="status-filter" onchange="filterRequests()" class="form-select" style="padding: 8px; border-radius: 6px;">
-        <option value="all">All</option>
-        <option value="Pending" selected>Pending</option>
-        <option value="Completed">Completed</option>
-        <option value="Denied">Denied</option>
+        <option value="all" selected>All Requests</option>
+        <option value="Open" >Open Requests</option>
+        <option value="Completed">Completed Requests</option>
+        <option value="Denied">Denied Requests</option>
     </select>
 </div>
 
@@ -597,5 +601,27 @@
         
     </div>
 </div>
+<style>
+    .btn-contact {
+    padding: 8px 15px;
+    background-color: #6c757d; /* changed to gray */
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 5px 5px 10px 0;
+}
+.btn-view {
+    background-color: #6c757d; 
+    color: white;
+    border: none;
+}
+.card-header:first-child {
+       background-color: linear-gradient(90deg, #3b82f6, #60a5fa);
 
+}
+.page-title::after {
+    background: none;
+}
+</style>
 {% endblock %}

@@ -8,7 +8,7 @@
 
     <!-- Centered Text -->
     <div>
-        <h1 class="page-title mb-1" style="font-size: 2.5rem; color: #1f2937; font-weight: 700;">Opened Service Requests</h1>
+        <h1 class="page-title mb-1" style="font-size: 2.5rem; color: #1f2937; font-weight: 700;">Open Service Requests</h1>
     </div>
 </div>
 
@@ -429,7 +429,7 @@
                             <strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong>
                         </td>
                         <td>{{ req.description|truncatechars:50 }}</td>
-                        <td>
+                        <!-- <td>
                             <a href="{% url 'adminmanager:clientmanager_update_request' req.id %}" onclick="openUpdateModal({{ req.id }}, '{{ req.status }}', '{{ req.vendor.id|default:'' }}')">
                                 {% if req.get_status_display == "Pending" or req.get_status_display == "Open" %}
                                     <span class="badge-custom status-pending">
@@ -449,7 +449,73 @@
                                     </span>
                                 {% endif %}
                             </a>
-                        </td>
+                        </td> -->
+
+                          
+                        <td onclick="window.location.href='{% url 'adminmanager:clientmanager_update_request' req.id %}'" style="cursor: pointer;">
+    {% if req.get_status_display == "Pending" or req.get_status_display == "Open" %}
+        <span class="badge-custom" style="
+            background-color: #FFD700;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #e6c200;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            Pending
+        </span>
+    {% elif req.get_status_display == "Completed" %}
+        <span class="badge-custom" style="
+            background-color: #28a745;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #1e7e34;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% elif req.get_status_display == "Cancelled" or req.get_status_display == "Denied" %}
+        <span class="badge-custom" style="
+            background-color: #dc3545;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #bd2130;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% else %}
+        <span class="badge-custom" style="
+            background-color: #6c757d;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #545b62;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        ">
+            {{ req.get_status_display }}
+        </span>
+    {% endif %}
+</td>
+
                     </tr>
                     {% empty %}
                     <tr>
