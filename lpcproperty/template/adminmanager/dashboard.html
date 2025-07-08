@@ -1,5 +1,5 @@
-{% extends 'adminmanager/adminbase.html' %}
-{ % load static %}
+{% extends 'adminmanager/dashboardbase.html' %}
+{% load static %}
 {% block content %}
 <!-- Font Awesome CDN (v6.5.0) -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -175,6 +175,11 @@
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:concierge_completed_requests' %}'">Completed Requests</div>
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:concierge_denied_requests' %}'">Denied Requests</div>
             </div>
+            <div class="sub-item"><i class="fas fa-exchange-alt"></i> Arrival / Departure Info</div>
+            <div class="sub-sub-menu">
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">Pre-Arrival Info</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:departure_requests' %}'">Departure Info</div>
+            </div>
             <!-- <div class="sub-item"><i class="fas fa-layer-group"></i> Property Improvement</div> -->
             <div class="sub-sub-menu">
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_pending_requests' %}'">Pending Requests</div>
@@ -183,9 +188,9 @@
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_denied_requests' %}'">Denied Requests</div>
             </div>
         <!-- Pre-Arrival Info -->
-        <div class="menu-item pre-arrival" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">
+        <!-- <div class="menu-item pre-arrival" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">
             Pre-Arrival Info
-        </div>
+        </div> -->
         <!-- <div class="sub-menu">
             <div class="sub-item">Welcome Packages</div>
             <div class="sub-sub-menu">
@@ -200,9 +205,9 @@
         </div> -->
         
         <!-- Departure Info -->
-        <div class="menu-item departure" onclick="window.location.href='{% url 'adminmanager:departure_requests' %}'">
+        <!-- <div class="menu-item departure" onclick="window.location.href='{% url 'adminmanager:departure_requests' %}'">
             Departure Info
-        </div>
+        </div> -->
         <!-- <div class="sub-menu">
             <div class="sub-item">Checkout Process</div>
             <div class="sub-sub-menu">
@@ -219,12 +224,12 @@
         <!-- Manage Client -->
        
         <!-- Manage CM's -->
-        <div class="menu-item manage-client " onclick="window.location.href='{% url 'adminmanager:list' %}'">
+        <div class="menu-item pre-arrival"  onclick="window.location.href='{% url 'adminmanager:list' %}'">
             Manage CM's
         </div>
         
 
-        <div class="menu-item manage-cms" onclick="window.location.href='{% url 'adminmanager:vendor_list' %}'">
+        <div class="menu-item departure"  onclick="window.location.href='{% url 'adminmanager:vendor_list' %}'">
             Manage Vendors
         </div>
         

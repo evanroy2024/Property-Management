@@ -681,7 +681,13 @@
                         <label class="form-label" for="city">City</label>
                         <input class="form-control" type="text" id="city" name="city" required placeholder="Enter the City Name">
                         <label class="form-label" for="state">State</label>
-                        <input class="form-control" type="text" id="state" name="state" required placeholder="Enter the State Name">
+<select class="form-control" name="state" id="state" required>
+    <option value="" disabled selected>Select State</option>
+    {% for state in us_states %}
+        <option value="{{ state }}">{{ state }}</option>
+    {% endfor %}
+</select>
+
                     </div>
                    
                     
@@ -709,6 +715,11 @@
                         <label class="form-label" for="year_built">Zipcode</label>
                         <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" placeholder="Enter Zipcode">
                     </div>
+
+                    <div class="form-group half">
+    <label class="form-label" for="additional_info">Additional Property Information</label>
+    <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property"></textarea>
+</div>
                     
                 </div>
             </div>
@@ -735,6 +746,30 @@
                     <label class="checkbox-container">
                         <input type="checkbox" name="gated_property" id="gated_property">
                         Gated Property
+                    </label>
+                     <label class="checkbox-container">
+                        <input type="checkbox" name="basketball_court" id="basketball_court">
+                        Basketball Court
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="tennis_court" id="tennis_court">
+                        Tennis Court
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="pickleball_court" id="pickleball_court">
+                        Pickle Ball Court
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="hot_tub" id="hot_tub">
+                        Hot Tub
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="outdoor_kitchen_gazebo" id="outdoor_kitchen_gazebo">
+                        Outdoor Kitchen / Gazebo
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="waterfront" id="waterfront">
+                        Waterfront
                     </label>
                 </div>
             </div>

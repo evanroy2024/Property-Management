@@ -152,9 +152,7 @@
 th.sortable:hover .sort-icon {
     color: #000;
 }
-#sortable-table:hover {
-    cursor: pointer;
-}
+
 </style>
 
 <div class="content-wrapper">
@@ -170,10 +168,10 @@ th.sortable:hover .sort-icon {
 
     <!-- Properties Table Card -->
     <div class="card shadow mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <!-- <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold">Property Listings</h6>
          
-        </div>
+        </div> -->
     
         <!-- Live Filters -->
         <div class="p-3">
@@ -198,6 +196,7 @@ th.sortable:hover .sort-icon {
                   <option value="">States</option>
                 </select>
               </div>
+              
             </div>
           </div>
           
@@ -212,6 +211,7 @@ th.sortable:hover .sort-icon {
                             <th class="sortable" data-index="2">Property Address <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="3">Property State <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="4">Size of Home <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="2">Zip Code <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="5">CM Name <i class="fas fa-sort sort-icon"></i></th>
 
                             <th>Actions</th>
@@ -230,6 +230,7 @@ th.sortable:hover .sort-icon {
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
+                            <td>{{ prop.zipcode }}</td>
                             <td>{{ prop.client_manager.last_name }}, {{ prop.client_manager.first_name }} </td>
                             <td>
                                 <a href="{% url 'adminmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
@@ -662,4 +663,12 @@ th.sortable:hover .sort-icon {
         });
     });
 </script>
+<style>
+   
+    @media (min-width: 1000px) {
+  .content-wrapper {
+    min-height: 700px;
+  }
+}
+</style>
 {% endblock content %}

@@ -1,5 +1,4 @@
 {% extends 'cmbase.html' %}
-
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -388,18 +387,21 @@
 
                 <!-- INITIAL BASIC FIELDS -->
                 <div id="basic-info">
-                    <div class="form-group">
-                        <label for="id_user">Client :</label>
-                        {{ form.user }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_description">Property :</label>
-                        {{ form.property }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_description">Inspection Summary :</label>
-                        {{ form.description }}
-                    </div>
+                   <div class="form-group" style="display: flex; align-items: flex-start; margin-bottom: 10px;">
+  <label for="id_user" style="width: 160px;">Client:</label>
+  <div style="flex: 1;">{{ form.user }}</div>
+</div>
+
+<div class="form-group" style="display: flex; align-items: flex-start; margin-bottom: 10px;">
+  <label for="id_property" style="width: 160px;">Property:</label>
+  <div style="flex: 1;">{{ form.property }}</div>
+</div>
+
+<div class="form-group" style="display: flex; align-items: flex-start;">
+  <label for="id_description" style="width: 160px;">Inspection Summary:</label>
+  <div style="flex: 1;">{{ form.description }}</div>
+</div>
+
 
     
 
@@ -423,14 +425,14 @@
                                             <button type="button" class="tab-link" data-tab="KITCHEN" data-index="4">
                                                 <i class="fas fa-utensils tab-icon"></i>Kitchen
                                             </button>
-                                            <button type="button" class="tab-link" data-tab="BUTLERS" data-index="5">
+                                            <button type="button" class="tab-link" data-tab="ENTRY_FOYER" data-index="5">
+                                                <i class="fas fa-door-closed tab-icon"></i>Entry / Foyer
+                                            </button>
+                                            <button type="button" class="tab-link" data-tab="BUTLERS" data-index="6">
                                                 <i class="fas fa-user-tie tab-icon"></i>Butlers
                                             </button>
-                                            <button type="button" class="tab-link" data-tab="BREAKFAST_AREA" data-index="6">
+                                            <button type="button" class="tab-link" data-tab="BREAKFAST_AREA" data-index="7">
                                                 <i class="fas fa-coffee tab-icon"></i>Breakfast Area
-                                            </button>
-                                            <button type="button" class="tab-link" data-tab="ENTRY_FOYER" data-index="7">
-                                                <i class="fas fa-door-closed tab-icon"></i>Entry / Foyer
                                             </button>
                                             <button type="button" class="tab-link" data-tab="GREAT_ROOM" data-index="8">
                                                 <i class="fas fa-couch tab-icon"></i>Great / Family Room
@@ -871,6 +873,41 @@
                                                 <div class="item-remarks">{{ form.kitchen12_remarks }}</div>
                                             </div>
                                         </div>
+
+                                        <div class="tab-content" id="ENTRY_FOYER">
+                                            <h3 class="section-title">Entry / Foyer</h3>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.entry1.label_tag }}</div>
+                                                <div class="item-control">{{ form.entry1 }}</div>
+                                                <div class="item-remarks">{{ form.entry1_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.entry2.label_tag }}</div>
+                                                <div class="item-control">{{ form.entry2 }}</div>
+                                                <div class="item-remarks">{{ form.entry2_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.entry3.label_tag }}</div>
+                                                <div class="item-control">{{ form.entry3 }}</div>
+                                                <div class="item-remarks">{{ form.entry3_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.entry4.label_tag }}</div>
+                                                <div class="item-control">{{ form.entry4 }}</div>
+                                                <div class="item-remarks">{{ form.entry4_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.entry5.label_tag }}</div>
+                                                <div class="item-control">{{ form.entry5 }}</div>
+                                                <div class="item-remarks">{{ form.entry5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.entry6.label_tag }}</div>
+                                                <div class="item-control">{{ form.entry6 }}</div>
+                                                <div class="item-remarks">{{ form.entry6_remarks }}</div>
+                                            </div>
+                                            
+                                        </div>
                                         
                                         <div class="tab-content" id="BUTLERS">
                                             <h3 class="section-title">Butlers</h3>
@@ -934,6 +971,16 @@
                                                 <div class="item-control">{{ form.butlers12 }}</div>
                                                 <div class="item-remarks">{{ form.butlers12_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.butlers13.label_tag }}</div>
+                                                <div class="item-control">{{ form.butlers13 }}</div>
+                                                <div class="item-remarks">{{ form.butlers13_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.butlers14.label_tag }}</div>
+                                                <div class="item-control">{{ form.butlers14 }}</div>
+                                                <div class="item-remarks">{{ form.butlers14_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -964,30 +1011,15 @@
                                                 <div class="item-control">{{ form.breakfast5 }}</div>
                                                 <div class="item-remarks">{{ form.breakfast5_remarks }}</div>
                                             </div>
-                                            
-                                        </div>
-                                        
-                                        <div class="tab-content" id="ENTRY_FOYER">
-                                            <h3 class="section-title">Entry / Foyer</h3>
                                             <div class="item-row">
-                                                <div class="item-label">{{ form.entry1.label_tag }}</div>
-                                                <div class="item-control">{{ form.entry1 }}</div>
-                                                <div class="item-remarks">{{ form.entry1_remarks }}</div>
+                                                <div class="item-label">{{ form.breakfast6.label_tag }}</div>
+                                                <div class="item-control">{{ form.breakfast6 }}</div>
+                                                <div class="item-remarks">{{ form.breakfast6_remarks }}</div>
                                             </div>
                                             <div class="item-row">
-                                                <div class="item-label">{{ form.entry2.label_tag }}</div>
-                                                <div class="item-control">{{ form.entry2 }}</div>
-                                                <div class="item-remarks">{{ form.entry2_remarks }}</div>
-                                            </div>
-                                            <div class="item-row">
-                                                <div class="item-label">{{ form.entry3.label_tag }}</div>
-                                                <div class="item-control">{{ form.entry3 }}</div>
-                                                <div class="item-remarks">{{ form.entry3_remarks }}</div>
-                                            </div>
-                                            <div class="item-row">
-                                                <div class="item-label">{{ form.entry4.label_tag }}</div>
-                                                <div class="item-control">{{ form.entry4 }}</div>
-                                                <div class="item-remarks">{{ form.entry4_remarks }}</div>
+                                                <div class="item-label">{{ form.breakfast7.label_tag }}</div>
+                                                <div class="item-control">{{ form.breakfast7 }}</div>
+                                                <div class="item-remarks">{{ form.breakfast7_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -1019,6 +1051,16 @@
                                                 <div class="item-control">{{ form.greatroom5 }}</div>
                                                 <div class="item-remarks">{{ form.greatroom5_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.greatroom6.label_tag }}</div>
+                                                <div class="item-control">{{ form.greatroom6 }}</div>
+                                                <div class="item-remarks">{{ form.greatroom6_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.greatroom6.label_tag }}</div>
+                                                <div class="item-control">{{ form.greatroom6 }}</div>
+                                                <div class="item-remarks">{{ form.greatroom6_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -1048,6 +1090,16 @@
                                                 <div class="item-label">{{ form.dining5.label_tag }}</div>
                                                 <div class="item-control">{{ form.dining5 }}</div>
                                                 <div class="item-remarks">{{ form.dining5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.dining6.label_tag }}</div>
+                                                <div class="item-control">{{ form.dining6 }}</div>
+                                                <div class="item-remarks">{{ form.dining6_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.dining7.label_tag }}</div>
+                                                <div class="item-control">{{ form.dining7 }}</div>
+                                                <div class="item-remarks">{{ form.dining7_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -1194,6 +1246,16 @@
                                                 <div class="item-control">{{ form.bedroom1_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom1_4_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom1_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom1_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom1_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom1_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom1_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom1_6_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -1218,6 +1280,16 @@
                                                 <div class="item-label">{{ form.bedroom2_4.label_tag }}</div>
                                                 <div class="item-control">{{ form.bedroom2_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom2_4_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom2_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom2_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom2_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom2_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom2_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom2_6_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -1244,6 +1316,16 @@
                                                 <div class="item-control">{{ form.bedroom3_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom3_4_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom3_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom3_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom3_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom3_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom3_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom3_6_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -1268,6 +1350,16 @@
                                                 <div class="item-label">{{ form.bedroom4_4.label_tag }}</div>
                                                 <div class="item-control">{{ form.bedroom4_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom4_4_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom4_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom4_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom4_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom4_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom4_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom4_6_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -1294,6 +1386,16 @@
                                             <div class="item-control">{{ form.bedroom5_4 }}</div>
                                             <div class="item-remarks">{{ form.bedroom5_4_remarks }}</div>
                                         </div>
+                                        <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom5_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom5_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom5_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom5_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom5_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom5_6_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BEDROOM6">
@@ -1317,6 +1419,16 @@
                                                 <div class="item-label">{{ form.bedroom6_4.label_tag }}</div>
                                                 <div class="item-control">{{ form.bedroom6_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom6_4_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom6_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom6_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom6_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom6_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom6_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom6_6_remarks }}</div>
                                             </div>
                                         </div>
 
@@ -1342,6 +1454,16 @@
                                                 <div class="item-control">{{ form.bedroom7_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom7_4_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom7_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom7_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom7_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom7_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom7_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom7_6_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BEDROOM8">
@@ -1365,6 +1487,16 @@
                                                 <div class="item-label">{{ form.bedroom8_4.label_tag }}</div>
                                                 <div class="item-control">{{ form.bedroom8_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom8_4_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom8_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom8_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom8_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom8_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom8_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom8_6_remarks }}</div>
                                             </div>
                                         </div>
 
@@ -1390,6 +1522,16 @@
                                                 <div class="item-control">{{ form.bedroom9_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom9_4_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom9_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom9_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom9_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom9_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom9_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom9_6_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BEDROOM10">
@@ -1414,10 +1556,17 @@
                                                 <div class="item-control">{{ form.bedroom10_4 }}</div>
                                                 <div class="item-remarks">{{ form.bedroom10_4_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom10_5.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom10_5 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom10_5_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bedroom10_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.bedroom10_6 }}</div>
+                                                <div class="item-remarks">{{ form.bedroom10_6_remarks }}</div>
+                                            </div>
                                         </div>
-
-                                        
-                                        
                                         
                                         <div class="tab-content" id="BATHROOM1">
                                             <h3 class="section-title">Bathroom 1 (Master Bath)</h3>
@@ -1460,6 +1609,16 @@
                                                 <div class="item-label">{{ form.bathroom1_8.label_tag }}</div>
                                                 <div class="item-control">{{ form.bathroom1_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom1_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom1_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom1_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom1_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom1_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom1_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom1_10_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -1506,6 +1665,16 @@
                                                 <div class="item-control">{{ form.bathroom2_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom2_8_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom2_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom2_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom2_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom2_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom2_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom2_10_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -1550,6 +1719,16 @@
                                                 <div class="item-label">{{ form.bathroom3_8.label_tag }}</div>
                                                 <div class="item-control">{{ form.bathroom3_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom3_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom3_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom3_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom3_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom3_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom3_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom3_10_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -1596,6 +1775,16 @@
                                                 <div class="item-control">{{ form.bathroom4_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom4_8_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom4_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom4_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom4_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom4_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom4_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom4_10_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -1641,6 +1830,16 @@
                                                 <div class="item-control">{{ form.bathroom5_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom5_8_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom5_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom5_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom5_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom5_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom5_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom5_10_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BATHROOM6">
@@ -1685,6 +1884,16 @@
                                             <div class="item-control">{{ form.bathroom6_8 }}</div>
                                             <div class="item-remarks">{{ form.bathroom6_8_remarks }}</div>
                                         </div>
+                                        <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom6_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom6_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom6_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom6_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom6_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom6_10_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BATHROOM7">
@@ -1728,6 +1937,16 @@
                                                 <div class="item-label">{{ form.bathroom7_8.label_tag }}</div>
                                                 <div class="item-control">{{ form.bathroom7_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom7_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom7_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom7_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom7_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom7_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom7_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom7_10_remarks }}</div>
                                             </div>
                                         </div>
 
@@ -1773,6 +1992,16 @@
                                                 <div class="item-control">{{ form.bathroom8_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom8_8_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom8_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom8_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom8_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom8_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom8_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom8_10_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BATHROOM9">
@@ -1816,6 +2045,16 @@
                                                 <div class="item-label">{{ form.bathroom9_8.label_tag }}</div>
                                                 <div class="item-control">{{ form.bathroom9_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom9_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom9_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom9_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom9_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom9_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom9_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom9_10_remarks }}</div>
                                             </div>
                                         </div>
 
@@ -1861,6 +2100,16 @@
                                                 <div class="item-control">{{ form.bathroom10_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom10_8_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom10_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom10_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom10_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom10_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom10_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom10_10_remarks }}</div>
+                                            </div>
                                         </div>
 
                                         <div class="tab-content" id="BATHROOM11">
@@ -1904,6 +2153,16 @@
                                                 <div class="item-label">{{ form.bathroom11_8.label_tag }}</div>
                                                 <div class="item-control">{{ form.bathroom11_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom11_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom11_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom11_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom11_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom11_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom11_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom11_10_remarks }}</div>
                                             </div>
                                         </div>
 
@@ -1949,6 +2208,16 @@
                                                 <div class="item-control">{{ form.bathroom12_8 }}</div>
                                                 <div class="item-remarks">{{ form.bathroom12_8_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom12_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom12_9 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom12_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.bathroom12_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.bathroom12_10 }}</div>
+                                                <div class="item-remarks">{{ form.bathroom12_10_remarks }}</div>
+                                            </div>
                                         </div>
                                             
                                         <div class="tab-content" id="GYM">
@@ -1988,6 +2257,16 @@
                                                 <div class="item-control">{{ form.gym_7 }}</div>
                                                 <div class="item-remarks">{{ form.gym_7_remarks }}</div>
                                             </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.gym_8.label_tag }}</div>
+                                                <div class="item-control">{{ form.gym_8 }}</div>
+                                                <div class="item-remarks">{{ form.gym_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.gym_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.gym_9 }}</div>
+                                                <div class="item-remarks">{{ form.gym_9_remarks }}</div>
+                                            </div>
                                             
                                         </div>
                                         
@@ -2017,7 +2296,17 @@
                                                 <div class="item-label">{{ form.theatre_5.label_tag }}</div>
                                                 <div class="item-control">{{ form.theatre_5 }}</div>
                                                 <div class="item-remarks">{{ form.theatre_5_remarks }}</div>
-                                            </div>                                            
+                                            </div>  
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.theatre_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.theatre_6 }}</div>
+                                                <div class="item-remarks">{{ form.theatre_6_remarks }}</div>
+                                            </div> 
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.theatre_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.theatre_6 }}</div>
+                                                <div class="item-remarks">{{ form.theatre_6_remarks }}</div>
+                                            </div>                                           
                                         </div>
                                         
                                         <div class="tab-content" id="GUEST_HOUSE_SLEEPING_LIVING">
@@ -2046,6 +2335,16 @@
                                                 <div class="item-label">{{ form.guest_house_5.label_tag }}</div>
                                                 <div class="item-control">{{ form.guest_house_5 }}</div>
                                                 <div class="item-remarks">{{ form.guest_house_5_remarks }}</div>
+                                            </div>
+                                             <div class="item-row">
+                                                <div class="item-label">{{ form.guest_house_6.label_tag }}</div>
+                                                <div class="item-control">{{ form.guest_house_6 }}</div>
+                                                <div class="item-remarks">{{ form.guest_house_6_remarks }}</div>
+                                            </div>
+                                             <div class="item-row">
+                                                <div class="item-label">{{ form.guest_house_7.label_tag }}</div>
+                                                <div class="item-control">{{ form.guest_house_7 }}</div>
+                                                <div class="item-remarks">{{ form.guest_house_7_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -2091,6 +2390,16 @@
                                                 <div class="item-label">{{ form.guest_house_bath_8.label_tag }}</div>
                                                 <div class="item-control">{{ form.guest_house_bath_8 }}</div>
                                                 <div class="item-remarks">{{ form.guest_house_bath_8_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.guest_house_bath_9.label_tag }}</div>
+                                                <div class="item-control">{{ form.guest_house_bath_9 }}</div>
+                                                <div class="item-remarks">{{ form.guest_house_bath_9_remarks }}</div>
+                                            </div>
+                                            <div class="item-row">
+                                                <div class="item-label">{{ form.guest_house_bath_10.label_tag }}</div>
+                                                <div class="item-control">{{ form.guest_house_bath_10 }}</div>
+                                                <div class="item-remarks">{{ form.guest_house_bath_10_remarks }}</div>
                                             </div>
                                             
                                         </div>
@@ -3089,31 +3398,49 @@ select.required-field:invalid {
 }
 </style>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Find the input field inside .item-remarks
-    const input = document.querySelector('.item-remarks input[type="text"]');
-    
-    if (input) {
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all input fields inside elements with class "item-remarks"
+    const inputs = document.querySelectorAll('.item-remarks input[type="text"]');
+
+    inputs.forEach(function(input) {
         // Create a new textarea element
         const textarea = document.createElement('textarea');
-        
-        // Copy all attributes from input to textarea
+
+        // Copy attributes
         textarea.name = input.name;
         textarea.id = input.id;
         textarea.value = input.value;
         textarea.className = input.className;
         textarea.placeholder = input.placeholder || '';
-        
+
         // Set textarea properties
         textarea.rows = 4;
         textarea.style.width = input.style.width || '100%';
         textarea.style.resize = 'vertical';
-        
+        textarea.style.direction = 'ltr';
+        textarea.style.textAlign = 'left';
+
         // Replace input with textarea
         input.parentNode.replaceChild(textarea, input);
-    }
+    });
 });
 </script>
 
+
+<style>
+.tab-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-icon {
+  width: 20px; /* Fixed width ensures text aligns */
+  text-align: center;
+}
+.item-control {
+    min-width: 150px;
+}
+</style>
 
 {% endblock content %}

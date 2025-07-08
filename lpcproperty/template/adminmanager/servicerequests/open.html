@@ -531,7 +531,7 @@
                 </tbody>
             </table>
         </div>
-        {% if requests %}
+        {% if requests and requests|length > 10 %}
         <div class="table-footer d-flex justify-content-between align-items-center">
             <div style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">
                 Showing <strong>{{ requests|length }}</strong> items

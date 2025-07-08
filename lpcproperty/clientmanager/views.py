@@ -335,7 +335,14 @@ def property_create_view(request):
         'clients': clients,
         'managers': managers
     })
-
+from django.shortcuts import render, get_object_or_404, redirect
+US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
 
 def property_update_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk)
@@ -356,10 +363,19 @@ def property_update_view(request, pk):
             prop.impact_windows = 'impact_windows' in request.POST
             prop.has_hoa = 'has_hoa' in request.POST
             prop.gated_property = 'gated_property' in request.POST
+            prop.basketball_court = 'basketball_court' in request.POST
+            prop.tennis_court = 'tennis_court' in request.POST
+            prop.pickleball_court = 'pickleball_court' in request.POST
+            prop.hot_tub = 'hot_tub' in request.POST
+            prop.outdoor_kitchen_gazebo = 'outdoor_kitchen_gazebo' in request.POST
+            prop.waterfront = 'waterfront' in request.POST
+
             prop.state = request.POST.get('property_state', '')   # Added state
             prop.city = request.POST.get('property_city', '')     # Added City 
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
             prop.zipcode = request.POST.get('property_zipcode', '')     # Added City 
+            prop.additional_info = request.POST.get('additional_info', '')
+
             prop.save()
 
             # Update Client info
@@ -488,7 +504,8 @@ def property_update_view(request, pk):
         'floors': floors,
         'client': client,
         'client_managers': client_managers,
-        'selected_client_manager': prop.client_manager
+        'selected_client_manager': prop.client_manager,
+        'us_states': US_STATES,
     })
 
 
@@ -835,29 +852,76 @@ def denied_requests(request):
     requests = ServiceRequest.objects.filter(status='denied')
     return render(request, 'clientmanager/servicerequests/denied.html', {'requests': requests})
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.dateparse import parse_date
+from django.contrib import messages
+
 def update_service_request(request, request_id):
     manager_id = request.session.get('manager_id') 
     if not manager_id:
         return redirect('clientmanager:client_login')
-
     request_obj = get_object_or_404(ServiceRequest, id=request_id)
     vendors = Vendor.objects.all()
 
     if request.method == 'POST':
         request_obj.status = request.POST.get('status')
+
+        # Handle vendor
         vendor_id = request.POST.get('vendor')
         if vendor_id:
             request_obj.vendor = Vendor.objects.get(id=vendor_id)
         else:
             request_obj.vendor = None
+
+        # Get and validate completation_denied_date
+        date_str = request.POST.get('completation_denied_date')
+        print("DEBUG - Received date:", date_str)  # For debugging in terminal
+
+        parsed_date = parse_date(date_str)
+        if not parsed_date:
+            messages.error(request, "Completation Denied Date is required and must be valid.")
+            return render(request, 'adminmanager/servicerequests/update.html', {
+                'request_obj': request_obj,
+                'vendors': vendors,
+            })
+
+        request_obj.completation_denied_date = parsed_date
         request_obj.save()
-        messages.success(request, 'Request Updated Successfully!')
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('clientmanager:clientmanager_open_requests')
 
     return render(request, 'clientmanager/servicerequests/update.html', {
         'request_obj': request_obj,
         'vendors': vendors,
     })
+
+
+
+# def update_service_request(request, request_id):
+#     manager_id = request.session.get('manager_id') 
+#     if not manager_id:
+#         return redirect('clientmanager:client_login')
+
+#     request_obj = get_object_or_404(ServiceRequest, id=request_id)
+#     vendors = Vendor.objects.all()
+
+#     if request.method == 'POST':
+#         request_obj.status = request.POST.get('status')
+#         vendor_id = request.POST.get('vendor')
+#         if vendor_id:
+#             request_obj.vendor = Vendor.objects.get(id=vendor_id)
+#         else:
+#             request_obj.vendor = None
+
+        
+#         request_obj.save()
+#         messages.success(request, 'Request Updated Successfully!')
+#         return redirect(request.META.get('HTTP_REFERER', '/'))
+
+#     return render(request, 'clientmanager/servicerequests/update.html', {
+#         'request_obj': request_obj,
+#         'vendors': vendors,
+#     })
 
 def service_request_detail(request, request_id):
     manager_id = request.session.get('manager_id') 
@@ -905,7 +969,31 @@ def concierge_denied_requests(request):
     requests = ConciergeServiceRequest.objects.filter(status='denied')
     return render(request, 'clientmanager/conciergerequests/denied.html', {'requests': requests})
 
-# Update
+# # Update
+# def update_concierge_request(request, request_id):
+#     manager_id = request.session.get('manager_id') 
+#     if not manager_id:
+#         return redirect('clientmanager:client_login')
+
+#     request_obj = get_object_or_404(ConciergeServiceRequest, id=request_id)
+#     vendors = Vendor.objects.all()
+
+#     if request.method == 'POST':
+#         request_obj.status = request.POST.get('status')
+#         vendor_id = request.POST.get('vendor')
+#         if vendor_id:
+#             request_obj.vendor = Vendor.objects.get(id=vendor_id)
+#         else:
+#             request_obj.vendor = None
+#         request_obj.save()
+#         messages.success(request, 'Request Updated Successfully!')
+#         return redirect(request.META.get('HTTP_REFERER', '/'))
+
+#     return render(request, 'clientmanager/conciergerequests/update.html', {
+#         'request_obj': request_obj,
+#         'vendors': vendors,
+#     })
+
 def update_concierge_request(request, request_id):
     manager_id = request.session.get('manager_id') 
     if not manager_id:
@@ -916,19 +1004,36 @@ def update_concierge_request(request, request_id):
 
     if request.method == 'POST':
         request_obj.status = request.POST.get('status')
+
+        # Handle vendor
         vendor_id = request.POST.get('vendor')
         if vendor_id:
             request_obj.vendor = Vendor.objects.get(id=vendor_id)
         else:
             request_obj.vendor = None
+
+        # Get and validate date
+        date_str = request.POST.get('completation_denied_date')
+        print("DEBUG: Got date:", date_str)
+        parsed_date = parse_date(date_str)
+
+        if not parsed_date:
+            messages.error(request, "Completation Denied Date is required and must be valid.")
+            return render(request, 'clientnager/conciergerequests/update.html', {
+                'request_obj': request_obj,
+                'vendors': vendors,
+            })
+
+        request_obj.completation_denied_date = parsed_date
         request_obj.save()
-        messages.success(request, 'Request Updated Successfully!')
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+        return redirect('clientmanager:concierge_open_requests')
 
     return render(request, 'clientmanager/conciergerequests/update.html', {
         'request_obj': request_obj,
         'vendors': vendors,
     })
+
 
 # View
 def view_concierge_request(request, request_id):
@@ -1265,7 +1370,7 @@ def open_reports_view(request):
     if not manager_id:
         return redirect('clientmanager:client_login')
 
-    reports = WalkthroughReport.objects.all()
+    reports = WalkthroughReport.objects.filter(status="Open")
     return render(request, 'clientmanager/walkthrough/open_reports.html', {
         'reports': reports,
         'base_template': 'cmbase.html'
@@ -1536,3 +1641,65 @@ def walk_export_csv(request, report_id):
 
     return response
 # Creating Reports 
+
+
+
+
+
+# Report Updates ----------------------------------------------------------------------
+from django.http import JsonResponse
+from walkthroughreport.models import WalkthroughReport
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+
+
+@csrf_exempt
+def update_cost_ajax(request, report_id):
+    if request.method == 'POST':
+        cost = request.POST.get('cost')
+        report = WalkthroughReport.objects.get(id=report_id)
+        report.cost = int(cost)
+        report.save()
+        return JsonResponse({'success': True, 'new_cost': report.cost})
+    return JsonResponse({'success': False})
+@csrf_exempt
+def update_client_approval(request, report_id):
+    if request.method == 'POST':
+        status = request.POST.get('approval')
+        if status not in ['Approved', 'Denied']:
+            return JsonResponse({'success': False})
+        try:
+            report = WalkthroughReport.objects.get(id=report_id)
+            report.client_approval = status
+            report.save()
+            return JsonResponse({'success': True, 'new_status': report.client_approval})
+        except:
+            return JsonResponse({'success': False})
+    return JsonResponse({'success': False})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from walkthroughreport.models import WalkthroughReport
+from datetime import datetime
+
+@csrf_exempt
+def update_status(request, report_id):
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        date_str = request.POST.get('date')
+
+        if new_status not in ['Completed', 'Denied'] or not date_str:
+            return JsonResponse({'success': False})
+
+        try:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            report = WalkthroughReport.objects.get(id=report_id)
+            report.status = new_status
+            report.completation_denied_date = date_obj
+            report.save()
+            return JsonResponse({'success': True, 'new_status': new_status, 'new_date': str(date_obj)})
+        except:
+            return JsonResponse({'success': False})
+
+    return JsonResponse({'success': False})

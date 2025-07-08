@@ -471,15 +471,21 @@
                         </div>
 
                         <div class="form-row">
-                          <div class="form-col form-col-md">
-                              <div class="form-group">
-                                  <label class="form-label" for="number_of_stories">Property State</label>
-                                  <div class="input-with-icon">
-                                      <i class="fas fa-building input-icon"></i>
-                                      <input type="text" id="property_state" name="property_state" class="form-control" value="{{ property.state }}" placeholder="Enter State">
-                                  </div>
-                              </div>
-                          </div>
+                         <div class="form-col form-col-md">
+  <div class="form-group">
+    <label class="form-label" for="property_state">Property State</label>
+    <div class="input-with-icon">
+      <i class="fas fa-building input-icon"></i>
+      <select id="property_state" name="property_state" class="form-control">
+        <option value="">Select State</option>
+        {% for code in us_states %}
+          <option value="{{ code }}" {% if property.state == code %}selected{% endif %}>{{ code }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</div>
+
                           <div class="form-col form-col-md">
                               <div class="form-group">
                                   <label class="form-label" for="year_built">Property City</label>
@@ -500,9 +506,15 @@
                         </div>
 
                          <div class="form-group half">
-                        <label class="form-label" for="year_built">Zipcode</label>
-                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" placeholder="{{ property.zipcode }}">
+                        <label class="form-label" for="year_built">Zip Code</label>
+                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" value="{{ property.zipcode }}" placeholder="Enter Zip Code">
                     </div>
+                       <!-- Additional Info -->
+<div class="form-group">
+    <label class="form-label" for="additional_info">Additional Property Information</label>
+    <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property">{{ property.additional_info }}</textarea>
+</div>
+                    
                     
                         
                         
@@ -538,6 +550,36 @@
                                     <input type="checkbox" name="gated_property" {% if property.gated_property %}checked{% endif %}>
                                     <span class="checkbox-label">Gated Property</span>
                                 </label>
+                                <label class="custom-checkbox">
+    <input type="checkbox" name="basketball_court" {% if property.basketball_court %}checked{% endif %}>
+    <span class="checkbox-label">Basketball Court</span>
+</label>
+
+<label class="custom-checkbox">
+    <input type="checkbox" name="tennis_court" {% if property.tennis_court %}checked{% endif %}>
+    <span class="checkbox-label">Tennis Court</span>
+</label>
+
+<label class="custom-checkbox">
+    <input type="checkbox" name="pickleball_court" {% if property.pickleball_court %}checked{% endif %}>
+    <span class="checkbox-label">Pickle Ball Court</span>
+</label>
+
+<label class="custom-checkbox">
+    <input type="checkbox" name="hot_tub" {% if property.hot_tub %}checked{% endif %}>
+    <span class="checkbox-label">Hot Tub</span>
+</label>
+
+<label class="custom-checkbox">
+    <input type="checkbox" name="outdoor_kitchen_gazebo" {% if property.outdoor_kitchen_gazebo %}checked{% endif %}>
+    <span class="checkbox-label">Outdoor Kitchen / Gazebo</span>
+</label>
+
+<label class="custom-checkbox">
+    <input type="checkbox" name="waterfront" {% if property.waterfront %}checked{% endif %}>
+    <span class="checkbox-label">Waterfront</span>
+</label>
+
                             </div>
                         </div>
                         
@@ -1098,7 +1140,8 @@ function toggleVisibility() {
                     </select>
                 </div>
             
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Update Client Manager</button>
+                                <button type="submit" class="btn btn-primary ">Update</button>
+
             </form>
 <style>
     /* Form Container */
@@ -1245,64 +1288,76 @@ function toggleVisibility() {
         });
     </script> -->
 
-    <script>
-        let floorCount = 1;
-    
-        // Add new floor function
-        function addFloor() {
-            floorCount++;
-            const floorSection = document.createElement("div");
-            floorSection.className = "floor-section";
-            floorSection.id = `floor-section-${floorCount}`;
-    
-            floorSection.innerHTML = `
+<script>
+    // Initialize floorCount to the number of existing floor sections
+    let floorCount = document.querySelectorAll('.floor-section').length;
+
+    // Add new floor
+    function addFloor() {
+        floorCount++;
+        const floorSection = document.createElement("div");
+        floorSection.className = "floor-section";
+        floorSection.id = `floor-section-${floorCount}`;
+
+        floorSection.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center">
                 <h2>Floor ${floorCount}</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                        <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
-                    </div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeFloor('floor-section-${floorCount}')">Delete Floor</button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                    <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
                 </div>
-    
-                <!-- Floor Image -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="floor_image_${floorCount}">Floor Image</label>
-                        <input class="form-control" type="file" name="floor_image_${floorCount}" accept="image/*">
-                    </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_image_${floorCount}">Floor Image</label>
+                    <input class="form-control" type="file" name="floor_image_${floorCount}" accept="image/*">
                 </div>
-                
-                <!-- Rooms for the new floor -->
-                <div class="rooms-container" id="rooms-container-${floorCount}">
-                    <h3>Rooms for Floor ${floorCount}</h3>
-                    <div class="room-group" id="room-group-${floorCount}-1">
-                        <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                        <!-- No room size or image input -->
-                    </div>
+            </div>
+
+            <div class="rooms-container" id="rooms-container-${floorCount}">
+                <h3>Rooms for Floor ${floorCount}</h3>
+                <div class="room-group" id="room-group-${floorCount}-1">
+                    <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
                 </div>
-                <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
-            `;
-    
-            document.getElementById("floors-container").appendChild(floorSection);
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addRoom(${floorCount})">Add Room</button>
+            <hr>
+        `;
+
+        document.getElementById("floors-container").appendChild(floorSection);
+    }
+
+    // Add room to specific floor
+    function addRoom(floorId) {
+        const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+        const roomGroup = document.createElement("div");
+        roomGroup.className = "room-group";
+        roomGroup.id = `room-group-${floorId}-${roomCount}`;
+
+        roomGroup.innerHTML = `
+            <input class="form-control mt-2" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+        `;
+
+        document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+    }
+
+    // Remove floor
+    function removeFloor(sectionId) {
+        const floorElement = document.getElementById(sectionId);
+        if (floorElement) {
+            floorElement.remove();
         }
-    
-        // Add new room function for a specific floor
-        function addRoom(floorId) {
-            const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
-            const roomGroup = document.createElement("div");
-            roomGroup.className = "room-group";
-            roomGroup.id = `room-group-${floorId}-${roomCount}`;
-    
-            roomGroup.innerHTML = `
-                <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-                <!-- No room size or image input -->
-            `;
-    
-            document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
-        }
-    </script>
+    }
+</script>
     
 
+ 
     <style>
         #floors-container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1487,6 +1542,15 @@ function toggleVisibility() {
     min-width: 100%;
   }
 }
-
+#delete-floor-btn{
+  background-color: red !important;
+}
+.client-manager-form .btn {
+    width: 8%;
+    padding: 14px;
+    font-size: 0.9rem;
+    margin: 0 auto;
+    display: flex;
+}
     </style>
 {% endblock content %}

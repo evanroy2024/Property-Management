@@ -35,13 +35,13 @@ from .models import DepartureInformation
 
 @admin.register(DepartureInformation)
 class DepartureInformationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'departure_date', 'departure_time')
+    list_display = ('name', 'user', 'departure_date', 'departure_time', 'status')
     search_fields = ('name', 'user__username')
-    list_filter = ('departure_date',)
+    list_filter = ('departure_date', 'status')
 
     fieldsets = (
         ('User & Departure Details', {
-            'fields': ('user', 'name', 'departure_date', 'departure_time'),
+            'fields': ('user', 'name', 'departure_date', 'departure_time', 'status'),
             'classes': ('wide',),
         }),
         ('Services', {
@@ -49,7 +49,6 @@ class DepartureInformationAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     )
-
 
 
 

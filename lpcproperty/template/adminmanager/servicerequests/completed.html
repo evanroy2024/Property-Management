@@ -8,7 +8,7 @@
 
     <!-- Centered Text -->
     <div>
-        <h1 class="page-title mb-1" style="font-size: 2.5rem; color: #1f2937; font-weight: 700;">Completed Concierge Requests</h1>
+        <h1 class="page-title mb-1" style="font-size: 2.5rem; color: #1f2937; font-weight: 700;">Completed Services Requests</h1>
     </div>
 </div>
 
@@ -505,7 +505,7 @@
                     {% for req in requests %}
                     <tr data-client="{{ req.user.last_name }}, {{ req.user.first_name }}" data-date="{{ req.created_at|date:'Y-m-d' }}">
                         <td>{{ forloop.counter }}</td>
-                          <td onclick="window.location.href='{% url 'adminmanager:concierge_view_request' req.id %}'">
+                          <td onclick="window.location.href='{% url 'adminmanager:clientmanager_view_request' req.id %}'">
                             <div style="color: #1e293b; font-weight: 500;">{{ req.created_at|date:"Y-m-d" }}</div>
                         </td>
                         <td>
@@ -549,7 +549,7 @@
                 </tbody>
             </table>
         </div>
-        {% if requests %}
+       {% if requests and requests|length > 10 %}
         <div class="table-footer d-flex justify-content-between align-items-center">
             <div style="color: #64748b; font-size: 0.875rem;">
                 Showing <strong>{{ requests|length }}</strong> items

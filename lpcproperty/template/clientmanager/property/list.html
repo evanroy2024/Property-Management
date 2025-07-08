@@ -152,28 +152,24 @@
 th.sortable:hover .sort-icon {
     color: #000;
 }
-#sortable-table:hover {
-    cursor: pointer;
-}
+
 </style>
 
 <div class="content-wrapper">
     <!-- Page Header -->
     <div class="page-header">
         <h1 class="h3 mb-0 text-gray-800">All Properties</h1>
-        <!-- <a href="{% url 'clientmanager:property_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus fa-sm mr-2"></i> Add New Property
-        </a> -->
+       
     </div>
 
     <!-- Stats Cards -->
 
     <!-- Properties Table Card -->
     <div class="card shadow mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <!-- <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold">Property Listings</h6>
          
-        </div>
+        </div> -->
     
         <!-- Live Filters -->
         <div class="p-3">
@@ -198,6 +194,7 @@ th.sortable:hover .sort-icon {
                   <option value="">States</option>
                 </select>
               </div>
+              
             </div>
           </div>
           
@@ -212,6 +209,7 @@ th.sortable:hover .sort-icon {
                             <th class="sortable" data-index="2">Property Address <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="3">Property State <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="4">Size of Home <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="2">Zip Code <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="5">CM Name <i class="fas fa-sort sort-icon"></i></th>
 
                             <th>Actions</th>
@@ -230,6 +228,7 @@ th.sortable:hover .sort-icon {
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
                             <td>{{ prop.size_of_home }}</td>
+                            <td>{{ prop.zipcode }}</td>
                             <td>{{ prop.client_manager.last_name }}, {{ prop.client_manager.first_name }} </td>
                             <td>
                                 <a href="{% url 'clientmanager:property_detail' prop.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
@@ -262,10 +261,7 @@ th.sortable:hover .sort-icon {
                                 <div class="empty-state">
                                     <i class="fas fa-home fa-4x mb-3 icon-gray"></i>
                                     <h4 class="text-gray-800 mb-2">No properties found</h4>
-                                    <p class="text-gray-600 mb-3">Get started by adding your first property</p>
-                                    <a href="{% url 'clientmanager:property_create' %}" class="btn btn-primary">
-                                        <i class="fas fa-plus mr-2"></i> Add Property
-                                    </a>
+                                  
                                 </div>
                             </td>
                         </tr>
@@ -535,36 +531,35 @@ th.sortable:hover .sort-icon {
   
           // Update modal content with better design
           modalBody.innerHTML = `
-           <!-- Primary Contact Section -->
+            <!-- Primary Contact Section -->
             <div class="contact-section">
-            <h5>Primary Contact</h5>
-            <div class="contact-row">
+              <h5>Primary Contact</h5>
+              <div class="contact-row">
                 <div class="contact-column">
-                <p class="contact-info"><strong>Name:</strong> ${data.lname || ''}, ${data.name1 || '-'}</p>
-                <p class="contact-info"><strong>Email:</strong> ${data.email1 || '-'}</p>
+                  <p class="contact-info"><strong>Name:</strong> ${data.name1 || '-'} ${data.lname1 || ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${data.email1 || '-'}</p>
                 </div>
                 <div class="contact-column">
-                <p class="contact-info"><strong>Phone:</strong> ${data.phone1 || '-'}</p>
-                <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone1 || '-'}</p>
+                  <p class="contact-info"><strong>Phone:</strong> ${data.phone1 || '-'}</p>
+                  <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone1 || '-'}</p>
                 </div>
+              </div>
             </div>
+  
+            <!-- Secondary Contact Section -->
+            <div class="contact-section">
+              <h5>Secondary Contact</h5>
+              <div class="contact-row">
+                <div class="contact-column">
+                  <p class="contact-info"><strong>Name:</strong> ${data.name2 || '-'} ${data.lname2 || ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${data.email2 || '-'}</p>
+                </div>
+                <div class="contact-column">
+                  <p class="contact-info"><strong>Phone:</strong> ${data.phone2 || '-'}</p>
+                  <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone2 || '-'}</p>
+                </div>
+              </div>
             </div>
-
-           <!-- Secondary Contact Section -->
-                <div class="contact-section">
-                <h5>Secondary Contact</h5>
-                <div class="contact-row">
-                    <div class="contact-column">
-                    <p class="contact-info"><strong>Name:</strong> ${data.lname2 || ''}, ${data.name2 || '-'}</p>
-                    <p class="contact-info"><strong>Email:</strong> ${data.email2 || '-'}</p>
-                    </div>
-                    <div class="contact-column">
-                    <p class="contact-info"><strong>Phone:</strong> ${data.phone2 || '-'}</p>
-                    <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone2 || '-'}</p>
-                    </div>
-                </div>
-                </div>
-
           `;
   
           // Show the modal
@@ -663,4 +658,12 @@ th.sortable:hover .sort-icon {
         });
     });
 </script>
+<style>
+   
+    @media (min-width: 1000px) {
+  .content-wrapper {
+    min-height: 700px;
+  }
+}
+</style>
 {% endblock content %}

@@ -1,322 +1,375 @@
 {% extends 'cmbase.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container py-5 fade-in">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card main-card">
-        <div class="card-header bg-gradient text-white">
-          <h2 class="text-center mb-0 fw-bold card-title-animation">Update Concierge Request</h2>
-        </div>
-        <div class="card-body">
-          <div class="text-center mb-4 subtitle-animation">
-            <p class="text-muted">Manage your concierge request details below</p>
-          </div>
-          {% if messages %}
-          {% for message in messages %}
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <strong>Success!</strong> {{ message }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-          {% endfor %}
-          {% endif %}
-          <form method="post" class="needs-validation form-animation" novalidate>
-            {% csrf_token %}
-            
-            <div class="form-floating mb-4 input-animation">
-              <select name="status" id="status" class="form-select custom-select" required>
-                {% for value, label in request_obj.STATUS_CHOICES %}
-                <option value="{{ value }}" {% if value == request_obj.status %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-              </select>
-              <label for="status">Request Status</label>
-              <div class="icon-container">
-                <div class="icon-circle">
-                  <i class="bi bi-check-circle-fill"></i>
-                </div>
-              </div>
-            </div>
-            
-            <div class="form-floating mb-4 input-animation" style="animation-delay: 0.2s">
-              <select name="vendor" id="vendor" class="form-select custom-select" required>
-                <option value="">-- Select Vendor --</option>
-                {% for vendor in vendors %}
-                <option value="{{ vendor.id }}" {% if vendor == request_obj.vendor %}selected{% endif %}>
-                  {{ vendor.company_name }} (  {{ vendor.service }} )
-                </option>
-                {% endfor %}
-              </select>
-              <label for="vendor">Assign Vendor</label>
-              <div class="icon-container">
-                <div class="icon-circle">
-                  <i class="bi bi-building-fill"></i>
-                </div>
-              </div>
-            </div>
-            
-            <div class="d-flex justify-content-between align-items-center mt-4">
-
-              <!-- Back Button -->
-              <a href="{% url 'clientmanager:concierge_pending_requests' %}" class="btn btn-secondary">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill me-2" viewBox="0 0 16 16">
-                      <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.5 8a.5.5 0 0 1 .5-.5h4.793L8.146 6.354a.5.5 0 1 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 1 1-.708-.708L9.793 8.5H5a.5.5 0 0 1-.5-.5z"/>
-                  </svg>
-                  Back
-              </a>
-          
-              <!-- Update Button -->
-              <button type="submit" class="btn btn-submit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
-                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                  </svg>
-                  Save 
-              </button>
-          
-          </div>
-          
-            
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Required CSS and JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-
 <style>
-  :root {
-    --primary: #4361ee;
-    --primary-light: #4895ef;
-    --primary-dark: #3f37c9;
-    --success: #4cc9f0;
-    --white: #ffffff;
-    --light: #f8f9fa;
-    --dark: #212529;
-    --gray: #6c757d;
-  }
-
-  body {
-    background-color: var(--light);
-    font-family: 'Poppins', sans-serif;
-  }
-
-  /* Card Styling */
-  .main-card {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    transform: translateY(0);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .main-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 50px rgba(67, 97, 238, 0.2);
-  }
-
-  .card-header {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    padding: 1.5rem;
-    border-bottom: none;
-  }
-
-  /* Form Elements */
-  .form-floating {
-    position: relative;
-    margin-bottom: 1.5rem;
-  }
-  .form-floating>.form-select:hover{
-    cursor: pointer;
-  }
-  .custom-select {
-    height: 60px;
-    border-radius: 10px;
-    border: 2px solid #e0e0e0;
-    padding-left: 60px;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .custom-select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
-  }
-
-  .form-floating > label {
-    padding-left: 60px;
-    font-weight: 500;
-    color: var(--gray);
-  }
-
-  .icon-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-  }
-
-  .icon-circle {
-    width: 34px;
-    height: 34px;
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    transition: all 0.3s ease;
-  }
-
-  .custom-select:focus + label + .icon-container .icon-circle {
-    transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
-  }
-
-  /* Button Styling */
-  .btn-submit {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: white;
-    border: 2px solid var(--primary); /* Add border */
-    border-radius: 5px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    z-index: 1;
-}
-
-.btn-submit:hover {
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-    border-color: var(--primary-light); /* Change border on hover */
-    cursor: pointer;
-}
-
-.btn-submit svg {
-    margin-right: 8px; /* Adjust icon spacing */
-}
-
-
-  
-
-  /* Animations */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes scaleIn {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-
-  @keyframes slideInRight {
-    from { transform: translateX(-20px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-
-  .fade-in {
-    animation: fadeIn 0.8s ease forwards;
-  }
-
-  .card-title-animation {
-    animation: scaleIn 0.6s ease 0.2s forwards;
-    opacity: 0;
-  }
-
-  .subtitle-animation {
-    animation: fadeIn 0.6s ease 0.4s forwards;
-    opacity: 0;
-  }
-
-  .input-animation {
-    animation: slideInRight 0.6s ease forwards;
-    opacity: 0;
-  }
-
-  .input-animation:nth-child(2) {
-    animation-delay: 0.6s;
-  }
-
-  .button-animation {
-    animation: fadeIn 0.6s ease 0.8s forwards;
-    opacity: 0;
-  }
-
-  .main-card:hover .custom-btn {
-    animation: pulse 1.5s infinite;
-  }
-
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .custom-select {
-      height: 55px;
+    body {
+        background-color: #ffffff;
+        color: #000000;
     }
-    .custom-btn {
-      padding: 0.6rem 1.5rem !important;
+    .custom-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
     }
-  }
-  .card-title-animation {
-    animation: scaleIn 0.6s ease 0.2s forwards;
-    color: rgb(0, 0, 0);
-    opacity: 0;
-}
+    .card-header-custom {
+        background: linear-gradient(135deg, #0050c8, #007bff);
+        color: white;
+        border: none;
+        padding: 20px 25px;
+    }
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+        background-color: #f9f9f9;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        background-color: #ffffff;
+    }
+    .input-group-text {
+        background-color: #e9ecef;
+        border: 2px solid #e0e0e0;
+        border-right: none;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #0050c8, #007bff);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 14px 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+    }
+    .btn-back {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 14px 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        color: white;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    .page-container {
+        padding: 40px 0;
+    }
+    .status-select {
+        border-left: 4px solid #007bff;
+    }
+    .vendor-select {
+        border-left: 4px solid #28a745;
+    }
+    .cost-input {
+        border-left: 4px solid #fd7e14;
+    }
+    
+    /* Status Button Styles */
+    .status-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .status-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 15px 20px;
+        border: 2px solid;
+        border-radius: 8px;
+        background-color: #ffffff;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        position: relative;
+        outline: none;
+    }
+    
+    .status-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .status-btn.completed {
+        border-color: #28a745;
+        color: #28a745;
+    }
+    
+    .status-btn.completed:hover {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status-btn.completed.selected {
+        background-color: #28a745;
+        color: white;
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+    
+    .status-btn.denied {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+    
+    .status-btn.denied:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .status-btn.denied.selected {
+        background-color: #dc3545;
+        color: white;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+    
+    .status-btn svg {
+        margin-right: 8px;
+    }
+    
+    /* Hidden input for form submission */
+    .status-input {
+        display: none;
+    }
+    
+    /* Form animations */
+    .form-animation {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .input-animation {
+        animation: slideInLeft 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .button-animation {
+        animation: slideInUp 1s ease-out;
+        animation-delay: 0.4s;
+        animation-fill-mode: both;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Icon styling for form fields */
+    .form-field-with-icon {
+        position: relative;
+    }
+    
+    .form-field-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #007bff;
+        font-size: 18px;
+        z-index: 2;
+    }
+    
+    .form-control.with-icon,
+    .form-select.with-icon {
+        padding-left: 50px;
+    }
+    
+    @media (max-width: 576px) {
+        .status-buttons {
+            flex-direction: column;
+        }
+        .status-btn {
+            flex: none;
+        }
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .btn-back, .btn-submit {
+            width: 100%;
+        }
+    }
 </style>
 
-<script>
-  // Form validation
-  (function() {
-    'use strict';
-    window.addEventListener('load', function() {
-      var forms = document.getElementsByClassName('needs-validation');
-      Array.prototype.filter.call(forms, function(form) {
-        form.addEventListener('submit', function(event) {
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
-      });
-    }, false);
-  })();
+<div class="page-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="custom-card">
+                    <div class="card-header-custom">
+                        <h3 class="mb-0 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-building-gear me-3" viewBox="0 0 16 16">
+                                <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z"/>
+                                <path d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3.5 3.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zm-6.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5z"/>
+                                <path d="M12 14a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1.5-2.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m-3 0a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 3a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m3 0a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1"/>
+                            </svg>
+                            Update Concierge Requests
+                        </h3>
+                    </div>
+                    <div class="card-body p-4 p-lg-5">
+                        {% if messages %}
+                            <div class="alert alert-danger">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <form method="post" class="needs-validation form-animation" novalidate>
+                            {% csrf_token %}
 
-  // Add hover animation to select fields
-  $(document).ready(function() {
-    $('.custom-select').on('change', function() {
-      if ($(this).val() !== '') {
-        $(this).addClass('is-filled');
-      } else {
-        $(this).removeClass('is-filled');
-      }
-    });
+                            <div class="mb-4 input-animation">
+                                <label class="form-label">Request Status</label>
+                                <div class="status-buttons">
+                                    <button type="button" class="status-btn completed {% if request_obj.status == 'completed' %}selected{% endif %}" data-status="completed">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                        Completed
+                                    </button>
+                                    <button type="button" class="status-btn denied {% if request_obj.status == 'denied' %}selected{% endif %}" data-status="denied">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+                                        </svg>
+                                        Denied
+                                    </button>
+                                </div>
+                                <!-- Hidden input to store the selected status -->
+                                <input type="hidden" name="status" id="status-input" value="{{ request_obj.status }}" class="status-input">
+                            </div>
+
+                            <div class="mb-4 input-animation form-field-with-icon" style="animation-delay: 0.15s;">
+                                <label for="completation_denied_date" class="form-label" id="date-label">
+                                    {% if request_obj.status == 'completed' %}
+                                        Completion Date
+                                    {% elif request_obj.status == 'denied' %}
+                                        Denied Date
+                                    {% else %}
+                                        Completion/Denied Date
+                                    {% endif %}
+                                </label>
+                                <div class="form-field-with-icon">
+                                    <i class="bi bi-calendar-event-fill form-field-icon"></i>
+                                    <input
+                                        type="date"
+                                        name="completation_denied_date"
+                                        id="completation_denied_date"
+                                        class="form-control with-icon"
+                                        value="{{ request_obj.completation_denied_date|date:'Y-m-d' }}"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="mb-4 input-animation form-field-with-icon" style="animation-delay: 0.2s;">
+                                <label for="vendor" class="form-label">Assign Vendor</label>
+                                <div class="form-field-with-icon">
+                                    <i class="bi bi-building-fill form-field-icon"></i>
+                                    <select name="vendor" id="vendor" class="form-select with-icon" required>
+                                        <option value="">-- Select Vendor --</option>
+                                        {% for vendor in vendors %}
+                                            <option value="{{ vendor.id }}" {% if vendor == request_obj.vendor %}selected{% endif %}>
+                                                {{ vendor.company_name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-5 button-animation w-100">
+                                <!-- Left Button -->
+                                <button type="button" class="btn btn-back px-5 py-3" onclick="window.location.href='{% url 'adminmanager:concierge_open_requests' %}'">
+                                    <i class="bi bi-arrow-left-circle-fill me-2"></i>
+                                    <span>Go Back</span>
+                                </button>
+                            
+                                <!-- Right Button -->
+                                <button type="submit" class="btn btn-submit px-5 py-3">
+                                    <span>Update Request</span>
+                                    <i class="bi bi-arrow-right-circle-fill ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusButtons = document.querySelectorAll('.status-btn');
+    const statusInput = document.getElementById('status-input');
+    const dateLabel = document.getElementById('date-label');
     
-    // Check initial values
-    $('.custom-select').each(function() {
-      if ($(this).val() !== '') {
-        $(this).addClass('is-filled');
-      }
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove selected class from all buttons
+            statusButtons.forEach(btn => btn.classList.remove('selected'));
+            
+            // Add selected class to clicked button
+            this.classList.add('selected');
+            
+            // Update hidden input value
+            statusInput.value = this.dataset.status;
+            
+            // Update date label based on selected status
+            if (this.dataset.status === 'completed') {
+                dateLabel.textContent = 'Completion Date';
+            } else if (this.dataset.status === 'denied') {
+                dateLabel.textContent = 'Denied Date';
+            }
+        });
     });
-    
-    // Add animation when page loads
-    setTimeout(function() {
-      $('.main-card').addClass('loaded');
-    }, 200);
-  });
+});
 </script>
+
 {% endblock %}

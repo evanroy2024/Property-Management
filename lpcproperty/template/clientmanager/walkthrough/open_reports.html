@@ -342,17 +342,19 @@
             text-decoration: underline;
         }
     </style>
+<!-- Place this in your <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <div class="container">
         
         <header>
             <div class="logo">
                <img src="{% static 'img/smalllogo.png' %}" alt="">
-              Open Walk-Thru Items
+               Open Walk-Thru Items
             </div>
-            <p class="tagline">All your Service Request Open Items are here go through them if you have any questions kindly get back to us</p>
         </header>
-       
+        
+        
         <div class="scroll-indicator">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
@@ -368,75 +370,90 @@
                 <thead>
                     <tr>
                         <th id="dateHeader" style="cursor: pointer;">
-                            Date <span id="dateArrow">⬍</span>
+                            Walk-Thru Report Date <span id="dateArrow">⬍</span>
                         </th>
-                        <!-- <th id="clientHeader" style="cursor: pointer;">
-                            Client <span id="clientArrow">⬍</span>
-                        </th> -->
+                      
                          <th id="clientHeader" style="position: relative; color: white;">
-  <span style="cursor: pointer;">Client</span>
-  <span id="clientArrow" style="margin-left: 4px;">⬍</span>
+                                    <span style="cursor: pointer;">Client</span>
+                                    <span id="clientArrow" style="margin-left: 4px;">⬍</span>
 
-  <!-- White rectangle with BLACK icon inside -->
-  <span id="clientFilterBtn" title="Filter Client" style="
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 12px;
-    width: 26px;
-    height: 22px;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    transition: background 0.2s ease;
-  ">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-      <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.3 8.4v5a1 1 0 0 1-.6.9l-4 2A1 1 0 0 1 9 20v-7.9L2.6 5.6A1 1 0 0 1 3 4z"/>
-    </svg>
-  </span>
+                                    <!-- White rectangle with BLACK icon inside -->
+                                    <span id="clientFilterBtn" title="Filter Client" style="
+                                        display: inline-flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin-left: 12px;
+                                        width: 26px;
+                                        height: 22px;
+                                        background: white;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+                                        transition: background 0.2s ease;
+                                    ">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                                        <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.3 8.4v5a1 1 0 0 1-.6.9l-4 2A1 1 0 0 1 9 20v-7.9L2.6 5.6A1 1 0 0 1 3 4z"/>
+                                        </svg>
+                                    </span>
 
-  <!-- Client dropdown -->
-  <select id="clientDropdown" style="
-    position: absolute;
-    top: 32px;
-    left: 0;
-    display: none;
-    z-index: 999;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 14px;
-    min-width: 180px;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    appearance: none;
-    outline: none;
-  ">
-    <option value="all">All Clients</option>
-  </select>
-</th>
-
-
+                                    <!-- Client dropdown -->
+                                    <select id="clientDropdown" style="
+                                        position: absolute;
+                                        top: 32px;
+                                        left: 0;
+                                        display: none;
+                                        z-index: 999;
+                                        background: white;
+                                        border: 1px solid #ccc;
+                                        border-radius: 6px;
+                                        padding: 6px 8px;
+                                        font-size: 14px;
+                                        min-width: 180px;
+                                        color: #333;
+                                        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                                        appearance: none;
+                                        outline: none;
+                                    ">
+                                        <option value="all">All Clients</option>
+                                    </select>
+                                    </th>
                         <th>Est'd Cost</th>
-                        <th>Client approval</th>
-                        <th>Action</th>
+                        <th>Client Approval</th>
+                        <th>Item Complete</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for report in reports %}
                     <tr class="{% if request.status == 'open' %}active{% endif %}">
-                        <td>{{ report.datetime  }}</td>
+                       <td onclick="window.location.href='{% url 'clientmanager:report_open_detail' report.pk %}'" style="cursor: pointer;">{{ report.datetime }}</td>
                         <td>{{ report.user.last_name }} , {{ report.user.first_name }}</td>
-                        <td>{{ report.cost }}</td>
-                        <td><a href="{% url 'clientmanager:update_walkthrough_report' report.id %}" style="background:#ffe8a1;color:#8a6d1f;padding:4px 10px;border-radius:12px;font-size:13px;font-weight:500;text-decoration:none;display:inline-block;">Pending</a></td>
+                        <!-- <td>{{ report.cost }}</td> -->
+<td style="display: flex; align-items: center; gap: 20px;">
+  <span id="cost-{{ report.id }}">{{ report.cost }}</span>
+  <button onclick="openCostModal({{ report.id }})" style="background: none; border: none; color: #2c3e50; cursor: pointer;" title="Edit Cost">
+    <i class="fas fa-pen-to-square"></i>
+  </button>
+</td>
 
-                        <td style="display: flex;">
-                           <a href="{% url 'clientmanager:report_open_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
-                                 View
-                            </a>
-                        </td>
+<td><div id="approval-cell-{{ report.id }}" onclick="openApprovalPopup({{ report.id }})" style="cursor: pointer;"><span style="padding:4px 10px; border-radius:5px; font-weight:bold; background-color:{% if report.client_approval == 'Approved' %}#2ecc71{% elif report.client_approval == 'Denied' %}#e74c3c{% else %}#f1c40f{% endif %}; color:{% if report.client_approval == 'Pending' %}black{% else %}white{% endif %};">{{ report.client_approval }}</span></div></td>
+
+
+
+                        <!-- <td style="display: flex; justify-content: space-between;">
+                            <a href="{% url 'walkthroughreport:report_open_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
+                                View
+                           </a>
+                           <a href="{% url 'walkthroughreport:update_walkthrough_report' report.id %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">Update</a>
+
+                           
+                        </td> -->
+                       <td onclick="openStatusPopup({{ report.id }})" style="cursor: pointer;" id="status-cell-{{ report.id }}">
+  <span style="padding: 4px 10px; background-color: white; color: black; border: 1px solid #ccc; border-radius: 5px; font-weight: bold;">
+    Open
+  </span>
+</td>
+
+
                         
                     </tr>
                     {% empty %}
@@ -445,7 +462,225 @@
                 </tbody>
             </table>
         </div>
+        
+
+      
+    </div>
+
+    <!-- Update cost html  -->
+<!-- Cost Modal -->
+<div id="costModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter:blur(2px);">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:linear-gradient(135deg, #fff 0%, #f8f9fa 100%); padding:40px; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.2); min-width:400px; border:1px solid rgba(255,255,255,0.2);">
+    <div style="text-align:center; margin-bottom:30px;">
+      <div style="width:60px; height:60px; background:linear-gradient(135deg, #27ae60, #2ecc71); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:24px;">💰</div>
+      <h3 style="margin:0; color:#2c3e50; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight:600; font-size:24px;">Update Cost</h3>
+      <p style="margin:5px 0 0 0; color:#7f8c8d; font-size:14px;">Enter the amount for this report</p>
+    </div>
+    <form id="costForm">
+      <div style="margin-bottom:30px;">
+        <label style="display:block; margin-bottom:10px; color:#34495e; font-weight:600; font-size:16px;">Amount ($):</label>
+        <input type="number" id="costInput" required placeholder="0.00" step="0.01" style="width:100%; padding:16px; border:2px solid #e3f2fd; border-radius:12px; font-size:18px; transition:all 0.3s; background:#fafbfc; box-sizing:border-box;" onfocus="this.style.borderColor='#3498db'; this.style.background='#fff';" onblur="this.style.borderColor='#e3f2fd'; this.style.background='#fafbfc';">
+      </div>
+      <input type="hidden" id="reportIdInput">
+      <div style="display:flex; gap:15px; justify-content:center;">
+        <button type="submit" style="background:linear-gradient(135deg, #27ae60, #2ecc71); color:white; padding:14px 30px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(39, 174, 96, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(39, 174, 96, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(39, 174, 96, 0.3)';">✓ Save Changes</button>
+        <button type="button" onclick="closeCostModal()" style="background:linear-gradient(135deg, #95a5a6, #bdc3c7); color:white; padding:14px 30px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(149, 165, 166, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(149, 165, 166, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(149, 165, 166, 0.3)';">✕ Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
+function openCostModal(id) {
+  document.getElementById('reportIdInput').value = id;
+  document.getElementById('costInput').value = document.getElementById(`cost-${id}`).innerText.trim();
+  document.getElementById('costModal').style.display = 'block';
+}
+
+function closeCostModal() {
+  document.getElementById('costModal').style.display = 'none';
+}
+
+document.getElementById('costForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const id = document.getElementById('reportIdInput').value;
+  const cost = document.getElementById('costInput').value;
+
+  fetch(`/clientmanager/update-cost/${id}/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `cost=${encodeURIComponent(cost)}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById(`cost-${id}`).innerText = data.new_cost;
+      closeCostModal();
+    } else {
+      alert('Update failed');
+    }
+  })
+  .catch(() => alert('Request error'));
+});
+</script>
+
+<!-- Approval Modal -->
+<div id="approvalPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter:blur(2px);">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:linear-gradient(135deg, #fff 0%, #f8f9fa 100%); padding:40px; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.2); min-width:400px; border:1px solid rgba(255,255,255,0.2);">
+    <div style="text-align:center; margin-bottom:30px;">
+      <div style="width:60px; height:60px; background:linear-gradient(135deg, #3498db, #5dade2); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:24px;">📋</div>
+      <h3 style="margin:0; color:#2c3e50; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight:600; font-size:24px;">Client Approval</h3>
+      <p style="margin:5px 0 0 0; color:#7f8c8d; font-size:14px;">Do you want to edit client approval status?</p>
+    </div>
+    <input type="hidden" id="approvalReportId">
+    <div style="display:flex; gap:15px; justify-content:center; margin-bottom:25px;">
+      <button onclick="setApprovalStatus('Approved')" style="background:linear-gradient(135deg, #27ae60, #2ecc71); color:white; padding:16px 32px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(39, 174, 96, 0.3); min-width:130px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(39, 174, 96, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(39, 174, 96, 0.3)';">✅ Approved</button>
+      <button onclick="setApprovalStatus('Denied')" style="background:linear-gradient(135deg, #e74c3c, #ec7063); color:white; padding:16px 32px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(231, 76, 60, 0.3); min-width:130px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(231, 76, 60, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(231, 76, 60, 0.3)';">❌ Denied</button>
+    </div>
+    <div style="text-align:center;">
+      <button onclick="closeApprovalPopup()" style="background:linear-gradient(135deg, #95a5a6, #bdc3c7); color:white; padding:14px 30px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(149, 165, 166, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(149, 165, 166, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(149, 165, 166, 0.3)';">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openApprovalPopup(reportId) {
+  document.getElementById('approvalReportId').value = reportId;
+  document.getElementById('approvalPopup').style.display = 'block';
+}
+
+function closeApprovalPopup() {
+  document.getElementById('approvalPopup').style.display = 'none';
+}
+
+function setApprovalStatus(status) {
+  const reportId = document.getElementById('approvalReportId').value;
+
+  fetch(`/clientmanager/update-approval/${reportId}/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `approval=${status}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      let color = (data.new_status === 'Approved') ? '#2ecc71' : '#e74c3c';
+      let emoji = (data.new_status === 'Approved') ? '' : '';
+
+      document.getElementById(`approval-cell-${reportId}`).innerHTML = `
+        <span style="padding: 4px 10px; background-color: ${color}; color: white; border-radius: 5px; font-weight: bold;">
+          ${emoji} ${data.new_status}
+        </span>
+      `;
+      closeApprovalPopup();
+    } else {
+      alert('Update failed');
+    }
+  })
+  .catch(() => {
+    alert('Request error');
+  });
+}
+</script>
+
+<!-- Status Modal -->
+<div id="statusPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; backdrop-filter:blur(2px);">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:linear-gradient(135deg, #fff 0%, #f8f9fa 100%); padding:40px; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.2); min-width:400px; border:1px solid rgba(255,255,255,0.2);">
+    <div style="text-align:center; margin-bottom:30px;">
+      <h3 style="margin:0; color:#2c3e50; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight:600; font-size:24px;">Update Status</h3>
+      <p style="margin:5px 0 0 0; color:#7f8c8d; font-size:14px;">Update the status and completion date</p>
+    </div>
+    <input type="hidden" id="statusReportId">
+    
+    <div style="margin-bottom:25px;">
+      <label style="display:block; margin-bottom:10px; color:#34495e; font-weight:600; font-size:16px;">📅 Date:</label>
+      <input type="date" id="statusDate" required style="width:100%; padding:16px; border:2px solid #e3f2fd; border-radius:12px; font-size:16px; transition:all 0.3s; background:#fafbfc; box-sizing:border-box;" onfocus="this.style.borderColor='#3498db'; this.style.background='#fff';" onblur="this.style.borderColor='#e3f2fd'; this.style.background='#fafbfc';">
+    </div>
+    
+    <div style="margin-bottom:35px;">
+      <label style="display:block; margin-bottom:10px; color:#34495e; font-weight:600; font-size:16px;">📊 Status:</label>
+      <select id="statusDropdown" style="width:100%; padding:16px; border:2px solid #e3f2fd; border-radius:12px; font-size:16px; transition:all 0.3s; background:#fafbfc; box-sizing:border-box;" onfocus="this.style.borderColor='#3498db'; this.style.background='#fff';" onblur="this.style.borderColor='#e3f2fd'; this.style.background='#fafbfc';">
+        <option value="Completed">✅ Completed</option>
+        <option value="Denied">❌ Denied</option>
+      </select>
+    </div>
+    
+    <div style="display:flex; gap:15px; justify-content:center;">
+      <button onclick="submitStatus()" style="background:linear-gradient(135deg, #9b59b6, #bb6bd8); color:white; padding:14px 30px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(155, 89, 182, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(155, 89, 182, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(155, 89, 182, 0.3)';">✓ Save Changes</button>
+      <button onclick="closeStatusPopup()" style="background:linear-gradient(135deg, #95a5a6, #bdc3c7); color:white; padding:14px 30px; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(149, 165, 166, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(149, 165, 166, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(149, 165, 166, 0.3)';">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+function openStatusPopup(reportId) {
+  document.getElementById('statusReportId').value = reportId;
+  document.getElementById('statusDate').value = '';
+  document.getElementById('statusDropdown').value = 'Completed';
+  document.getElementById('statusPopup').style.display = 'block';
+}
+
+function closeStatusPopup() {
+  document.getElementById('statusPopup').style.display = 'none';
+}
+
+function submitStatus() {
+  const reportId = document.getElementById('statusReportId').value;
+  const date = document.getElementById('statusDate').value;
+  const status = document.getElementById('statusDropdown').value;
+
+  fetch(`/walkthrough/update-status/${reportId}/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `status=${status}&date=${date}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      let color = (status === 'Completed') ? '#2ecc71' : '#e74c3c';
+      document.getElementById(`status-cell-${reportId}`).innerHTML = `
+        <span style="padding:4px 10px; background-color:${color}; color:white; border-radius:5px;">
+          ${status}
+        </span>`;
+      closeStatusPopup();
+    } else {
+      alert('Update failed');
+    }
+  })
+  .catch(() => alert('Request error'));
+}
+</script>
+
+<!-- Update cost html end  -->
+    <script>
+        document.querySelectorAll('.services-table tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Remove active class from all rows
+                document.querySelectorAll('.services-table tbody tr').forEach(r => {
+                    r.classList.remove('active');
+                });
+                
+                // Add active class to clicked row
+                row.classList.add('active');
+                
+                // Get the service name from the first cell
+                const serviceName = row.querySelector('td').textContent;
+                
+                // Update service details section
+                document.querySelector('.service-details h2').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    ${serviceName}
+                `;
+                
+                // In a real implementation, we would update the details content based on the selected service
+            });
+        });
+    </script>
+    <script>
     const dateHeader = document.getElementById("dateHeader");
     const clientHeader = document.getElementById("clientHeader");
     const dateArrow = document.getElementById("dateArrow");
@@ -552,36 +787,4 @@
         });
     });
 </script>
-        
-
-       
-    </div>
-
-    <script>
-        document.querySelectorAll('.services-table tbody tr').forEach(row => {
-            row.addEventListener('click', () => {
-                // Remove active class from all rows
-                document.querySelectorAll('.services-table tbody tr').forEach(r => {
-                    r.classList.remove('active');
-                });
-                
-                // Add active class to clicked row
-                row.classList.add('active');
-                
-                // Get the service name from the first cell
-                const serviceName = row.querySelector('td').textContent;
-                
-                // Update service details section
-                document.querySelector('.service-details h2').innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                    ${serviceName}
-                `;
-                
-                // In a real implementation, we would update the details content based on the selected service
-            });
-        });
-    </script>
 {% endblock content %}

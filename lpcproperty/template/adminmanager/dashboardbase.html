@@ -102,43 +102,25 @@
                 display: block;
             }
         }
-        .logout-btn {
-    background: none;
-    color: #e6e6e6;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
 
-.logout-btn:hover {
-    color: #e74c3c;
-}
-body {
-            font-family: 'Arial', sans-serif;
-            background-color: #ffffff;
-            color: #fff;
-        }
-        
     </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-links">
-        <a href="{% url 'mainapp:client_properties' %}">Properties</a>
-        <a href="{% url 'mainapp:service_request' %}">Services</a>
-    </div>
-    <div class="logo">
-        <img onclick="window.location.href='{% url 'mainapp:dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
-    </div>
-    <div class="nav-links">
-        <a href="{% url 'mainapp:dashboard' %}">Dashboard</a>
-        <a href="{% url 'mainapp:client_logout' %}">Logout</a>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="{% url 'adminmanager:property_list' %}">Properties </a>
+            <a href="{% url 'adminmanager:vendor_list' %}">Vendors</a>
+        </div>
+        <div class="logo">
+            <img onclick="window.location.href='{% url 'mainapp:dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'adminmanager:admin_dashboard' %}">Dashboard</a>
+            <a href="{% url 'mainapp:client_logout' %}">Logout</a>
 
-    </div>
-    <div class="menu-toggle">☰</div>
-</nav>
+        </div>
+        <div class="menu-toggle">☰</div>
+    </nav>
 
     {% block content %}
     <!-- Child template content will be injected here -->
@@ -365,16 +347,14 @@ body {
 .standalone-footer-policy a:hover {
     color: #ffffff;
 }
-.standalone-footer-title {
-    color: #ffffff;
-}
+
 </style>
 
 <footer class="standalone-footer">
   <div class="standalone-footer-shape"></div>
   <div class="standalone-footer-container">
       <div class="standalone-footer-column">
-          <div class="standalone-footer-logo">Lotus Company</div>
+                   <div class="standalone-footer-logo">Lotus Company</div>
         <p class="standalone-footer-about">Explore available services and connect with client managers to submit requests and more.</p>
 
           <div class="standalone-footer-social">
@@ -455,7 +435,6 @@ body {
   </div>
 </footer>
 <!-- Add footer Ends Here  -->
-
 
 
     

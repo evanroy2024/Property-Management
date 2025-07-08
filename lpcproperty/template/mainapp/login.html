@@ -176,9 +176,16 @@
   
   <form method="POST">
     {% csrf_token %}
-    {% for message in messages %}
-    <div class="alert alert-warning">{{ message }}</div>
-    {% endfor %}
+    {% if messages %}
+  {% for message in messages %}
+    {% if 'login_error' in message.tags %}
+      <div class="alert alert-danger">
+        {{ message }}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 
     <h2>EMAIL or USERNAME</h2>
     <input type="text" id="username" name="username" class="input-field" placeholder="Username" required>

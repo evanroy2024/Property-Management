@@ -58,7 +58,7 @@ def client_login(request):
             pass
 
         # If all checks fail
-        messages.error(request, "Invalid credentials or user type not found.")
+        messages.error(request, "Invalid credentials or user type not found.",extra_tags='login_error')
 
     return render(request, "mainapp/login.html")
 @client_login_required
@@ -187,7 +187,7 @@ def service_request(request):
             floor_plan_name=floor_plan_name  # Save it if present
         )
 
-        messages.success(request, "Service request submitted successfully!")
+        messages.success(request, "Service request submitted successfully!" ,)
         return redirect("servicesapp:request_form_success")
     
     client_id = request.session['client_id']

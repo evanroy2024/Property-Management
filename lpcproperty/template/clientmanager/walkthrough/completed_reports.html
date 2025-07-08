@@ -342,25 +342,18 @@
             text-decoration: underline;
         }
     </style>
+<!-- Place this in your <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <div class="container">
         
         <header>
             <div class="logo">
                <img src="{% static 'img/smalllogo.png' %}" alt="">
-               Walk-Thru Completed Reports
+               Completed Walk-Thru Items
             </div>
-            <p class="tagline">All your Service Request Open Items are here go through them if you have any questions kindly get back to us</p>
         </header>
-        <div style="display: flex; justify-content: center; gap: 20px; margin: 20px;">
-            <a href="{% url 'clientmanager:all_reports' %}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s;">All Reports</a>
         
-            <a href="{% url 'clientmanager:open_reports' %}" style="padding: 10px 20px; background-color: #ffc107; color: black; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s;">Open Reports</a>
-        
-            <a href="{% url 'clientmanager:completed_reports' %}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s;">Completed Reports</a>
-        
-            <a href="{% url 'clientmanager:denied_reports' %}" style="padding: 10px 20px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s;">Denied Reports</a>
-        </div>
         
         <div class="scroll-indicator">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -376,26 +369,84 @@
             <table class="services-table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Total Cost</th>
-                        <th>Action</th>
+                        <th id="dateHeader" style="cursor: pointer;">
+                            Walk-Thru Report Date <span id="dateArrow">⬍</span>
+                        </th>
+                      
+                         <th id="clientHeader" style="position: relative; color: white;">
+                                    <span style="cursor: pointer;">Client</span>
+                                    <span id="clientArrow" style="margin-left: 4px;">⬍</span>
+
+                                    <!-- White rectangle with BLACK icon inside -->
+                                    <span id="clientFilterBtn" title="Filter Client" style="
+                                        display: inline-flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin-left: 12px;
+                                        width: 26px;
+                                        height: 22px;
+                                        background: white;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+                                        transition: background 0.2s ease;
+                                    ">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                                        <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.3 8.4v5a1 1 0 0 1-.6.9l-4 2A1 1 0 0 1 9 20v-7.9L2.6 5.6A1 1 0 0 1 3 4z"/>
+                                        </svg>
+                                    </span>
+
+                                    <!-- Client dropdown -->
+                                    <select id="clientDropdown" style="
+                                        position: absolute;
+                                        top: 32px;
+                                        left: 0;
+                                        display: none;
+                                        z-index: 999;
+                                        background: white;
+                                        border: 1px solid #ccc;
+                                        border-radius: 6px;
+                                        padding: 6px 8px;
+                                        font-size: 14px;
+                                        min-width: 180px;
+                                        color: #333;
+                                        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                                        appearance: none;
+                                        outline: none;
+                                    ">
+                                        <option value="all">All Clients</option>
+                                    </select>
+                                    </th>
+                                    <th>Description</th>
+                        <th>Cost</th>
+                        <th>Date Completed</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for report in reports %}
                     <tr class="{% if request.status == 'open' %}active{% endif %}">
-                        <td>{{ report.datetime  }}</td>
+                       <td onclick="window.location.href='{% url 'clientmanager:report_open_detail' report.pk %}'" style="cursor: pointer;">{{ report.datetime }}</td>
+                        <td>{{ report.user.last_name }} , {{ report.user.first_name }}</td>
                         <td>{{ report.description }}</td>
                         <td>{{ report.cost }}</td>
-                        <td style="display: flex;">
-                            <a href="{% url 'clientmanager:report_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
-                                 View
-                            </a>
-                            <a href="{% url 'clientmanager:update_walkthrough_report' report.id %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">Update</a>
+                        <td>{{ report.completation_denied_date }}</td>
 
-                            
-                        </td>
+
+
+
+
+
+                        <!-- <td style="display: flex; justify-content: space-between;">
+                            <a href="{% url 'walkthroughreport:report_open_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
+                                View
+                           </a>
+                           <a href="{% url 'walkthroughreport:update_walkthrough_report' report.id %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">Update</a>
+
+                           
+                        </td> -->
+
+
+
                         
                     </tr>
                     {% empty %}
@@ -406,70 +457,10 @@
         </div>
         
 
-        <div class="service-details">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
-                Property Management Services
-            </h2>
-            <p>Maximize your investment's potential with our comprehensive property management solutions. We handle everything from tenant acquisition to maintenance, allowing you to enjoy passive income without the hassle.</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <div>
-                        <h3>Tenant Screening</h3>
-                        <p>Rigorous background checks to ensure reliable, respectful tenants for your property.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                    </svg>
-                    <div>
-                        <h3>Maintenance & Repairs</h3>
-                        <p>24/7 response to maintenance issues with our network of trusted professionals.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <div>
-                        <h3>Timely Rent Collection</h3>
-                        <p>Consistent cash flow with our automated collection system and follow-up processes.</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    <div>
-                        <h3>Regular Inspections</h3>
-                        <p>Quarterly property assessments to identify and address concerns before they escalate.</p>
-                    </div>
-                </div>
-            </div>
-            
-           
-        </div>
-        
-       
-        
       
     </div>
 
+ 
     <script>
         document.querySelectorAll('.services-table tbody tr').forEach(row => {
             row.addEventListener('click', () => {
@@ -497,4 +488,111 @@
             });
         });
     </script>
+    <script>
+    const dateHeader = document.getElementById("dateHeader");
+    const clientHeader = document.getElementById("clientHeader");
+    const dateArrow = document.getElementById("dateArrow");
+    const clientArrow = document.getElementById("clientArrow");
+    const clientFilterBtn = document.getElementById("clientFilterBtn");
+    const clientDropdown = document.getElementById("clientDropdown");
+
+    let dateAsc = true;
+    let clientAsc = true;
+    let dateSorted = false;
+    let clientSorted = false;
+
+    function parseCustomDate(str) {
+        str = str.replace("a.m.", "AM").replace("p.m.", "PM");
+        return new Date(str);
+    }
+
+    function sortTable(index, isAsc, isDate = false) {
+        const tbody = document.querySelector(".services-table tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr")).filter(
+            row => row.querySelectorAll("td").length > 0
+        );
+
+        rows.sort((a, b) => {
+            let aText = a.children[index].innerText.trim();
+            let bText = b.children[index].innerText.trim();
+
+            if (isDate) {
+                let aDate = parseCustomDate(aText);
+                let bDate = parseCustomDate(bText);
+                return isAsc ? aDate - bDate : bDate - aDate;
+            } else {
+                return isAsc
+                    ? aText.localeCompare(bText)
+                    : bText.localeCompare(aText);
+            }
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    dateHeader.addEventListener("click", () => {
+        if (!dateSorted) {
+            sortTable(0, true, true);
+            dateArrow.textContent = "⬆";
+            dateAsc = false;
+            dateSorted = true;
+        } else {
+            sortTable(0, dateAsc, true);
+            dateArrow.textContent = dateAsc ? "⬆" : "⬇";
+            dateAsc = !dateAsc;
+        }
+    });
+
+    clientHeader.addEventListener("click", () => {
+        if (!clientSorted) {
+            sortTable(1, true);
+            clientArrow.textContent = "⬆";
+            clientAsc = false;
+            clientSorted = true;
+        } else {
+            sortTable(1, clientAsc);
+            clientArrow.textContent = clientAsc ? "⬆" : "⬇";
+            clientAsc = !clientAsc;
+        }
+    });
+
+    // Toggle dropdown
+    clientFilterBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent closing instantly
+        clientDropdown.style.display = clientDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    // Auto-hide dropdown on select
+    clientDropdown.addEventListener("change", () => {
+        const selectedClient = clientDropdown.value;
+        document.querySelectorAll(".services-table tbody tr").forEach(row => {
+            const clientName = row.children[1].innerText.trim();
+            row.style.display = (selectedClient === "all" || clientName === selectedClient) ? "" : "none";
+        });
+        clientDropdown.style.display = "none"; // auto-hide after select
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!clientDropdown.contains(e.target) && !clientFilterBtn.contains(e.target)) {
+            clientDropdown.style.display = "none";
+        }
+    });
+
+    // Populate dropdown
+    window.addEventListener("DOMContentLoaded", () => {
+        const clientSet = new Set();
+        document.querySelectorAll(".services-table tbody tr").forEach(row => {
+            const clientName = row.children[1].innerText.trim();
+            clientSet.add(clientName);
+        });
+
+        clientSet.forEach(name => {
+            const option = document.createElement("option");
+            option.value = name;
+            option.textContent = name;
+            clientDropdown.appendChild(option);
+        });
+    });
+</script>
 {% endblock content %}

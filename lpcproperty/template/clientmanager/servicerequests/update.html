@@ -1,4 +1,6 @@
 {% extends 'cmbase.html' %}
+{% load static %}
+
 {% block content %}
 <style>
     body {
@@ -39,7 +41,7 @@
         border: none;
         color: white;
         border-radius: 8px;
-        padding: 8px 15px;
+        padding: 14px 20px;
         font-weight: 600;
         letter-spacing: 0.5px;
         transition: all 0.3s;
@@ -65,6 +67,84 @@
     .cost-input {
         border-left: 4px solid #fd7e14;
     }
+    
+    /* Status Button Styles */
+    .status-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .status-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 15px 20px;
+        border: 2px solid;
+        border-radius: 8px;
+        background-color: #ffffff;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        position: relative;
+        outline: none;
+    }
+    
+    .status-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .status-btn.completed {
+        border-color: #28a745;
+        color: #28a745;
+    }
+    
+    .status-btn.completed:hover {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status-btn.completed.selected {
+        background-color: #28a745;
+        color: white;
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+    
+    .status-btn.denied {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+    
+    .status-btn.denied:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .status-btn.denied.selected {
+        background-color: #dc3545;
+        color: white;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+    
+    .status-btn svg {
+        margin-right: 8px;
+    }
+    
+    /* Hidden input for form submission */
+    .status-input {
+        display: none;
+    }
+    
+    @media (max-width: 576px) {
+        .status-buttons {
+            flex-direction: column;
+        }
+        .status-btn {
+            flex: none;
+        }
+    }
 </style>
 
 <div class="page-container">
@@ -79,29 +159,60 @@
                                 <path d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3.5 3.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zm-6.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5z"/>
                                 <path d="M12 14a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1.5-2.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m-3 0a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 3a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m3 0a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1"/>
                             </svg>
-                            Update Property Improvement Request
+                            Update Service Requests
                         </h3>
                     </div>
-                    {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <strong>Success!</strong> {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                
                     <div class="card-body p-4 p-lg-5">
-                        <form method="post" class="needs-validation" novalidate>{% csrf_token %}
-                            <div class="mb-4">
-                                <label for="status" class="form-label">Request Status</label>
-                                <select name="status" class="form-select">
-                                    {% for val, label in request_obj.STATUS_CHOICES %}
-                                        <option value="{{ val }}" {% if val == request_obj.status %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
+                        {% if messages %}
+                            <div class="alert alert-danger">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
                             </div>
-                            
+                        {% endif %}
+                        
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+
+                            <div class="mb-4">
+                                <label class="form-label">Request Status</label>
+                                <div class="status-buttons">
+                                    <button type="button" class="status-btn completed {% if request_obj.status == 'completed' %}selected{% endif %}" data-status="completed">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                        Completed
+                                    </button>
+                                    <button type="button" class="status-btn denied {% if request_obj.status == 'denied' %}selected{% endif %}" data-status="denied">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+                                        </svg>
+                                        Denied
+                                    </button>
+                                </div>
+                                <!-- Hidden input to store the selected status -->
+                                <input type="hidden" name="status" id="status-input" value="{{ request_obj.status }}" class="status-input">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="completation_denied_date" class="form-label" id="date-label">
+                                    {% if request_obj.status == 'completed' %}
+                                        Completion Date
+                                    {% elif request_obj.status == 'denied' %}
+                                        Denied Date
+                                    {% else %}
+                                        Completion/Denied Date
+                                    {% endif %}
+                                </label>
+                                <input
+                                    type="date"
+                                    name="completation_denied_date"
+                                    class="form-control"
+                                    value="{{ request_obj.completation_denied_date|date:'Y-m-d' }}"
+                                    required
+                                />
+                            </div>
+
                             <div class="mb-4">
                                 <label for="vendor" class="form-label">Assign Vendor</label>
                                 <select name="vendor" class="form-select">
@@ -113,25 +224,15 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            
-                            
-                            <div class="d-flex justify-content-between align-items-center mt-4">
-                                <a href="javascript:history.back()" class="btn btn-secondary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5a.5.5 0 0 1 .5.5z"/>
-                                    </svg>
-                                    Back
-                                </a>
-                                
-                            
+
+                            <div class="d-grid">
                                 <button type="submit" class="btn btn-submit">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
                                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                                     </svg>
-                                    Save 
+                                    Save Changes
                                 </button>
                             </div>
-                            
                         </form>
                     </div>
                 </div>
@@ -139,4 +240,33 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusButtons = document.querySelectorAll('.status-btn');
+    const statusInput = document.getElementById('status-input');
+    const dateLabel = document.getElementById('date-label');
+    
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove selected class from all buttons
+            statusButtons.forEach(btn => btn.classList.remove('selected'));
+            
+            // Add selected class to clicked button
+            this.classList.add('selected');
+            
+            // Update hidden input value
+            statusInput.value = this.dataset.status;
+            
+            // Update date label based on selected status
+            if (this.dataset.status === 'completed') {
+                dateLabel.textContent = 'Completion Date';
+            } else if (this.dataset.status === 'denied') {
+                dateLabel.textContent = 'Denied Date';
+            }
+        });
+    });
+});
+</script>
+
 {% endblock %}

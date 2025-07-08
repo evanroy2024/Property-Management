@@ -293,13 +293,20 @@ from propertydetails.models import PropertyManagement, Floor, Room
 from mainapp.models import Client 
 from django.db import transaction
 from django.core.exceptions import ValidationError
-
+US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
 def property_create_view(request):
     clients = Client.objects.all()
     managers = ClientManagers.objects.all()
     context = {
         'clients': clients,
-        'managers': managers
+        'managers': managers,
+        'us_states': US_STATES,
     }
 
     if request.method == 'POST':
@@ -499,6 +506,15 @@ def property_create_view(request):
                     state=request.POST.get('state', ''),
                     city=request.POST.get('city', ''),
                     zipcode=request.POST.get('property_zipcode', ''),
+                    additional_info=request.POST.get('additional_info', ''),
+
+                    # New features
+                    basketball_court='basketball_court' in request.POST,
+                    tennis_court='tennis_court' in request.POST,
+                    pickleball_court='pickleball_court' in request.POST,
+                    hot_tub='hot_tub' in request.POST,
+                    outdoor_kitchen_gazebo='outdoor_kitchen_gazebo' in request.POST,
+                    waterfront='waterfront' in request.POST,
                 )
 
                 # Loop through each floor and room
@@ -541,6 +557,9 @@ def property_create_view(request):
             return render(request, 'adminmanager/property/create.html', context)
 
     return render(request, 'adminmanager/property/create.html', context)
+
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -564,10 +583,18 @@ def property_update_view(request, pk):
             prop.impact_windows = 'impact_windows' in request.POST
             prop.has_hoa = 'has_hoa' in request.POST
             prop.gated_property = 'gated_property' in request.POST
+            prop.basketball_court = 'basketball_court' in request.POST
+            prop.tennis_court = 'tennis_court' in request.POST
+            prop.pickleball_court = 'pickleball_court' in request.POST
+            prop.hot_tub = 'hot_tub' in request.POST
+            prop.outdoor_kitchen_gazebo = 'outdoor_kitchen_gazebo' in request.POST
+            prop.waterfront = 'waterfront' in request.POST
+
             prop.state = request.POST.get('property_state', '')   # Added state
             prop.city = request.POST.get('property_city', '')     # Added City 
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
             prop.zipcode = request.POST.get('property_zipcode', '')     # Added City 
+            prop.additional_info = request.POST.get('additional_info', '')
             prop.save()
 
             # Update Client info
@@ -696,7 +723,8 @@ def property_update_view(request, pk):
         'floors': floors,
         'client': client,
         'client_managers': client_managers,
-        'selected_client_manager': prop.client_manager
+        'selected_client_manager': prop.client_manager,
+        'us_states': US_STATES,  # ✅ Pass it to the template
     })
 
 

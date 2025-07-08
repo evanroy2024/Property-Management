@@ -18,6 +18,13 @@ class PropertyManagement(models.Model):
     has_hoa = models.BooleanField(default=False)
     gated_property = models.BooleanField(default=False)
 
+    basketball_court = models.BooleanField(default=False)
+    tennis_court = models.BooleanField(default=False)
+    pickleball_court = models.BooleanField(default=False)
+    hot_tub = models.BooleanField(default=False)
+    outdoor_kitchen_gazebo = models.BooleanField(default=False)
+    waterfront = models.BooleanField(default=False)
+
     city = models.CharField(max_length=20, null=True, blank=True)
     state = models.CharField(max_length=20, null=True, blank=True)
     zipcode = models.CharField(max_length=10, null=True, blank=True)
@@ -31,6 +38,8 @@ class PropertyManagement(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    additional_info = models.TextField(blank=True, null=True)
     # Floor Plan Fields (Supports Image & PDF)
   
 
