@@ -651,61 +651,97 @@ def property_update_view(request, pk):
             client.contact4_priority = request.POST.get('contact4_priority', '')
 
             # Contact Person 4 Update
-            client.contact4_name = request.POST.get('contact4_name', '')
-            client.contact4_last_name = request.POST.get('contact4_last_name', '')
-            client.contact4_email = request.POST.get('contact4_email', '')
-            client.contact4_phone = request.POST.get('contact4_phone', '')
-            client.contact4_office_phone = request.POST.get('contact4_office_phone', '')
-            client.contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
-            client.contact4_preferred = request.POST.get('contact4_preferred', '')
-            client.contact4_priority = request.POST.get('contact4_priority', '')
+            client.contact5_name = request.POST.get('contact4_name', '')
+            client.contact5_last_name = request.POST.get('contact4_last_name', '')
+            client.contact5_email = request.POST.get('contact4_email', '')
+            client.contact5_phone = request.POST.get('contact4_phone', '')
+            client.contact5_office_phone = request.POST.get('contact4_office_phone', '')
+            client.contact5_buisness_adress = request.POST.get('contact4_buisness_adress', '')
+            client.contact5_preferred = request.POST.get('contact4_preferred', '')
+            client.contact5_priority = request.POST.get('contact4_priority', '')
 
             client.save()
 
             # Update floors and rooms (including floor image)
-            existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
+            # Replace the floor and room handling section in your property_update_view with this:
+
+            # Update floors and rooms (including floor image)
+            existing_floors = list(prop.floors.all())
+            floors_to_keep = []
+
+            # Get all floor names from POST data
+            floor_names_in_post = []
             i = 1
             while True:
                 floor_key = f'floor_name_{i}'
                 if floor_key not in request.POST:
                     break
+                floor_names_in_post.append((i, request.POST.get(floor_key)))
+                i += 1
 
-                floor_name = request.POST.get(floor_key)
-                floor_image = request.FILES.get(f'floor_image_{i}')  # New image input for each floor
-
-                floor = existing_floors.get(floor_key)
-                if floor:
+            # Process each floor from POST data
+            for floor_index, floor_name in floor_names_in_post:
+                floor_image = request.FILES.get(f'floor_image_{floor_index}')
+                
+                # Try to find existing floor by index (if it exists)
+                floor = None
+                if floor_index <= len(existing_floors):
+                    floor = existing_floors[floor_index - 1]
                     floor.floor_name = floor_name
-                    if floor_image:  # If an image is provided, update it
+                    if floor_image:
                         floor.floor_imgae = floor_image
                     floor.save()
                 else:
-                    floor = Floor.objects.create(property=prop, floor_name=floor_name, floor_imgae=floor_image)
-
-                # Handle room updates
+                    # Create new floor
+                    floor = Floor.objects.create(
+                        property=prop, 
+                        floor_name=floor_name, 
+                        floor_imgae=floor_image
+                    )
+                
+                floors_to_keep.append(floor)
+                
+                # Handle room updates for this floor
+                existing_rooms = list(floor.rooms.all())
+                rooms_to_keep = []
+                
                 j = 1
                 while True:
-                    room_name_key = f'room_name_{i}_{j}'
-                    room_size_key = f'room_size_{i}_{j}'
-
+                    room_name_key = f'room_name_{floor_index}_{j}'
+                    room_size_key = f'room_size_{floor_index}_{j}'
+                    
                     if room_name_key not in request.POST:
                         break
-
+                    
                     room_name = request.POST.get(room_name_key)
-                    room_size = request.POST.get(room_size_key)
-
-                    if j <= floor.rooms.count():
-                        room = floor.rooms.all()[j - 1]
+                    room_size = request.POST.get(room_size_key, '')
+                    
+                    if j <= len(existing_rooms):
+                        # Update existing room
+                        room = existing_rooms[j - 1]
                         room.room_name = room_name
                         room.room_size = room_size
                         room.save()
                     else:
-                        Room.objects.create(
+                        # Create new room
+                        room = Room.objects.create(
                             floor=floor,
                             room_name=room_name,
+                            room_size=room_size
                         )
+                    
+                    rooms_to_keep.append(room)
                     j += 1
-                i += 1
+                
+                # Delete rooms that are no longer in the form
+                for room in existing_rooms:
+                    if room not in rooms_to_keep:
+                        room.delete()
+
+            # Delete floors that are no longer in the form
+            for floor in existing_floors:
+                if floor not in floors_to_keep:
+                    floor.delete()
 
         # Handling Client Manager Update (if new_cm is present)
         if 'new_cm' in request.POST:
@@ -1500,3 +1536,37 @@ def send_email_view(request):
 
 
 # services updates html -------------------------------------------------------------------------------------
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from servicedetails.models import ServiceRequest
+
+@csrf_exempt
+def update_cost(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            req = ServiceRequest.objects.get(id=data['id'])
+            req.cost = data['cost']
+            req.save()
+            return JsonResponse({'success': True})
+        except ServiceRequest.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Request not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid method'})
+
+
+from servicedetails.models import ConciergeServiceRequest
+
+@csrf_exempt
+def update_concierge_cost(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            req = ConciergeServiceRequest.objects.get(id=data['id'])
+            req.cost = data['cost']
+            req.save()
+            return JsonResponse({'success': True})
+        except ConciergeServiceRequest.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Request not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid method'})

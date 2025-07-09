@@ -471,7 +471,7 @@
                         </div>
 
                         <div class="form-row">
-                         <div class="form-col form-col-md">
+                          <div class="form-col form-col-md">
   <div class="form-group">
     <label class="form-label" for="property_state">Property State</label>
     <div class="input-with-icon">
@@ -497,6 +497,10 @@
                           </div>
                       </div>
                         
+                         <div class="form-group half">
+                        <label class="form-label" for="year_built">Zip Code</label>
+                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" value="{{ property.zipcode }}" placeholder="Enter Zip Code">
+                    </div>
                         <div class="form-group">
                             <label class="form-label" for="construction_type">Construction Type</label>
                             <div class="input-with-icon">
@@ -505,24 +509,19 @@
                             </div>
                         </div>
 
-                         <div class="form-group half">
-                        <label class="form-label" for="year_built">Zip Code</label>
-                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" value="{{ property.zipcode }}" placeholder="Enter Zip Code">
-                    </div>
-                       <!-- Additional Info -->
+                    <!-- Additional Info -->
 <div class="form-group">
     <label class="form-label" for="additional_info">Additional Property Information</label>
     <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property">{{ property.additional_info }}</textarea>
 </div>
-                    
                     
                         
                         
                     </div>
                 </div>
                 
-                <!-- Property Features Card -->
-                <div class="card">
+               <!-- Property Features Card -->
+                  <div class="card">
                     <div class="card-header">
                         <h2 class="card-title"><i class="fas fa-list-check"></i> Property Features</h2>
                     </div>
@@ -580,6 +579,7 @@
     <span class="checkbox-label">Waterfront</span>
 </label>
 
+                                
                             </div>
                         </div>
                         
@@ -592,6 +592,7 @@
                         </div>
                     </div>
                 </div>
+
                 
                 <!-- Floor Plans Card -->
                 <div class="card">
@@ -600,8 +601,10 @@
                     <div id="floors-container">
                         {% for floor in floors %}
                         <div class="floor-section" id="floor-section-{{ forloop.counter }}">
+                          <div class="floor-delete-bts" style="display: flex; justify-content: space-between;">
                             <h2>Floor {{ forloop.counter }}</h2>
-                            
+                             <button type="button" class="btn btn-danger btn-sm" onclick="removeFloor('floor-section-{{ forloop.counter }}')">Delete Floor</button>
+                            </div>
                             <!-- Floor Name -->
                             <div class="form-row">
                                 <div class="form-group">
@@ -708,8 +711,10 @@
                   
                     <!-- Addtional contacts adding  -->
                      <div class="additional-contact-1" style="display: none;">
+                      <div style="display: flex; justify-content: space-between;">
                     <h3 class="sub-title">Contact Person 1</h3>
-
+                    <button type="button" class="delete-contact-btn" onclick="deleteContact(1)" style="display: none; background: #dc3545; width: 80px; border-radius: 20px; color: white; height: 40px;  border: none; border-radius: 3px; margin-top: 10px;">Delete </button>
+                    </div>
                     <div class="form-row" style="gap: 20px;">
                       <div class="form-group">
                         <label>First Name</label>
@@ -763,8 +768,10 @@
                     </div>
                     </div>
                     <div class="additional-contact-2" style="display: none;">
-                        <h3 class="sub-title">Contact Person 2</h3>
-                      
+                        <div style="display: flex; justify-content: space-between;">
+                    <h3 class="sub-title">Contact Person 2</h3>
+                    <button type="button" class="delete-contact-btn" onclick="deleteContact(2)" style="display: none; background: #dc3545; width: 80px; border-radius: 20px; color: white; height: 40px;  border: none; border-radius: 3px; margin-top: 10px;">Delete </button>
+                    </div>
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>First Name</label>
@@ -818,8 +825,10 @@
                         </div>
                       </div>
                       <div class="additional-contact-3" style="display: none;">
-                        <h3 class="sub-title">Contact Person 3</h3>
-                      
+                       <div style="display: flex; justify-content: space-between;">
+                    <h3 class="sub-title">Contact Person 3</h3>
+                    <button type="button" class="delete-contact-btn" onclick="deleteContact(3)" style="display: none; background: #dc3545; width: 80px; border-radius: 20px; color: white; height: 40px;  border: none; border-radius: 3px; margin-top: 10px;">Delete </button>
+                    </div>
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>First Name</label>
@@ -873,7 +882,10 @@
                         </div>
                       </div>
                       <div class="additional-contact-4" style="display: none;">
-                        <h3 class="sub-title">Contact Person 4</h3>
+                        <div style="display: flex; justify-content: space-between;">
+                    <h3 class="sub-title">Contact Person 4</h3>
+                    <button type="button" class="delete-contact-btn" onclick="deleteContact(4)" style="display: none; background: #dc3545; width: 80px; border-radius: 20px; color: white; height: 40px;  border: none; border-radius: 3px; margin-top: 10px;">Delete </button>
+                    </div>
                       
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
@@ -928,8 +940,10 @@
                         </div>
                       </div>
                       <div class="additional-contact-5" style="display: none;">
-                        <h3 class="sub-title">Contact Person 5</h3>
-                      
+                        <div style="display: flex; justify-content: space-between;">
+                    <h3 class="sub-title">Contact Person 5</h3>
+                    <button type="button" class="delete-contact-btn" onclick="deleteContact(5)" style="display: none; background: #dc3545; width: 80px; border-radius: 20px; color: white; height: 40px;  border: none; border-radius: 3px; margin-top: 10px;">Delete </button>
+                    </div>
                         <div class="form-row" style="gap: 20px;">
                           <div class="form-group">
                             <label>First Name</label>
@@ -984,31 +998,208 @@
                       </div>
                                                                                         
                     <!-- Button to toggle visibility -->
-<button id="toggleButtonContact" type="button" onclick="toggleVisibility()">Client Contact 1</button>
+<div class="previous-next-btn" style="display: flex; gap: 10px;">
+<button id="prevContactButton" type="button" onclick="showPreviousContact()" style="padding: 8px 16px; margin-right: 10px; background: #6c757d; color: white; border: none; border-radius: 4px;">Previous</button>
+<button id="nextContactButton" type="button" onclick="showNextContact()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px;">Add Contact</button>
+</div>
 <script>
-    let currentContact = 1; // To track the current contact form being displayed
+let currentContact = 1;
+let activeContacts = []; // Track which contacts are active
+let currentlyDisplayed = 0; // Track which contact is currently shown
 
-function toggleVisibility() {
-    // Hide the previous contact form
-    if (currentContact > 1) {
-        document.querySelector(`.additional-contact-${currentContact - 1}`).style.display = 'none';
-    }
-
-    // Show the current contact form
-    document.querySelector(`.additional-contact-${currentContact}`).style.display = 'block';
-
-    // Move to the next contact form
-    currentContact++;
-
-    // If we've reached beyond the 5th contact, hide the button
-    if (currentContact > 5) {
-        document.getElementById('toggleButtonContact').style.display = 'none';
-    } else {
-        // Update the button text to show the next contact
-        document.getElementById('toggleButtonContact').textContent = `Client Contact ${currentContact}`;
+function addNewContact() {
+    if (currentContact <= 5) {
+        // Hide all currently displayed contacts
+        hideAllContacts();
+        
+        // Show the current contact form
+        const contactForm = document.querySelector(`.additional-contact-${currentContact}`);
+        contactForm.style.display = 'block';
+        currentlyDisplayed = currentContact;
+        
+        // Add to active contacts if not already there
+        if (!activeContacts.includes(currentContact)) {
+            activeContacts.push(currentContact);
+        }
+        
+        // Show delete button for this contact
+        const deleteBtn = contactForm.querySelector('.delete-contact-btn');
+        if (deleteBtn) {
+            deleteBtn.style.display = 'inline-block';
+        }
+        
+        // Move to the next contact form
+        currentContact++;
+        
+        // Show/hide navigation buttons
+        updateNavigationButtons();
     }
 }
 
+function hideAllContacts() {
+    for (let i = 1; i <= 5; i++) {
+        const contactForm = document.querySelector(`.additional-contact-${i}`);
+        if (contactForm) {
+            contactForm.style.display = 'none';
+        }
+    }
+}
+
+function showPreviousContact() {
+    if (activeContacts.length > 0) {
+        // Find the previous contact in active contacts
+        const currentIndex = activeContacts.indexOf(currentlyDisplayed);
+        if (currentIndex > 0) {
+            hideAllContacts();
+            currentlyDisplayed = activeContacts[currentIndex - 1];
+            document.querySelector(`.additional-contact-${currentlyDisplayed}`).style.display = 'block';
+            updateNavigationButtons();
+        }
+    }
+}
+
+function showNextContact() {
+    if (activeContacts.length > 0) {
+        // Find the next contact in active contacts
+        const currentIndex = activeContacts.indexOf(currentlyDisplayed);
+        if (currentIndex < activeContacts.length - 1) {
+            hideAllContacts();
+            currentlyDisplayed = activeContacts[currentIndex + 1];
+            document.querySelector(`.additional-contact-${currentlyDisplayed}`).style.display = 'block';
+            updateNavigationButtons();
+        } else {
+            // No next contact, add new one
+            addNewContact();
+        }
+    } else {
+        // No active contacts, add first one
+        addNewContact();
+    }
+}
+
+function updateNavigationButtons() {
+    const prevButton = document.getElementById('prevContactButton');
+    const nextButton = document.getElementById('nextContactButton');
+    
+    // Always show both buttons
+    if (prevButton) {
+        prevButton.style.display = 'inline-block';
+        
+        // Enable/disable previous button
+        if (activeContacts.length > 0 && activeContacts.indexOf(currentlyDisplayed) > 0) {
+            prevButton.disabled = false;
+            prevButton.style.opacity = '1';
+        } else {
+            prevButton.disabled = true;
+            prevButton.style.opacity = '0.5';
+        }
+    }
+    
+    if (nextButton) {
+        nextButton.style.display = 'inline-block';
+        
+        // Enable/disable next button based on available contacts or ability to add new
+        if (activeContacts.length > 0 && activeContacts.indexOf(currentlyDisplayed) < activeContacts.length - 1) {
+            nextButton.disabled = false;
+            nextButton.style.opacity = '1';
+            nextButton.textContent = 'Next';
+        } else if (currentContact <= 5) {
+            nextButton.disabled = false;
+            nextButton.style.opacity = '1';
+            nextButton.textContent = 'Add Contact';
+        } else {
+            nextButton.disabled = true;
+            nextButton.style.opacity = '0.5';
+            nextButton.textContent = 'Next';
+        }
+    }
+}
+
+function deleteContact(contactNum) {
+    const contactForm = document.querySelector(`.additional-contact-${contactNum}`);
+    
+    // Hide the form
+    contactForm.style.display = 'none';
+    
+    // Clear all fields in this contact
+    contactForm.querySelectorAll('input').forEach(input => {
+        input.value = '';
+    });
+    contactForm.querySelectorAll('select').forEach(select => {
+        select.selectedIndex = 0;
+    });
+    
+    // Remove from active contacts
+    activeContacts = activeContacts.filter(contact => contact !== contactNum);
+    
+    // If deleted contact was currently displayed, show another one
+    if (currentlyDisplayed === contactNum) {
+        if (activeContacts.length > 0) {
+            currentlyDisplayed = activeContacts[activeContacts.length - 1];
+            document.querySelector(`.additional-contact-${currentlyDisplayed}`).style.display = 'block';
+        } else {
+            currentlyDisplayed = 0;
+        }
+    }
+    
+    // Show the add button again if it was hidden
+    if (currentContact > 5) {
+        document.getElementById('toggleButtonContact').style.display = 'inline-block';
+        document.getElementById('toggleButtonContact').textContent = `Client Contact ${currentContact}`;
+    }
+    
+    // Update navigation buttons
+    updateNavigationButtons();
+}
+
+// Prevent auto-save on page unload
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        // Add flag to track intentional saves
+        form.dataset.intentionalSubmit = 'false';
+        
+        // Override form submission
+        form.addEventListener('submit', function(e) {
+            if (this.dataset.intentionalSubmit !== 'true') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Add explicit save button handler
+        const saveButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        saveButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                form.dataset.intentionalSubmit = 'true';
+            });
+        });
+    }
+    
+    // Prevent browser auto-fill from populating contact forms
+    document.querySelectorAll('.additional-contact-1, .additional-contact-2, .additional-contact-3, .additional-contact-4, .additional-contact-5').forEach(form => {
+        form.querySelectorAll('input').forEach(input => {
+            input.setAttribute('autocomplete', 'off');
+        });
+    });
+});
+
+// Clear fields when showing new contact to prevent garbage data
+function clearContactFields(contactNum) {
+    const contactForm = document.querySelector(`.additional-contact-${contactNum}`);
+    if (contactForm) {
+        contactForm.querySelectorAll('input').forEach(input => {
+            if (!input.value || input.value.trim() === '') {
+                input.value = '';
+            }
+        });
+        contactForm.querySelectorAll('select').forEach(select => {
+            if (select.selectedIndex === -1 || select.value === '') {
+                select.selectedIndex = 0;
+            }
+        });
+    }
+}
 </script>
 
                   </div>
@@ -1092,7 +1283,7 @@ function toggleVisibility() {
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
+                    <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
                         <i class="fas fa-times"></i> Cancel
                       </a>
                     <button type="submit" class="btn btn-primary btn-icon" id="updateBtn">
@@ -1140,8 +1331,7 @@ function toggleVisibility() {
                     </select>
                 </div>
             
-                                <button type="submit" class="btn btn-primary ">Update</button>
-
+                <button type="submit" class="btn btn-primary ">Update Client Manager</button>
             </form>
 <style>
     /* Form Container */
@@ -1287,46 +1477,63 @@ function toggleVisibility() {
             });
         });
     </script> -->
-
 <script>
     // Initialize floorCount to the number of existing floor sections
     let floorCount = document.querySelectorAll('.floor-section').length;
+    
+    // Function to get the next available floor number
+    function getNextFloorNumber() {
+        const existingFloors = document.querySelectorAll('.floor-section');
+        const usedNumbers = Array.from(existingFloors).map(floor => {
+            const floorTitle = floor.querySelector('h2').textContent;
+            return parseInt(floorTitle.replace('Floor ', ''));
+        });
+        
+        // Find the smallest unused number starting from 1
+        let nextNumber = 1;
+        while (usedNumbers.includes(nextNumber)) {
+            nextNumber++;
+        }
+        return nextNumber;
+    }
 
     // Add new floor
     function addFloor() {
-        floorCount++;
+        const nextFloorNumber = getNextFloorNumber();
+        floorCount++; // This is just for unique IDs
+        
         const floorSection = document.createElement("div");
         floorSection.className = "floor-section";
         floorSection.id = `floor-section-${floorCount}`;
 
         floorSection.innerHTML = `
             <div class="d-flex justify-content-between align-items-center">
-                <h2>Floor ${floorCount}</h2>
+                <h2>Floor ${nextFloorNumber}</h2>
                 <button type="button" class="btn btn-danger btn-sm" onclick="removeFloor('floor-section-${floorCount}')">Delete Floor</button>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                    <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                    <label class="form-label" for="floor_name_${nextFloorNumber}">Floor Name</label>
+                    <input class="form-control" type="text" id="floor_name_${nextFloorNumber}" name="floor_name_${nextFloorNumber}" placeholder="e.g. Main Floor" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="floor_image_${floorCount}">Floor Image</label>
-                    <input class="form-control" type="file" name="floor_image_${floorCount}" accept="image/*">
+                    <label class="form-label" for="floor_image_${nextFloorNumber}">Floor Image</label>
+                    <input class="form-control" type="file" name="floor_image_${nextFloorNumber}" accept="image/*">
                 </div>
             </div>
 
-            <div class="rooms-container" id="rooms-container-${floorCount}">
-                <h3>Rooms for Floor ${floorCount}</h3>
-                <div class="room-group" id="room-group-${floorCount}-1">
-                    <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+            <div class="rooms-container" id="rooms-container-${nextFloorNumber}">
+                <h3>Rooms for Floor ${nextFloorNumber}</h3>
+                <div class="room-group" id="room-group-${nextFloorNumber}-1">
+                    <input class="form-control" type="text" name="room_name_${nextFloorNumber}_1" placeholder="Room Name" required>
                 </div>
             </div>
 
-            <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addRoom(${floorCount})">Add Room</button>
+            <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addRoom(${nextFloorNumber})">Add Room</button>
             <hr>
         `;
 
@@ -1347,17 +1554,83 @@ function toggleVisibility() {
         document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
     }
 
+    // Function to renumber all floors sequentially
+    function renumberFloors() {
+        const allFloors = document.querySelectorAll('.floor-section');
+        allFloors.forEach((floor, index) => {
+            const newFloorNumber = index + 1;
+            
+            // Update floor title
+            const floorTitle = floor.querySelector('h2');
+            floorTitle.textContent = `Floor ${newFloorNumber}`;
+            
+            // Update rooms container title
+            const roomsTitle = floor.querySelector('.rooms-container h3');
+            roomsTitle.textContent = `Rooms for Floor ${newFloorNumber}`;
+            
+            // Update floor name input
+            const floorNameInput = floor.querySelector('input[name^="floor_name_"]');
+            if (floorNameInput) {
+                floorNameInput.name = `floor_name_${newFloorNumber}`;
+                floorNameInput.id = `floor_name_${newFloorNumber}`;
+            }
+            
+            // Update floor name label
+            const floorNameLabel = floor.querySelector('label[for^="floor_name_"]');
+            if (floorNameLabel) {
+                floorNameLabel.setAttribute('for', `floor_name_${newFloorNumber}`);
+            }
+            
+            // Update floor image input
+            const floorImageInput = floor.querySelector('input[name^="floor_image_"]');
+            if (floorImageInput) {
+                floorImageInput.name = `floor_image_${newFloorNumber}`;
+                floorImageInput.id = `floor_image_${newFloorNumber}`;
+            }
+            
+            // Update floor image label
+            const floorImageLabel = floor.querySelector('label[for^="floor_image_"]');
+            if (floorImageLabel) {
+                floorImageLabel.setAttribute('for', `floor_image_${newFloorNumber}`);
+            }
+            
+            // Update rooms container ID
+            const roomsContainer = floor.querySelector('.rooms-container');
+            if (roomsContainer) {
+                roomsContainer.id = `rooms-container-${newFloorNumber}`;
+            }
+            
+            // Update all room inputs for this floor
+            const roomInputs = floor.querySelectorAll('input[name^="room_name_"]');
+            roomInputs.forEach((roomInput, roomIndex) => {
+                roomInput.name = `room_name_${newFloorNumber}_${roomIndex + 1}`;
+            });
+            
+            // Update all room groups for this floor
+            const roomGroups = floor.querySelectorAll('.room-group');
+            roomGroups.forEach((roomGroup, roomIndex) => {
+                roomGroup.id = `room-group-${newFloorNumber}-${roomIndex + 1}`;
+            });
+            
+            // Update Add Room button onclick
+            const addRoomButton = floor.querySelector('button[onclick^="addRoom("]');
+            if (addRoomButton) {
+                addRoomButton.setAttribute('onclick', `addRoom(${newFloorNumber})`);
+            }
+        });
+    }
+
     // Remove floor
     function removeFloor(sectionId) {
         const floorElement = document.getElementById(sectionId);
         if (floorElement) {
             floorElement.remove();
+            renumberFloors(); // Renumber all floors after deletion
         }
     }
 </script>
     
 
- 
     <style>
         #floors-container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1546,11 +1819,13 @@ function toggleVisibility() {
   background-color: red !important;
 }
 .client-manager-form .btn {
-    width: 8%;
-    padding: 14px;
-    font-size: 0.9rem;
-    margin: 0 auto;
-    display: flex;
+    /* width: 8%;
+    padding: 14px; */
+    font-size: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-transform: capitalize;
+    font-weight: 500;
 }
+
     </style>
 {% endblock content %}

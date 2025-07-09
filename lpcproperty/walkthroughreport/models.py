@@ -83,7 +83,7 @@ class WalkthroughReport(models.Model):
     datetime = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     cost = models.IntegerField(default=0,blank=True, null=True,)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open',blank=True, null=True)
-    client_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='Pending')
+    client_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='Pending', blank=True)
     completation_denied_date = models.DateField(blank=True, null=True)
     gie1 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GIE, verbose_name="Visual Inspection: Exterior of House")
     gie1_remarks = models.CharField(max_length=500, blank=True, null=True)

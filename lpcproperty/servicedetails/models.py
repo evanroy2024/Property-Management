@@ -26,13 +26,14 @@ class ServiceRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     floor_plan_name = models.CharField(max_length=100, blank=True, null=True)
     completation_denied_date = models.DateField(blank=True, null=True)
-
+    cost = models.IntegerField(default=0)
 
     def __str__(self):
         return self.request_type
 
 
 from django.db import models
+from django.utils import timezone
 
 class PrearrivalInformation(models.Model):
     STATUS_CHOICES = [
@@ -70,6 +71,8 @@ class PrearrivalInformation(models.Model):
     automobiles = models.TextField(null=True, blank=True)
     additional = models.TextField(null=True, blank=True)
 
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
     def __str__(self):
         return f"{self.name} - {self.user.username if self.user else 'No User'}"
 
@@ -91,6 +94,7 @@ class DepartureInformation(models.Model):
     wash = models.TextField(null=True, blank=True)
     trash = models.TextField(null=True, blank=True)
     additional = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
 
     def __str__(self):
         return f"{self.name} - {self.user.username if self.user else 'No User'}"
@@ -113,7 +117,7 @@ class ConciergeServiceRequest(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completation_denied_date = models.DateField(blank=True, null=True)
-
+    cost = models.BigIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user} - {self.status}"

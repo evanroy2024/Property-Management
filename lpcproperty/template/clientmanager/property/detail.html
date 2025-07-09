@@ -50,7 +50,7 @@
                             <div class="info-value">{{ property.state }}</div>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Zipcode</span>
+                            <span class="info-label">Zip Code</span>
                             <div class="info-value">{{ property.zipcode }}</div>
                         </div>
                         <div class="info-item">
@@ -77,6 +77,30 @@
                             <label><span>Gated Property</span>
                                 <input type="checkbox" {% if property.gated_property %}checked{% endif %} disabled>
                             </label>
+                            <label><span>Basketball Court</span>
+                                <input type="checkbox" {% if property.basketball_court %}checked{% endif %} disabled>
+                            </label>
+
+                            <label><span>Tennis Court</span>
+                                <input type="checkbox" {% if property.tennis_court %}checked{% endif %} disabled>
+                            </label>
+
+                            <label><span>Pickle Ball Court</span>
+                                <input type="checkbox" {% if property.pickleball_court %}checked{% endif %} disabled>
+                            </label>
+
+                            <label><span>Hot Tub</span>
+                                <input type="checkbox" {% if property.hot_tub %}checked{% endif %} disabled>
+                            </label>
+
+                            <label><span>Outdoor Kitchen / Gazebo</span>
+                                <input type="checkbox" {% if property.outdoor_kitchen_gazebo %}checked{% endif %} disabled>
+                            </label>
+
+                            <label><span>Waterfront</span>
+                                <input type="checkbox" {% if property.waterfront %}checked{% endif %} disabled>
+                            </label>
+
                         </div>
                     </div>
                 </div>

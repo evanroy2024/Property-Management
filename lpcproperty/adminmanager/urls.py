@@ -109,6 +109,9 @@ urlpatterns = [
 
     path('send-email/', views.send_email_view, name='send_email'),
 
+    path('update-cost/', views.update_cost, name='update_cost'),
+    path('update-concierge-cost/', views.update_concierge_cost, name='update_concierge_cost'),
+
     # For services updates 
 
 

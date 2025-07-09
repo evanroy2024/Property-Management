@@ -417,6 +417,7 @@
                             </div>
                         </th>
                         <th>Description</th>
+                        <th>Cost</th>
                         <th>Date Denied</th>
                     </tr>
                 </thead>
@@ -429,6 +430,7 @@
                             <strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong>
                         </td>
                         <td>{{ req.description|truncatechars:50 }}</td>
+                        <td>${{ req.cost }}</td>
                        
 <td>{{ req.completation_denied_date }}</td>
 

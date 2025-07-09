@@ -58,14 +58,20 @@
                     Client Name
                     <span id="name-sort-arrow" class="sort-arrow" style="color: #495057 !important;">↕️</span>
                 </div>
-                <div style="color: #495057 !important;">Arrival Date/Time</div>
-                <div style="color: #495057 !important;">Request Submittal Date</div>
+                <div class="sortable-header" onclick="sortByArrivalDate()" style="cursor: pointer; display: flex; align-items: center; gap: 5px; color: #495057 !important;">
+                    Arrival Date/Time
+                    <span id="arrival-sort-arrow" class="sort-arrow" style="color: #495057 !important;">↕️</span>
+                </div>
+                <div class="sortable-header" onclick="sortBySubmittalDate()" style="cursor: pointer; display: flex; align-items: center; gap: 5px; color: #495057 !important;">
+                    Request Submittal Date
+                    <span id="submittal-sort-arrow" class="sort-arrow" style="color: #495057 !important;">↕️</span>
+                </div>
                 <div style="color: #495057 !important;">Actions</div>
             </div>
             
             <div class="request-list">
                 {% for r in requests %}
-                    <div class="request-item" data-status="{{ r.status|lower }}" data-client-id="{{ r.user.id }}" data-client-name="{{ r.user.last_name }}, {{ r.user.first_name }}" style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr; gap: 15px; padding: 15px; border-bottom: 1px solid #e9ecef; align-items: center;">
+                    <div class="request-item" data-status="{{ r.status|lower }}" data-client-id="{{ r.user.id }}" data-client-name="{{ r.user.last_name }}, {{ r.user.first_name }}" data-arrival-date="{{ r.arrival_date }}" data-submittal-date="{{ r.created_at|date:'Y-m-d' }}" style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr; gap: 15px; padding: 15px; border-bottom: 1px solid #e9ecef; align-items: center;">
                         <div class="client-name" style="font-weight: 500; color: #1f2937 !important;">
                             {{ r.user.last_name }}, {{ r.user.first_name }}
                         </div>
@@ -163,6 +169,8 @@
 
 <script>
     let nameSort = 'none'; // none, asc, desc
+    let arrivalSort = 'none'; // none, asc, desc
+    let submittalSort = 'none'; // none, asc, desc
 
     function showContactDetails(firstName, lastName, email, phoneNumber, contact1Email, contact1Phone) {
         const clientDetails = `
@@ -230,6 +238,12 @@
         const items = Array.from(requestList.querySelectorAll('.request-item'));
         const arrow = document.getElementById('name-sort-arrow');
         
+        // Reset other sort states
+        arrivalSort = 'none';
+        submittalSort = 'none';
+        document.getElementById('arrival-sort-arrow').textContent = '↕️';
+        document.getElementById('submittal-sort-arrow').textContent = '↕️';
+        
         // Cycle through sort states
         if (nameSort === 'none' || nameSort === 'desc') {
             nameSort = 'asc';
@@ -247,6 +261,76 @@
                 return nameA.localeCompare(nameB);
             } else {
                 return nameB.localeCompare(nameA);
+            }
+        });
+        
+        // Re-append sorted items
+        items.forEach(item => requestList.appendChild(item));
+    }
+
+    function sortByArrivalDate() {
+        const requestList = document.querySelector('.request-list');
+        const items = Array.from(requestList.querySelectorAll('.request-item'));
+        const arrow = document.getElementById('arrival-sort-arrow');
+        
+        // Reset other sort states
+        nameSort = 'none';
+        submittalSort = 'none';
+        document.getElementById('name-sort-arrow').textContent = '↕️';
+        document.getElementById('submittal-sort-arrow').textContent = '↕️';
+        
+        // Cycle through sort states
+        if (arrivalSort === 'none' || arrivalSort === 'desc') {
+            arrivalSort = 'asc';
+            arrow.textContent = '↑';
+        } else {
+            arrivalSort = 'desc';
+            arrow.textContent = '↓';
+        }
+        
+        items.sort((a, b) => {
+            const dateA = new Date(a.getAttribute('data-arrival-date'));
+            const dateB = new Date(b.getAttribute('data-arrival-date'));
+            
+            if (arrivalSort === 'asc') {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
+        });
+        
+        // Re-append sorted items
+        items.forEach(item => requestList.appendChild(item));
+    }
+
+    function sortBySubmittalDate() {
+        const requestList = document.querySelector('.request-list');
+        const items = Array.from(requestList.querySelectorAll('.request-item'));
+        const arrow = document.getElementById('submittal-sort-arrow');
+        
+        // Reset other sort states
+        nameSort = 'none';
+        arrivalSort = 'none';
+        document.getElementById('name-sort-arrow').textContent = '↕️';
+        document.getElementById('arrival-sort-arrow').textContent = '↕️';
+        
+        // Cycle through sort states
+        if (submittalSort === 'none' || submittalSort === 'desc') {
+            submittalSort = 'asc';
+            arrow.textContent = '↑';
+        } else {
+            submittalSort = 'desc';
+            arrow.textContent = '↓';
+        }
+        
+        items.sort((a, b) => {
+            const dateA = new Date(a.getAttribute('data-submittal-date'));
+            const dateB = new Date(b.getAttribute('data-submittal-date'));
+            
+            if (submittalSort === 'asc') {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
             }
         });
         
