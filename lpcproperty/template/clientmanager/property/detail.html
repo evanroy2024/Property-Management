@@ -57,6 +57,10 @@
                             <span class="info-label">Preferred Contact Method</span>
                             <div class="info-value">{{ property.preferred_contact_method }}</div>
                         </div>
+                        <div class="info-item">
+                            <span class="info-label">Additional Property Information</span>
+                            <div class="info-value">{{ property.additional_info }}</div>
+                        </div>
                         
                     </div>
                     <div class="property-features">
@@ -194,7 +198,7 @@
         </div>
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Zipcode:</strong> {{ property.client.zipcode }}
+                <strong>Zip Code:</strong> {{ property.client.zipcode }}
             </div>
         </div>
         <div class="col-md-4 mb-3">
@@ -536,7 +540,7 @@ button.addEventListener("click", function() {
         </div>
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Zipcode:</strong> {{ property.client_manager.zipcode }}
+                <strong>Zip Code:</strong> {{ property.client_manager.zipcode }}
             </div>
         </div>
     </div>
