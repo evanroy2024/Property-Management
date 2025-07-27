@@ -34,6 +34,14 @@
                             <div class="info-value">{{ property.number_of_stories }}</div>
                         </div>
                         <div class="info-item">
+                            <span class="info-label">Street 1</span>
+                            <div class="info-value">{{ property.street_line1 }}</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Street 2</span>
+                            <div class="info-value">{{ property.street_line2 }}</div>
+                        </div>
+                        <div class="info-item">
                             <span class="info-label">Year Built</span>
                             <div class="info-value">{{ property.year_built }}</div>
                         </div>
@@ -155,7 +163,7 @@
     </div>
     
     <!-- Client info grid - 3 items per row -->
-    <div class="row">
+    <div class="row" style="color: black;">
         <!-- Row 1: First 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
@@ -167,16 +175,16 @@
                 <strong>Email:</strong> {{ property.client.email }}
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <!-- <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Username:</strong> {{ property.client.username }}
             </div>
-        </div>
+        </div> -->
         
         <!-- Row 2: Next 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone:</strong> {{ property.client.phone_number }}
+                <strong>Cell:</strong> {{ property.client.phone_number }}
             </div>
         </div>
         <div class="col-md-4 mb-3">
@@ -225,10 +233,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact1_phone }}
+                <strong>Cell :</strong> {{ property.client.contact1_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact1_office_phone }}
             </div>
@@ -247,7 +255,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact1_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact2_name or property.client.contact2_last_name or property.client.contact2_email or property.client.contact2_phone %}
@@ -267,10 +275,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact2_phone }}
+                <strong>Cell :</strong> {{ property.client.contact2_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact2_office_phone }}
             </div>
@@ -289,7 +297,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact2_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact3_name or property.client.contact3_last_name or property.client.contact3_email or property.client.contact3_phone %}
@@ -309,10 +317,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact3_phone }}
+                <strong>Cell :</strong> {{ property.client.contact3_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact3_office_phone }}
             </div>
@@ -331,7 +339,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact3_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact4_name or property.client.contact4_last_name or property.client.contact4_email or property.client.contact4_phone %}
@@ -351,10 +359,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact4_phone }}
+                <strong>Cell :</strong> {{ property.client.contact4_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact4_office_phone }}
             </div>
@@ -373,7 +381,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Contact Type :</strong> {{ property.client.contact4_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact5_name or property.client.contact5_last_name or property.client.contact5_email or property.client.contact5_phone %}
@@ -393,10 +401,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact5_phone }}
+                <strong>Cell :</strong> {{ property.client.contact5_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact5_office_phone }}
             </div>
@@ -415,7 +423,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact5_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
  <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
@@ -483,17 +491,14 @@ button.addEventListener("click", function() {
     
 </div>
 <!-- Client Manager Information with 3 fields per row -->
-<div class="container-fluid mt-4">
-    <!-- Header -->
+<!-- <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-12 mb-3">
             <h3 class="section-title">Client Manager Information</h3>
         </div>
     </div>
     
-    <!-- Client Manager info grid - 3 items per row -->
     <div class="row">
-        <!-- Row 1: First 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Name:</strong> {{ property.client_manager.last_name }}, {{ property.client_manager.first_name }}
@@ -510,7 +515,6 @@ button.addEventListener("click", function() {
             </div>
         </div>
         
-        <!-- Row 2: Next 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Phone:</strong> {{ property.client_manager.phone_number }}
@@ -527,7 +531,6 @@ button.addEventListener("click", function() {
             </div>
         </div>
         
-        <!-- Row 3: Last 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>City:</strong> {{ property.client_manager.city }}
@@ -545,9 +548,7 @@ button.addEventListener("click", function() {
         </div>
     </div>
 </div>
-<!-- CSS for Styling -->
 <style>
-    /* Basic styling for info-box */
     .info-box {
         background-color: #f9f9f9;
         border: 1px solid #ddd;
@@ -560,7 +561,6 @@ button.addEventListener("click", function() {
         color: #333;
     }
 
-    /* Title styling */
     .section-title {
         font-size: 1.5rem;
         font-weight: 600;
@@ -568,14 +568,12 @@ button.addEventListener("click", function() {
         color: #4b4b4b;
     }
 
-    /* Styling for each section */
     .row .col-md-6 .info-box {
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
 
-    /* Responsive styling */
     @media (max-width: 767px) {
         .row .col-md-6 {
             flex: 0 0 100%;
@@ -585,8 +583,11 @@ button.addEventListener("click", function() {
             margin-bottom: 20px;
         }
     }
-</style>
-   <!-- Floor Plans Overview Section -->
+</style> -->
+  
+
+
+<!-- Floor Plans Overview Section -->
    <div class="property-container mt7">
     <p class="section-title">Floor Plans Overview</p>
     
@@ -936,14 +937,6 @@ button.addEventListener("click", function() {
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
-body {
-  font-family: var(--font-family);
-  color: var(--text-color);
-  background-color: #f9fafb;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
 
 /* Layout optimization */
 .content-wrapper {

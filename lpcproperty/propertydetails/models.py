@@ -7,6 +7,9 @@ class PropertyManagement(models.Model):
     client_manager = models.ForeignKey(ClientManagers, on_delete=models.CASCADE, related_name="managed_properties")
 
     address = models.CharField(max_length=255)
+    street_line1 = models.CharField(max_length=255, blank=True, null=True)
+    street_line2 = models.CharField(max_length=255, blank=True, null=True)
+
     size_of_home = models.CharField(max_length=50)
     number_of_stories = models.PositiveIntegerField()
     construction_type = models.CharField(max_length=100)

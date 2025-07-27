@@ -15,20 +15,7 @@
             --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark-color);
-            line-height: 1.6;
-        }
-        
+     
         .container {
             width: 100%;
             max-width: 1200px;
@@ -371,11 +358,11 @@
                        
                         
                     </div>
-                    
-                    <!-- Toggle Button -->
-                    <div>
-                        <button type="button" id="toggle-new-client" class="toggle-btn">+ Add Client</button>
+                    <div style="width: 100%; display: block; margin: 0; padding: 0; margin-left: 10px;">
+                    <button type="button" id="toggle-new-client" class="toggle-btn" style="margin: 0;">+ Add New Client</button>
                     </div>
+
+                    <!-- Toggle Button -->
                     
                     <!-- New Client Form -->
                     <div id="new-client-form" class="new-client-card" style="display: none;">
@@ -388,16 +375,16 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="new_last_name" placeholder="Last Name">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="new_username" placeholder="Username">
-                            </div>
+                            </div> -->
                     
                             <div class="form-group flex-33">
                                 <input type="email" class="form-control" name="new_email" placeholder="Email">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="password" class="form-control" name="new_password" placeholder="Password">
-                            </div>
+                            </div> -->
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="new_phone" placeholder="Phone">
                             </div>
@@ -417,9 +404,15 @@
                              <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="client_city" name="client_city" placeholder="Enter City" >
                             </div>
-                             <div class="form-group flex-33">
-                                <input type="text" class="form-control" id="client_state" name="client_state" placeholder="Enter State " >
-                            </div>
+                            <div class="form-group flex-33">
+  <select class="form-control" id="client_state" name="client_state" >
+    <option value="" disabled selected>Select State</option>
+    {% for state in us_states %}
+      <option value="{{ state }}" {% if client.state == state %}selected{% endif %}>{{ state }}</option>
+    {% endfor %}
+  </select>
+</div>
+
                              <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="client_zipcode" name="client_zipcode" placeholder="Enter Zipcode" >
                             </div>
@@ -608,7 +601,7 @@
                     </div>
               
 
-<!-- adding new client ends here  -->
+                    <!-- adding new client ends here  -->
                 
                     <div class="form-group half">
                         <label class="form-label" for="client_manager_id">Select Client Manager</label>
@@ -619,9 +612,9 @@
                         </select>
                     </div>
                     <!-- Toggle Button -->
-                    <div>
+                    <!-- <div>
                         <button type="button" id="toggle-new-cm" class="toggle-btn-cm" style="margin-top: 31%;  background: linear-gradient(135deg, #6e8efb, #a777e3);">+ Add CM</button>
-                    </div>
+                    </div> -->
                     
                     <!-- Add this wrapper -->
                     <div id="new-cm-form" style="display: none;">
@@ -678,15 +671,27 @@
                         <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the property address">
                     </div>
                     <div class="form-group half">
+                        <label class="form-label" for="street_line1">Street Address Line 1</label>
+                        <input class="form-control" type="text" id="street_line1" name="street_line1" placeholder="Street address, P.O. box, company name, c/o" required>
+                    </div>
+
+                    <div class="form-group half">
+                        <label class="form-label" for="street_line2">Street Address Line 2</label>
+                        <input class="form-control" type="text" id="street_line2" name="street_line2" placeholder="Apartment, suite, unit, building, floor, etc.">
+                    </div>
+
+                     <div class="form-group half">
                         <label class="form-label" for="city">City</label>
                         <input class="form-control" type="text" id="city" name="city" required placeholder="Enter the City Name">
+                    </div>
+                    <div class="form-group half">
                         <label class="form-label" for="state">State</label>
-<select class="form-control" name="state" id="state" required>
-    <option value="" disabled selected>Select State</option>
-    {% for state in us_states %}
-        <option value="{{ state }}">{{ state }}</option>
-    {% endfor %}
-</select>
+                        <select class="form-control" name="state" id="state" required>
+                            <option value="" disabled selected>Select State</option>
+                            {% for state in us_states %}
+                                <option value="{{ state }}">{{ state }}</option>
+                            {% endfor %}
+                        </select>
 
                     </div>
                       <div class="form-group half">

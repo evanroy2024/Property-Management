@@ -163,3 +163,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     "sidebar_fixed": True,
 #     "sidebar_collapsed": False,
 # }
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000 

@@ -30,7 +30,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        body {
+            font-family: 'Raleway', sans-serif;
+    font-weight: 200; /* Use extra light weight */
+    color: #666; /* Softer text color */
+    background-color: black;
+        }
         .navbar {
             background-color: #13293D;
             display: flex;
@@ -112,261 +117,37 @@
 }
 body {
             font-family: 'Arial', sans-serif;
-            background-color: #000;
+            background-color: #ffffff;
             color: #fff;
         }
         
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-links">
-            <a href="{% url 'adminmanager:property_list' %}">Properties </a>
-            <a href="{% url 'adminmanager:vendor_list' %}">Vendors</a>
-        </div>
-        <div class="logo">
-            <img onclick="window.location.href='{% url 'adminmanager:admin_dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
-        </div>
-        <div class="nav-links">
-            <a href="{% url 'adminmanager:admin_dashboard' %}">Dashboard</a>
-            <!-- Logout Button Form -->
-            <form method="POST" action="{% url 'adminmanager:admin_logout' %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
-        </div>
-       
-        <div class="menu-toggle">☰</div>
-    </nav>
+  <nav class="navbar">
+    <div class="nav-links">
+        <a href="{% url 'adminmanager:property_list' %}">Properties</a>
+        <a href="{% url 'adminmanager:vendor_list' %}">Vendors</a>
+    </div>
+    <div class="logo">
+        <img onclick="window.location.href='{% url 'adminmanager:admin_dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
+    </div>
+    <div class="nav-links">
+        <a href="{% url 'adminmanager:admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'adminmanager:admin_logout' %}">Logout</a>
+
+    </div>
+    <div class="menu-toggle">☰</div>
+</nav>
 
     {% block content %}
     <!-- Child template content will be injected here -->
     {% endblock %}
 
  
-    <style>
-        /* Reset */
-        .standalone-footer *,
-        .standalone-footer *::before,
-        .standalone-footer *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-      
-        /* Main Footer Styles */
-        .standalone-footer {
-            width: 100%;
-            background: linear-gradient(145deg, #e19540, #d78a3b);
-            color: #fff;
-            padding: 2rem 1rem;
-            overflow-x: hidden;
-        }
-      
-        .standalone-footer-container {
-            max-width: 1200px;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-      
-        .standalone-footer-column {
-            padding: 0 0.5rem;
-        }
-      
-        .standalone-footer-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-      
-        .standalone-footer-about {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.85);
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-      
-        .standalone-footer-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
-            display: inline-block;
-            padding-bottom: 0.25rem;
-        }
-      
-        .standalone-footer-links {
-            list-style: none;
-        }
-      
-        .standalone-footer-links li {
-            margin-bottom: 0.5rem;
-        }
-      
-        .standalone-footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: inline-block;
-            position: relative;
-            padding-left: 1rem;
-        }
-      
-        .standalone-footer-links a::before {
-            content: '›';
-            position: absolute;
-            left: 0;
-            top: 0;
-            transition: 0.2s;
-        }
-      
-        .standalone-footer-links a:hover {
-            color: #fff;
-            transform: translateX(4px);
-        }
-      
-        .standalone-footer-contact {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-      
-        .standalone-footer-contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 0.9rem;
-        }
-      
-        .standalone-footer-social {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-        }
-      
-        .standalone-footer-social a {
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-      
-        .standalone-footer-social a:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-        }
-      
-        .standalone-footer-social svg {
-            width: 14px;
-            height: 14px;
-            fill: #fff;
-        }
-      
-        .standalone-footer-bottom {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            font-size: 0.85rem;
-            gap: 0.5rem;
-        }
-      
-        .standalone-footer-policy {
-            display: flex;
-            gap: 1rem;
-        }
-      
-        .standalone-footer-policy a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-        }
-      
-        .standalone-footer-policy a:hover {
-            color: #fff;
-        }
-      
-        .standalone-footer-shape {
-            display: none; /* Hides the scroll-inducing shape */
-        }
-      
-        @media (max-width: 768px) {
-            .standalone-footer-container {
-                grid-template-columns: 1fr;
-                padding: 0;
-            }
-      
-            .standalone-footer-bottom {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-      
-            .standalone-footer {
-                padding: 2rem 1rem;
-            }
-        }
-        .standalone-footer {
-          background: #13293D;
-          color: #EAEAEA;
-      }
-      
-      .standalone-footer-title::after {
-          background-color: rgba(255, 255, 255, 0.6);
-      }
-      
-      .standalone-footer-links a {
-          color: rgba(255, 255, 255, 0.8);
-      }
-      
-      .standalone-footer-links a:hover {
-          color: #ffffff;
-      }
-      
-      .standalone-footer-contact-item {
-          color: rgba(255, 255, 255, 0.8);
-      }
-      
-      .standalone-footer-about {
-          color: rgba(255, 255, 255, 0.8);
-      }
-      
-      .standalone-footer-social a {
-          background-color: rgba(255, 255, 255, 0.2);
-      }
-      
-      .standalone-footer-social a:hover {
-          background-color: rgba(255, 255, 255, 0.4);
-      }
-      
-      .standalone-footer-bottom {
-          border-top: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      
-      .standalone-footer-copyright {
-          color: rgba(255, 255, 255, 0.8);
-      }
-      
-      .standalone-footer-policy a {
-          color: rgba(255, 255, 255, 0.8);
-      }
-      
-      .standalone-footer-policy a:hover {
-          color: #ffffff;
-      }
-      
-     
-      </style>
 
+
+    
     <script>
         const toggle = document.querySelector(".menu-toggle");
         const navLinks = document.querySelectorAll(".nav-links");
@@ -375,6 +156,12 @@ body {
             navLinks.forEach(nav => nav.classList.toggle("active"));
         });
     </script>
+    <style>
+        /* .nav-links a {
+    font-weight: 600;
+} */
+
+    </style>
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

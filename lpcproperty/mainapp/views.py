@@ -26,6 +26,8 @@ from .models import Client ,ClientManagers
 from mainapp.models import Client, ClientManagers
 from django.contrib.auth import authenticate, login as django_login
 
+from django.contrib.auth.hashers import check_password
+
 def client_login(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -40,7 +42,7 @@ def client_login(request):
         # 2. Client Manager check
         try:
             manager = ClientManagers.objects.get(username=username)
-            if manager.check_password(password):
+            if check_password(password, manager.password):  # ✅ fixed
                 request.session.flush()
                 request.session['manager_id'] = manager.id
                 return redirect('clientmanager:client_dashboard')
@@ -50,7 +52,7 @@ def client_login(request):
         # 3. Client check
         try:
             client = Client.objects.get(username=username)
-            if client.check_password(password):
+            if check_password(password, client.password):  # ✅ fixed
                 request.session.flush()
                 request.session['client_id'] = client.id
                 return redirect('mainapp:dashboard')
@@ -58,9 +60,10 @@ def client_login(request):
             pass
 
         # If all checks fail
-        messages.error(request, "Invalid credentials or user type not found.",extra_tags='login_error')
+        messages.error(request, "Invalid credentials or user type not found.", extra_tags='login_error')
 
     return render(request, "mainapp/login.html")
+
 @client_login_required
 def dashboard(request):
     client_id = request.session.get('client_id')

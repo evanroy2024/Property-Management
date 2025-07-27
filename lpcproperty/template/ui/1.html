@@ -1,694 +1,773 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Step Pre-Approval Form</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Open Walk-Through Reports{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body{
+        background-color: white;
+    }
+    .content-wrapper {
+        padding: 1.5rem;
+        background-color: #f8f9fc;
     }
     
-    body {
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
-      padding: 0;
-    }
-    
-    header {
-      background-color: #fff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 1.2rem 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #2563eb;
-    }
-    
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-    }
-    
-    .nav-links a {
-      color: #64748b;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      transition: color 0.2s ease;
-    }
-    
-    .nav-links a:hover {
-      color: #2563eb;
-    }
-    
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    
-    .page-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 0.5rem;
-    }
-    
-    .page-subtitle {
-      font-size: 1.1rem;
-      color: #64748b;
-      margin-bottom: 2.5rem;
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 14px;
     }
     
     .card {
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      min-height: 300px;
+        border: none;
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
     }
     
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 0.75rem 1.25rem;
     }
     
-    .section-title svg {
-      width: 20px;
-      height: 20px;
+    .card-body {
+        padding: 1rem;
     }
     
-    .form-group {
-      margin-bottom: 1.5rem;
+    .table-responsive {
+        overflow-x: auto;
     }
     
-    .form-label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #64748b;
-      margin-bottom: 0.5rem;
+    .table th {
+        background-color: white;
+        color: black;
+        border-bottom: 2px solid #e3e6f0;
+        font-weight: 700;
+        padding: 0.75rem;
+        vertical-align: middle;
+        position: relative;
     }
     
-    .form-control {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      background-color: #fff;
-      font-size: 1rem;
-      color: #1e293b;
-      transition: all 0.2s ease;
+    .table td {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #e3e6f0;
     }
     
-    .form-control:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    .table-hover tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
     }
     
-    .date-time-container {
-      display: flex;
-      gap: 1rem;
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
     }
     
-    .date-picker-container, .time-picker-container {
-      position: relative;
-      flex: 1;
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
     }
     
-    .icon {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-      pointer-events: none;
+    .status-approved {
+        background-color: #2ecc71;
+        color: white;
     }
     
-    .btn-container {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: space-between;
+    .status-denied {
+        background-color: #e74c3c;
+        color: white;
     }
     
-    .btn {
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .status-pending {
+        background-color: #f1c40f;
+        color: black;
+    }
+    
+    .status-open {
+        background-color: white;
+        color: black;
+        border: 1px solid #ccc;
+    }
+    
+    .status-completed {
+        background-color: #2ecc71;
+        color: white;
+    }
+    
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+    
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+    
+    .sort-icon {
+        font-size: 0.65rem;
+        color: #999;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+    
+    th.sortable:hover .sort-icon {
+        color: #333;
+    }
+    
+    .filter-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 12px;
+        width: 26px;
+        height: 22px;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        transition: background 0.2s ease;
+    }
+    
+    .filter-dropdown {
+        position: absolute;
+        top: 32px;
+        left: 0;
+        display: none;
+        z-index: 999;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 6px 8px;
+        font-size: 14px;
+        min-width: 180px;
+        color: #333;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        appearance: none;
+        outline: none;
+    }
+    
+    .edit-btn {
+        background: none;
+        border: none;
+        color: #2c3e50;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+    
+    .edit-btn:hover {
+        color: #4e73df;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        backdrop-filter: blur(2px);
+    }
+    
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        width: 30%;
+        max-width: 500px;
+        min-width: 300px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .modal-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 600;
+        font-size: 24px;
+    }
+    
+    .modal-input {
+        width: 100%;
+        padding: 16px;
+        border: 2px solid #e3f2fd;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: #fafbfc;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+    }
+    
+    .modal-input:focus {
+        border-color: #3498db;
+        background: #fff;
+        outline: none;
     }
     
     .btn-primary {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-    }
-    
-    .btn-secondary {
-      background-color: transparent;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
     }
     
     .btn-primary:hover {
-      background-color: #1d4ed8;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6, #bdc3c7);
+        color: white;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
     }
     
     .btn-secondary:hover {
-      background-color: #f8fafc;
-      color: #1e293b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
     }
     
-    .btn-disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .btn-danger {
+        background: linear-gradient(135deg, #e74c3c, #ec7063);
+        color: white;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        min-width: 130px;
     }
     
-    .progress-container {
-      /* overflow-x: auto; */
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
     }
     
-    .progress-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      min-width: 900px;
+    .h3, h3 {
+        color: black;
     }
     
-    .progress-bar::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      right: 20px;
-      height: 3px;
-      background-color: #e2e8f0;
-      transform: translateY(-50%);
-      z-index: 1;
+    .icon-gray {
+        color: #dddfeb;
     }
-    
-    .progress-bar-fill {
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      height: 3px;
-      background-color: #2563eb;
-      transform: translateY(-50%);
-      transition: width 0.3s ease;
-      z-index: 2;
-    }
-    
-    .step {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: white;
-      border: 3px solid #e2e8f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #64748b;
-      position: relative;
-      z-index: 3;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .step.active, .step.completed {
-      border-color: #2563eb;
-      background-color: #2563eb;
-      color: white;
-    }
-    
-    .step:hover:not(.active) {
-      background-color: #f8fafc;
-      transform: scale(1.05);
-    }
-    
-    .step-label {
-      position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #64748b;
-    }
-    
-    .step.active + .step-label, .step.completed + .step-label {
-      color: #2563eb;
-      font-weight: 600;
-    }
-    
-    .form-step {
-      display: none;
-    }
-    
-    .form-step.active {
-      display: block;
-      animation: fadeIn 0.5s;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @media (max-width: 768px) {
-      .date-time-container {
-        flex-direction: column;
-      }
-      .progress-container {
-      overflow-x: auto;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-      .nav-links {
-        display: none;
-      }
-      
-      .btn-container {
-        flex-direction: column-reverse;
-        gap: 1rem;
-      }
-      
-      .btn {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="header-container">
-      <div class="logo">TravelPro</div>
-      <nav class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Pre-Approval</a>
-        <a href="#">Bookings</a>
-        <a href="#">Support</a>
-      </nav>
-    </div>
-  </header>
+</style>
 
-  <div class="container">
-    <h1 class="page-title">Travel Pre-Approval</h1>
-    <p class="page-subtitle">Please complete all required information to submit your travel request.</p>
-    
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-bar-fill" id="progress-fill"></div>
-        <div class="step active" data-step="1">1<span class="step-label">Home</span></div>
-        <div class="step" data-step="2">2<span class="step-label">Details</span></div>
-        <div class="step" data-step="3">3<span class="step-label">Transport</span></div>
-        <div class="step" data-step="4">4<span class="step-label">Stay</span></div>
-        <div class="step" data-step="5">5<span class="step-label">Meals</span></div>
-        <div class="step" data-step="6">6<span class="step-label">Budget</span></div>
-        <div class="step" data-step="7">7<span class="step-label">Documents</span></div>
-        <div class="step" data-step="8">8<span class="step-label">Approval</span></div>
-        <div class="step" data-step="9">9<span class="step-label">Notes</span></div>
-        <div class="step" data-step="10">10<span class="step-label">Submit</span></div>
-      </div>
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Open Walk-Through Reports</h1>
     </div>
-    
-    <form id="multi-step-form">
-      <!-- Step 1: Home - Arrival Details -->
-      <div class="form-step active" data-step="1">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Arrival Details
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Arrival Location</label>
-            <input type="text" class="form-control" placeholder="Enter destination city or airport" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Arrival Date & Time</label>
-            <div class="date-time-container">
-              <div class="date-picker-container">
-                <input type="date" class="form-control" required>
-                <div class="icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                  </svg>
+
+    <!-- Reports Table Card -->
+    <div class="card shadow mb-4">
+        <!-- Live Filters -->
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <select id="filter-client" class="form-select">
+                        <option value="">All Clients</option>
+                    </select>
                 </div>
-              </div>
-              <div class="time-picker-container">
-                <input type="time" class="form-control" required>
-                <div class="icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                  </svg>
+                <div class="col-md-6">
+                    <select id="filter-date" class="form-select">
+                        <option value="">All Dates</option>
+                    </select>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-        
-        <div class="btn-container">
-          <div></div> <!-- Empty div for spacing -->
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 2</button>
-        </div>
-      </div>
-      
-      <!-- Step 2 -->
-      <div class="form-step" data-step="2">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Travel Details
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Additional Information</label>
-            <input type="text" class="form-control" placeholder="Enter details for this step" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 3</button>
-        </div>
-      </div>
-      
-      <!-- Step 3 -->
-      <div class="form-step" data-step="3">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-            Transportation
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Transportation Details</label>
-            <input type="text" class="form-control" placeholder="Enter transportation information" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 4</button>
-        </div>
-      </div>
-      
-      <!-- Step 4 -->
-      <div class="form-step" data-step="4">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Accommodation
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Accommodation Information</label>
-            <input type="text" class="form-control" placeholder="Enter accommodation details" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 5</button>
-        </div>
-      </div>
-      
-      <!-- Step 5 -->
-      <div class="form-step" data-step="5">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Meals
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Meal Requirements</label>
-            <input type="text" class="form-control" placeholder="Enter meal preferences or requirements" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 6</button>
-        </div>
-      </div>
-      
-      <!-- Step 6 -->
-      <div class="form-step" data-step="6">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Budget
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Budget Information</label>
-            <input type="text" class="form-control" placeholder="Enter budget details" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 7</button>
-        </div>
-      </div>
-      
-      <!-- Step 7 -->
-      <div class="form-step" data-step="7">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Documents
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Required Documentation</label>
-            <input type="text" class="form-control" placeholder="Enter document information" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 8</button>
-        </div>
-      </div>
-      
-      <!-- Step 8 -->
-      <div class="form-step" data-step="8">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Approval Information
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Approver Information</label>
-            <input type="text" class="form-control" placeholder="Enter approver details" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Step 9</button>
-        </div>
-      </div>
-      
-      <!-- Step 9 -->
-      <div class="form-step" data-step="9">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Additional Notes
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Any Additional Information</label>
-            <input type="text" class="form-control" placeholder="Enter any additional notes" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="button" class="btn btn-primary next-btn">Continue to Final Step</button>
-        </div>
-      </div>
-      
-      <!-- Step 10 -->
-      <div class="form-step" data-step="10">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Review & Submit
-          </h2>
-          
-          <div class="form-group">
-            <label class="form-label">Final Comments</label>
-            <input type="text" class="form-control" placeholder="Enter any final comments" required>
-          </div>
-        </div>
-        
-        <div class="btn-container">
-          <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-          <button type="submit" class="btn btn-primary">Submit Application</button>
-        </div>
-      </div>
-    </form>
-  </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.getElementById('multi-step-form');
-      const steps = document.querySelectorAll('.form-step');
-      const nextButtons = document.querySelectorAll('.next-btn');
-      const prevButtons = document.querySelectorAll('.prev-btn');
-      const stepIndicators = document.querySelectorAll('.step');
-      const progressFill = document.getElementById('progress-fill');
-      let currentStep = 1;
-      
-      // Update progress bar
-      function updateProgressBar() {
-        const totalSteps = steps.length;
-        const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
-        progressFill.style.width = `calc(${progressPercentage}% - ${20 * progressPercentage / 100}px)`;
-      }
-      
-      // Show specific step
-      function showStep(stepNumber) {
-        steps.forEach(step => {
-          step.classList.remove('active');
-        });
-        
-        stepIndicators.forEach(indicator => {
-          indicator.classList.remove('active');
-          
-          if (parseInt(indicator.dataset.step) < stepNumber) {
-            indicator.classList.add('completed');
-          } else {
-            indicator.classList.remove('completed');
-          }
-          
-          if (parseInt(indicator.dataset.step) === stepNumber) {
-            indicator.classList.add('active');
-          }
-        });
-        
-        const targetStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
-        targetStep.classList.add('active');
-        
-        currentStep = stepNumber;
-        updateProgressBar();
-      }
-      
-      // Event listeners for next buttons
-      nextButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const currentStepElement = this.closest('.form-step');
-          const nextStepNumber = parseInt(currentStepElement.dataset.step) + 1;
-          
-          // Basic validation - check if all required fields in current step are filled
-          const requiredFields = currentStepElement.querySelectorAll('[required]');
-          let isValid = true;
-          
-          requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-              isValid = false;
-              field.classList.add('invalid');
-            } else {
-              field.classList.remove('invalid');
-            }
-          });
-          
-          if (isValid) {
-            showStep(nextStepNumber);
-          }
-        });
-      });
-      
-      // Event listeners for previous buttons
-      prevButtons.forEach(button => {
-        button.addEventListener('click', function() {
-          const currentStepElement = this.closest('.form-step');
-          const prevStepNumber = parseInt(currentStepElement.dataset.step) - 1;
-          showStep(prevStepNumber);
-        });
-      });
-      
-      // Event listeners for step indicators
-      stepIndicators.forEach(indicator => {
-        indicator.addEventListener('click', function() {
-          const stepNumber = parseInt(this.dataset.step);
-          showStep(stepNumber);
-        });
-      });
-      
-      // Form submission
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Form submitted successfully!');
-        // Here you would typically send the form data to your server
-      });
-      
-      // Initialize
-      updateProgressBar();
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="sortable-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-index="0" style="cursor: pointer;">
+                                Report Date <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-index="1" style="cursor: pointer; position: relative;">
+                                <span>Client</span>
+                                <i class="fas fa-sort sort-icon"></i>
+                                <span class="filter-btn" id="clientFilterBtn" title="Filter Client">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.3 8.4v5a1 1 0 0 1-.6.9l-4 2A1 1 0 0 1 9 20v-7.9L2.6 5.6A1 1 0 0 1 3 4z"/>
+                                    </svg>
+                                </span>
+                                <select id="clientDropdown" class="filter-dropdown">
+                                    <option value="all">All Clients</option>
+                                </select>
+                            </th>
+                            <th>Est'd Cost</th>
+                            <th>Client Status</th>
+                            <th>Item Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table">
+                        {% for report in reports %}
+                        <tr class="report-row"
+                            data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"
+                            data-date="{{ report.datetime|date:'Y-m-d' }}"
+                            data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">
+                            <td onclick="window.location.href='{% url 'walkthroughreport:report_open_detail' report.pk %}'" style="cursor: pointer;">
+                                <strong>{{ report.datetime|date:'M d, Y' }}</strong><br>
+                                <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>
+                            </td>
+                            <td><strong>{{ report.user.last_name }}, {{ report.user.first_name }}</strong></td>
+                            <td >
+                                <span id="cost-{{ report.id }}">${{ report.cost }}</span>
+                               <button onclick="document.getElementById('reportIdInput').value='{{ report.id }}'; document.getElementById('costInput').value='{{ report.cost }}'; document.getElementById('noteInput').value=`{{ report.cost_notes|escapejs }}`; document.getElementById('costModal').style.display='block';" class="edit-btn" title="Edit Cost">
+    <i class="fas fa-pen-to-square"></i>
+</button>
+                            </td>
+                            <td>
+                                <div id="approval-cell-{{ report.id }}" onclick="openApprovalPopup({{ report.id }})" style="cursor: pointer;">
+                                    <span class="status-badge {% if report.client_approval == 'Approved' %}status-approved{% elif report.client_approval == 'Denied' %}status-denied{% else %}status-pending{% endif %}">
+                                        {{ report.client_approval }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td onclick="openStatusPopup({{ report.id }})" style="cursor: pointer;" id="status-cell-{{ report.id }}">
+                               {% if report.status == 'Open' %}
+    <span class="status-badge status-open">Open</span>
+{% elif report.status == 'Completed' %}
+    <span style="
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        font-size: 13px;
+        background-color: #28a745;">
+        Completed
+    </span>
+{% elif report.status == 'Denied' %}
+    <span style="
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        font-size: 13px;
+        background-color: #dc3545;">
+        Denied
+    </span>
+{% endif %}
+
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i class="fas fa-clipboard-list fa-4x mb-3 icon-gray"></i>
+                                    <h4 class="text-gray-800 mb-2">No open walk-through reports found</h4>
+                                    <p class="text-gray-600 mb-3">All reports are currently completed or closed</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+              <div style="text-align:right;"><button id="confirmAllBtn" style="background-color:#007bff; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s;">Submit Updates</button></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cost Modal -->
+<div id="costModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="align-items: center; justify-content: center;">
+            <h3>Estimated Cost</h3>
+        </div>
+        <form id="costForm">
+            <p style="color: black;">Amount ($):</p>
+            <input type="number" id="costInput" required placeholder="0.00" step="0.01" class="modal-input">
+            <p style="color: black;">calculation:</p>
+            <textarea id="noteInput" required class="modal-input" rows="3" placeholder="list vendor cost, internal markup, and addl costs that may apply. Copy this total to the “Amount box”"></textarea>
+            <input type="hidden" id="reportIdInput">
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" onclick="closeCostModal()" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Approval Modal -->
+<div id="approvalPopup" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="align-items: center; justify-content: center;">
+            <h3>Client Approval</h3>
+        </div>
+        <input type="hidden" id="approvalReportId">
+        <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px;">
+            <button onclick="setApprovalStatus('Approved')" class="btn-primary">Approved</button>
+            <button onclick="setApprovalStatus('Denied')" class="btn-danger">Denied</button>
+        </div>
+        <div style="text-align: center;">
+            <button onclick="closeApprovalPopup()" class="btn-secondary">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Status Modal -->
+<div id="statusPopup" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="align-items: center; justify-content: center;">
+            <h3>Update Status</h3>
+        </div>
+        <input type="hidden" id="statusReportId">
+        <p style="color: rgb(0, 0, 0);">Date:</p>
+        <input type="date" id="statusDate" required class="modal-input">
+        <p style="color: rgb(0, 0, 0);">Status:</p>
+        <select id="statusDropdown" class="modal-input">
+            <option value="Completed">Completed</option>
+            <option value="Denied">Denied</option>
+        </select>
+        <p style="color: rgb(0, 0, 0);">Remarks:</p>
+        <textarea type="text" id="statusRemarks" required class="modal-input" placeholder="Write your remarks"></textarea>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button onclick="submitStatus()" class="btn-primary">Save Changes</button>
+            <button onclick="closeStatusPopup()" class="btn-secondary">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize filters
+    const filters = {
+        client: document.getElementById("filter-client"),
+        date: document.getElementById("filter-date")
+    };
+    
+    const rows = document.querySelectorAll(".report-row");
+    
+    // Populate dropdowns
+    const clients = new Set();
+    const dates = new Set();
+    
+    rows.forEach(row => {
+        const client = row.getAttribute("data-client");
+        const date = row.getAttribute("data-date");
+        if (client) clients.add(client);
+        if (date) dates.add(date);
     });
-  </script>
-</body>
-</html>
+    
+    [...clients].sort().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+        filters.client.appendChild(opt);
+    });
+    
+    [...dates].sort().reverse().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        const dateObj = new Date(val);
+        opt.textContent = dateObj.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+        filters.date.appendChild(opt);
+    });
+    
+    // Filter function
+    function filterTable() {
+        const selected = {
+            client: filters.client.value,
+            date: filters.date.value
+        };
+        
+        rows.forEach(row => {
+            const matches = 
+                (!selected.client || row.getAttribute("data-client") === selected.client) &&
+                (!selected.date || row.getAttribute("data-date") === selected.date);
+            
+            row.style.display = matches ? "" : "none";
+        });
+    }
+    
+    Object.values(filters).forEach(filter => {
+        filter.addEventListener("change", filterTable);
+    });
+    
+    // Sorting
+    const table = document.getElementById("report-table");
+    const headers = document.querySelectorAll("th.sortable");
+    
+    let currentSort = { index: null, direction: 1 };
+    
+    headers.forEach(header => {
+        header.addEventListener("click", function () {
+            const index = parseInt(this.getAttribute("data-index"));
+            
+            if (currentSort.index === index) {
+                currentSort.direction *= -1;
+            } else {
+                currentSort.index = index;
+                currentSort.direction = 1;
+            }
+            
+            const rows = Array.from(table.querySelectorAll("tr"));
+            
+            rows.sort((a, b) => {
+                let aText = a.children[index].innerText.trim().toLowerCase();
+                let bText = b.children[index].innerText.trim().toLowerCase();
+                
+                if (index === 0) {
+                    const aDate = new Date(aText);
+                    const bDate = new Date(bText);
+                    return currentSort.direction * (aDate - bDate);
+                }
+                
+                return currentSort.direction * aText.localeCompare(bText);
+            });
+            
+            headers.forEach(h => {
+                const icon = h.querySelector(".sort-icon");
+                icon.className = "fas fa-sort sort-icon";
+            });
+            
+            const icon = this.querySelector(".sort-icon");
+            icon.className = currentSort.direction === 1 ? "fas fa-sort-up sort-icon" : "fas fa-sort-down sort-icon";
+            
+            rows.forEach(row => table.appendChild(row));
+        });
+    });
+    
+    // Client filter dropdown
+    const clientFilterBtn = document.getElementById("clientFilterBtn");
+    const clientDropdown = document.getElementById("clientDropdown");
+    
+    clientFilterBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        clientDropdown.style.display = clientDropdown.style.display === "none" ? "block" : "none";
+    });
+    
+    clientDropdown.addEventListener("change", () => {
+        const selectedClient = clientDropdown.value;
+        document.querySelectorAll(".report-row").forEach(row => {
+            const clientName = row.children[1].innerText.trim();
+            row.style.display = (selectedClient === "all" || clientName === selectedClient) ? "" : "none";
+        });
+        clientDropdown.style.display = "none";
+    });
+    
+    document.addEventListener("click", (e) => {
+        if (!clientDropdown.contains(e.target) && !clientFilterBtn.contains(e.target)) {
+            clientDropdown.style.display = "none";
+        }
+    });
+    
+    // Populate client dropdown
+    const clientSet = new Set();
+    document.querySelectorAll(".report-row").forEach(row => {
+        const clientName = row.children[1].innerText.trim();
+        clientSet.add(clientName);
+    });
+    
+    clientSet.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        clientDropdown.appendChild(option);
+    });
+});
+
+// Modal functions
+function openCostModal(id) {
+    document.getElementById('reportIdInput').value = id;
+    document.getElementById('costInput').value = document.getElementById(`cost-${id}`).innerText.replace('$', '');
+    document.getElementById('costModal').style.display = 'block';
+}
+
+function closeCostModal() {
+    document.getElementById('costModal').style.display = 'none';
+}
+
+function openApprovalPopup(reportId) {
+    document.getElementById('approvalReportId').value = reportId;
+    document.getElementById('approvalPopup').style.display = 'block';
+}
+
+function closeApprovalPopup() {
+    document.getElementById('approvalPopup').style.display = 'none';
+}
+
+function openStatusPopup(reportId) {
+    document.getElementById('statusReportId').value = reportId;
+    document.getElementById('statusDate').value = '';
+    document.getElementById('statusDropdown').value = 'Completed';
+    document.getElementById('statusPopup').style.display = 'block';
+}
+
+function closeStatusPopup() {
+    document.getElementById('statusPopup').style.display = 'none';
+}
+// Cost 
+document.getElementById('costForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('reportIdInput').value;
+    const cost = document.getElementById('costInput').value;
+    const cost_notes = document.getElementById('noteInput').value;
+
+    fetch(`/walkthrough/update-cost/${id}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `cost=${encodeURIComponent(cost)}&cost_notes=${encodeURIComponent(cost_notes)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`cost-${id}`).innerText = `$${data.new_cost}`;
+            closeCostModal();
+        } else {
+            alert('Update failed');
+        }
+    })
+    .catch(() => alert('Request error'));
+});
+
+
+function setApprovalStatus(status) {
+    const reportId = document.getElementById('approvalReportId').value;
+    
+    fetch(`/walkthrough/update-approval/${reportId}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `approval=${status}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            let statusClass = (data.new_status === 'Approved') ? 'status-approved' : 'status-denied';
+            document.getElementById(`approval-cell-${reportId}`).innerHTML = `
+                <span class="status-badge ${statusClass}">${data.new_status}</span>
+            `;
+            closeApprovalPopup();
+        } else {
+            alert('Update failed');
+        }
+    })
+    .catch(() => alert('Request error'));
+}
+
+function submitStatus() {
+    const reportId = document.getElementById('statusReportId').value;
+    const date = document.getElementById('statusDate').value;
+    const status = document.getElementById('statusDropdown').value;
+    const remarks = document.getElementById('statusRemarks').value;
+
+    fetch(`/walkthrough/update-status/${reportId}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `status=${encodeURIComponent(status)}&date=${encodeURIComponent(date)}&remarks=${encodeURIComponent(remarks)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            let statusClass = (status === 'Completed') ? 'status-completed' : 'status-denied';
+            document.getElementById(`status-cell-${reportId}`).innerHTML = `
+                <span class="status-badge ${statusClass}">${status}</span>
+            `;
+            closeStatusPopup();
+        } else {
+            alert('Update failed');
+        }
+    })
+    .catch(() => alert('Request error'));
+}
+
+// Close modals on outside click
+window.onclick = function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+</script>
+<script>
+document.getElementById('confirmAllBtn').addEventListener('click', function () {
+    fetch("{% url 'walkthroughreport:confirm_all_changes' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("All the Completed and Denied items will be moved to dedicated Catagory , Do you want to proceed ?");
+            location.reload(); // Optional: refresh to see updates
+        }
+    });
+});
+
+// CSRF token getter
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+{% endblock content %}

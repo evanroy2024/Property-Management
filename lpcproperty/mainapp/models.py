@@ -3,13 +3,16 @@ from django.contrib.auth.hashers import make_password, check_password
 
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+import uuid
+import random
+import string
 
 class Client(models.Model):
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
-    username = models.CharField(max_length=150, unique=True)
+    username = models.CharField(max_length=150, unique=True, blank=True)
     email = models.EmailField()
-    password = models.CharField(max_length=255)  # Store hashed passwords
+    password = models.CharField(max_length=255, blank=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
@@ -103,15 +106,27 @@ class Client(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
+    def generate_username(self):
+        base = (self.first_name + self.last_name).lower()
+        return f"{base}{uuid.uuid4().hex[:6]}"
 
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
+    def generate_password(self, length=10):
+        chars = string.ascii_letters + string.digits
+        return ''.join(random.choices(chars, k=length))
 
     def save(self, *args, **kwargs):
-        if not self.password.startswith('pbkdf2_sha256$'):
-            self.password = make_password(self.password)
+        if not self.username:
+            self.username = self.generate_username()
+
+        if not self.password:
+            # Generate and hash password if it's empty
+            raw_password = self.generate_password()
+            self.password = make_password(raw_password)
+        else:
+            # Check if it's already hashed (Django hashes start with 'pbkdf2_' by default)
+            if not self.password.startswith('pbkdf2_'):
+                self.password = make_password(self.password)
+
         super().save(*args, **kwargs)
 
     def __str__(self):

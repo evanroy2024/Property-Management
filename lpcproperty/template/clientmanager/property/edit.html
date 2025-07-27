@@ -700,10 +700,16 @@
                       </div>
                       <div class="form-group">
                         <label>State</label>
-                        <input type="text" name="client_state" value="{{ client.state }}" placeholder="State">
+                        <select name="client_state" class="form-control">
+                          <option value="">Select State</option>
+                          {% for code in us_states %}
+                            <option value="{{ code }}" {% if client.state == code %}selected{% endif %}>{{ code }}</option>
+                          {% endfor %}
+                        </select>
                       </div>
+
                       <div class="form-group">
-                        <label>Zip</label>
+                        <label>Zip Code</label>
                         <input type="text" name="client_zipcode" value="{{ client.zipcode }}" placeholder="Zip Code">
                       </div>
                     </div>

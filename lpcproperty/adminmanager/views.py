@@ -273,10 +273,40 @@ from django.contrib import messages
 #     return request.session.get('client_id')
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+
 def property_list_view(request):
+    if request.method == "POST":
+        property_id = request.POST.get("property_id")
+        cm_id = request.POST.get("cm_id")
+
+        prop = get_object_or_404(PropertyManagement, id=property_id)
+        cm = get_object_or_404(ClientManagers, id=cm_id)
+        prop.client_manager = cm
+        prop.save()
+        return redirect('adminmanager:property_list')  # change name if needed
+
     clients = Client.objects.all()
-    properties = PropertyManagement.objects.all()  # Removed filtering
-    return render(request, 'adminmanager/property/list.html', {'properties': properties,'clients': clients})
+    properties = PropertyManagement.objects.all()
+    all_cms = ClientManagers.objects.all()
+
+    all_cms_json = json.dumps([
+        {
+            "id": cm.id,
+            "name": f"{cm.last_name}, {cm.first_name}",
+            "email": cm.email,
+            "phone": cm.phone_number or cm.office_phone or ""
+        } for cm in all_cms
+    ], cls=DjangoJSONEncoder)
+
+    return render(request, 'adminmanager/property/list.html', {
+        'properties': properties,
+        'clients': clients,
+        'all_cms_json': all_cms_json
+    })
+
 from django.shortcuts import render, get_object_or_404
 from propertydetails.models import PropertyManagement
 
@@ -319,9 +349,9 @@ def property_create_view(request):
                 if not client_id:
                     new_first_name = request.POST.get('new_first_name', '')
                     new_last_name = request.POST.get('new_last_name', '')
-                    new_username = request.POST.get('new_username', '')
                     new_email = request.POST.get('new_email', '')
-                    new_password = request.POST.get('new_password', '')
+                    new_username = ''
+                    new_password = ''
                     new_phone = request.POST.get('new_phone', '')
                     office_phone = request.POST.get('office_phone', '')  
                     business_address = request.POST.get('business_address', '')
@@ -376,7 +406,7 @@ def property_create_view(request):
 
                     # Only require basic client information if creating a new client
                     if new_first_name or new_last_name or new_username or new_email:
-                        if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
+                        if not all([new_first_name, new_last_name, new_email]):
                             error_message = "Please complete all required fields for the new client"
                             context['error_message'] = error_message
                             return render(request, 'adminmanager/property/create.html', context)
@@ -385,9 +415,7 @@ def property_create_view(request):
                         new_client = Client.objects.create(
                             first_name=new_first_name,
                             last_name=new_last_name,
-                            username=new_username,
                             email=new_email,
-                            password=new_password,
                             phone_number=new_phone,
                             office_phone=office_phone,
                             business_address=business_address,
@@ -493,6 +521,8 @@ def property_create_view(request):
                     client_id=client_id,
                     client_manager_id=client_manager_id,
                     address=address,
+                    street_line1 = request.POST.get('street_line1', ''),
+                    street_line2 = request.POST.get('street_line2', ''),
                     size_of_home=request.POST.get('size_of_home', ''),
                     number_of_stories=request.POST.get('number_of_stories', ''),
                     construction_type=request.POST.get('construction_type', ''),
@@ -563,7 +593,7 @@ def property_create_view(request):
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.shortcuts import render, get_object_or_404, redirect
-
+from django.contrib.auth.hashers import make_password
 def property_update_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk)
     client = prop.client
@@ -574,6 +604,8 @@ def property_update_view(request, pk):
         if 'address' in request.POST:
             # Property fields
             prop.address = request.POST['address']
+            prop.street_line1 = request.POST.get('street1', '')
+            prop.street_line2 = request.POST.get('street2', '')
             prop.size_of_home = request.POST.get('size_of_home', '')
             prop.number_of_stories = request.POST.get('number_of_stories', '')
             prop.construction_type = request.POST.get('construction_type', '')
@@ -608,6 +640,9 @@ def property_update_view(request, pk):
             client.zipcode = request.POST.get('client_zipcode', '')
             client.phone_number = request.POST.get('client_phone_number', '')
             client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
+            new_password = request.POST.get('client_password', '')
+            if new_password and not new_password.startswith('pbkdf2_'):
+                client.password = make_password(new_password)
 
             # Update contact persons info (if necessary)
             # Contact Person 1
@@ -1251,57 +1286,278 @@ from django.http import HttpResponse
 from walkthroughreport.models import WalkthroughReport
 from mainapp.models import Client
 from django.views.decorators.csrf import csrf_exempt
-
-# def submit_walkthrough(request):
-#     if request.method == "POST":
-#         data = request.POST
-
-#         # Only set fields that are present
-#         kwargs = {}
-#         if data.get("user"):
-#             try:
-#                 kwargs["user"] = Client.objects.get(id=data.get("user"))
-#             except Client.DoesNotExist:
-#                 return HttpResponse("Invalid client", status=400)
-
-#         for field in WalkthroughReport._meta.get_fields():
-#             if field.name in data and field.name != 'user':
-#                 val = data.get(field.name)
-#                 if val != "":
-#                     kwargs[field.name] = val
-
-#         WalkthroughReport.objects.create(**kwargs)
-#         return HttpResponse("Submitted Successfully")
-    
-#     clients = Client.objects.all()
-#     return render(request, "clientmanager/walkthrough/submit_walkthrough.html", {"clients": clients})
-
 from django import forms
+from django.shortcuts import render, redirect
+from walkthroughreport.forms import (
+    WalkthroughReportForm,
+    GeneralItemsExteriorForm,
+    GeneralItemsInteriorForm,
+    GarageForm,
+    LaundryForm,
+    KitchenForm,
+    ButlersForm,
+    BreakfastAreaForm,
+    EntryFoyerForm,
+    GreatRoomForm,
+    DiningRoomForm,
+    ClosetsMainLevelForm,
+    ClosetsUpperLevelForm,
+    HallwaysMainLevelForm,
+    HallwaysUpperLevelForm,
+    Bedroom1Form, Bedroom2Form, Bedroom3Form, Bedroom4Form, Bedroom5Form,
+    Bedroom6Form, Bedroom7Form, Bedroom8Form, Bedroom9Form, Bedroom10Form,
+    Bathroom1Form, Bathroom2Form, Bathroom3Form, Bathroom4Form, Bathroom5Form,
+    Bathroom6Form, Bathroom7Form, Bathroom8Form, Bathroom9Form, Bathroom10Form,
+    Bathroom11Form, Bathroom12Form,
+    GymForm,
+    TheatreMusicRoomForm,
+    GuestHouseSleepingForm,
+    GuestHouseBathForm
+)
 
-class WalkthroughReportForm(forms.ModelForm):
-    class Meta:
-        model = WalkthroughReport
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
-        self.fields['property'].label_from_instance = lambda obj: obj.address  # Only show address
+def process_form_data(post_data):
+    """Clean POST data to handle empty amount fields"""
+    cleaned_data = post_data.copy()
+    for key, value in cleaned_data.items():
+        if 'amount' in key and (value == '' or value is None):
+            cleaned_data[key] = '0'
+    return cleaned_data
 
 def walkthrough_report_view(request):
     if request.method == 'POST':
-        form = WalkthroughReportForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('adminmanager:walkthrough-success')
-    else:
-        form = WalkthroughReportForm()
-    return render(request, 'walkthrough_form.html', {'form': form})
+        # Clean the POST data
+        cleaned_post_data = process_form_data(request.POST)
+        
+        # Initialize all forms with cleaned POST data
+        report_form = WalkthroughReportForm(cleaned_post_data)
+        exterior_form = GeneralItemsExteriorForm(cleaned_post_data)
+        interior_form = GeneralItemsInteriorForm(cleaned_post_data)
+        garage_form = GarageForm(cleaned_post_data)
+        laundry_form = LaundryForm(cleaned_post_data)
+        kitchen_form = KitchenForm(cleaned_post_data)
+        butlers_form = ButlersForm(cleaned_post_data)
+        breakfast_area_form = BreakfastAreaForm(cleaned_post_data)
+        entry_foyer_form = EntryFoyerForm(cleaned_post_data)
+        great_room_form = GreatRoomForm(cleaned_post_data)
+        dining_room_form = DiningRoomForm(cleaned_post_data)
+        closets_main_level_form = ClosetsMainLevelForm(cleaned_post_data)
+        closets_upper_level_form = ClosetsUpperLevelForm(cleaned_post_data)
+        hallways_main_level_form = HallwaysMainLevelForm(cleaned_post_data)
+        hallways_upper_level_form = HallwaysUpperLevelForm(cleaned_post_data)
+        
+        # Bedroom forms
+        bedroom1_form = Bedroom1Form(cleaned_post_data)
+        bedroom2_form = Bedroom2Form(cleaned_post_data)
+        bedroom3_form = Bedroom3Form(cleaned_post_data)
+        bedroom4_form = Bedroom4Form(cleaned_post_data)
+        bedroom5_form = Bedroom5Form(cleaned_post_data)
+        bedroom6_form = Bedroom6Form(cleaned_post_data)
+        bedroom7_form = Bedroom7Form(cleaned_post_data)
+        bedroom8_form = Bedroom8Form(cleaned_post_data)
+        bedroom9_form = Bedroom9Form(cleaned_post_data)
+        bedroom10_form = Bedroom10Form(cleaned_post_data)
+        
+        # Bathroom forms
+        bathroom1_form = Bathroom1Form(cleaned_post_data)
+        bathroom2_form = Bathroom2Form(cleaned_post_data)
+        bathroom3_form = Bathroom3Form(cleaned_post_data)
+        bathroom4_form = Bathroom4Form(cleaned_post_data)
+        bathroom5_form = Bathroom5Form(cleaned_post_data)
+        bathroom6_form = Bathroom6Form(cleaned_post_data)
+        bathroom7_form = Bathroom7Form(cleaned_post_data)
+        bathroom8_form = Bathroom8Form(cleaned_post_data)
+        bathroom9_form = Bathroom9Form(cleaned_post_data)
+        bathroom10_form = Bathroom10Form(cleaned_post_data)
+        bathroom11_form = Bathroom11Form(cleaned_post_data)
+        bathroom12_form = Bathroom12Form(cleaned_post_data)
+        
+        # Additional forms
+        gym_form = GymForm(cleaned_post_data)
+        theatre_music_room_form = TheatreMusicRoomForm(cleaned_post_data)
+        guest_house_sleeping_form = GuestHouseSleepingForm(cleaned_post_data)
+        guest_house_bath_form = GuestHouseBathForm(cleaned_post_data)
 
+        # Collect all forms for validation
+        all_forms = [
+            report_form, exterior_form, interior_form, garage_form, laundry_form,
+            kitchen_form, butlers_form, breakfast_area_form, entry_foyer_form,
+            great_room_form, dining_room_form, closets_main_level_form,
+            closets_upper_level_form, hallways_main_level_form, hallways_upper_level_form,
+            bedroom1_form, bedroom2_form, bedroom3_form, bedroom4_form, bedroom5_form,
+            bedroom6_form, bedroom7_form, bedroom8_form, bedroom9_form, bedroom10_form,
+            bathroom1_form, bathroom2_form, bathroom3_form, bathroom4_form, bathroom5_form,
+            bathroom6_form, bathroom7_form, bathroom8_form, bathroom9_form, bathroom10_form,
+            bathroom11_form, bathroom12_form, gym_form, theatre_music_room_form,
+            guest_house_sleeping_form, guest_house_bath_form
+        ]
+
+        # Debug: Print validation errors
+        invalid_forms = []
+        for i, form in enumerate(all_forms):
+            if not form.is_valid():
+                invalid_forms.append((i, form.__class__.__name__, form.errors))
+        
+        if invalid_forms:
+            print("Invalid forms:")
+            for i, name, errors in invalid_forms:
+                print(f"{name}: {errors}")
+
+        # Check if all forms are valid
+        if all(form.is_valid() for form in all_forms):
+            # Save the main report first
+            report_instance = report_form.save()
+
+            # Save all related forms
+            forms_to_save = [
+                (exterior_form, 'general_items_exterior'),
+                (interior_form, 'general_items_interior'),
+                (garage_form, 'garage'),
+                (laundry_form, 'laundry'),
+                (kitchen_form, 'kitchen'),
+                (butlers_form, 'butlers'),
+                (breakfast_area_form, 'breakfast_area'),
+                (entry_foyer_form, 'entry_foyer'),
+                (great_room_form, 'great_room'),
+                (dining_room_form, 'dining_room'),
+                (closets_main_level_form, 'closets_main_level'),
+                (closets_upper_level_form, 'closets_upper_level'),
+                (hallways_main_level_form, 'hallways_main_level'),
+                (hallways_upper_level_form, 'hallways_upper_level'),
+                (bedroom1_form, 'bedroom1'),
+                (bedroom2_form, 'bedroom2'),
+                (bedroom3_form, 'bedroom3'),
+                (bedroom4_form, 'bedroom4'),
+                (bedroom5_form, 'bedroom5'),
+                (bedroom6_form, 'bedroom6'),
+                (bedroom7_form, 'bedroom7'),
+                (bedroom8_form, 'bedroom8'),
+                (bedroom9_form, 'bedroom9'),
+                (bedroom10_form, 'bedroom10'),
+                (bathroom1_form, 'bathroom1'),
+                (bathroom2_form, 'bathroom2'),
+                (bathroom3_form, 'bathroom3'),
+                (bathroom4_form, 'bathroom4'),
+                (bathroom5_form, 'bathroom5'),
+                (bathroom6_form, 'bathroom6'),
+                (bathroom7_form, 'bathroom7'),
+                (bathroom8_form, 'bathroom8'),
+                (bathroom9_form, 'bathroom9'),
+                (bathroom10_form, 'bathroom10'),
+                (bathroom11_form, 'bathroom11'),
+                (bathroom12_form, 'bathroom12'),
+                (gym_form, 'gym'),
+                (theatre_music_room_form, 'theatre_music_room'),
+                (guest_house_sleeping_form, 'guest_house_sleeping_living'),
+                (guest_house_bath_form, 'guest_house_bathroom')
+            ]
+
+            for form, relation_name in forms_to_save:
+                instance = form.save(commit=False)
+                instance.walkthrough_report = report_instance
+                instance.save()
+
+            return redirect('adminmanager:walkthrough-success')
+        else:
+            # Re-render form with errors
+            pass
+
+    else:
+        # Initialize all forms for GET request
+        report_form = WalkthroughReportForm()
+        exterior_form = GeneralItemsExteriorForm()
+        interior_form = GeneralItemsInteriorForm()
+        garage_form = GarageForm()
+        laundry_form = LaundryForm()
+        kitchen_form = KitchenForm()
+        butlers_form = ButlersForm()
+        breakfast_area_form = BreakfastAreaForm()
+        entry_foyer_form = EntryFoyerForm()
+        great_room_form = GreatRoomForm()
+        dining_room_form = DiningRoomForm()
+        closets_main_level_form = ClosetsMainLevelForm()
+        closets_upper_level_form = ClosetsUpperLevelForm()
+        hallways_main_level_form = HallwaysMainLevelForm()
+        hallways_upper_level_form = HallwaysUpperLevelForm()
+        
+        # Bedroom forms
+        bedroom1_form = Bedroom1Form()
+        bedroom2_form = Bedroom2Form()
+        bedroom3_form = Bedroom3Form()
+        bedroom4_form = Bedroom4Form()
+        bedroom5_form = Bedroom5Form()
+        bedroom6_form = Bedroom6Form()
+        bedroom7_form = Bedroom7Form()
+        bedroom8_form = Bedroom8Form()
+        bedroom9_form = Bedroom9Form()
+        bedroom10_form = Bedroom10Form()
+        
+        # Bathroom forms
+        bathroom1_form = Bathroom1Form()
+        bathroom2_form = Bathroom2Form()
+        bathroom3_form = Bathroom3Form()
+        bathroom4_form = Bathroom4Form()
+        bathroom5_form = Bathroom5Form()
+        bathroom6_form = Bathroom6Form()
+        bathroom7_form = Bathroom7Form()
+        bathroom8_form = Bathroom8Form()
+        bathroom9_form = Bathroom9Form()
+        bathroom10_form = Bathroom10Form()
+        bathroom11_form = Bathroom11Form()
+        bathroom12_form = Bathroom12Form()
+        
+        # Additional forms
+        gym_form = GymForm()
+        theatre_music_room_form = TheatreMusicRoomForm()
+        guest_house_sleeping_form = GuestHouseSleepingForm()
+        guest_house_bath_form = GuestHouseBathForm()
+
+    return render(request, 'walkthrough_form.html', {
+        'form': report_form,
+        'exterior_form': exterior_form,
+        'interior_form': interior_form,
+        'garage_form': garage_form,
+        'laundry_form': laundry_form,
+        'kitchen_form': kitchen_form,
+        'butlers_form': butlers_form,
+        'breakfast_area_form': breakfast_area_form,
+        'entry_foyer_form': entry_foyer_form,
+        'great_room_form': great_room_form,
+        'dining_room_form': dining_room_form,
+        'closets_main_level_form': closets_main_level_form,
+        'closets_upper_level_form': closets_upper_level_form,
+        'hallways_main_level_form': hallways_main_level_form,
+        'hallways_upper_level_form': hallways_upper_level_form,
+        'bedroom1_form': bedroom1_form,
+        'bedroom2_form': bedroom2_form,
+        'bedroom3_form': bedroom3_form,
+        'bedroom4_form': bedroom4_form,
+        'bedroom5_form': bedroom5_form,
+        'bedroom6_form': bedroom6_form,
+        'bedroom7_form': bedroom7_form,
+        'bedroom8_form': bedroom8_form,
+        'bedroom9_form': bedroom9_form,
+        'bedroom10_form': bedroom10_form,
+        'bathroom1_form': bathroom1_form,
+        'bathroom2_form': bathroom2_form,
+        'bathroom3_form': bathroom3_form,
+        'bathroom4_form': bathroom4_form,
+        'bathroom5_form': bathroom5_form,
+        'bathroom6_form': bathroom6_form,
+        'bathroom7_form': bathroom7_form,
+        'bathroom8_form': bathroom8_form,
+        'bathroom9_form': bathroom9_form,
+        'bathroom10_form': bathroom10_form,
+        'bathroom11_form': bathroom11_form,
+        'bathroom12_form': bathroom12_form,
+        'gym_form': gym_form,
+        'theatre_music_room_form': theatre_music_room_form,
+        'guest_house_sleeping_form': guest_house_sleeping_form,
+        'guest_house_bath_form': guest_house_bath_form,
+    })
 def walkthrough_success_view(request):
     return render(request, 'walkthrough_success.html')
 
-
+# walkthrough report Done ------------------------------------------------------------------------------------------------------------------
 
 # Client Management 
 from django.shortcuts import render, get_object_or_404, redirect
