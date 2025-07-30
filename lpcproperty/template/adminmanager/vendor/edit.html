@@ -1,5 +1,5 @@
 {% extends 'adminmanager/adminbase.html' %}
-{ % load static %}
+{% load static %}
 
 {% block title %}Edit Vendor{% endblock %}
 
@@ -143,6 +143,127 @@
     color: var(--danger-color);
     margin-left: 4px;
   }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+  }
+  
+  .service-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    background: white;
+    border-radius: 25px;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 55px;
+    text-align: center;
+  }
+  
+  .service-option:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .service-option input[type="checkbox"] {
+    display: none;
+  }
+  
+  .service-option label {
+    cursor: pointer;
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #475569;
+    transition: all 0.3s ease;
+    text-align: center;
+    line-height: 1.3;
+    pointer-events: none;
+  }
+  
+  .service-option.checked {
+    border-color: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    transform: translateY(-3px);
+  }
+  
+  .service-option.checked,
+  .service-option.checked * {
+    color: #ffffff !important;
+  }
+  
+  .contact-row {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    position: relative;
+  }
+  
+  .contact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .contact-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+  }
+  
+  .remove-contact {
+    background: var(--danger-color);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .remove-contact:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+  }
+  
+  .add-contact-btn {
+    background: var(--success-color);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .add-contact-btn:hover {
+    background: #0d9488;
+    transform: translateY(-2px);
+  }
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
@@ -159,25 +280,9 @@
 </style>
 
 <!-- Page Header -->
-<div class="page-header">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-md-6">
-        <h1 class="page-title">Edit Vendor</h1>
-      </div>
-      <div class="col-md-6 text-md-end">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb justify-content-md-end mb-0">
-            <li class="breadcrumb-item"><a href="{% url 'adminmanager:admin_dashboard' %}" class="text-white">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'adminmanager:vendor_list' %}" class="text-white">Vendors</a></li>
-          </ol>
-        </nav>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="container">
+
+<div class="container" style="margin-top: 20px;">
   <div class="row">
     <div class="col-12">
       <div class="form-card mb-4">
@@ -188,13 +293,12 @@
             </div>
             <div>
               <h5 class="mb-0 fw-bold">{{ vendor.company_name }}</h5>
-              <span class="text-muted">Last updated on March 20, 2025</span>
             </div>
           </div>
           <div>
-            <a href="#" class="btn btn-outline-danger btn-sm">
-              <i class="bi bi-trash me-1"></i>Delete
-            </a>
+            <a href="{% url 'adminmanager:vendor_list' %}" class="btn btn-outline-secondary btn-sm">
+  <i class="bi bi-arrow-left me-1"></i>Back
+</a>
           </div>
         </div>
         
@@ -207,17 +311,45 @@
                 <h6 class="section-title">Company Information</h6>
               </div>
               
-              <div class="col-12 mb-3">
+              <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="company_name" name="company_name" value="{{ vendor.company_name }}" placeholder="Company Name" required>
                   <label for="company_name" class="required-field">Company Name</label>
                 </div>
               </div>
-              
-              <div class="col-md-6 mb-3" style="display: none;">
+
+              <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="username" name="username" value="{{ vendor.username }}" placeholder="Username" required>
-                  <label for="username" class="required-field">Username</label>
+                  <input type="text" class="form-control" id="name" name="name" value="{{ vendor.name }}" placeholder="Person Name" required>
+                  <label for="name" class="required-field">Person Name</label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="email" name="email" value="{{ vendor.email }}" placeholder="Email" required>
+                  <label for="email" class="required-field">Email</label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ vendor.phone_number }}" placeholder="Phone Number" required>
+                  <label for="phone_number" class="required-field">Cell</label>
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="street" name="street" value="{{ vendor.street }}" placeholder="Street" required>
+                  <label for="street" class="required-field">Street</label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="apt_suite" name="apt_suite" value="{{ vendor.apt_suite }}" placeholder="Apt/Suite">
+                  <label for="apt_suite">Apt/Suite</label>
                 </div>
               </div>
               
@@ -235,17 +367,29 @@
                 </div>
               </div>
               
-              <div class="col-md-4 mb-3">
+             <div class="col-md-4 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="state" name="state" value="{{ vendor.state }}" placeholder="State">
+                  <select class="form-select" id="state" name="state">
+                    <option value="" disabled {% if not vendor.state %}selected{% endif %}>Select a state</option>
+                    {% for state_code in US_STATES %}
+                      <option value="{{ state_code }}" {% if vendor.state == state_code %}selected{% endif %}>{{ state_code }}</option>
+                    {% endfor %}
+                  </select>
                   <label for="state">State</label>
                 </div>
               </div>
-              
+
               <div class="col-md-4 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ vendor.zip_code }}" placeholder="ZIP Code">
                   <label for="zip_code">ZIP Code</label>
+                </div>
+              </div>
+
+              <div class="col-12 mb-3">
+                <div class="form-floating">
+                  <textarea class="form-control" id="notes" name="notes" placeholder="Notes" style="height: 100px">{{ vendor.notes }}</textarea>
+                  <label for="notes">Notes</label>
                 </div>
               </div>
             </div>
@@ -255,55 +399,102 @@
                 <h6 class="section-title">Contact Information</h6>
               </div>
               
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="email" class="form-control" id="email" name="email" value="{{ vendor.email }}" placeholder="Email" required>
-                  <label for="email" class="required-field">Email</label>
+              <div class="col-12">
+                <div id="contacts-container">
+                  {% for contact in existing_contacts %}
+                    <div class="contact-row">
+                      <div class="contact-header">
+                        <h6 class="contact-title">Contact #{{ forloop.counter }}</h6>
+                        {% if forloop.counter > 1 %}
+                          <button type="button" class="remove-contact" onclick="removeContact(this)">
+                            <i class="bi bi-x"></i>
+                          </button>
+                        {% endif %}
+                      </div>
+                      <div class="row">
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_first_name[]" value="{{ contact.first_name }}" placeholder="First Name" required>
+                            <label class="required-field">First Name</label>
+                          </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_last_name[]" value="{{ contact.last_name }}" placeholder="Last Name" required>
+                            <label class="required-field">Last Name</label>
+                          </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_cell[]" value="{{ contact.cell }}" placeholder="Cell Phone">
+                            <label>Cell</label>
+                          </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="email" class="form-control" name="contact_email[]" value="{{ contact.email }}" placeholder="Email">
+                            <label>Email</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% empty %}
+                    <!-- If no contacts exist, show one empty contact row -->
+                    <div class="contact-row">
+                      <div class="contact-header">
+                        <h6 class="contact-title">Contact #1</h6>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_first_name[]" placeholder="First Name" required>
+                            <label class="required-field">First Name</label>
+                          </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_last_name[]" placeholder="Last Name" required>
+                            <label class="required-field">Last Name</label>
+                          </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_cell[]" placeholder="Cell Phone">
+                            <label>Cell</label>
+                          </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          <div class="form-floating">
+                            <input type="email" class="form-control" name="contact_email[]" placeholder="Email">
+                            <label>Email</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
                 </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ vendor.phone_number }}" placeholder="Phone Number">
-                  <label for="phone_number">Phone Number</label>
-                </div>
+                
+                <button type="button" class="add-contact-btn" id="add-contact-btn">
+                  <i class="bi bi-plus-circle"></i>
+                  Add Additional Contact
+                </button>
               </div>
             </div>
+            
             <div class="row mb-4">
               <div class="col-12">
                 <h6 class="section-title">Service Details</h6>
               </div>
             
               <div class="col-12">
-                <label class="form-label required-field mb-2">Service Type</label>
+                <label class="form-label mb-3">Available Services</label>
                 
-                <!-- Dropdown for selecting services -->
-                <div class="dropdown service-dropdown mb-3">
-                  <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" type="button" id="serviceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span>Select Services</span>
-                    <i class="bi bi-chevron-down"></i>
-                  </button>
-                  <ul class="dropdown-menu w-100" aria-labelledby="serviceDropdown">
-                    {% for key, value in service_choices %}
-                      <li>
-                        <a class="dropdown-item service-item" href="#" data-service-key="{{ key }}" data-service-value="{{ value }}">
-                          <div class="form-check">
-                            <input class="form-check-input service-checkbox" type="checkbox" id="service-check-{{ key }}" {% if key in selected_services %}checked{% endif %}>
-                            <label class="form-check-label w-100" for="service-check-{{ key }}">{{ value }}</label>
-                          </div>
-                        </a>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-                
-                <!-- Display area for selected services -->
-                <div id="selected-services" class="d-flex flex-wrap gap-2 mb-3">
-                  {% for service in selected_services %}
-                    <div class="selected-service-tag" data-service-key="{{ service }}">
-                      <span>{{ service }}</span>
-                      <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove"></button>
-                      <input type="hidden" name="service[]" value="{{ service }}">
+                <!-- Service Selection Grid -->
+                <div class="service-grid mb-4">
+                  {% for service in service_choices %}
+                    <div class="service-option">
+                      <input class="form-check-input service-checkbox" type="checkbox" id="service-{{ forloop.counter }}" name="service[]" value="{{ service }}" {% if service in selected_services %}checked{% endif %}>
+                      <label class="form-check-label" for="service-{{ forloop.counter }}">{{ service }}</label>
                     </div>
                   {% endfor %}
                 </div>
@@ -311,131 +502,12 @@
                 <!-- Additional Services Input -->
                 <div class="form-floating mt-4">
                   <input type="text" class="form-control" id="additional_service" name="additional_service"
-                         value="" placeholder="cutting, painting, ...">
+                         value="{{ additional_services_text }}" placeholder="cutting, painting, ...">
                   <label for="additional_service">Add Additional Services (comma separated)</label>
                 </div>
                 <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
               </div>
             </div>
-            
-            <style>
-              .service-dropdown .dropdown-menu {
-                padding: 0.5rem;
-                max-height: 300px;
-                overflow-y: auto;
-              }
-              
-              .service-dropdown .dropdown-item {
-                padding: 0.5rem;
-                border-radius: 4px;
-              }
-              
-              .service-dropdown .dropdown-item:hover {
-                background-color: #f8f9fa;
-              }
-              
-              .service-dropdown .dropdown-item:active {
-                background-color: #f0f0f0;
-                color: #212529;
-              }
-              
-              .service-dropdown .form-check {
-                padding-left: 0;
-                margin-bottom: 0;
-                display: flex;
-                align-items: center;
-              }
-              
-              .service-dropdown .form-check-input {
-                margin-right: 0.5rem;
-                margin-left: 0;
-                position: relative;
-              }
-              
-              .selected-service-tag {
-                display: inline-flex;
-                align-items: center;
-                padding: 0.35rem 0.75rem;
-                background-color: #e9f0ff;
-                color: #0d6efd;
-                border: 1px solid #c9d8fd;
-                border-radius: 50px;
-                font-size: 0.875rem;
-              }
-              
-              .selected-service-tag .btn-close {
-                font-size: 0.5rem;
-                padding: 0.15rem;
-              }
-            </style>
-            
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              // Handle dropdown item clicks
-              document.querySelectorAll('.service-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  
-                  const checkbox = this.querySelector('.service-checkbox');
-                  checkbox.checked = !checkbox.checked;
-                  
-                  updateSelectedServices();
-                });
-              });
-              
-              // Handle checkbox clicks within dropdown
-              document.querySelectorAll('.service-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('click', function(e) {
-                  e.stopPropagation();
-                  updateSelectedServices();
-                });
-              });
-              
-              // Initial setup
-              updateSelectedServices();
-              
-              // Event delegation for remove buttons (for dynamically added elements)
-              document.getElementById('selected-services').addEventListener('click', function(e) {
-                if (e.target.classList.contains('btn-close') || e.target.closest('.btn-close')) {
-                  const tag = e.target.closest('.selected-service-tag');
-                  const serviceKey = tag.getAttribute('data-service-key');
-                  
-                  // Uncheck the corresponding checkbox
-                  const checkbox = document.querySelector(`#service-check-${serviceKey}`);
-                  if (checkbox) {
-                    checkbox.checked = false;
-                  }
-                  
-                  // Remove the tag
-                  tag.remove();
-                }
-              });
-              
-              function updateSelectedServices() {
-                const selectedServicesContainer = document.getElementById('selected-services');
-                selectedServicesContainer.innerHTML = '';
-                
-                document.querySelectorAll('.service-checkbox:checked').forEach(checkbox => {
-                  const serviceItem = checkbox.closest('.service-item');
-                  const serviceKey = serviceItem.getAttribute('data-service-key');
-                  const serviceValue = serviceItem.getAttribute('data-service-value');
-                  
-                  const tag = document.createElement('div');
-                  tag.className = 'selected-service-tag';
-                  tag.setAttribute('data-service-key', serviceKey);
-                  tag.innerHTML = `
-                    <span>${serviceValue}</span>
-                    <button type="button" class="btn-close btn-sm ms-2" aria-label="Remove"></button>
-                    <input type="hidden" name="service[]" value="${serviceKey}">
-                  `;
-                  
-                  selectedServicesContainer.appendChild(tag);
-                });
-              }
-            });
-            </script>
-            
             
             <div class="row">
               <div class="col-12">
@@ -462,32 +534,117 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
 <script>
-  // Form validation
-  document.addEventListener('DOMContentLoaded', function() {
-    // Update avatar preview based on company name
-    const companyNameInput = document.getElementById('company_name');
-    const avatarPreview = document.querySelector('.avatar-preview');
+document.addEventListener('DOMContentLoaded', function() {
+  let contactCount = {{ existing_contacts|length|default:1 }};
+
+  // Handle service option clicks
+  document.querySelectorAll('.service-option').forEach(option => {
+    const checkbox = option.querySelector('input[type="checkbox"]');
     
-    if (companyNameInput && avatarPreview) {
-      companyNameInput.addEventListener('input', function() {
-        const firstLetter = this.value.trim()[0] || '';
-        avatarPreview.textContent = firstLetter;
-      });
+    // Set initial state
+    if (checkbox.checked) {
+      option.classList.add('checked');
     }
     
-    // Form validation
-    const forms = document.querySelectorAll('.needs-validation');
-    
-    Array.from(forms).forEach(function(form) {
-      form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        
-        form.classList.add('was-validated');
-      }, false);
+    // Add click event to the entire option
+    option.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Toggle checkbox
+      checkbox.checked = !checkbox.checked;
+      
+      // Toggle visual state
+      if (checkbox.checked) {
+        option.classList.add('checked');
+      } else {
+        option.classList.remove('checked');
+      }
     });
   });
+
+  // Add contact functionality
+  document.getElementById('add-contact-btn').addEventListener('click', function() {
+    contactCount++;
+    const contactsContainer = document.getElementById('contacts-container');
+    
+    const newContactRow = document.createElement('div');
+    newContactRow.className = 'contact-row';
+    newContactRow.innerHTML = `
+      <div class="contact-header">
+        <h6 class="contact-title">Contact #${contactCount}</h6>
+        <button type="button" class="remove-contact" onclick="removeContact(this)">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <div class="form-floating">
+            <input type="text" class="form-control" name="contact_first_name[]" placeholder="First Name">
+            <label>First Name</label>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="form-floating">
+            <input type="text" class="form-control" name="contact_last_name[]" placeholder="Last Name">
+            <label>Last Name</label>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="form-floating">
+            <input type="text" class="form-control" name="contact_cell[]" placeholder="Cell Phone">
+            <label>Cell</label>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="form-floating">
+            <input type="email" class="form-control" name="contact_email[]" placeholder="Email">
+            <label>Email</label>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    contactsContainer.appendChild(newContactRow);
+  });
+
+  // Update avatar preview based on company name
+  const companyNameInput = document.getElementById('company_name');
+  const avatarPreview = document.querySelector('.avatar-preview');
+  
+  if (companyNameInput && avatarPreview) {
+    companyNameInput.addEventListener('input', function() {
+      const firstLetter = this.value.trim()[0] || '';
+      avatarPreview.textContent = firstLetter;
+    });
+  }
+  
+  // Form validation
+  const forms = document.querySelectorAll('.needs-validation');
+  
+  Array.from(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      
+      form.classList.add('was-validated');
+    }, false);
+  });
+});
+
+// Remove contact function (global scope for onclick)
+function removeContact(button) {
+  const contactRow = button.closest('.contact-row');
+  contactRow.remove();
+  
+  // Renumber remaining contacts
+  const contactRows = document.querySelectorAll('.contact-row');
+  contactRows.forEach((row, index) => {
+    const title = row.querySelector('.contact-title');
+    title.textContent = `Contact #${index + 1}`;
+  });
+}
 </script>
 {% endblock content %}

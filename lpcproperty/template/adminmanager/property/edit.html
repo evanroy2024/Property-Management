@@ -446,7 +446,7 @@
                         <div class="form-row">
                             <div class="form-col form-col-md">
                                 <div class="form-group">
-                                    <label class="form-label" for="address">Stret 1 </label>
+                                    <label class="form-label" for="address">Street 1 </label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-map-marker-alt input-icon"></i>
                                         <input type="text" id="street1" name="street1" class="form-control" value="{{ property.street_line1 }}" placeholder="Enter Street 1 name">
@@ -464,27 +464,7 @@
                             </div>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-col form-col-md">
-                                <div class="form-group">
-                                    <label class="form-label" for="number_of_stories">Number of Stories</label>
-                                    <div class="input-with-icon">
-                                        <i class="fas fa-building input-icon"></i>
-                                        <input type="number" id="number_of_stories" name="number_of_stories" class="form-control" value="{{ property.number_of_stories }}" placeholder="Enter number of stories">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-col form-col-md">
-                                <div class="form-group">
-                                    <label class="form-label" for="year_built">Year Built</label>
-                                    <div class="input-with-icon">
-                                        <i class="fas fa-calendar-alt input-icon"></i>
-                                        <input type="number" id="year_built" name="year_built" class="form-control" value="{{ property.year_built }}" placeholder="Enter year built">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        
                         <div class="form-row">
                           <div class="form-col form-col-md">
   <div class="form-group">
@@ -515,7 +495,30 @@
                          <div class="form-group half">
                         <label class="form-label" for="year_built">Zip Code</label>
                         <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" value="{{ property.zipcode }}" placeholder="Enter Zip Code">
-                    </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="number_of_stories">Number of Stories</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-building input-icon"></i>
+                                        <input type="number" id="number_of_stories" name="number_of_stories" class="form-control" value="{{ property.number_of_stories }}" placeholder="Enter number of stories">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="year_built">Year Built</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-calendar-alt input-icon"></i>
+                                        <input type="number" id="year_built" name="year_built" class="form-control" value="{{ property.year_built }}" placeholder="Enter year built">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
                         <div class="form-group">
                             <label class="form-label" for="construction_type">Construction Type</label>
                             <div class="input-with-icon">
@@ -525,11 +528,11 @@
                         </div>
 
                     <!-- Additional Info -->
-<div class="form-group">
-    <label class="form-label" for="additional_info">Additional Property Information</label>
-    <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property">{{ property.additional_info }}</textarea>
-</div>
-                    
+                        <div class="form-group">
+                            <label class="form-label" for="additional_info">Additional Property Information</label>
+                            <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property">{{ property.additional_info }}</textarea>
+                        </div>
+                                            
                         
                         
                     </div>
@@ -690,6 +693,14 @@
                       </div>
 
                     </div>
+                     <div class="form-row" style="gap: 10px;">
+                      <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" name="client_address" value="{{ client.address }}" placeholder="Address">
+                      </div>
+                    </div>
+                  
+                    
                     <div class="form-row" style="gap: 10px;">
                       <div class="form-group">
                         <label>City</label>
@@ -725,13 +736,7 @@
                       </div>
                     </div>
                   
-                    <div class="form-row" style="gap: 10px;">
-                      <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" name="client_address" value="{{ client.address }}" placeholder="Address">
-                      </div>
-                    </div>
-                  
+                   
                     
                   
                   

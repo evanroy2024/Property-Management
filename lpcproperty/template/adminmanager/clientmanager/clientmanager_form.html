@@ -294,16 +294,22 @@
               </div>
               
               <div class="col-md-4 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="state" name="state" placeholder="State" value="{{ clientmanager.state|default:'' }}">
-                  <label for="state">State</label>
-                </div>
-              </div>
+  <div class="form-floating">
+    <select class="form-select" id="state" name="state">
+      <option value="" disabled selected>Select State</option>
+      {% for state_code in US_STATES %}
+        <option value="{{ state_code }}" {% if clientmanager.state == state_code %}selected{% endif %}>{{ state_code }}</option>
+      {% endfor %}
+    </select>
+    <label for="state">State</label>
+  </div>
+</div>
+
               
               <div class="col-md-4 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Zipcode" value="{{ clientmanager.zipcode|default:'' }}">
-                  <label for="zipcode">Zipcode</label>
+                  <label for="zipcode">Zip code</label>
                 </div>
               </div>
 

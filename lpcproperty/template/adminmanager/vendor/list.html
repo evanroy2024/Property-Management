@@ -1,601 +1,581 @@
 {% extends 'adminmanager/adminbase.html' %}
-{ % load static %}
-
-{% block title %}Vendor Dashboard{% endblock %}
+{% load static %}
+{% block title %}Vendors{% endblock %}
 
 {% block content %}
-<!-- Custom CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-VzLcLQpQClj9TVXbN4y6U5V9r/0WvEylXyAVFZgmnNFEwW9Z6u3qx7wG+jGgpJjG+YrRy7v0Sk1tw5V5J9BkIA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
-  :root {
-    --primary-color: #4361ee;
-    --secondary-color: #3f37c9;
-    --accent-color: #4cc9f0;
-    --success-color: #2ec4b6;
-    --danger-color: #e63946;
-    --light-bg: #f8f9fa;
-    --dark-text: #2b2d42;
-    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    --gradient-bg: linear-gradient(135deg, #4361ee, #3a0ca3);
-  }
-  
-  body {
-    background-color: #f5f7fa;
-    color: var(--dark-text);
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .dashboard-header {
-    background: var(--gradient-bg);
-    padding: 2rem 0;
-    border-radius: 0 0 20px 20px;
-    margin-bottom: 2rem;
-    box-shadow: var(--card-shadow);
-  }
-  
-  .dashboard-title {
-    color: white;
-    font-weight: 700;
-    margin-bottom: 0;
-    font-size: 1.8rem;
-  }
-  
-  .stats-card {
-    border-radius: 15px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: none;
-    height: 100%;
-  }
-  
-  .stats-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  .stats-card .icon {
-    font-size: 2rem;
-    width: 64px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-  }
-  
-  .vendor-card {
-    background: white;
-    border-radius: 15px;
-    box-shadow: var(--card-shadow);
-    border: none;
-    overflow: hidden;
-  }
-  
-  .vendor-card .card-header {
-    background: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 1.5rem;
-  }
-  
-  .vendor-table {
-    margin-bottom: 0;
-  }
-  
-  .vendor-table th {
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #6c757d;
-    padding: 1.2rem 1.5rem;
-  }
-  
-  .vendor-table td {
-    padding: 1.2rem 1.5rem;
-    vertical-align: middle;
-  }
-  
-  .vendor-table tr {
-    transition: all 0.2s ease;
-  }
-  
-  .vendor-table tr:hover {
-    background-color: rgba(67, 97, 238, 0.05);
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: white;
-    font-size: 1rem;
-  }
-  
-  .action-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: white;
-    color: #6c757d;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .action-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-  }
-  
-  .dropdown-menu {
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: none;
-    padding: 0.5rem;
-    min-width: 12rem;
-  }
-  
-  .dropdown-item {
-    padding: 0.7rem 1rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-  
-  .dropdown-item:hover {
-    background-color: rgba(67, 97, 238, 0.1);
-  }
-  
-  .dropdown-item i {
-    font-size: 1.1rem;
-  }
-  
-  .badge-service {
-    padding: 0.5rem 1rem;
-    border-radius: 30px;
-    font-weight: 500;
-    font-size: 0.75rem;
-  }
-  
-  .btn-add {
-    background: white;
-    color: var(--primary-color);
-    border: none;
-    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.15);
-    border-radius: 12px;
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    transition: all 0.3s;
-  }
-  
-  .btn-add:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-2px);
-  }
-  
-  .btn-add i {
-    margin-right: 0.5rem;
-  }
-  
-  .empty-state {
-    padding: 4rem 2rem;
-    text-align: center;
-  }
-  
-  .empty-state i {
-    font-size: 5rem;
-    color: #e2e8f0;
-    margin-bottom: 1.5rem;
-  }
-  
-  .empty-state p {
-    color: #64748b;
-    font-size: 1.1rem;
-    max-width: 400px;
-    margin: 0 auto 1.5rem;
-  }
-  
-  /* Animation for dropdown */
-  .dropdown-menu.show {
-    animation: dropdown-animation 0.3s ease forwards;
-    transform-origin: top right;
-  }
-  
-  @keyframes dropdown-animation {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  /* Make sure dropdown stays visible on mobile */
-  @media (max-width: 992px) {
-    .dropdown-menu {
-      position: absolute !important;
-      will-change: transform !important;
-    }
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .dashboard-header {
-      border-radius: 0;
-      padding: 1.5rem 0;
+    /* Custom Styles */
+    .content-wrapper {
+        padding: 1.5rem;
+        background-color: #f8f9fc;
     }
     
-    .vendor-table td, 
-    .vendor-table th {
-      padding: 1rem;
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
     }
     
-    .vendor-table {
-      min-width: 800px;
+    .card {
+        border: none;
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .card-header h6 {
+        font-weight: 700;
+        margin: 0;
+        color: #4e73df;
     }
     
     .stats-card {
-      margin-bottom: 1rem;
+        border-left: 0.25rem solid;
+        border-radius: 0.35rem;
     }
-  }
-  
-  /* Fix for dropdown positioning */
-  .dropdown-menu-end {
-    right: 0 !important;
-    left: auto !important;
-  }
+    
+    .border-left-primary { border-left-color: #4e73df; }
+    .border-left-success { border-left-color: #1cc88a; }
+    .border-left-info { border-left-color: #36b9cc; }
+    .border-left-warning { border-left-color: #f6c23e; }
+    
+    .text-primary { color: #4e73df !important; }
+    .text-success { color: #1cc88a !important; }
+    .text-info { color: #36b9cc !important; }
+    .text-warning { color: #f6c23e !important; }
+    
+    .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .table th {
+        background-color: #f8f9fc;
+        border-bottom: 2px solid #e3e6f0;
+        color: #5a5c69;
+        font-weight: 700;
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+    
+    .table td {
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+    
+    .badge {
+        font-weight: 600;
+        padding: 0.25em 0.6em;
+    }
+    
+    .action-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        margin-right: 0.25rem;
+    }
+    
+    .icon-gray {
+        color: #dddfeb;
+    }
+
+    .h3, h3 {
+        color: black;
+    }
+    .table th {
+        background-color: white;
+    }
+
+    /* Professional Styling for Filter Dropdowns */
+    #filter-company, #filter-contact-person, #filter-city, #filter-state, #filter-service {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+
+    /* Focus Effect */
+    #filter-company:focus, #filter-contact-person:focus, #filter-city:focus, #filter-state:focus, #filter-service:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+
+    .sort-icon {
+        font-size: 0.65rem;
+        color: #6c757d;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+
+    th.sortable:hover .sort-icon {
+        color: #000;
+    }
+
+    .service-text {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    @media (min-width: 1000px) {
+        .content-wrapper {
+            min-height: 700px;
+        }
+    }
 </style>
 
-<!-- Dashboard content -->
-<div class="dashboard-header">
-  <div class="container-fluid">
-    <div class="row align-items-center">
-      <div class="col-md-8">
-        <h1 class="dashboard-title">Vendor Management</h1>
-      </div>
-      <div class="col-md-4 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'adminmanager:create_vendor' %}" class="btn-add">
-          <i class="bi bi-plus-circle"></i>Add New Vendor
-        </a>
-      </div>
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center w-100">
+            <h1 class="h3 mb-2 mb-md-0 text-gray-800">All Vendors</h1>
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 gap-sm-3 ms-auto">
+                <div class="card stats-card border-left-primary" style="min-width: 150px; margin-bottom: 0;">
+                    <div class="card-body py-2 px-3">
+                        <div class="d-flex align-items-center">
+                            <span class="font-weight-bold text-primary" style="font-size: 0.875rem; margin-right: 8px;">
+                                Total :
+                            </span>
+                            <span class="h5 mb-0 font-weight-bold text-gray-800">{{ vendors|length }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'adminmanager:create_vendor' %}" class="btn btn-primary">
+                    <i class="fas fa-plus fa-sm mr-2"></i> Add New Vendor
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<div class="container-fluid">
-  <!-- Stats cards -->
-  <div class="row mb-4">
-    <div class="col-xl-3 col-md-6 mb-4">
-      <div class="stats-card">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="text-muted mb-1">Total Vendors</h6>
-              <h3 class="mb-0 fw-bold">{{ vendors|length }}</h3>
+    <!-- Vendors Table Card -->
+    <div class="card shadow mb-4">
+        <!-- Live Filters -->
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-md-2">
+                    <select id="filter-company" class="form-select">
+                        <option value="">Company Name</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="filter-contact-person" class="form-select">
+                        <option value="">Name</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="filter-city" class="form-select">
+                        <option value="">Cities</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="filter-state" class="form-select">
+                        <option value="">States</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select id="filter-service" class="form-select">
+                        <option value="">Services</option>
+                        <option value="painting">Painting</option>
+                        <option value="wall covering">Wall Covering</option>
+                        <option value="flooring, tile">Flooring, Tile</option>
+                        <option value="flooring, resilient">Flooring, Resilient</option>
+                        <option value="flooring, epoxy">Flooring, Epoxy</option>
+                        <option value="flooring, carpet">Flooring, Carpet</option>
+                        <option value="plumbing">Plumbing</option>
+                        <option value="hvac">HVAC</option>
+                        <option value="roofing">Roofing</option>
+                        <option value="appliance repair">Appliance Repair</option>
+                        <option value="countertops">Countertops</option>
+                        <option value="millwork">Millwork</option>
+                        <option value="locksmith">Locksmith</option>
+                        <option value="electrician">Electrician</option>
+                        <option value="pressure washer">Pressure Washer</option>
+                        <option value="car detailer">Car Detailer</option>
+                        <option value="landscape">Landscape</option>
+                        <option value="av">AV</option>
+                        <option value="security">Security</option>
+                        <option value="glass, repair">Glass, Repair</option>
+                        <option value="glass, installation">Glass, Installation</option>
+                        <option value="garage door">Garage Door</option>
+                    </select>
+                </div>
             </div>
-            <div class="icon bg-primary-subtle text-primary">
-              <i class="bi bi-building"></i>
-            </div>
-          </div>
         </div>
-      </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="sortable-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-index="0">Company Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="1">Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="2">City <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="3">State <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="4">Cell <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="5">Email <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="6">Service <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendor-table">
+                        {% for vendor in vendors %}
+                        <tr class="vendor-row"
+                            data-company="{{ vendor.company_name|lower }}"
+                            data-contact-person="{{ vendor.name|lower }}"
+                            data-city="{{ vendor.city|lower }}"
+                            data-state="{{ vendor.state|lower }}"
+                            data-service="{{ vendor.service|lower }}">
+                            <td><strong>{{ vendor.company_name }}</strong></td>
+                            <td>{{ vendor.name }}</td>
+                            <td>{{ vendor.city }}</td>
+                            <td>{{ vendor.state }}</td>
+                            <td>{{ vendor.phone_number }}</td>
+                            <td>{{ vendor.email }}</td>
+                            <td>
+                                <span class="service-text" title="{{ vendor.service }}">
+                                    {{ vendor.service|truncatechars:30 }}
+                                </span>
+                            </td>
+                           <td>
+                              <a href="{% url 'adminmanager:edit_vendor' vendor.id %}" 
+                                class="btn btn-primary btn-sm me-1">
+                                  Edit
+                              </a>
+
+                              <a href="{% url 'adminmanager:delete_vendor' vendor.id %}" 
+                                class="btn btn-danger btn-sm me-1"
+                                onclick="return confirm('Are you sure you want to delete {{ vendor.company_name }}?')">
+                                  Delete
+                              </a>
+
+                              <a href="#" 
+                                class="btn btn-success btn-sm open-contact-modal"
+                                data-vendor-id="{{ vendor.id }}"
+                                data-vendor-name="{{ vendor.company_name }}"
+                                data-vendor-contacts='{{ vendor.contacts.all|length }}'>
+                                  Contacts
+                              </a>
+                          </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-truck fa-4x mb-3 icon-gray"></i>
+                                    <h4 class="text-gray-800 mb-2">No vendors found</h4>
+                                    <p class="text-gray-600 mb-3">Get started by adding your first vendor</p>
+                                    <a href="#" class="btn btn-primary">
+                                        <i class="fas fa-plus mr-2"></i> Add Vendor
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     
-    <div class="col-xl-3 col-md-6 mb-4">
-      <div class="stats-card">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="text-muted mb-1">Active Services</h6>
-            </div>
-            <div class="icon bg-success-subtle text-success">
-              <i class="bi bi-gear"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-xl-3 col-md-6 mb-4">
-      <div class="stats-card">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="text-muted mb-1">New This Month</h6>
-              <h3 class="mb-0 fw-bold">{{ vendors|dictsortreversed:"id"|slice:":3"|length }}</h3>
-            </div>
-            <div class="icon bg-info-subtle text-info">
-              <i class="bi bi-calendar-plus"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-xl-3 col-md-6 mb-4">
-      <div class="stats-card">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="text-muted mb-1">Last Updated</h6>
-              <h3 class="mb-0 fw-bold">Today</h3>
-            </div>
-            <div class="icon bg-warning-subtle text-warning">
-              <i class="bi bi-clock-history"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Vendor table -->
-  <div class="row">
-    <div class="col-12">
-      <div class="vendor-card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0 fw-bold">Vendor Directory</h5>
-          <div class="input-group" style="max-width: 300px;">
-            <input type="text" class="form-control" placeholder="Search vendors..." id="vendorSearch">
-            <button class="btn btn-outline-primary" type="button">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-        </div>
-       <!-- Vendor Table HTML -->
-<div class="table-responsive">
-    <table class="table vendor-table" id="vendorTable">
-      <thead>
-        <tr>
-          <th>Company</th>
-          <th>Username</th>
-          <th>Contact</th>
-          <th>Service</th>
-          <th class="text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for vendor in vendors %}
-        <tr>
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="avatar me-3" style="background-color: hsl({{ vendor.id|add:100|divisibleby:360 }}deg, 80%, 60%)">
-                {{ vendor.company_name|slice:":1" }}
-              </div>
-              <div>
-                <h6 class="mb-0 fw-semibold">{{ vendor.company_name }}</h6>
-              </div>
-            </div>
-          </td>
-          <td>
-            <span class="text-muted">{{ vendor.username }}</span>
-          </td>
-          <td>
-            <div>
-              <div class="d-flex align-items-center mb-1">
-                <i class="bi bi-envelope-fill text-muted me-2" style="font-size: 0.8rem;"></i>
-                <a href="mailto:{{ vendor.email }}" class="text-decoration-none">{{ vendor.email }}</a>
-              </div>
-              <div class="d-flex align-items-center">
-                <i class="bi bi-telephone-fill text-muted me-2" style="font-size: 0.8rem;"></i>
-                <a href="tel:{{ vendor.phone_number }}" class="text-decoration-none">{{ vendor.phone_number }}</a>
-              </div>
-            </div>
-          </td>
-          <td>
-            <span class="badge-service bg-success-subtle text-success">{{ vendor.service }}</span>
-          </td>
-          <td class="text-center">
-            <div class="d-flex justify-content-center">
-              <!-- <a href="#" class="btn btn-sm btn-outline-primary me-2">
-                <i class="bi bi-chat-dots me-1"></i>Contact
-              </a> -->
-              <div class="dropdown action-dropdown">
-                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="toggleDropdown(event, {{ vendor.id }})">
-                  <i class="bi bi-three-dots"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" id="dropdown{{ vendor.id }}">
-                  <li>
-                    <a class="dropdown-item" href="{% url 'adminmanager:edit_vendor' vendor.id %}">
-                      <i class="bi bi-pencil-square me-2 text-primary"></i>Edit Details
-                    </a>
-                  </li>
-                 
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <a class="dropdown-item text-danger" href="{% url 'adminmanager:delete_vendor' vendor.id %}" 
-                       onclick="return confirm('Are you sure you want to delete {{ vendor.company_name }}?')">
-                      <i class="bi bi-trash me-2"></i>Delete Vendor
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5">
-            <div class="empty-state">
-              <i class="bi bi-building-add"></i>
-              <p>You haven't added any vendors yet. Get started by adding your first vendor.</p>
-              <a href="{% url 'adminmanager:create_vendor' %}" class="btn btn-primary px-4 py-2">
-                <i class="bi bi-plus-circle me-2"></i>Add Your First Vendor
-              </a>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  
-  <!-- Required CSS (Add this to your CSS file) -->
-  <style>
-    .action-dropdown {
-      position: relative;
-    }
-    
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      right: 0;
-      min-width: 200px;
-      background-color: #fff;
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-      border-radius: 0.25rem;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      z-index: 1000;
-    }
-    
-    .dropdown-menu.show {
-      display: block;
-    }
-    
-    .dropdown-item {
-      display: block;
-      width: 100%;
-      padding: 0.5rem 1rem;
-      clear: both;
-      text-align: inherit;
-      white-space: nowrap;
-      background-color: transparent;
-      border: 0;
-      text-decoration: none;
-      color: #212529;
-    }
-    
-    .dropdown-item:hover, .dropdown-item:focus {
-      background-color: #f8f9fa;
-    }
-    
-    .dropdown-divider {
-      height: 0;
-      margin: 0.5rem 0;
-      overflow: hidden;
-      border-top: 1px solid #e9ecef;
-    }
-  </style>
-  
-  <!-- Required JavaScript (Add this to your JavaScript file or at the end of your template) -->
-  <script>
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-      const dropdowns = document.querySelectorAll('.dropdown-menu.show');
-      dropdowns.forEach(function(dropdown) {
-        dropdown.classList.remove('show');
-      });
-    });
-    
-    // Toggle specific dropdown
-    function toggleDropdown(event, vendorId) {
-      event.stopPropagation(); // Prevent closing immediately due to document click listener
-      
-      // Get the specific dropdown menu
-      const dropdown = document.getElementById('dropdown' + vendorId);
-      
-      // Close all other open dropdowns
-      const allDropdowns = document.querySelectorAll('.dropdown-menu.show');
-      allDropdowns.forEach(function(menu) {
-        if (menu !== dropdown) {
-          menu.classList.remove('show');
-        }
-      });
-      
-      // Toggle the current dropdown
-      dropdown.classList.toggle('show');
-    }
-  </script>
+    <!-- JavaScript for Live Filtering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filters = {
+                company: document.getElementById("filter-company"),
+                contactPerson: document.getElementById("filter-contact-person"),
+                city: document.getElementById("filter-city"),
+                state: document.getElementById("filter-state"),
+                service: document.getElementById("filter-service"),
+            };
         
-        {% if vendors %}
-        <div class="card-footer bg-white p-3 d-flex justify-content-between align-items-center">
-          <div>
-            <span class="text-muted">Showing {{ vendors|length }} vendors</span>
-          </div>
-          <div>
-            <nav aria-label="Page navigation">
-              <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled">
-                  <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#">Next</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-<script>
-  // Search functionality for vendors
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('vendorSearch');
-    if (searchInput) {
-      searchInput.addEventListener('keyup', function() {
-        const searchTerm = this.value.toLowerCase();
-        const table = document.getElementById('vendorTable');
-        const rows = table.getElementsByTagName('tr');
+            const rows = document.querySelectorAll(".vendor-row");
         
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          if (row.cells.length > 1) { // Skip empty state row
-            const text = row.textContent.toLowerCase();
-            if (text.indexOf(searchTerm) > -1) {
-              row.style.display = '';
-            } else {
-              row.style.display = 'none';
+            // Populate dropdowns (except service which is predefined)
+            function populateDropdown(filterKey, dataAttr) {
+                const values = new Set();
+                rows.forEach(row => {
+                    const val = row.getAttribute(dataAttr);
+                    if (val && val.trim() !== '') values.add(val);
+                });
+        
+                [...values].sort().forEach(val => {
+                    const opt = document.createElement("option");
+                    opt.value = val;
+                    opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                    filters[filterKey].appendChild(opt);
+                });
             }
-          }
-        }
-      });
-    }
-    
-    // Fix dropdown positioning issue
-    const dropdownToggleList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-    dropdownToggleList.map(function (dropdownToggle) {
-      dropdownToggle.addEventListener('click', function(event) {
-        event.stopPropagation();
-        const dropdownMenu = this.nextElementSibling;
         
-        if (dropdownMenu.classList.contains('show')) {
-          dropdownMenu.classList.remove('show');
-        } else {
-          const openMenus = document.querySelectorAll('.dropdown-menu.show');
-          openMenus.forEach(menu => menu.classList.remove('show'));
-          dropdownMenu.classList.add('show');
-        }
-      });
-    });
+            populateDropdown("company", "data-company");
+            populateDropdown("contactPerson", "data-contact-person");
+            populateDropdown("city", "data-city");
+            populateDropdown("state", "data-state");
+        
+            // Filtering function
+            function filterTable() {
+                const selected = {
+                    company: filters.company.value,
+                    contactPerson: filters.contactPerson.value,
+                    city: filters.city.value,
+                    state: filters.state.value,
+                    service: filters.service.value,
+                };
+        
+                rows.forEach(row => {
+                    const rowService = row.getAttribute("data-service");
+                    const matches =
+                        (!selected.company || row.getAttribute("data-company") === selected.company) &&
+                        (!selected.contactPerson || row.getAttribute("data-contact-person") === selected.contactPerson) &&
+                        (!selected.city || row.getAttribute("data-city") === selected.city) &&
+                        (!selected.state || row.getAttribute("data-state") === selected.state) &&
+                        (!selected.service || rowService.includes(selected.service));
+        
+                    row.style.display = matches ? "" : "none";
+                });
+            }
+        
+            // Attach change listeners
+            Object.values(filters).forEach(select => {
+                select.addEventListener("change", filterTable);
+            });
+        });
+    </script>
+
+    <!-- JavaScript for Sorting -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const table = document.getElementById("vendor-table");
+            const headers = document.querySelectorAll("th.sortable");
+        
+            let currentSort = {
+                index: null,
+                direction: 1 // 1 for ascending, -1 for descending
+            };
+        
+            headers.forEach(header => {
+                header.addEventListener("click", function () {
+                    const index = parseInt(this.getAttribute("data-index"));
+        
+                    if (currentSort.index === index) {
+                        currentSort.direction *= -1;
+                    } else {
+                        currentSort.index = index;
+                        currentSort.direction = 1;
+                    }
+        
+                    const rows = Array.from(table.querySelectorAll("tr"));
+        
+                    rows.sort((a, b) => {
+                        const aText = a.children[index].innerText.trim().toLowerCase();
+                        const bText = b.children[index].innerText.trim().toLowerCase();
+        
+                        if (!isNaN(aText) && !isNaN(bText)) {
+                            return currentSort.direction * (parseFloat(aText) - parseFloat(bText));
+                        }
+        
+                        return currentSort.direction * aText.localeCompare(bText);
+                    });
+        
+                    // Update sort icons
+                    headers.forEach(h => {
+                        const icon = h.querySelector(".sort-icon");
+                        icon.className = "fas fa-sort sort-icon";
+                    });
+        
+                    const icon = this.querySelector(".sort-icon");
+                    icon.className = currentSort.direction === 1
+                        ? "fas fa-sort-up sort-icon"
+                        : "fas fa-sort-down sort-icon";
+        
+                    // Re-append sorted rows
+                    rows.forEach(row => table.appendChild(row));
+                });
+            });
+        });
+    </script>
+</div>
+
+<!-- Contact Modal -->
+<style>
+    .contact-modal-content {
+        background-color: #fff;
+        border-radius: 12px;
+        color: #333;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+    }
+
+    .contact-modal-header {
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .contact-modal-title {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .contact-close-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.2rem;
+    }
+
+    .contact-modal-body {
+        padding: 1rem;
+        color: #333;
+    }
+
+    .contact-item {
+        border: 1px solid #e3e6f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #f8f9fc;
+    }
+
+    .contact-item h6 {
+        color: #4e73df;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .contact-info {
+        margin: 5px 0;
+        font-size: 0.95rem;
+    }
+
+    .contact-info strong {
+        color: #0056b3;
+    }
+</style>
+
+<!-- Modal HTML Structure -->
+<div class="modal fade contact-modal" id="contactModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered contact-modal-dialog">
+        <div class="modal-content contact-modal-content">
+            <div class="modal-header contact-modal-header">
+                <h5 class="modal-title contact-modal-title">Vendor Contacts</h5>
+                <button type="button" class="btn-close contact-close-btn" data-bs-dismiss="modal" aria-label="Close">
+                    <span style="color: red;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body contact-modal-body" id="contactModalBody">
+                Loading...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Contact Modal -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalBody = document.getElementById("contactModalBody");
     
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function() {
-      const openMenus = document.querySelectorAll('.dropdown-menu.show');
-      openMenus.forEach(menu => menu.classList.remove('show'));
+        document.querySelectorAll(".open-contact-modal").forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+    
+                const vendorId = this.getAttribute("data-vendor-id");
+                const vendorName = this.getAttribute("data-vendor-name");
+    
+                // Find vendor contacts from the template data
+                const vendorContacts = [];
+                {% for vendor in vendors %}
+                    if ({{ vendor.id }} == vendorId) {
+                        {% for contact in vendor.contacts.all %}
+                            vendorContacts.push({
+                                firstName: "{{ contact.first_name|escapejs }}",
+                                lastName: "{{ contact.last_name|escapejs }}",
+                                cell: "{{ contact.cell|escapejs }}",
+                                email: "{{ contact.email|escapejs }}"
+                            });
+                        {% endfor %}
+                    }
+                {% endfor %}
+    
+                // Update modal content
+                let contactsHtml = `<h5 style="color: #4e73df; margin-bottom: 20px;">${vendorName} - Contacts</h5>`;
+    
+                if (vendorContacts.length === 0) {
+                    contactsHtml += `
+                        <div class="text-center">
+                            <i class="fas fa-users fa-3x mb-3" style="color: #dddfeb;"></i>
+                            <h6 style="color: #5a5c69;">No contacts available</h6>
+                            <p style="color: #858796;">No contact information has been added for this vendor.</p>
+                        </div>
+                    `;
+                } else {
+                    vendorContacts.forEach((contact, index) => {
+                        contactsHtml += `
+                            <div class="contact-item">
+                                <h6>Contact ${index + 1}</h6>
+                                <div class="contact-info"><strong>Name:</strong>  ${contact.lastName}, ${contact.firstName}</div>
+                                <div class="contact-info"><strong>Cell:</strong> ${contact.cell}</div>
+                                <div class="contact-info"><strong>Email:</strong> ${contact.email}</div>
+                            </div>
+                        `;
+                    });
+                }
+    
+                modalBody.innerHTML = contactsHtml;
+    
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById("contactModal"));
+                modal.show();
+            });
+        });
     });
-  });
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
 {% endblock content %}

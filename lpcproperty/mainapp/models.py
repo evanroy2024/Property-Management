@@ -181,14 +181,27 @@ class VendorService(models.Model):
     
 class Vendor(models.Model):
     company_name = models.CharField(max_length=255)
-    username = models.CharField(max_length=150)
+    name = models.CharField(max_length=255)  # Person's name
+    street = models.CharField(max_length=255)
+    apt_suite = models.CharField(max_length=255, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     address = models.TextField()
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=20)
     email = models.EmailField()
     phone_number = models.CharField(max_length=15)
-    # service = models.CharField(max_length=50, choices=SERVICE_CHOICES , blank=True, null=True)
     service = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return self.company_name
+
+class VendorContact(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='contacts')
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    cell = models.CharField(max_length=15)
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.vendor.company_name}"

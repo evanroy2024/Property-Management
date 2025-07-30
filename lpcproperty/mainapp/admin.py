@@ -62,10 +62,17 @@ from .models import Vendor
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
-    list_display = ("company_name", "username", "email", "phone_number", "city", "state", "service")
-    search_fields = ("company_name", "username", "email", "phone_number", "city")
+    list_display = ("company_name", "email", "phone_number", "city", "state", "service")
+    search_fields = ("company_name", "email", "phone_number", "city")
     list_filter = ("state", "service")
     ordering = ("company_name",)
 
 from .models import VendorService
 admin.site.register(VendorService)
+
+from django.contrib import admin
+from .models import VendorContact
+
+@admin.register(VendorContact)
+class VendorContactAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'cell', 'email', 'vendor')

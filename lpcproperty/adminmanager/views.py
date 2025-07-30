@@ -863,41 +863,40 @@ def export_property_pdf(request, pk):
 from mainapp.models import Vendor
 
 # List vendors
+from mainapp.models import Vendor, VendorContact
+
 def vendor_list(request):
-    vendors = Vendor.objects.all()
+    vendors = Vendor.objects.prefetch_related('contacts').all()
     return render(request, 'adminmanager/vendor/list.html', {'vendors': vendors})
 
+import uuid
+from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
+from mainapp.models import Vendor
+import uuid
+from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
+from mainapp.models import Vendor, VendorContact
 
-import uuid  # For generating a unique string
-from mainapp.models import VendorService
 def create_vendor(request):
-    # Get all services for the dropdown
-    all_services = VendorService.objects.all().order_by('name')
-    
     if request.method == 'POST':
         # Get selected services and additional services
         selected_services = request.POST.getlist('service[]')
         additional_service = request.POST.get('additional_service', '')
         
+        # Combine them into one string, if you're storing as comma-separated
         combined_services = selected_services
-        
-        # Process additional services
         if additional_service:
             additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
-            
-            # Add new services to the VendorService model
-            for service_name in additional_list:
-                if service_name:
-                    VendorService.objects.get_or_create(name=service_name)
-            
             combined_services += additional_list
-        
-        # Auto-generate a dummy username
-        auto_username = f'vendor_{uuid.uuid4().hex[:6]}'
-        
-        Vendor.objects.create(
+
+        # Create new vendor
+        vendor = Vendor.objects.create(
             company_name=request.POST.get('company_name'),
-            username=auto_username,
+            name=request.POST.get('name'),
+            street=request.POST.get('street'),
+            apt_suite=request.POST.get('apt_suite'),
+            notes=request.POST.get('notes'),
             address=request.POST.get('address'),
             city=request.POST.get('city'),
             state=request.POST.get('state'),
@@ -906,19 +905,71 @@ def create_vendor(request):
             phone_number=request.POST.get('phone_number'),
             service=', '.join(combined_services),
         )
+
+        # Create contacts
+        contact_first_names = request.POST.getlist('contact_first_name[]')
+        contact_last_names = request.POST.getlist('contact_last_name[]')
+        contact_cells = request.POST.getlist('contact_cell[]')
+        contact_emails = request.POST.getlist('contact_email[]')
+
+        for i in range(len(contact_first_names)):
+            if contact_first_names[i].strip() and contact_last_names[i].strip():
+                VendorContact.objects.create(
+                    vendor=vendor,
+                    first_name=contact_first_names[i].strip(),
+                    last_name=contact_last_names[i].strip(),
+                    cell=contact_cells[i].strip() if i < len(contact_cells) else '',
+                    email=contact_emails[i].strip() if i < len(contact_emails) else ''
+                )
+
         return redirect('adminmanager:vendor_list')
-    
-    # Pass all services to the template
-    return render(request, 'adminmanager/vendor/create.html', {
-        'service_choices': [(service.name, service.name) for service in all_services]
-    })
+
+    # Predefined service choices
+    service_choices = [
+        'Painting',
+        'Wall Covering',
+        'Flooring, Tile',
+        'Flooring, Resilient',
+        'Flooring, Epoxy',
+        'Flooring, Carpet',
+        'Plumbing',
+        'HVAC',
+        'Roofing',
+        'Appliance Repair',
+        'Countertops',
+        'Millwork',
+        'Locksmith',
+        'Electrician',
+        'Pressure Washer',
+        'Car Detailer',
+        'Landscape',
+        'AV',
+        'Security',
+        'Glass, Repair',
+        'Glass, Installation',
+        'Garage Door',
+        
+    ]
+
+    context = {
+        'service_choices': service_choices,
+        'US_STATES': US_STATES,
+
+    }
+
+    return render(request, 'adminmanager/vendor/create.html', context)
+
+  
 # Edit vendor
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
 
     if request.method == 'POST':
         vendor.company_name = request.POST.get('company_name')
-        vendor.username = request.POST.get('username')
+        vendor.name = request.POST.get('name')
+        vendor.street = request.POST.get('street')
+        vendor.apt_suite = request.POST.get('apt_suite')
+        vendor.notes = request.POST.get('notes')
         vendor.address = request.POST.get('address')
         vendor.city = request.POST.get('city')
         vendor.state = request.POST.get('state')
@@ -934,34 +985,81 @@ def edit_vendor(request, vendor_id):
         combined_services = selected_services
         if additional_service:
             additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
-            
-            # Add new services to the VendorService model
-            for service_name in additional_list:
-                if service_name:
-                    VendorService.objects.get_or_create(name=service_name)
-                    
             combined_services += additional_list
 
         # Save combined service string (e.g. comma-separated)
         vendor.service = ', '.join(combined_services)
         vendor.save()
 
+        # Handle contacts
+        # First, delete all existing contacts
+        VendorContact.objects.filter(vendor=vendor).delete()
+
+        # Create new contacts from form data
+        contact_first_names = request.POST.getlist('contact_first_name[]')
+        contact_last_names = request.POST.getlist('contact_last_name[]')
+        contact_cells = request.POST.getlist('contact_cell[]')
+        contact_emails = request.POST.getlist('contact_email[]')
+
+        for i in range(len(contact_first_names)):
+            if contact_first_names[i].strip() and contact_last_names[i].strip():
+                VendorContact.objects.create(
+                    vendor=vendor,
+                    first_name=contact_first_names[i].strip(),
+                    last_name=contact_last_names[i].strip(),
+                    cell=contact_cells[i].strip() if i < len(contact_cells) else '',
+                    email=contact_emails[i].strip() if i < len(contact_emails) else ''
+                )
+
         return redirect('adminmanager:vendor_list')
+
+    # Get existing contacts
+    existing_contacts = VendorContact.objects.filter(vendor=vendor)
 
     # Prepare existing services for form pre-checking
     existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
 
-    # Get all services for the dropdown
-    all_services = VendorService.objects.all().order_by('name')
+    # Predefined service choices
+    service_choices = [
+        'Painting',
+        'Wall Covering',
+        'Flooring, Tile',
+        'Flooring, Resilient',
+        'Flooring, Epoxy',
+        'Flooring, Carpet',
+        'Plumbing',
+        'HVAC',
+        'Roofing',
+        'Appliance Repair',
+        'Countertops',
+        'Millwork',
+        'Locksmith',
+        'Electrician',
+        'Pressure Washer',
+        'Car Detailer',
+        'Landscape',
+        'AV',
+        'Security',
+        'Glass, Repair',
+        'Glass, Installation',
+        'Garage Door'
+    ]
+
+    # Separate predefined services from additional services
+    selected_predefined = [service for service in existing_services if service in service_choices]
+    additional_services = [service for service in existing_services if service not in service_choices]
+    additional_services_text = ', '.join(additional_services)
 
     context = {
         'vendor': vendor,
-        'selected_services': existing_services,
-        'service_choices': [(service.name, service.name) for service in all_services],
+        'existing_contacts': existing_contacts,
+        'selected_services': selected_predefined,
+        'service_choices': service_choices,
+        'additional_services_text': additional_services_text,
+        'US_STATES': US_STATES,
     }
 
     return render(request, 'adminmanager/vendor/edit.html', context)
-
 # Delete vendor
 def delete_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
@@ -1006,7 +1104,8 @@ def clientmanager_profile_edit(request):
 
     return render(request, 'clientmanager/profile/clientmanager_profile_edit.html', {
         'clientmanager': clientmanager,
-        'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES
+        'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,
+        
     })
 
 
@@ -1554,6 +1653,7 @@ def walkthrough_report_view(request):
         'guest_house_sleeping_form': guest_house_sleeping_form,
         'guest_house_bath_form': guest_house_bath_form,
     })
+
 def walkthrough_success_view(request):
     return render(request, 'walkthrough_success.html')
 
@@ -1701,8 +1801,16 @@ def clientmanager_create_view(request):
     return render(request, 'adminmanager/clientmanager/clientmanager_form.html', {
         'action': 'Create',
         'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,
+        'US_STATES': US_STATES,
     })
 
+US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
 # Edit View
 def clientmanager_edit_view(request, pk):
     cm = get_object_or_404(ClientManagers, pk=pk)
@@ -1728,6 +1836,7 @@ def clientmanager_edit_view(request, pk):
         'clientmanager': cm,
         'action': 'Edit',
         'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,
+        'US_STATES': US_STATES,
     })
 
 # Delete View

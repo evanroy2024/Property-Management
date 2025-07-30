@@ -8,6 +8,7 @@ app_name = 'walkthroughreport'
 urlpatterns = [
     path('my-reports/', my_reports_view, name='my_reports'),
     path('export_pdf/<int:report_id>/', export_pdf, name='export_pdf'),
+    path('print_pdf/<int:report_id>/', views.print_pdf, name='print_pdf'),
     path('export/excel/<int:report_id>/', views.export_excel, name='export_excel'),
     path('export/csv/<int:report_id>/', views.export_csv, name='export_csv'),
 
@@ -33,6 +34,8 @@ urlpatterns = [
     path('update-client-approval/<int:report_id>/', views.update_client_approval, name='update-client-approval'),
     path('update-field-status/<int:report_id>/', views.update_field_status_ajax, name='update-field-status-ajax'),
     path('bulk-update-status/', views.bulk_update_status, name='bulk_update_status'),
+
+    
 
     
 
