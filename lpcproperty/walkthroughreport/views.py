@@ -1573,6 +1573,19 @@ def update_client_approval(request, report_id):
             report = WalkthroughReport.objects.get(id=report_id)
             print(f"Found report: {report.id}")
             
+            # Normalize category for common typos
+            def normalize_category(cat):
+                """Handle common typos and variations"""
+                # Fix the Voyer/Foyer typo
+                if 'Voyer' in cat:
+                    cat = cat.replace('Voyer', 'Foyer')
+                return cat
+            
+            # Apply normalization
+            normalized_category = normalize_category(category)
+            if normalized_category != category:
+                print(f"Normalized category from '{category}' to '{normalized_category}'")
+            
             # Model mapping based on category
             model_mapping = {
                 'General Items - Exterior': ('general_items_exterior', GeneralItemsExterior),
@@ -1617,9 +1630,10 @@ def update_client_approval(request, report_id):
                 'Guest House - Bathroom': ('guesthousebathroom', GuestHouseBathroom),
             }
             
-            if category in model_mapping:
-                print(f"Category '{category}' found in mapping")
-                related_name, model_class = model_mapping[category]
+            # Use normalized category for lookup
+            if normalized_category in model_mapping:
+                print(f"Category '{normalized_category}' found in mapping")
+                related_name, model_class = model_mapping[normalized_category]
                 print(f"Using model: {model_class.__name__}")
                 
                 # Get or create the related model instance
@@ -1642,8 +1656,8 @@ def update_client_approval(request, report_id):
                     print(f"Approval field {approval_field} not found")
                     return JsonResponse({'status': 'error', 'message': f'Field {approval_field} not found'}, status=400)
             else:
-                print(f"Category '{category}' not found in model_mapping")
-                return JsonResponse({'status': 'error', 'message': f'Category {category} not found'}, status=400)
+                print(f"Category '{normalized_category}' not found in model_mapping")
+                return JsonResponse({'status': 'error', 'message': f'Category {normalized_category} not found'}, status=400)
                      
         except Exception as e:
             print("Update failed:", e)

@@ -1,238 +1,386 @@
 {% extends 'adminmanager/adminbase.html' %}
 {% load static %}
-{% block title %}Client Manager Dashboard{% endblock %}
+{% block title %}Client Managers{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <h2 class="dashboard-title">All Client Managers</h2>
-        <a href="{% url 'adminmanager:create' %}" class="btn-add">
-            <i class="fas fa-plus-circle"></i> Add New Client Manager
-        </a>
-    </div>
-
-    <div class="table-responsive">
-        {% if clientmanagers %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Preferred Contact</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cm in clientmanagers %}
-                <tr>
-                    <td>{{ cm.first_name }} {{ cm.last_name }}</td>
-                    <td>{{ cm.email }}</td>
-                    <td>{{ cm.preferred_contact_method }}</td>
-                    <td class="action-buttons">
-                        <a href="{% url 'adminmanager:detail' cm.pk %}" class="btn-view" title="View details">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                        <a href="{% url 'adminmanager:edit' cm.pk %}" class="btn-edit" title="Edit this manager">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <a href="{% url 'adminmanager:delete' cm.pk %}" class="btn-delete" title="Delete this manager">
-                            <i class="fas fa-trash-alt"></i> Delete
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="empty-state">
-            <i class="fas fa-users empty-icon"></i>
-            <p>No client managers found.</p>
-            <a href="{% url 'adminmanager:create' %}" class="btn-add-empty">Add your first client manager</a>
-        </div>
-        {% endif %}
-    </div>
-</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-VzLcLQpQClj9TVXbN4y6U3qx7wG+jGgpJjG+YrRy7v0Sk1tw5V5J9BkIA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
-    /* Dashboard Container */
-    .dashboard-container {
+    /* Custom Styles */
+    .content-wrapper {
         padding: 1.5rem;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        margin-bottom: 2rem;
+        background-color: #f8f9fc;
     }
-
-    /* Dashboard Header */
-    .dashboard-header {
+    
+    .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
     }
-
-    .dashboard-title {
-        color: #333;
-        font-size: 1.5rem;
-        margin: 0;
-        font-weight: 600;
-    }
-
-    /* Buttons */
-    .btn-add {
-        background-color: #4CAF50;
-        color: white;
-        padding: 0.6rem 1rem;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        transition: background-color 0.3s;
-        font-weight: 500;
+    
+    .card {
         border: none;
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
     }
-
-    .btn-add:hover {
-        background-color: #3e8e41;
-        text-decoration: none;
+    
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
     }
-
-    .btn-add i {
-        margin-right: 0.4rem;
+    
+    .card-header h6 {
+        font-weight: 700;
+        margin: 0;
+        color: #4e73df;
     }
-
-    /* Table Styles */
+    
+    .stats-card {
+        border-left: 0.25rem solid;
+        border-radius: 0.35rem;
+    }
+    
+    .border-left-primary { border-left-color: #4e73df; }
+    .border-left-success { border-left-color: #1cc88a; }
+    .border-left-info { border-left-color: #36b9cc; }
+    .border-left-warning { border-left-color: #f6c23e; }
+    
+    .text-primary { color: #4e73df !important; }
+    .text-success { color: #1cc88a !important; }
+    .text-info { color: #36b9cc !important; }
+    .text-warning { color: #f6c23e !important; }
+    
+    .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+    }
+    
     .table-responsive {
         overflow-x: auto;
-        width: 100%;
     }
-
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-        margin-bottom: 1rem;
+    
+    .table th {
+        background-color: #f8f9fc;
+        border-bottom: 2px solid #e3e6f0;
+        color: #5a5c69;
+        font-weight: 700;
+        padding: 0.75rem;
+        vertical-align: middle;
     }
-
-    .data-table th {
-        background-color: #f5f7fa;
-        padding: 0.8rem 1rem;
-        font-weight: 600;
-        color: #333;
-        border-bottom: 2px solid #eaedf3;
+    
+    .table td {
+        padding: 0.75rem;
+        vertical-align: middle;
     }
-
-    .data-table td {
-        padding: 0.8rem 1rem;
-        border-bottom: 1px solid #eaedf3;
-        color: #4a4a4a;
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
     }
-
-    .data-table tr:hover {
-        background-color: #f9fafb;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-view, .btn-edit, .btn-delete {
-        padding: 0.4rem 0.7rem;
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        transition: all 0.2s;
-    }
-
-    .btn-view {
-        background-color: #2196F3;
-        color: white;
-    }
-
-    .btn-view:hover {
-        background-color: #0b7dda;
-    }
-
-    .btn-edit {
-        background-color: #FFC107;
-        color: #333;
-    }
-
-    .btn-edit:hover {
-        background-color: #e6ab00;
-    }
-
-    .btn-delete {
-        background-color: #f44336;
-        color: white;
-    }
-
-    .btn-delete:hover {
-        background-color: #d32f2f;
-    }
-
-    .btn-view i, .btn-edit i, .btn-delete i {
-        margin-right: 0.3rem;
-        font-size: 0.85rem;
-    }
-
-    /* Empty State */
+    
     .empty-state {
         text-align: center;
         padding: 3rem 1rem;
-        color: #666;
+    }
+    
+    .badge {
+        font-weight: 600;
+        padding: 0.25em 0.6em;
+    }
+    
+    .action-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        margin-right: 0.25rem;
+    }
+    
+    .icon-gray {
+        color: #dddfeb;
     }
 
-    .empty-icon {
-        font-size: 3rem;
-        color: #ccc;
-        margin-bottom: 1rem;
+    .h3, h3 {
+        color: black;
     }
-
-    .btn-add-empty {
-        background-color: #4CAF50;
-        color: white;
-        padding: 0.6rem 1rem;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 1rem;
-        transition: background-color 0.3s;
-    }
-
-    .btn-add-empty:hover {
-        background-color: #3e8e41;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .dashboard-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .btn-view, .btn-edit, .btn-delete {
-            padding: 0.5rem;
-            width: 100%;
-            justify-content: center;
-        }
-    }
-    body{
+    .table th {
         background-color: white;
+    }
+
+    /* Professional Styling for Filter Dropdowns */
+    #filter-name, #filter-city, #filter-state {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+
+    /* Focus Effect */
+    #filter-name:focus, #filter-city:focus, #filter-state:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+
+    .sort-icon {
+        font-size: 0.65rem;
+        color: #6c757d;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+
+    th.sortable:hover .sort-icon {
+        color: #000;
+    }
+
+    @media (min-width: 1000px) {
+        .content-wrapper {
+            min-height: 700px;
+        }
     }
 </style>
 
-<!-- Add Font Awesome for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center w-100">
+            <h1 class="h3 mb-2 mb-md-0 text-gray-800">All Client Managers</h1>
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 gap-sm-3 ms-auto">
+                <div class="card stats-card border-left-primary" style="min-width: 150px; margin-bottom: 0;">
+                    <div class="card-body py-2 px-3">
+                        <div class="d-flex align-items-center">
+                            <span class="font-weight-bold text-primary" style="font-size: 0.875rem; margin-right: 8px;">
+                                Total :
+                            </span>
+                            <span class="h5 mb-0 font-weight-bold text-gray-800">{{ clientmanagers|length }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'adminmanager:create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus fa-sm mr-2"></i> Add New Manager
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Managers Table Card -->
+    <div class="card shadow mb-4">
+        <!-- Live Filters -->
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <select id="filter-name" class="form-select">
+                        <option value="">Name</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select id="filter-city" class="form-select">
+                        <option value="">Cities</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select id="filter-state" class="form-select">
+                        <option value="">States</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="sortable-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-index="0">Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="1">Username <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="2">Email <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="3">Cell Phone <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="4">City <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="5">State <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manager-table">
+                        {% for cm in clientmanagers %}
+                        <tr class="manager-row"
+                            data-name="{{ cm.last_name|lower }}, {{ cm.first_name|lower }}"
+                            data-city="{{ cm.city|lower }}"
+                            data-state="{{ cm.state|lower }}">
+                            <td><strong>{{ cm.last_name }}, {{ cm.first_name }}</strong></td>
+                            <td>{{ cm.username }}</td>
+                            <td>{{ cm.email }}</td>
+                            <td>{{ cm.phone_number }}</td>
+                            <td>{{ cm.city }}</td>
+                            <td>{{ cm.state }}</td>
+                            <td>
+                                <!-- <a href="{% url 'adminmanager:detail' cm.pk %}" 
+                                   class="btn btn-info btn-sm me-1">
+                                    View
+                                </a> -->
+                                <a href="{% url 'adminmanager:edit' cm.pk %}" 
+                                   class="btn btn-primary btn-sm me-1">
+                                    Edit
+                                </a>
+                                <a href="{% url 'adminmanager:delete' cm.pk %}" 
+                                   class="btn btn-danger btn-sm me-1"
+                                   onclick="return confirm('Are you sure you want to delete {{ cm.first_name }} {{ cm.last_name }}?')">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-users fa-4x mb-3 icon-gray"></i>
+                                    <h4 class="text-gray-800 mb-2">No client managers found</h4>
+                                    <p class="text-gray-600 mb-3">Get started by adding your first client manager</p>
+                                    <a href="{% url 'adminmanager:create' %}" class="btn btn-primary">
+                                        <i class="fas fa-plus mr-2"></i> Add Manager
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript for Live Filtering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filters = {
+                name: document.getElementById("filter-name"),
+                city: document.getElementById("filter-city"),
+                state: document.getElementById("filter-state"),
+            };
+        
+            const rows = document.querySelectorAll(".manager-row");
+        
+            // Populate dropdowns
+            function populateDropdown(filterKey, dataAttr) {
+                const values = new Set();
+                rows.forEach(row => {
+                    const val = row.getAttribute(dataAttr);
+                    if (val && val.trim() !== '') values.add(val);
+                });
+        
+                [...values].sort().forEach(val => {
+                    const opt = document.createElement("option");
+                    opt.value = val;
+                    opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                    filters[filterKey].appendChild(opt);
+                });
+            }
+        
+            populateDropdown("name", "data-name");
+            populateDropdown("city", "data-city");
+            populateDropdown("state", "data-state");
+        
+            // Filtering function
+            function filterTable() {
+                const selected = {
+                    name: filters.name.value,
+                    city: filters.city.value,
+                    state: filters.state.value,
+                };
+        
+                rows.forEach(row => {
+                    const matches =
+                        (!selected.name || row.getAttribute("data-name") === selected.name) &&
+                        (!selected.city || row.getAttribute("data-city") === selected.city) &&
+                        (!selected.state || row.getAttribute("data-state") === selected.state);
+        
+                    row.style.display = matches ? "" : "none";
+                });
+            }
+        
+            // Attach change listeners
+            Object.values(filters).forEach(select => {
+                select.addEventListener("change", filterTable);
+            });
+        });
+    </script>
+
+    <!-- JavaScript for Sorting -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const table = document.getElementById("manager-table");
+            const headers = document.querySelectorAll("th.sortable");
+        
+            let currentSort = {
+                index: null,
+                direction: 1 // 1 for ascending, -1 for descending
+            };
+        
+            headers.forEach(header => {
+                header.addEventListener("click", function () {
+                    const index = parseInt(this.getAttribute("data-index"));
+        
+                    if (currentSort.index === index) {
+                        currentSort.direction *= -1;
+                    } else {
+                        currentSort.index = index;
+                        currentSort.direction = 1;
+                    }
+        
+                    const rows = Array.from(table.querySelectorAll("tr"));
+        
+                    rows.sort((a, b) => {
+                        const aText = a.children[index].innerText.trim().toLowerCase();
+                        const bText = b.children[index].innerText.trim().toLowerCase();
+        
+                        if (!isNaN(aText) && !isNaN(bText)) {
+                            return currentSort.direction * (parseFloat(aText) - parseFloat(bText));
+                        }
+        
+                        return currentSort.direction * aText.localeCompare(bText);
+                    });
+        
+                    // Update sort icons
+                    headers.forEach(h => {
+                        const icon = h.querySelector(".sort-icon");
+                        icon.className = "fas fa-sort sort-icon";
+                    });
+        
+                    const icon = this.querySelector(".sort-icon");
+                    icon.className = currentSort.direction === 1
+                        ? "fas fa-sort-up sort-icon"
+                        : "fas fa-sort-down sort-icon";
+        
+                    // Re-append sorted rows
+                    rows.forEach(row => table.appendChild(row));
+                });
+            });
+        });
+    </script>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
 {% endblock content %}

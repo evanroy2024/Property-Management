@@ -312,10 +312,18 @@
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Person Name" required>
-                  <label for="name" class="required-field">Cell</label>
+                  <label for="name" class="required-field">Cell Phone</label>
                 </div>
               </div>
               
+              
+              
+              <div class="col-12 mb-3">
+                <div class="form-floating">
+                  <textarea class="form-control" id="address" name="address" placeholder="Address" style="height: 100px"></textarea>
+                  <label for="address">Address</label>
+                </div>
+              </div>
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="street" name="street" placeholder="Street" required>
@@ -329,14 +337,6 @@
                   <label for="apt_suite">Apt/Suite</label>
                 </div>
               </div>
-              
-              <div class="col-12 mb-3">
-                <div class="form-floating">
-                  <textarea class="form-control" id="address" name="address" placeholder="Address" style="height: 100px"></textarea>
-                  <label for="address">Address</label>
-                </div>
-              </div>
-              
               <div class="col-md-4 mb-3">
                 <div class="form-floating">
                   <input type="text" class="form-control" id="city" name="city" placeholder="City">
@@ -420,31 +420,61 @@
             </div>
             
             <div class="row mb-4">
-              <div class="col-12">
-                <h6 class="section-title">Service Details</h6>
-              </div>
-            
-              <div class="col-12">
-                <label class="form-label mb-3">Available Services</label>
-                
-                <!-- Service Selection Grid -->
-                <div class="service-grid mb-4">
-                  {% for service in service_choices %}
-                    <div class="service-option">
-                      <input class="form-check-input service-checkbox" type="checkbox" id="service-{{ forloop.counter }}" name="service[]" value="{{ service }}">
-                      <label class="form-check-label" for="service-{{ forloop.counter }}">{{ service }}</label>
-                    </div>
-                  {% endfor %}
-                </div>
-            
-                <!-- Additional Services Input -->
-                <div class="form-floating mt-4">
-                  <input type="text" class="form-control" id="additional_service" name="additional_service" placeholder="cutting, painting, ...">
-                  <label for="additional_service">Add Additional Services (comma separated)</label>
-                </div>
-                <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
-              </div>
-            </div>
+  <div class="col-12">
+    <h6 class="section-title">Service Details</h6>
+  </div>
+
+  <div class="col-12">
+    <!-- Main Service Selection -->
+    <label class="form-label mb-3">Main Service</label>
+    <div class="form-floating mb-4">
+      <select class="form-select" id="main_service" name="main_service" required>
+        <option value="">Select Main Service</option>
+        {% for service in service_choices %}
+          <option value="{{ service }}">{{ service }}</option>
+        {% endfor %}
+      </select>
+      <label for="main_service">Choose Your Primary Service</label>
+    </div>
+
+    <!-- Additional Services -->
+    <label class="form-label mb-3">Additional Services (Optional)</label>
+    
+    <!-- Service Selection Grid -->
+    <div class="service-grid mb-4">
+      {% for service in service_choices %}
+        <div class="service-option">
+          <input class="form-check-input service-checkbox" type="checkbox" id="service-{{ forloop.counter }}" name="service[]" value="{{ service }}">
+          <label class="form-check-label" for="service-{{ forloop.counter }}">{{ service }}</label>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Custom Additional Services Input -->
+    <div class="form-floating mt-4">
+      <input type="text" class="form-control" id="additional_service" name="additional_service" placeholder="cutting, painting, ...">
+      <label for="additional_service">Add Other Services (comma separated)</label>
+    </div>
+    <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
+  </div>
+</div>
+
+<script>
+// Prevent selecting main service as additional service
+document.getElementById('main_service').addEventListener('change', function() {
+  const mainService = this.value;
+  const checkboxes = document.querySelectorAll('.service-checkbox');
+  
+  checkboxes.forEach(checkbox => {
+    if (checkbox.value === mainService) {
+      checkbox.disabled = true;
+      checkbox.checked = false;
+    } else {
+      checkbox.disabled = false;
+    }
+  });
+});
+</script>
             
             <div class="row">
               <div class="col-12">

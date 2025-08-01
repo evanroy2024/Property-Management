@@ -521,63 +521,79 @@ th.sortable:hover .sort-icon {
   </div>
   
   <!-- Add this JavaScript to handle the modal opening and data injection -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const modalBody = document.getElementById("conModalBody");
-  
-      document.querySelectorAll(".open-con-modal").forEach(button => {
-        button.addEventListener("click", function (e) {
-          e.preventDefault();
-  
-          const contactData = this.getAttribute("data-contact");
-          if (!contactData) return;
-  
-          let data;
-          try {
-            data = JSON.parse(contactData);  // Parse the contact info from the button's data attribute
-          } catch (err) {
-            console.error("Invalid JSON in contact data", err);
-            return;
-          }
-  
-          // Update modal content with better design
-          modalBody.innerHTML = `
-            <!-- Primary Contact Section -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const modalBody = document.getElementById("conModalBody");
+
+    // Helper to check if a value is meaningful
+    function isValid(value) {
+      return value && value !== "None" && value !== "none" && value !== "null" && value !== null;
+    }
+
+    document.querySelectorAll(".open-con-modal").forEach(button => {
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const contactData = this.getAttribute("data-contact");
+        if (!contactData) return;
+
+        let data;
+        try {
+          data = JSON.parse(contactData);
+        } catch (err) {
+          console.error("Invalid JSON in contact data", err);
+          return;
+        }
+
+        // Check if at least one contact field is valid
+        const hasPrimaryContact = isValid(data.name1) || isValid(data.email1) || isValid(data.phone1);
+        const hasSecondaryContact = isValid(data.name2) || isValid(data.email2) || isValid(data.phone2);
+
+        if (!hasPrimaryContact && !hasSecondaryContact) {
+          return; // Don’t show modal if nothing useful
+        }
+
+        // Generate modal content
+        modalBody.innerHTML = `
+          ${hasPrimaryContact ? `
             <div class="contact-section">
               <h5>Primary Contact</h5>
               <div class="contact-row">
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Name:</strong> ${data.name1 || '-'} ${data.lname1 || ''}</p>
-                  <p class="contact-info"><strong>Email:</strong> ${data.email1 || '-'}</p>
+                  <p class="contact-info"><strong>Name:</strong> ${isValid(data.name1) ? data.name1 : '-'} ${isValid(data.lname1) ? data.lname1 : ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${isValid(data.email1) ? data.email1 : '-'}</p>
                 </div>
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Cell:</strong> ${data.phone1 || '-'}</p>
+                  <p class="contact-info"><strong>Cell Phone:</strong> ${isValid(data.phone1) ? data.phone1 : '-'}</p>
                 </div>
               </div>
             </div>
-  
-            <!-- Secondary Contact Section -->
+          ` : ''}
+
+          ${hasSecondaryContact ? `
             <div class="contact-section">
               <h5>Secondary Contact</h5>
               <div class="contact-row">
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Name:</strong> ${data.name2 || '-'} ${data.lname2 || ''}</p>
-                  <p class="contact-info"><strong>Email:</strong> ${data.email2 || '-'}</p>
+                  <p class="contact-info"><strong>Name:</strong> ${isValid(data.name2) ? data.name2 : '-'} ${isValid(data.lname2) ? data.lname2 : ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${isValid(data.email2) ? data.email2 : '-'}</p>
                 </div>
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Cell:</strong> ${data.phone2 || '-'}</p>
+                  <p class="contact-info"><strong>Cell Phone:</strong> ${isValid(data.phone2) ? data.phone2 : '-'}</p>
                 </div>
               </div>
             </div>
-          `;
-  
-          // Show the modal
-          const modal = new bootstrap.Modal(document.getElementById("conModal"));
-          modal.show();
-        });
+          ` : ''}
+        `;
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById("conModal"));
+        modal.show();
       });
     });
-  </script>
+  });
+</script>
+
   
   <!-- For CM Pop Up start  -->
 <form id="cmChangeForm" method="POST" style="display:none;">

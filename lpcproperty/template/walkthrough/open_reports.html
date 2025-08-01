@@ -1077,6 +1077,7 @@ function submitUpdateFieldStatus() {
 
 <!-- Summary changes   ---------------------------------------------------------------------------------------  -->
 <!-- Modal for Cost Summary -->
+<!-- Modal for Cost Summary -->
 <div id="costSummaryModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); backdrop-filter:blur(2px);">
   <div style="background:#fff; margin:2% auto; padding:0; border-radius:12px; width:90%; max-width:700px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-height:90vh; overflow:hidden;">
     
@@ -1141,6 +1142,12 @@ function populateClientDropdown() {
   // Clear existing options except first
   select.innerHTML = '<option value="">Choose a client...</option>';
   
+  // Add "All Clients" option
+  const allOption = document.createElement('option');
+  allOption.value = 'ALL_CLIENTS';
+  allOption.textContent = 'All Clients';
+  select.appendChild(allOption);
+  
   clients.forEach(client => {
     const option = document.createElement('option');
     option.value = client;
@@ -1156,25 +1163,43 @@ function getClientReports(clientName) {
   
   rows.forEach(row => {
     const clientCell = row.querySelector('td:nth-child(5)');
-    if (clientCell && clientCell.textContent.trim() === clientName) {
-      const category = row.querySelector('td:nth-child(1)').textContent.trim();
-      const item = row.querySelector('td:nth-child(2)').textContent.trim();
-      const costCell = row.querySelector('td:nth-child(6) span[id^="cost-"]');
-      const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
-      const cost = parseFloat(costText) || 0;
-      const dateCell = row.querySelector('td:nth-child(4) strong');
-      const date = dateCell ? dateCell.textContent.trim() : '';
+    if (clientCell) {
+      const rowClient = clientCell.textContent.trim();
       
-      reports.push({
-        category,
-        item,
-        cost,
-        date
-      });
+      // If "All Clients" selected or specific client matches
+      if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
+        const category = row.querySelector('td:nth-child(1)').textContent.trim();
+        const item = row.querySelector('td:nth-child(2)').textContent.trim();
+        const costCell = row.querySelector('td:nth-child(6) span[id^="cost-"]');
+        const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
+        const cost = parseFloat(costText) || 0;
+        const dateCell = row.querySelector('td:nth-child(4) strong');
+        const date = dateCell ? dateCell.textContent.trim() : '';
+        
+        reports.push({
+          category,
+          item,
+          cost,
+          date,
+          client: rowClient
+        });
+      }
     }
   });
   
   return reports;
+}
+
+// Group reports by client for "All Clients" view
+function groupReportsByClient(reports) {
+  const grouped = {};
+  reports.forEach(report => {
+    if (!grouped[report.client]) {
+      grouped[report.client] = [];
+    }
+    grouped[report.client].push(report);
+  });
+  return grouped;
 }
 
 // Generate PDF
@@ -1194,51 +1219,110 @@ function generatePDF(clientName, reports, totalCost) {
   doc.setFontSize(12);
   doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
   
-  // Table headers
   let yPos = 70;
-  doc.setFontSize(10);
-  doc.setFont(undefined, 'bold');
   
-  // Header background
-  doc.setFillColor(245, 245, 245);
-  doc.rect(20, yPos - 8, 170, 12, 'F');
-  
-  doc.text('Date', 25, yPos);
-  doc.text('Category', 60, yPos);
-  doc.text('Item', 105, yPos);
-  doc.text('Cost', 170, yPos, { align: 'right' });
-  
-  // Table rows
-  doc.setFont(undefined, 'normal');
-  yPos += 15;
-  
-  reports.forEach((report, index) => {
-    // Check if we need a new page
-    if (yPos > 260) {
-      doc.addPage();
-      yPos = 30;
-    }
+  if (clientName === 'All Clients') {
+    // Group reports by client
+    const groupedReports = groupReportsByClient(reports);
     
-    // Alternating row colors
-    if (index % 2 === 0) {
-      doc.setFillColor(250, 250, 250);
+    Object.keys(groupedReports).sort().forEach(client => {
+      const clientReports = groupedReports[client];
+      const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+      
+      // Check if we need a new page for client header
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 30;
+      }
+      
+      // Client header
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(230, 240, 255);
+      doc.rect(20, yPos - 8, 170, 15, 'F');
+      doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+      yPos += 20;
+      
+      // Table headers for this client
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(245, 245, 245);
       doc.rect(20, yPos - 8, 170, 12, 'F');
-    }
+      doc.text('Date', 22, yPos);
+      doc.text('Category', 55, yPos);
+      doc.text('Item', 95, yPos);
+      doc.text('Cost', 185, yPos, { align: 'right' });
+      yPos += 15;
+      
+      // Client's reports
+      doc.setFont(undefined, 'normal');
+      clientReports.forEach((report, index) => {
+        if (yPos > 260) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(20, yPos - 8, 170, 12, 'F');
+        }
+        
+        const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
+        doc.text(dateText, 22, yPos);
+        
+        const categoryText = report.category.length > 18 ? report.category.substring(0, 18) + '...' : report.category;
+        doc.text(categoryText, 55, yPos);
+        
+        const itemText = report.item.length > 25 ? report.item.substring(0, 25) + '...' : report.item;
+        doc.text(itemText, 95, yPos);
+        
+        doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
+        yPos += 12;
+      });
+      
+      yPos += 10; // Space between clients
+    });
+  } else {
+    // Single client view
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'bold');
+    doc.setFillColor(245, 245, 245);
+    const headerWidth = 170;
+    doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+    doc.text('Date', 22, yPos);
+    doc.text('Category', 55, yPos);
+    doc.text('Item', 95, yPos);
+    doc.text('Cost', 185, yPos, { align: 'right' });
+    yPos += 15;
     
-    doc.text(report.date, 25, yPos);
-    doc.text(report.category, 60, yPos);
-    
-    // Handle long item names
-    const itemText = report.item.length > 30 ? report.item.substring(0, 30) + '...' : report.item;
-    doc.text(itemText, 105, yPos);
-    
-    doc.text(`${report.cost.toFixed(2)}`, 170, yPos, { align: 'right' });
-    
-    yPos += 12;
-  });
+    doc.setFont(undefined, 'normal');
+    reports.forEach((report, index) => {
+      if (yPos > 260) {
+        doc.addPage();
+        yPos = 30;
+      }
+      
+      if (index % 2 === 0) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+      }
+      
+      const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
+      doc.text(dateText, 22, yPos);
+      
+      const categoryText = report.category.length > 18 ? report.category.substring(0, 18) + '...' : report.category;
+      doc.text(categoryText, 55, yPos);
+      
+      const itemText = report.item.length > 25 ? report.item.substring(0, 25) + '...' : report.item;
+      doc.text(itemText, 95, yPos);
+      
+      doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
+      yPos += 12;
+    });
+  }
   
   // Add total cost at the end
-  yPos += 10;
+  yPos += 15;
   if (yPos > 260) {
     doc.addPage();
     yPos = 30;
@@ -1248,10 +1332,11 @@ function generatePDF(clientName, reports, totalCost) {
   doc.rect(20, yPos - 8, 170, 20, 'F');
   doc.setFontSize(14);
   doc.setFont(undefined, 'bold');
-  doc.text(`Total Cost: ${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+  doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
   
   // Download the PDF
-  doc.save(`${clientName.replace(/[^a-z0-9]/gi, '_')}_cost_summary.pdf`);
+  const fileName = clientName === 'All Clients' ? 'All_Clients_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_cost_summary.pdf`;
+  doc.save(fileName);
 }
 
 // Display cost summary
@@ -1259,7 +1344,8 @@ function displayCostSummary(clientName) {
   const reports = getClientReports(clientName);
   const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
   
-  document.getElementById('selectedClientName').textContent = clientName;
+  const displayName = clientName === 'ALL_CLIENTS' ? 'All Clients' : clientName;
+  document.getElementById('selectedClientName').textContent = displayName;
   document.getElementById('totalCost').textContent = totalCost.toFixed(2);
   document.getElementById('downloadPdfBtn').style.display = 'inline-block';
   document.getElementById('printBtn').style.display = 'inline-block';
@@ -1268,7 +1354,7 @@ function displayCostSummary(clientName) {
   reportsList.innerHTML = '';
   
   if (reports.length === 0) {
-    reportsList.innerHTML = '<div style="text-align:center; padding:40px; color:#6c757d;"><p style="margin:0; font-size:16px;">No reports found for this client.</p></div>';
+    reportsList.innerHTML = '<div style="text-align:center; padding:40px; color:#6c757d;"><p style="margin:0; font-size:16px;">No reports found.</p></div>';
     document.getElementById('downloadPdfBtn').style.display = 'none';
     document.getElementById('printBtn').style.display = 'none';
   } else {
@@ -1278,33 +1364,87 @@ function displayCostSummary(clientName) {
     tableContainer.style.borderRadius = '8px';
     tableContainer.style.background = '#fff';
     
-    const table = document.createElement('table');
-    table.style.width = '100%';
-    table.style.borderCollapse = 'collapse';
-    table.style.minWidth = '500px';
-    
-    table.innerHTML = `
-      <thead>
-        <tr style="background:#f8f9fa;">
-          <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
-          <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Category</th>
-          <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Item</th>
-          <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${reports.map((report, index) => `
-          <tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+    if (clientName === 'ALL_CLIENTS') {
+      // Group reports by client
+      const groupedReports = groupReportsByClient(reports);
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        // Client header
+        const clientHeader = document.createElement('div');
+        clientHeader.style.background = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+        clientHeader.style.padding = '15px 20px';
+        clientHeader.style.margin = '15px 0 10px 0';
+        clientHeader.style.borderRadius = '8px';
+        clientHeader.style.border = '2px solid #2196f3';
+        clientHeader.innerHTML = `<h4 style="margin:0; color:#1976d2; font-weight:700; font-size:16px;">Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})</h4>`;
+        tableContainer.appendChild(clientHeader);
+        
+        // Client's data table
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '20px';
+        
+        const tableRows = clientReports.map((report, index) => {
+          return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; font-weight:500;">${report.category}</td>
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:250px; word-wrap:break-word; line-height:1.4;">${report.item}</td>
-            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">${report.cost.toFixed(2)}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
+          </tr>`;
+        }).join('');
+        
+        table.innerHTML = `
+          <thead>
+            <tr style="background:#f8f9fa;">
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Category</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Item</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        `;
+        
+        tableContainer.appendChild(table);
+      });
+    } else {
+      // Single client view
+      const table = document.createElement('table');
+      table.style.width = '100%';
+      table.style.borderCollapse = 'collapse';
+      
+      const tableRows = reports.map((report, index) => {
+        return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; font-weight:500;">${report.category}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:250px; word-wrap:break-word; line-height:1.4;">${report.item}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
+        </tr>`;
+      }).join('');
+      
+      table.innerHTML = `
+        <thead>
+          <tr style="background:#f8f9fa;">
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Category</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Item</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
           </tr>
-        `).join('')}
-      </tbody>
-    `;
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      `;
+      
+      tableContainer.appendChild(table);
+    }
     
-    tableContainer.appendChild(table);
     reportsList.appendChild(tableContainer);
   }
   
@@ -1341,7 +1481,8 @@ document.getElementById('downloadPdfBtn').addEventListener('click', function() {
   if (selectedClient) {
     const reports = getClientReports(selectedClient);
     const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
-    generatePDF(selectedClient, reports, totalCost);
+    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+    generatePDF(displayName, reports, totalCost);
   }
 });
 
@@ -1351,60 +1492,139 @@ document.getElementById('printBtn').addEventListener('click', function() {
   if (selectedClient) {
     const reports = getClientReports(selectedClient);
     const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
     
-    // Create printable content
-    const printContent = `
-      <html>
-        <head>
-          <title>Cost Summary - ${selectedClient}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-            .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
-            .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-            th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-            th { background: #f8f9fa; font-weight: bold; }
-            tr:nth-child(even) { background: #f9f9f9; }
-            .cost { text-align: right; font-weight: bold; }
-            @media print {
-              body { margin: 0; }
-              .no-print { display: none; }
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Cost Summary Report</h1>
-          <div class="client-info">
-            <strong>Client:</strong> ${selectedClient}<br>
-            <strong>Generated:</strong> ${new Date().toLocaleDateString()}
-          </div>
-          <div class="total-box">
-            <h2 style="margin: 0; color: #007bff;">Total Cost: ${totalCost.toFixed(2)}</h2>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Item</th>
-                <th>Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${reports.map(report => `
+    let printContent = '';
+    
+    if (selectedClient === 'ALL_CLIENTS') {
+      const groupedReports = groupReportsByClient(reports);
+      let clientTables = '';
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        const clientRows = clientReports.map(report => `
+          <tr>
+            <td>${report.date}</td>
+            <td>${report.category}</td>
+            <td>${report.item}</td>
+            <td class="cost">$${report.cost.toFixed(2)}</td>
+          </tr>
+        `).join('');
+        
+        clientTables += `
+          <div class="client-section">
+            <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
+              Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
+            </h3>
+            <table>
+              <thead>
                 <tr>
-                  <td>${report.date}</td>
-                  <td>${report.category}</td>
-                  <td>${report.item}</td>
-                  <td class="cost">${report.cost.toFixed(2)}</td>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Item</th>
+                  <th>Cost</th>
                 </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `;
+              </thead>
+              <tbody>
+                ${clientRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+      
+      printContent = `
+        <html>
+          <head>
+            <title>Cost Summary - ${displayName}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+              .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+              .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
+              .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+              table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+              th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+              th { background: #f8f9fa; font-weight: bold; }
+              tr:nth-child(even) { background: #f9f9f9; }
+              .cost { text-align: right; font-weight: bold; }
+              @media print {
+                body { margin: 0; }
+                .no-print { display: none; }
+                .client-section { page-break-inside: avoid; }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Cost Summary Report</h1>
+            <div class="client-info">
+              <strong>Client:</strong> ${displayName}<br>
+              <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+            </div>
+            ${clientTables}
+            <div class="total-box">
+              <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+            </div>
+          </body>
+        </html>
+      `;
+    } else {
+      // Single client print content
+      printContent = `
+        <html>
+          <head>
+            <title>Cost Summary - ${displayName}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+              .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+              .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
+              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+              th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+              th { background: #f8f9fa; font-weight: bold; }
+              tr:nth-child(even) { background: #f9f9f9; }
+              .cost { text-align: right; font-weight: bold; }
+              @media print {
+                body { margin: 0; }
+                .no-print { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Cost Summary Report</h1>
+            <div class="client-info">
+              <strong>Client:</strong> ${displayName}<br>
+              <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+            </div>
+            <div class="total-box">
+              <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Item</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reports.map(report => `
+                  <tr>
+                    <td>${report.date}</td>
+                    <td>${report.category}</td>
+                    <td>${report.item}</td>
+                    <td class="cost">$${report.cost.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+    }
     
     // Open print window
     const printWindow = window.open('', '_blank');
@@ -1457,6 +1677,12 @@ document.getElementById('downloadPdfBtn').addEventListener('mouseenter', functio
   this.style.background = '#218838';
   this.style.transform = 'translateY(-1px)';
   this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+});
+
+document.getElementById('downloadPdfBtn').addEventListener('mouseleave', function() {
+  this.style.background = '#28a745';
+  this.style.transform = 'translateY(0)';
+  this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
 });
 
 // Print button hover effect

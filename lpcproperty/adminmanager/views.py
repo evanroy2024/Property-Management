@@ -864,11 +864,17 @@ from mainapp.models import Vendor
 
 # List vendors
 from mainapp.models import Vendor, VendorContact
-
 def vendor_list(request):
     vendors = Vendor.objects.prefetch_related('contacts').all()
+    
+    # Add first service to each vendor
+    for vendor in vendors:
+        if vendor.service:
+            vendor.first_service = vendor.service.split(',')[0].strip()
+        else:
+            vendor.first_service = ''
+    
     return render(request, 'adminmanager/vendor/list.html', {'vendors': vendors})
-
 import uuid
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
@@ -877,15 +883,22 @@ import uuid
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from mainapp.models import Vendor, VendorContact
-
 def create_vendor(request):
     if request.method == 'POST':
-        # Get selected services and additional services
+        # Get main service first
+        main_service = request.POST.get('main_service', '')
+        
+        # Get selected additional services
         selected_services = request.POST.getlist('service[]')
         additional_service = request.POST.get('additional_service', '')
         
-        # Combine them into one string, if you're storing as comma-separated
-        combined_services = selected_services
+        # Start with main service
+        combined_services = [main_service] if main_service else []
+        
+        # Add additional selected services
+        combined_services += selected_services
+        
+        # Add custom additional services
         if additional_service:
             additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
             combined_services += additional_list
@@ -926,40 +939,37 @@ def create_vendor(request):
 
     # Predefined service choices
     service_choices = [
-        'Painting',
-        'Wall Covering',
-        'Flooring, Tile',
-        'Flooring, Resilient',
-        'Flooring, Epoxy',
-        'Flooring, Carpet',
-        'Plumbing',
-        'HVAC',
-        'Roofing',
         'Appliance Repair',
-        'Countertops',
-        'Millwork',
-        'Locksmith',
-        'Electrician',
-        'Pressure Washer',
-        'Car Detailer',
-        'Landscape',
         'AV',
-        'Security',
-        'Glass, Repair',
-        'Glass, Installation',
+        'Car Detailer',
+        'Countertops',
+        'Electrician',
+        'Flooring, Carpet',
+        'Flooring, Epoxy',
+        'Flooring, Resilient',
+        'Flooring, Tile',
         'Garage Door',
-        
+        'Glass, Installation',
+        'Glass, Repair',
+        'HVAC',
+        'Landscape',
+        'Locksmith',
+        'Millwork',
+        'Painting',
+        'Plumbing',
+        'Pressure Washer',
+        'Roofing',
+        'Security',
+        'Wall Covering',
     ]
+
 
     context = {
         'service_choices': service_choices,
         'US_STATES': US_STATES,
-
     }
 
     return render(request, 'adminmanager/vendor/create.html', context)
-
-  
 # Edit vendor
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
@@ -977,25 +987,30 @@ def edit_vendor(request, vendor_id):
         vendor.email = request.POST.get('email')
         vendor.phone_number = request.POST.get('phone_number')
 
-        # Get selected services and additional services
+        # Get main service first
+        main_service = request.POST.get('main_service', '')
+        
+        # Get selected additional services
         selected_services = request.POST.getlist('service[]')
         additional_service = request.POST.get('additional_service', '')
-
-        # Combine them into one string, if you're storing as comma-separated
-        combined_services = selected_services
+        
+        # Start with main service
+        combined_services = [main_service] if main_service else []
+        
+        # Add additional selected services
+        combined_services += selected_services
+        
+        # Add custom additional services
         if additional_service:
             additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
             combined_services += additional_list
 
-        # Save combined service string (e.g. comma-separated)
         vendor.service = ', '.join(combined_services)
         vendor.save()
 
         # Handle contacts
-        # First, delete all existing contacts
         VendorContact.objects.filter(vendor=vendor).delete()
 
-        # Create new contacts from form data
         contact_first_names = request.POST.getlist('contact_first_name[]')
         contact_last_names = request.POST.getlist('contact_last_name[]')
         contact_cells = request.POST.getlist('contact_cell[]')
@@ -1013,46 +1028,31 @@ def edit_vendor(request, vendor_id):
 
         return redirect('adminmanager:vendor_list')
 
-    # Get existing contacts
     existing_contacts = VendorContact.objects.filter(vendor=vendor)
-
-    # Prepare existing services for form pre-checking
     existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
 
-    # Predefined service choices
     service_choices = [
-        'Painting',
-        'Wall Covering',
-        'Flooring, Tile',
-        'Flooring, Resilient',
-        'Flooring, Epoxy',
-        'Flooring, Carpet',
-        'Plumbing',
-        'HVAC',
-        'Roofing',
-        'Appliance Repair',
-        'Countertops',
-        'Millwork',
-        'Locksmith',
-        'Electrician',
-        'Pressure Washer',
-        'Car Detailer',
-        'Landscape',
-        'AV',
-        'Security',
-        'Glass, Repair',
-        'Glass, Installation',
-        'Garage Door'
+        'Appliance Repair', 'AV', 'Car Detailer', 'Countertops', 'Electrician',
+        'Flooring, Carpet', 'Flooring, Epoxy', 'Flooring, Resilient', 'Flooring, Tile',
+        'Garage Door', 'Glass, Installation', 'Glass, Repair', 'HVAC', 'Landscape',
+        'Locksmith', 'Millwork', 'Painting', 'Plumbing', 'Pressure Washer',
+        'Roofing', 'Security', 'Wall Covering'
     ]
 
-    # Separate predefined services from additional services
-    selected_predefined = [service for service in existing_services if service in service_choices]
-    additional_services = [service for service in existing_services if service not in service_choices]
+
+    # First service is main service
+    current_main_service = existing_services[0] if existing_services else ''
+    
+    # Rest are additional services
+    additional_existing = existing_services[1:] if len(existing_services) > 1 else []
+    selected_predefined = [service for service in additional_existing if service in service_choices]
+    additional_services = [service for service in additional_existing if service not in service_choices]
     additional_services_text = ', '.join(additional_services)
 
     context = {
         'vendor': vendor,
         'existing_contacts': existing_contacts,
+        'current_main_service': current_main_service,
         'selected_services': selected_predefined,
         'service_choices': service_choices,
         'additional_services_text': additional_services_text,
@@ -1832,12 +1832,13 @@ def clientmanager_edit_view(request, pk):
         cm.save()
         messages.success(request, "Client Manager updated successfully.")
         return redirect('adminmanager:list')
-    return render(request, 'adminmanager/clientmanager/clientmanager_form.html', {
+    return render(request, 'adminmanager/clientmanager/clientmanager_edit.html', {
         'clientmanager': cm,
         'action': 'Edit',
         'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,
         'US_STATES': US_STATES,
     })
+
 
 # Delete View
 def clientmanager_delete_view(request, pk):

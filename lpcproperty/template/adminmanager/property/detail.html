@@ -26,11 +26,11 @@
 
                     <div class="property-info">
                        <div class="info-item">
-                            <span class="info-label">Street 1</span>
+                            <span class="info-label">Apartment, Suite, Unit, Building</span>
                             <div class="info-value">{{ property.street_line1 }}</div>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Street 2</span>
+                            <span class="info-label">P.O. Box, Company Name, C/O </span>
                             <div class="info-value">{{ property.street_line2 }}</div>
                         </div>
                         <div class="info-item">
@@ -193,7 +193,7 @@
         <!-- Row 2: Next 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Cell:</strong> {{ property.client.phone_number }}
+                <strong>Cell Phone:</strong> {{ property.client.phone_number }}
             </div>
         </div>
         <div class="col-md-4 mb-3">
@@ -242,7 +242,7 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Cell :</strong> {{ property.client.contact1_phone }}
+                <strong>Cell Phone :</strong> {{ property.client.contact1_phone }}
             </div>
         </div>
         <!-- <div class="col-md-4 col-sm-12 mb-3">
@@ -284,7 +284,7 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Cell :</strong> {{ property.client.contact2_phone }}
+                <strong>Cell Phone:</strong> {{ property.client.contact2_phone }}
             </div>
         </div>
         <!-- <div class="col-md-4 col-sm-12 mb-3">
@@ -326,7 +326,7 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Cell :</strong> {{ property.client.contact3_phone }}
+                <strong>Cell Phone:</strong> {{ property.client.contact3_phone }}
             </div>
         </div>
         <!-- <div class="col-md-4 col-sm-12 mb-3">
@@ -368,7 +368,7 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Cell :</strong> {{ property.client.contact4_phone }}
+                <strong>Cell Phone :</strong> {{ property.client.contact4_phone }}
             </div>
         </div>
         <!-- <div class="col-md-4 col-sm-12 mb-3">
@@ -410,7 +410,7 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Cell :</strong> {{ property.client.contact5_phone }}
+                <strong>Cell Phone :</strong> {{ property.client.contact5_phone }}
             </div>
         </div>
         <!-- <div class="col-md-4 col-sm-12 mb-3">
@@ -618,7 +618,7 @@ button.addEventListener("click", function() {
                 
                 <div class="room-list">
                     {% for room in floor.rooms.all %}
-                        <div class="room-item" style="border: 1px solid rgb(227, 227, 227); height: 50px;">
+                        <div class="room-item" style="border: 1px solid rgb(227, 227, 227); height: 50px; color: black;">
                             <p class="text-left" style="display: flex; align-items: center; ">{{ room.room_name }} </p>
                         </div>
                     {% endfor %}

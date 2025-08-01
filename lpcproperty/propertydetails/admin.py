@@ -10,7 +10,7 @@ class PropertyManagementAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Property Details", {
-            "fields": ("client", "client_manager", "address","city","state", "size_of_home", "number_of_stories", "construction_type", "year_built"),
+            "fields": ("client", "client_manager", "address","city","state", "street_line1","street_line2", "size_of_home", "number_of_stories", "construction_type", "year_built"),
         }),
         ("Features", {
             "fields": ("has_pool", "gated_community", "impact_windows", "has_hoa", "gated_property"),

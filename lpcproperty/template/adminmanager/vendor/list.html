@@ -209,32 +209,33 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <select id="filter-service" class="form-select">
-                        <option value="">Services</option>
-                        <option value="painting">Painting</option>
-                        <option value="wall covering">Wall Covering</option>
-                        <option value="flooring, tile">Flooring, Tile</option>
-                        <option value="flooring, resilient">Flooring, Resilient</option>
-                        <option value="flooring, epoxy">Flooring, Epoxy</option>
-                        <option value="flooring, carpet">Flooring, Carpet</option>
-                        <option value="plumbing">Plumbing</option>
-                        <option value="hvac">HVAC</option>
-                        <option value="roofing">Roofing</option>
-                        <option value="appliance repair">Appliance Repair</option>
-                        <option value="countertops">Countertops</option>
-                        <option value="millwork">Millwork</option>
-                        <option value="locksmith">Locksmith</option>
-                        <option value="electrician">Electrician</option>
-                        <option value="pressure washer">Pressure Washer</option>
-                        <option value="car detailer">Car Detailer</option>
-                        <option value="landscape">Landscape</option>
-                        <option value="av">AV</option>
-                        <option value="security">Security</option>
-                        <option value="glass, repair">Glass, Repair</option>
-                        <option value="glass, installation">Glass, Installation</option>
-                        <option value="garage door">Garage Door</option>
-                    </select>
-                </div>
+    <select id="filter-service" class="form-select">
+        <option value="">Services</option>
+        <option value="appliance repair">Appliance Repair</option>
+        <option value="av">AV</option>
+        <option value="car detailer">Car Detailer</option>
+        <option value="countertops">Countertops</option>
+        <option value="electrician">Electrician</option>
+        <option value="flooring, carpet">Flooring, Carpet</option>
+        <option value="flooring, epoxy">Flooring, Epoxy</option>
+        <option value="flooring, resilient">Flooring, Resilient</option>
+        <option value="flooring, tile">Flooring, Tile</option>
+        <option value="garage door">Garage Door</option>
+        <option value="glass, installation">Glass, Installation</option>
+        <option value="glass, repair">Glass, Repair</option>
+        <option value="hvac">HVAC</option>
+        <option value="landscape">Landscape</option>
+        <option value="locksmith">Locksmith</option>
+        <option value="millwork">Millwork</option>
+        <option value="painting">Painting</option>
+        <option value="plumbing">Plumbing</option>
+        <option value="pressure washer">Pressure Washer</option>
+        <option value="roofing">Roofing</option>
+        <option value="security">Security</option>
+        <option value="wall covering">Wall Covering</option>
+    </select>
+</div>
+
             </div>
         </div>
 
@@ -247,7 +248,7 @@
                             <th class="sortable" data-index="1">Name <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="2">City <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="3">State <i class="fas fa-sort sort-icon"></i></th>
-                            <th class="sortable" data-index="4">Cell <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="4">Cell Phone <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="5">Email <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="6">Service <i class="fas fa-sort sort-icon"></i></th>
                             <th>Actions</th>
@@ -268,9 +269,9 @@
                             <td>{{ vendor.phone_number }}</td>
                             <td>{{ vendor.email }}</td>
                             <td>
-                                <span class="service-text" title="{{ vendor.service }}">
-                                    {{ vendor.service|truncatechars:30 }}
-                                </span>
+                                 <span class="service-text" title="{{ vendor.service }}">
+                                {{ vendor.first_service }}
+                            </span>
                             </td>
                            <td>
                               <a href="{% url 'adminmanager:edit_vendor' vendor.id %}" 
@@ -549,7 +550,7 @@
                             <div class="contact-item">
                                 <h6>Contact ${index + 1}</h6>
                                 <div class="contact-info"><strong>Name:</strong>  ${contact.lastName}, ${contact.firstName}</div>
-                                <div class="contact-info"><strong>Cell:</strong> ${contact.cell}</div>
+                                <div class="contact-info"><strong>Cell Phone:</strong> ${contact.cell}</div>
                                 <div class="contact-info"><strong>Email:</strong> ${contact.email}</div>
                             </div>
                         `;
