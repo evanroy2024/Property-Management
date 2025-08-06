@@ -85,6 +85,9 @@ urlpatterns = [
     path('service-requests/denied/', views.denied_requests, name='clientmanager_denied_requests'),
     path('service-requests/<int:request_id>/update/', views.update_service_request, name='clientmanager_update_request'),
     path('service-request/<int:request_id>/view/', views.service_request_detail, name='clientmanager_view_request'),
+    path('update-service-cost/', views.update_service_cost, name='update_service_cost'),    # new 
+    path('modify-client-approval/', views.modify_client_approval, name='modify_client_approval'),  # new 
+    path('change-request-status/', views.change_request_status, name='change_request_status'),  # new 
 
     # Concierge Service Request URLs                            ( Frontend Done )
     path('concierge/pending/', views.concierge_pending_requests, name='concierge_pending_requests'),
@@ -93,6 +96,11 @@ urlpatterns = [
     path('concierge/denied/', views.concierge_denied_requests, name='concierge_denied_requests'),
     path('concierge/update/<int:request_id>/', views.update_concierge_request, name='concierge_update_request'),
     path('concierge/view/<int:request_id>/', views.view_concierge_request, name='concierge_view_request'),
+
+    # Add these to your urls.py
+    path('update-concierge-cost/', views.update_concierge_cost, name='update_concierge_cost'),  # new 
+    path('modify-concierge-approval/', views.modify_concierge_approval, name='modify_concierge_approval'), # new 
+    path('change-concierge-status/', views.change_concierge_status, name='change_concierge_status'), # new 
 
     # Property Improvement Details                              ( Frontend Done )
     path('property/pending/', views.property_pending_requests, name='property_pending_requests'),

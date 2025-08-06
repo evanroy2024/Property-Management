@@ -419,6 +419,7 @@
                 </table>
                 {% csrf_token %}
               <div style="text-align:right;">
+                <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
                 <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
     View Cost Summary
   </button>
@@ -1023,6 +1024,16 @@ function submitUpdateFieldStatus() {
   const lockedStatus = document.getElementById('lockedStatus');
   const newStatus = statusSelect.style.display !== 'none' ? statusSelect.value : lockedStatus.value;
 
+  // Get current client approval status from the approval span
+  const approvalSpan = document.getElementById(`approval-span-${reportId}-${fieldName}`);
+  const currentApproval = approvalSpan ? approvalSpan.textContent.trim() : '';
+  
+  // Check if client approval is pending
+  if (currentApproval === 'Pending' || currentApproval === '') {
+    alert('Please complete client approval first before updating the status.');
+    return; // Stop execution
+  }
+
   console.log('Updating status:', { reportId, fieldName, category, newStatus, datetime, remarks });
 
   fetch("{% url 'walkthroughreport:update-field-status-ajax' 0 %}".replace("0", reportId), {
@@ -1270,11 +1281,15 @@ function generatePDF(clientName, reports, totalCost) {
         const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
         doc.text(dateText, 22, yPos);
         
-        const categoryText = report.category.length > 18 ? report.category.substring(0, 18) + '...' : report.category;
-        doc.text(categoryText, 55, yPos);
-        
-        const itemText = report.item.length > 25 ? report.item.substring(0, 25) + '...' : report.item;
-        doc.text(itemText, 95, yPos);
+        const categoryLines = doc.splitTextToSize(report.category, 35);
+        doc.text(categoryLines, 55, yPos);
+
+        const itemLines = doc.splitTextToSize(report.item, 85);
+        doc.text(itemLines, 95, yPos);
+
+        // Adjust yPos based on maximum lines used
+        const maxLines = Math.max(categoryLines.length, itemLines.length);
+        yPos += (maxLines - 1) * 4; // Add extra space for multiple lines
         
         doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
         yPos += 12;
@@ -1310,11 +1325,15 @@ function generatePDF(clientName, reports, totalCost) {
       const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
       doc.text(dateText, 22, yPos);
       
-      const categoryText = report.category.length > 18 ? report.category.substring(0, 18) + '...' : report.category;
-      doc.text(categoryText, 55, yPos);
-      
-      const itemText = report.item.length > 25 ? report.item.substring(0, 25) + '...' : report.item;
-      doc.text(itemText, 95, yPos);
+      const categoryLines = doc.splitTextToSize(report.category, 32);
+      doc.text(categoryLines, 55, yPos);
+
+      const itemLines = doc.splitTextToSize(report.item, 75);
+      doc.text(itemLines, 95, yPos);
+
+      // Adjust yPos based on maximum lines used
+      const maxLines = Math.max(categoryLines.length, itemLines.length);
+      yPos += (maxLines - 1) * 4; // Add extra space for multiple lines
       
       doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
       yPos += 12;
@@ -1392,7 +1411,7 @@ function displayCostSummary(clientName) {
           return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; font-weight:500;">${report.category}</td>
-            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:250px; word-wrap:break-word; line-height:1.4;">${report.item}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:400px; word-wrap:break-word; line-height:1.4;">${report.item}</td>
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
           </tr>`;
         }).join('');
@@ -1720,4 +1739,39 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
   this.style.color = '#6c757d';
 });
 </script>
+
+<!-- read only cost thing  -->
+ <script>
+  // Unique total cost display function
+(function() {
+  function calculateTotalCost() {
+    const rows = document.querySelectorAll('#report-table tr.report-row');
+    let total = 0;
+    
+    rows.forEach(row => {
+      const costCell = row.querySelector('td:nth-child(6) span[id^="cost-"]');
+      if (costCell) {
+        const costText = costCell.textContent.replace('$', '').replace('-', '0');
+        const cost = parseFloat(costText) || 0;
+        total += cost;
+      }
+    });
+    
+    const totalButton = document.getElementById('totalCostBtn');
+    if (totalButton) {
+      totalButton.textContent = `Total : $${total.toFixed(2)}`;
+    }
+  }
+  
+  // Run when page loads
+  document.addEventListener('DOMContentLoaded', calculateTotalCost);
+  
+  // Run if page is already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', calculateTotalCost);
+  } else {
+    calculateTotalCost();
+  }
+})();
+ </script>
 {% endblock content %}

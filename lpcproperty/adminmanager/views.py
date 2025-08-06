@@ -1186,10 +1186,6 @@ def pending_requests(request):
     requests = ServiceRequest.objects.filter(status='pending')
     return render(request, 'adminmanager/servicerequests/pending.html', {'requests': requests})
 
-def open_requests(request):
-    requests = ServiceRequest.objects.filter(status='open')
-    return render(request, 'adminmanager/servicerequests/open.html', {'requests': requests})
-
 def completed_requests(request):
     requests = ServiceRequest.objects.filter(status='completed')
     return render(request, 'adminmanager/servicerequests/completed.html', {'requests': requests})
@@ -1936,3 +1932,131 @@ def update_concierge_cost(request):
         except ConciergeServiceRequest.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Request not found'})
     return JsonResponse({'success': False, 'error': 'Invalid method'})
+
+
+# Service reqiuest new part starts here -------------------------------------------------------------------------
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+def open_requests(request):
+    requests = ServiceRequest.objects.filter(status='open')
+    return render(request, 'adminmanager/servicerequests/open.html', {'requests': requests})
+
+
+@csrf_exempt
+@require_POST
+def update_service_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        service_request.cost = amount
+        service_request.cost_remarks = remarks
+        service_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def modify_client_approval(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        approval_status = data.get('approval_status')
+        
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        service_request.client_approval = approval_status
+        service_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def change_request_status(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        status = data.get('status')
+        completion_date = data.get('completion_date')
+        remarks = data.get('remarks', '')
+        
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        service_request.status = status
+        
+        if completion_date:
+            from datetime import datetime
+            service_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+        
+        service_request.status_remarks = remarks
+        service_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+
+# Consiguerge requests -------------------------------------------------------------------------------------------------
+@csrf_exempt
+@require_POST
+def update_concierge_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        concierge_request = get_object_or_404(ConciergeServiceRequest, id=request_id)
+        concierge_request.cost = amount
+        concierge_request.cost_remarks = remarks
+        concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def modify_concierge_approval(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        approval_status = data.get('approval_status')
+        
+        concierge_request = get_object_or_404(ConciergeServiceRequest, id=request_id)
+        concierge_request.client_approval = approval_status
+        concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def change_concierge_status(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        status = data.get('status')
+        completion_date = data.get('completion_date')
+        remarks = data.get('remarks', '')
+        
+        concierge_request = get_object_or_404(ConciergeServiceRequest, id=request_id)
+        concierge_request.status = status
+        
+        if completion_date:
+            from datetime import datetime
+            concierge_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+        
+        concierge_request.status_remarks = remarks
+        concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

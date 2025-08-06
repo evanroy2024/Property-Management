@@ -348,16 +348,17 @@
                     
                     <!-- Existing Client Dropdown -->
                     <div class="form-group half">
-                        <label class="form-label" for="client_id">Select Existing Client</label>
-                        <select class="form-control" name="client_id" id="client_id" required>
-                            {% for client in clients %}
-                                <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }} </option>
-                            {% endfor %}
-                        </select>
-                        
-                       
-                        
-                    </div>
+    <label class="form-label" for="client_id">Select Existing Client</label>
+    <select class="form-control" name="client_id" id="client_id" required 
+        style="appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+               background: url('data:image/svg+xml;utf8,<svg fill=\'%23333\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+               padding-right: 35px;">
+        {% for client in clients %}
+            <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
                     <div style="width: 100%; display: block; margin: 0; padding: 0; margin-left: 10px;">
                     <button type="button" id="toggle-new-client" class="toggle-btn" style="margin: 0;">+ Add New Client</button>
                     </div>
@@ -393,13 +394,13 @@
                               </div>
 
                             <div class="form-group flex-33">
-                                <input type="text" class="form-control" id="buisness_adress" name="buisness_adress" placeholder="Address" value="{{ form.buisness_adress.value }}">
+                                <input type="text" class="form-control" id="buisness_adress" name="buisness_adress" placeholder="Street Address 1" value="{{ form.buisness_adress.value }}">
                             </div>
 
 
 
                              <div class="form-group flex-33">
-                                <input type="text" class="form-control" id="client_address" name="client_address" placeholder="Business Address" >
+                                <input type="text" class="form-control" id="client_address" name="client_address" placeholder="Street Address 2" >
                             </div>
                              <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="client_city" name="client_city" placeholder="City" >
@@ -605,12 +606,16 @@
                 
                     <div class="form-group half">
                         <label class="form-label" for="client_manager_id">Select Client Manager</label>
-                        <select class="form-control" name="client_manager_id" id="client_manager_id" required>
+                        <select class="form-control" name="client_manager_id" id="client_manager_id" required 
+                            style="appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+                                background: url('data:image/svg+xml;utf8,<svg fill=\'%23333\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+                                padding-right: 35px;">
                             {% for manager in managers %}
-                                <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }} </option>
+                                <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+
                     <!-- Toggle Button -->
                     <!-- <div>
                         <button type="button" id="toggle-new-cm" class="toggle-btn-cm" style="margin-top: 31%;  background: linear-gradient(135deg, #6e8efb, #a777e3);">+ Add CM</button>
@@ -668,14 +673,14 @@
                     
                     <div class="form-group half">
                         <label class="form-label" for="address">Property Address</label>
-                        <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the property address" required>
+                        <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the street" required>
                     </div>
                     <div class="form-group half">
                         <!-- <label class="form-label" for="street_line1">Street Address Line 1</label> -->
                         <input class="form-control" type="text" id="street_line1" name="street_line1" placeholder="Apartment, Suite, Unit, Building, Floor, etc." required>
                     </div>
 
-                    <div class="form-group half">
+                    <div class="form-group half" style="display: none;">
                         <!-- <label class="form-label" for="street_line2">Street Address Line 2</label> -->
                         <input class="form-control" type="text" id="street_line2" name="street_line2" placeholder="Street Address, P.O. Box, Company Name, C/O ">
                     </div>

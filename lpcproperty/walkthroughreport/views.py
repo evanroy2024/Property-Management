@@ -721,7 +721,7 @@ CATEGORY_MAP = {
     'kitchen': "Kitchen",
     'butlers': "Butlers",
     'breakfast': "Breakfast Area",
-    'entry': "Entry / Voyer",
+    'entry': "Entry / Foyer",
     'great': "Great Room / Family Room",
     'dining': "Dining Room / Area",
     'closets_main': "Closets - Main Level",

@@ -779,7 +779,7 @@ class EntryFoyer(models.Model):
     entry4_update_date = models.DateField(blank=True, null=True)
     entry4_update_remarks = models.CharField(max_length=100, blank=True, null=True) 
 
-    entry5 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GIE, verbose_name="Windows")
+    entry5 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Entry / Foyer", verbose_name="Windows")
     entry5_remarks = models.CharField(max_length=500, blank=True, null=True)
     entry5_amount = models.PositiveIntegerField(default=0)
     entry5_calculation_note = models.CharField(max_length=500, blank=True, null=True)
@@ -788,7 +788,7 @@ class EntryFoyer(models.Model):
     entry5_update_date = models.DateField(blank=True, null=True)
     entry5_update_remarks = models.CharField(max_length=100, blank=True, null=True) 
 
-    entry6 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category=GIE, verbose_name="Window Treatment")
+    entry6 = CategoryCharField(max_length=20, choices=MCQ_CHOICES, blank=True, null=True, category="Entry / Foyer", verbose_name="Window Treatment")
     entry6_remarks = models.CharField(max_length=500, blank=True, null=True)
     entry6_amount = models.PositiveIntegerField(default=0)
     entry6_calculation_note = models.CharField(max_length=500, blank=True, null=True)

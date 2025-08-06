@@ -1,5 +1,10 @@
 from django.db import models
 from mainapp.models import Client, Vendor  # Import from mainapp
+APPROVAL_CHOICES = [
+    ('Pending', 'Pending'),
+    ('Approved', 'Approved'),
+    ('Denied', 'Denied'),
+]
 
 class ServiceRequest(models.Model):
     STATUS_CHOICES = [
@@ -22,11 +27,14 @@ class ServiceRequest(models.Model):
     request_type = models.CharField(max_length=50, choices=REQUEST_TYPE_CHOICES)  # Updated field
     description = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
+    floor_plan_name = models.CharField(max_length=100, blank=True, null=True)
+    status_remarks = models.TextField(blank=True, null=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)  # Use Vendor from mainapp
     created_at = models.DateTimeField(auto_now_add=True)
-    floor_plan_name = models.CharField(max_length=100, blank=True, null=True)
     completation_denied_date = models.DateField(blank=True, null=True)
+    client_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='Pending', blank=True)
     cost = models.IntegerField(default=0)
+    cost_remarks = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.request_type
@@ -114,10 +122,15 @@ class ConciergeServiceRequest(models.Model):
     user = models.ForeignKey(Client, on_delete=models.CASCADE)
     description = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
+    floor_plan_name = models.CharField(max_length=100, blank=True, null=True)
+    status_remarks = models.TextField(blank=True, null=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    client_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='Pending', blank=True)
     completation_denied_date = models.DateField(blank=True, null=True)
     cost = models.BigIntegerField(default=0)
+    cost_remarks = models.TextField(blank=True, null=True)
+
 
     def __str__(self):
         return f"{self.user} - {self.status}"
