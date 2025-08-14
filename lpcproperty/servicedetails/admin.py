@@ -18,7 +18,7 @@ from .models import PrearrivalInformation
 
 @admin.register(PrearrivalInformation)
 class PrearrivalInformationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'status', 'arrival_date', 'arrival_time', 'temperature', 'pool_temperature', 'hot_bath_temperature')
+    list_display = ('name', 'user', 'completation_denied_date' ,'status', 'arrival_date', 'arrival_time', 'temperature', 'pool_temperature', 'hot_bath_temperature')
     list_filter = ('arrival_date', 'indoor_lights', 'outdoor_lights', 'window_position')
     search_fields = ('name', 'user__username', 'music_genre', 'flower_type', 'flower_location')
 

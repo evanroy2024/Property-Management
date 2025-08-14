@@ -869,6 +869,7 @@ def process_model_fields(model_instance, report, model_name):
             'field_name': base,
             'model_name': model_name,
             'model_id': model_instance.id,
+            'completion_date': update_date,  # Add this
         })
     
     return inspection_items

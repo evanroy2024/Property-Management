@@ -342,30 +342,29 @@
                 </div>
             {% endif %}
 
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-home"></i> Basic Property Information</h2>
-                <div class="form-row">
-                    
-                    <!-- Existing Client Dropdown -->
-                    <div class="form-group half">
-    <label class="form-label" for="client_id">Select Existing Client</label>
-    <select class="form-control" name="client_id" id="client_id" required 
-        style="appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-               background: url('data:image/svg+xml;utf8,<svg fill=\'%23333\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
-               padding-right: 35px;">
-        {% for client in clients %}
-            <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }}</option>
-        {% endfor %}
-    </select>
-</div>
+<div class="card p-3">
+    <h2 class="card-title mb-4"><i class="fas fa-home"></i> Basic Property Information</h2>
 
-                    <div style="width: 100%; display: block; margin: 0; padding: 0; margin-left: 10px;">
-                    <button type="button" id="toggle-new-client" class="toggle-btn" style="margin: 0;">+ Add New Client</button>
-                    </div>
+    <div class="row g-3">
+        <!-- Existing Client Dropdown + Button -->
+        <div class="col-md-9">
+            <div class="form-floating">
+                <select class="form-control" name="client_id" id="client_id" required
+                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
+                           background: url('data:image/svg+xml;utf8,<svg fill=\'%23999\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+                           padding-right: 35px; color: #555;">
+                    {% for client in clients %}
+                        <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }}</option>
+                    {% endfor %}
+                </select>
+                <label for="client_id" class="required-field">Select Existing Client</label>
+            </div>
+        </div>
 
-                    <!-- Toggle Button -->
-                    
-                    <!-- New Client Form -->
+        <div class="col-md-3 d-flex align-items-center">
+            <button type="button" id="toggle-new-client" class="btn btn-primary w-100" style="background-color:#007bff; border:none;">+ Add New Client</button>
+        </div>
+   <!-- New Client Form -->
                     <div id="new-client-form" class="new-client-card" style="display: none;">
                         <h5 style="font-weight: 600;">New Client Info</h5>
                     
@@ -601,138 +600,108 @@
                         </script>
                     </div>
               
-
-                    <!-- adding new client ends here  -->
-                
-                    <div class="form-group half">
-                        <label class="form-label" for="client_manager_id">Select Client Manager</label>
-                        <select class="form-control" name="client_manager_id" id="client_manager_id" required 
-                            style="appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-                                background: url('data:image/svg+xml;utf8,<svg fill=\'%23333\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
-                                padding-right: 35px;">
-                            {% for manager in managers %}
-                                <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Toggle Button -->
-                    <!-- <div>
-                        <button type="button" id="toggle-new-cm" class="toggle-btn-cm" style="margin-top: 31%;  background: linear-gradient(135deg, #6e8efb, #a777e3);">+ Add CM</button>
-                    </div> -->
-                    
-                    <!-- Add this wrapper -->
-                    <div id="new-cm-form" style="display: none;">
-                        <div class="form-row-flex">
-                            <div class="form-group flex-33">
-                                <input type="text" class="form-control" name="new_cm_first_name" placeholder="First Name">
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="text" class="form-control" name="new_cm_last_name" placeholder="Last Name">
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="text" class="form-control" name="new_cm_username" placeholder="Username">
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="email" class="form-control" name="new_cm_email" placeholder="Email">
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="password" class="form-control" name="new_cm_password" placeholder="Password">
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="text" class="form-control" name="new_cm_phone" placeholder="Phone">
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="text" class="form-control" name="office_cm_phone" placeholder="Enter office phone" >
-                            </div>
-                            <div class="form-group flex-33">
-                                <input type="text" class="form-control" name="buisness_cm_adress" placeholder="Enter business address" >
-                            </div>
-                        </div>
-                    </div>
-                    <style>
-                        .form-row-flex {
-                                display: flex;
-                                flex-wrap: wrap;
-                                gap: 10px;
-                                margin-top: 10px;
-                            }
-                            #new-cm-form {
-                                background-color: #eef7ff;
-                                padding: 20px;
-                                border: 1px solid  #e1f0fd;
-                                border-radius: 10px;
-                            }
-                            .form-group.flex-33 {
-                                flex: 1 1 calc(33.33% - 10px);
-                                box-sizing: border-box;
-                            }
-
-                        </style>
-
-                    
-                    <div class="form-group half">
-                        <label class="form-label" for="address">Property Address</label>
-                        <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the street" required>
-                    </div>
-                    <div class="form-group half">
-                        <!-- <label class="form-label" for="street_line1">Street Address Line 1</label> -->
-                        <input class="form-control" type="text" id="street_line1" name="street_line1" placeholder="Apartment, Suite, Unit, Building, Floor, etc." required>
-                    </div>
-
-                    <div class="form-group half" style="display: none;">
-                        <!-- <label class="form-label" for="street_line2">Street Address Line 2</label> -->
-                        <input class="form-control" type="text" id="street_line2" name="street_line2" placeholder="Street Address, P.O. Box, Company Name, C/O ">
-                    </div>
-
-                     <div class="form-group half">
-                        <label class="form-label" for="city">City</label>
-                        <input class="form-control" type="text" id="city" name="city" required placeholder="Enter the City Name">
-                    </div>
-                    <div class="form-group half">
-                        <label class="form-label" for="state">State</label>
-                        <select class="form-control" name="state" id="state" required>
-                            <option value="" disabled selected>Select State</option>
-                            {% for state in us_states %}
-                                <option value="{{ state }}">{{ state }}</option>
-                            {% endfor %}
-                        </select>
-
-                    </div>
-                      <div class="form-group half">
-                        <label class="form-label" for="year_built">Zip Code</label>
-                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" placeholder="Enter Zip Code">
-                    </div>
-                    
-                    <div class="form-group half">
-                        <label class="form-label" for="size_of_home">Size of Home</label>
-                        <input class="form-control" type="text" id="size_of_home" name="size_of_home" placeholder="e.g. 2500 sqft">
-                    </div>
-        
-                    <div class="form-group half">
-                        <label class="form-label" for="number_of_stories">Number of Stories</label>
-                        <input class="form-control" type="number" id="number_of_stories" name="number_of_stories" required placeholder="Enter the number of stories" min="1">
-                    </div>
-                    
-                    <div class="form-group half">
-                        <label class="form-label" for="construction_type">Construction Type</label>
-                        <input class="form-control" type="text" id="construction_type" name="construction_type" placeholder="e.g. Concrete">
-                    </div>
-                    
-                    <div class="form-group half">
-                        <label class="form-label" for="year_built">Year Built</label>
-                        <input class="form-control" type="number" id="year_built" name="year_built" placeholder="e.g. 1995">
-                    </div>
-
-                  
-
-                    <div class="form-group half">
-    <label class="form-label" for="additional_info">Additional Property Information</label>
-    <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property"></textarea>
-</div>
-                    
-                </div>
+        <!-- Client Manager Full Width -->
+        <div class="col-12">
+            <div class="form-floating">
+                <select class="form-control" name="client_manager_id" id="client_manager_id" required
+                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
+                           background: url('data:image/svg+xml;utf8,<svg fill=\'%23999\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+                           padding-right: 35px; color: #555;">
+                    {% for manager in managers %}
+                        <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
+                    {% endfor %}
+                </select>
+                <label for="client_manager_id" class="required-field">Select Client Manager</label>
             </div>
+        </div>
+
+        <!-- Rest of the fields in 2-column layout -->
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="address" name="address" placeholder=" " required style="color: #555;">
+                <label for="address" class="required-field">Property Address</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="street_line1" name="street_line1" placeholder=" " required style="color: #555;">
+                <label for="street_line1">Apartment, Suite, Unit, etc.</label>
+            </div>
+        </div>
+
+        <div class="col-md-6" style="display:none;">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="street_line2" name="street_line2" placeholder=" " style="color: #555;">
+                <label for="street_line2">Street Address, P.O. Box, Company Name, C/O</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="city" name="city" placeholder=" " required style="color: #555;">
+                <label for="city" class="required-field">City</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select class="form-control" name="state" id="state" required style="color: #555;">
+                    <option value="" disabled selected>Select State</option>
+                    {% for state in us_states %}
+                        <option value="{{ state }}">{{ state }}</option>
+                    {% endfor %}
+                </select>
+                <label for="state" class="required-field">State</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="property_zipcode" name="property_zipcode" placeholder=" " style="color: #555;">
+                <label for="property_zipcode">Zip Code</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="size_of_home" name="size_of_home" placeholder=" " style="color: #555;">
+                <label for="size_of_home">Size of Home</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="number" class="form-control" id="number_of_stories" name="number_of_stories" placeholder=" " min="1" required style="color: #555;">
+                <label for="number_of_stories" class="required-field">Number of Stories</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="construction_type" name="construction_type" placeholder=" " style="color: #555;">
+                <label for="construction_type">Construction Type</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="number" class="form-control" id="year_built" name="year_built" placeholder=" " style="color: #555;">
+                <label for="year_built">Year Built</label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="form-floating">
+                <textarea class="form-control" id="additional_info" name="additional_info" placeholder=" " style="height: 120px; color: #ababab;"></textarea>
+                <label for="additional_info">Additional Property Information</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
             
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-list-check"></i> Property Features</h2>

@@ -258,12 +258,12 @@
                         {% for vendor in vendors %}
                         <tr class="vendor-row"
                             data-company="{{ vendor.company_name|lower }}"
-                            data-contact-person="{{ vendor.name|lower }}"
+                            data-contact-person="{{ vendor.last_name }}, {{ vendor.first_name }}"
                             data-city="{{ vendor.city|lower }}"
                             data-state="{{ vendor.state|lower }}"
                             data-service="{{ vendor.service|lower }}">
                             <td><strong>{{ vendor.company_name }}</strong></td>
-                            <td>{{ vendor.name }}</td>
+                            <td>{{ vendor.last_name }}, {{ vendor.first_name }}</td>
                             <td>{{ vendor.city }}</td>
                             <td>{{ vendor.state }}</td>
                             <td>{{ vendor.phone_number }}</td>

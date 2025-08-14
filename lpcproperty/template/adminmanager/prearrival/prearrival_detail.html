@@ -5,12 +5,12 @@
   <div class="container">
     <!-- Header with luxury branding -->
     <div class="mb-5 text-center">
-      <h1 class="display-4 fw-bold" style="color: #2c3e50;">Guest Experience</h1>
-      <div class="d-flex align-items-center justify-content-center">
+      <h1 class="display-4 fw-bold" style="color: #2c3e50;">Client Pre-arrival Details</h1>
+      <!-- <div class="d-flex align-items-center justify-content-center">
         <div class="mx-2" style="height: 1px; width: 50px; background-color: #dca54c;"></div>
-        <h2 class="mb-0" style="color: #dca54c;">Pre-arrival Details</h2>
+        <h2 class="mb-0" style="color: #2c3e50;">Client Pre-Arrival Details</h2>
         <div class="mx-2" style="height: 1px; width: 50px; background-color: #dca54c;"></div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Main content card with luxury design -->
@@ -19,13 +19,26 @@
       <div class="card-header p-4" style="background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <span class="badge py-2 px-3" style="background-color: #dca54c; font-size: 1rem;">GUEST</span>
-            <h2 class="mt-2 mb-0 text-white">{{ request_detail.name }}</h2>
-          </div>
-          <div class="bg-white p-3 rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#2c3e50" viewBox="0 0 16 16">
-              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
-            </svg>
+            <span class="badge py-2 px-3" style="background-color: #dca54c; font-size: 1rem;">Property Address</span>
+            <h2 class="mt-2 mb-1 text-white" style="font-size: 2.2rem; font-weight: 600;">{{ request_detail.user.last_name }}, {{ request_detail.user.first_name }}</h2>
+            {% if request_detail.user.properties.first %}
+              {% with property=request_detail.user.properties.first %}
+                {% if property.address %}
+                  <p class="text-white mb-1" style="font-size: 1.1rem; opacity: 0.9;">{{ property.address }}</p>
+                {% endif %}
+                {% if property.street_line1 %}
+                  <p class="text-white mb-1" style="font-size: 1.1rem; opacity: 0.9;">{{ property.street_line1 }}</p>
+                {% endif %}
+                <!-- {% if property.street_line2 %}
+                  <p class="text-white mb-1" style="font-size: 1.1rem; opacity: 0.9;">{{ property.street_line2 }}</p>
+                {% endif %} -->
+                {% if property.city or property.state or property.zipcode %}
+                  <p class="text-white mb-0" style="font-size: 1.1rem; opacity: 0.9;">
+                    {% if property.city %}{{ property.city }}{% endif %}{% if property.city and property.state %}, {% endif %}{% if property.state %}{{ property.state }}{% endif %}{% if property.zipcode %} {{ property.zipcode }}{% endif %}
+                  </p>
+                {% endif %}
+              {% endwith %}
+            {% endif %}
           </div>
         </div>
       </div>
@@ -42,17 +55,9 @@
             </div>
           </div>
           <div class="col">
-            <div class="d-flex justify-content-between align-items-end">
-              <div>
-                <p class="text-muted mb-1" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Arrival Date & Time</p>
-                <h3 class="mb-0" style="color: #2c3e50;">{{ request_detail.arrival_date }} <span style="color: #dca54c;">•</span> {{ request_detail.arrival_time }}</h3>
-              </div>
-              <div>
-                <button class="btn text-white px-4" style="background-color: #2c3e50; border-radius: 30px;"
-              onclick="window.open('https://calendar.google.com/calendar/r/eventedit?text=Pre-Arrival+Request&dates={{ request_detail.arrival_date|date:'Ymd' }}T{{ request_detail.arrival_time|date:'His' }}Z/{{ request_detail.arrival_date|date:'Ymd' }}T{{ request_detail.arrival_time|date:'His' }}Z&details=Reminder+for+Pre-Arrival+Request&location=Online', '_blank')">
-        Add to Calendar
-      </button>
-              </div>
+            <div>
+              <p class="text-muted mb-1" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Arrival Date & Time</p>
+              <h3 class="mb-0" style="color: #2c3e50;">{{ request_detail.arrival_date }} <span style="color: #dca54c;">•</span> {{ request_detail.arrival_time }}</h3>
             </div>
           </div>
         </div>
@@ -201,8 +206,8 @@
                 </div>
               </div>
               <div class="card-body" style="background-color: rgba(220, 165, 76, 0.03);">
-                <div class="p-3" style="border-left: 3px solid #dca54c; background-color: rgba(220, 165, 76, 0.05);">
-                  <p class="mb-0" style="color: #2c3e50;">{{ request_detail.additional }}</p>
+                <div class="p-3 text-start" style="border-left: 3px solid #dca54c; background-color: rgba(220, 165, 76, 0.05);">
+                  <p class="mb-0 text-start" style="color: #2c3e50;">{{ request_detail.additional }}</p>
                 </div>
               </div>
             </div>
@@ -219,32 +224,13 @@
           Back to Requests
         </a>
         <div>
-          <button class="btn me-2 px-4 py-2" style="border-radius: 30px; background-color: #2c3e50; color: white;" onclick="window.print();">
+          <button class="btn px-4 py-2" style="border-radius: 30px; background-color: #2c3e50; color: white;" onclick="window.print();">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer me-2" viewBox="0 0 16 16">
               <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
               <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 14a1 1 0 0 1-1-1v-1h-.5a.5.5 0 0 1 0-1H4v-1h8v1h.5a.5.5 0 0 1 0 1H12v1a1 1 0 0 1-1 1zm7-1V8H4v8z"/>
             </svg>
             Print
           </button>
-          <form method="post" style="display: inline;" onsubmit="return showSuccessAlert()">
-            {% csrf_token %}
-            <button type="submit" name="complete" class="btn px-4 py-2" style="border-radius: 30px; background-color: #dca54c; color: white;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                <path d="m10.97 4.97-.708.707L7.5 8.51 6.738 7.76l-.708.708 1.48 1.48 2.75-2.98.708-.707z"/>
-              </svg>
-              Complete Preparation
-            </button>
-          </form>
-          
-          <script>
-            function showSuccessAlert() {
-              alert("✅ Preparation marked as completed!");
-              return true; // allow the form to submit
-            }
-          </script>
-          
-          
         </div>
       </div>
     </div>

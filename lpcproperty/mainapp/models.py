@@ -181,7 +181,8 @@ class VendorService(models.Model):
     
 class Vendor(models.Model):
     company_name = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)  # Person's name
+    first_name = models.CharField(max_length=255)  # Person's name
+    last_name = models.CharField(max_length=255, blank=True, null=True)
     street = models.CharField(max_length=255)
     apt_suite = models.CharField(max_length=255, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)

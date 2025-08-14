@@ -288,33 +288,41 @@
                 <h6 class="section-title">Company Information</h6>
               </div>
               
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Company Name" required>
-                  <label for="company_name" class="required-field">Company Name</label>
-                </div>
-              </div>
+             <div class="col-md-12 mb-3">
+    <div class="form-floating">
+        <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Company Name" required>
+        <label for="company_name" class="required-field">Company Name</label>
+    </div>
+            </div>
 
-              <div class="col-md-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="name" name="name" placeholder="Person Name" required>
-                  <label for="name" class="required-field">Person Name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" required>
+                    <label for="first_name" class="required-field">First Name</label>
                 </div>
-              </div>
+            </div>
 
-              <div class="col-md-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="email" name="email" placeholder="Person Name" required>
-                  <label for="name" class="required-field">Email</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
+                    <label for="last_name">Last Name</label>
                 </div>
-              </div>
+            </div>
 
-              <div class="col-md-6 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Person Name" required>
-                  <label for="name" class="required-field">Cell Phone</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Person Name" required>
+                    <label for="name" class="required-field">Email</label>
                 </div>
-              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Person Name" required>
+                    <label for="name" class="required-field">Cell Phone</label>
+                </div>
+            </div>
+
               
               
               
@@ -502,8 +510,6 @@ document.getElementById('main_service').addEventListener('change', function() {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  let contactCount = 1;
-
   // Handle service option clicks
   document.querySelectorAll('.service-option').forEach(option => {
     const checkbox = option.querySelector('input[type="checkbox"]');
@@ -527,14 +533,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add contact functionality
   document.getElementById('add-contact-btn').addEventListener('click', function() {
-    contactCount++;
     const contactsContainer = document.getElementById('contacts-container');
+    
+    // Calculate the next contact number based on existing contacts
+    const existingContacts = document.querySelectorAll('.contact-row');
+    const nextContactNumber = existingContacts.length + 1;
     
     const newContactRow = document.createElement('div');
     newContactRow.className = 'contact-row';
     newContactRow.innerHTML = `
       <div class="contact-header">
-        <h6 class="contact-title">Contact #${contactCount}</h6>
+        <h6 class="contact-title">Contact #${nextContactNumber}</h6>
         <button type="button" class="remove-contact" onclick="removeContact(this)">
           <i class="bi bi-x"></i>
         </button>

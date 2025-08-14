@@ -71,9 +71,17 @@ urlpatterns = [
     # Pre Arrival Request To Client 
     path('prearrival/requests/', views.clientmanager_prearrival_requests, name='prearrival_requests'),
     path('prearrival/requests/<int:request_id>/', views.clientmanager_prearrival_detail, name='prearrival_request_detail'),
+    path('prearrival/requests/completed/', views.clientmanager_prearrival_completed_requests, name='prearrival_completed_requests'),
+    path('update-prearrival-cost/', views.upodate_prearrival_cost, name='upodate_prearrival_cost'),
+    path('update-prearrival-approval/', views.upodate_prearrival_approval, name='upodate_prearrival_approval'),
+    path('update-prearrival-status/', views.upodate_prearrival_status, name='upodate_prearrival_status'),
 
     # Depeartaure Information 
     path('departure/requests/', views.clientmanager_departure_requests, name='departure_requests'),
+    path('departure/completed/', views.clientmanager_departure_completed_requests, name='departure_completed'),
+    path('update-departure-cost/', views.upodate_departure_cost, name='upodate_departure_cost'),
+    path('update-departure-approval/', views.upodate_departure_approval, name='upodate_departure_approval'),
+    path('update-departure-status/', views.upodate_departure_status, name='upodate_departure_status'),
     path('departure/requests/<int:request_id>/', views.clientmanager_departure_detail, name='departure_request_detail'),
 
     # path('dashboardtrial/', views.client_manager_dashboard, name='client_manager_dashboard'),       #        TO CHECK CM AND CLIENT RELATIUON

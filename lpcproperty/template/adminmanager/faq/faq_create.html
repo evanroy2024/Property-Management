@@ -94,31 +94,34 @@
         <h2>Create New FAQ</h2>
     </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="question">Question:</label>
-            <input type="text" name="question" id="question" required>
-        </div>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="question">Question:</label>
+        <input type="text" name="question" id="question" required>
+    </div>
 
-        <div class="form-group">
-            <label for="answer">Answer:</label>
-            <textarea name="answer" id="answer" rows="5" required></textarea>
-        </div>
+    <div class="form-group">
+        <label for="answer">Answer:</label>
+        <textarea name="answer" id="answer" rows="5" required></textarea>
+    </div>
 
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <select name="category" id="category" required>
-                <option value="">-- Select Category --</option>
-                <option value="general">General</option>
-                <option value="account">Account</option>
-                <option value="billing">Billing</option>
-                <option value="technical">Technical</option>
-            </select>
-        </div>
+    <div class="form-group">
+        <label for="category">Category:</label>
+        <select name="category" id="category" required>
+            <option value="">-- Select Category --</option>
+            <option value="general">General</option>
+            <option value="account">Account</option>
+            <option value="billing">Billing</option>
+            <option value="technical">Technical</option>
+            <option value="services">Services</option>
+            <option value="membership">Membership</option>
+        </select>
+    </div>
 
-        <button type="submit" class="faq-edit-submit-btn">Create FAQ</button>
-    </form>
+    <button type="submit" class="faq-edit-submit-btn">Create FAQ</button>
+</form>
+
 
     <a href="{% url 'adminmanager:admin_faq_list' %}" class="back-link">⬅ Back to FAQ List</a>
 </div>

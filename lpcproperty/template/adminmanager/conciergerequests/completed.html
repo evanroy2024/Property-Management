@@ -1,6 +1,6 @@
 {% extends 'adminmanager/adminbase.html' %}
 {% load static %}
-{% block title %}Open Concierge Requests{% endblock %}
+{% block title %}Completed Concierge Requests{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -286,16 +286,21 @@
     <div class="card shadow mb-4">
         <div class="p-3">
             <div class="row g-2">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <select id="filter-date" class="form-select">
                         <option value="">All Dates</option>
                     </select>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <select id="filter-client" class="form-select">
                         <option value="">All Clients</option>
                     </select>
                 </div>
+                 <div class="col-md-4">
+                <select id="filter-month" class="form-select">
+                    <option value="">All Months</option>
+                </select>
+            </div>
             </div>
         </div>
 
@@ -314,6 +319,7 @@
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
+                            <th>Completation Date</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -333,7 +339,7 @@
                                 <td style="word-wrap: break-word; white-space: normal; max-width: 250px;">
                                     {{ req.description|truncatechars:300 }}
                                 </td>
-                                
+                                <!-- <td> <span id="cost-{{ req.id }}">{{ req.cost_remarks }}</span></td> -->
                                 <td>
                                     <span id="cost-{{ req.id }}">${{ req.cost|default:"0" }}</span>
                                     <button 
@@ -387,6 +393,14 @@
                                         {% endif %}
                                     </span>
                                 </td>
+                                <td 
+                                    style="cursor: pointer;">
+                                    {% if req.completation_denied_date %}
+                                        {{ req.completation_denied_date|date:'M d, Y' }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
 
                             </tr>
                         {% empty %}
@@ -402,8 +416,21 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div style="text-align:right;">
+                <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
+                <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
+    View Cost Summary
+  </button>
+  <button id="submitChangesBtn" style="background-color:#007bff; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s;">
+    Submit Updates
+  </button>
+</div>
+                <!-- <div style="text-align:right;">
+                    <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
+                </div> -->
             </div>
         </div>
+        
     </div>
 </div>
 
@@ -486,7 +513,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize filters
     const filters = {
         date: document.getElementById("filter-date"),
-        client: document.getElementById("filter-client")
+        client: document.getElementById("filter-client"),
+        month: document.getElementById("filter-month")
     };
     
     const rows = document.querySelectorAll(".request-row");
@@ -494,11 +522,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Populate dropdowns
     const dates = new Set();
     const clients = new Set();
+    const months = new Set();
     
     rows.forEach(row => {
         const date = row.getAttribute("data-date");
         const client = row.getAttribute("data-client");
-        if (date) dates.add(date);
+        if (date) {
+            dates.add(date);
+            // Extract year-month for month filter
+            const yearMonth = date.substring(0, 7); // Gets YYYY-MM
+            months.add(yearMonth);
+        }
         if (client) clients.add(client);
     });
     
@@ -521,17 +555,33 @@ document.addEventListener("DOMContentLoaded", function () {
         filters.client.appendChild(opt);
     });
     
+    [...months].sort().reverse().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        const dateObj = new Date(val + "-01");
+        opt.textContent = dateObj.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long'
+        });
+        filters.month.appendChild(opt);
+    });
+    
     // Filter function
     function filterTable() {
         const selected = {
             date: filters.date.value,
-            client: filters.client.value
+            client: filters.client.value,
+            month: filters.month.value
         };
         
         rows.forEach(row => {
+            const rowDate = row.getAttribute("data-date");
+            const rowMonth = rowDate ? rowDate.substring(0, 7) : '';
+            
             const matches = 
-                (!selected.date || row.getAttribute("data-date") === selected.date) &&
-                (!selected.client || row.getAttribute("data-client") === selected.client);
+                (!selected.date || rowDate === selected.date) &&
+                (!selected.client || row.getAttribute("data-client") === selected.client) &&
+                (!selected.month || rowMonth === selected.month);
             
             row.style.display = matches ? "" : "none";
         });
@@ -694,36 +744,18 @@ function submitUpdateApproval() {
 
 // Status Modal Functions
 function openUpdateStatusModal(requestId, currentStatus, currentDate, currentRemarks, clientApproval) {
-    // Check if client approval is pending
-    if (clientApproval === 'Pending') {
-        alert('Cannot update item status when client approval is pending.');
-        return;
-    }
-    
     document.getElementById('statusRequestId').value = requestId;
     document.getElementById('completionDate').value = currentDate || '';
     document.getElementById('statusRemarks').value = currentRemarks || '';
     
     const statusDropdown = document.getElementById('statusDropdown');
-    
-    // Auto-select based on client approval and disable dropdown
-    if (clientApproval === 'Approved') {
-        statusDropdown.value = 'completed';
-        statusDropdown.disabled = true;
-    } else if (clientApproval === 'Denied') {
-        statusDropdown.value = 'denied';
-        statusDropdown.disabled = true;
-    } else {
-        statusDropdown.value = currentStatus || 'open';
-        statusDropdown.disabled = false;
-    }
+    statusDropdown.value = currentStatus || 'open';
+    statusDropdown.disabled = false;
     
     document.getElementById('updateStatusModal').style.display = 'block';
 }
 
 function closeUpdateStatusModal() {
-    // Re-enable dropdown when closing
-    document.getElementById('statusDropdown').disabled = false;
     document.getElementById('updateStatusModal').style.display = 'none';
 }
 
@@ -767,7 +799,24 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
                 if (status === 'open') displayText = 'Open';
                 else if (status === 'completed') displayText = 'Completed';
                 else if (status === 'denied') displayText = 'Denied';
+                
+                // Update text
                 statusDisplay.textContent = displayText;
+                
+                // Update background color and styling
+                if (status === 'completed') {
+                    statusDisplay.style.backgroundColor = '#4CAF50';
+                    statusDisplay.style.color = 'white';
+                    statusDisplay.style.borderColor = '#4CAF50';
+                } else if (status === 'denied') {
+                    statusDisplay.style.backgroundColor = '#F44336';
+                    statusDisplay.style.color = 'white';
+                    statusDisplay.style.borderColor = '#F44336';
+                } else {
+                    statusDisplay.style.backgroundColor = '';
+                    statusDisplay.style.color = '';
+                    statusDisplay.style.borderColor = '#ccc';
+                }
             }
             closeUpdateStatusModal();
         } else {
@@ -781,4 +830,744 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
 });
 </script>
 
+<script>
+// Calculate total cost for the updated page structure   --------------------------------------------------------
+(function () {
+  function calculateTotalCost() {
+    const rows = document.querySelectorAll('#request-table tr.request-row');
+    let total = 0;
+
+    rows.forEach(row => {
+      const costCell = row.querySelector('td:nth-child(4) span[id^="cost-"]');
+      if (costCell) {
+        const costText = costCell.textContent.replace('$', '').replace('-', '0');
+        const cost = parseFloat(costText) || 0;
+        total += cost;
+      }
+    });
+
+    const totalButton = document.getElementById('totalCostBtn');
+    if (totalButton) {
+      totalButton.textContent = `Total : $${total.toFixed(2)}`;
+    }
+  }
+
+  // Run when page loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', calculateTotalCost);
+  } else {
+    calculateTotalCost();
+  }
+})();
+</script>
+
+
+<!-- For cost pdf and print downloda thing ----------------------------------------------------- -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+ 
+ <!-- Modal for Cost Summary -->
+<div id="costSummaryModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); backdrop-filter:blur(2px);">
+  <div style="background:#fff; margin:2% auto; padding:0; border-radius:12px; width:90%; max-width:700px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-height:90vh; overflow:hidden;">
+    
+    <!-- Modal Header -->
+    <div style="padding:20px 24px; border-bottom:1px solid #e9ecef; display:flex; justify-content:space-between; align-items:center; background:#f8f9fa;">
+      <h3 style="margin:0; color:#333; font-weight:600; font-size:18px;">Client Cost Summary</h3>
+      <span id="closeCostModal" style="color:#6c757d; font-size:24px; font-weight:bold; cursor:pointer; padding:4px; border-radius:4px; transition:all 0.2s ease;">&times;</span>
+    </div>
+    
+    <!-- Modal Body -->
+    <div style="padding:24px; max-height:70vh; overflow-y:auto;">
+      <div style="margin-bottom:24px;">
+        <label for="clientSelect" style="display:block; margin-bottom:8px; font-weight:600; color:#333; font-size:14px;">Select Client:</label>
+        <select id="clientSelect" style="width:100%; padding:12px 16px; border:2px solid #e9ecef; border-radius:8px; font-size:14px; color:#333; background:#fff; transition:border-color 0.3s ease; outline:none;">
+          <option value="" style="color:#333;">Choose a client...</option>
+        </select>
+      </div>
+      
+      <div id="costSummaryContent" style="display:none;">
+        <div style="background:#f8f9fa; padding:16px; border-radius:8px; margin-bottom:20px; border-left:4px solid #007bff;">
+          <h4 id="selectedClientName" style="margin:0; color:#333; font-weight:600; font-size:16px;"></h4>
+        </div>
+        
+        <div id="reportsList" style="margin-bottom:20px;"></div>
+        
+        <div style="background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding:20px; border-radius:10px; border:2px solid #007bff;">
+          <h4 style="margin:0 0 15px 0; color:#007bff; font-weight:700; font-size:18px; text-align:center;">
+            Total Cost: $<span id="totalCost">0.00</span>
+          </h4>
+          <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+            <button id="downloadPdfBtn" style="display:none; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Download PDF</button>
+            <button id="printBtn" style="display:none; background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    // Get unique clients from table
+function getUniqueClients() {
+  const clientSet = new Set();
+  const rows = document.querySelectorAll('#request-table tr.request-row');
+  
+  rows.forEach(row => {
+    const clientCell = row.querySelector('td:nth-child(2)');
+    if (clientCell) {
+      clientSet.add(clientCell.textContent.trim());
+    }
+  });
+  
+  return Array.from(clientSet).sort();
+}
+
+// Populate client dropdown
+function populateClientDropdown() {
+  const clients = getUniqueClients();
+  const select = document.getElementById('clientSelect');
+  
+  // Clear existing options except first
+  select.innerHTML = '<option value="">Choose a client...</option>';
+  
+  // Add "All Clients" option
+  const allOption = document.createElement('option');
+  allOption.value = 'ALL_CLIENTS';
+  allOption.textContent = 'All Clients';
+  select.appendChild(allOption);
+  
+  clients.forEach(client => {
+    const option = document.createElement('option');
+    option.value = client;
+    option.textContent = client;
+    select.appendChild(option);
+  });
+}
+
+// Get reports for selected client
+function getClientReports(clientName) {
+  const rows = document.querySelectorAll('#request-table tr.request-row');
+  const reports = [];
+  
+  rows.forEach(row => {
+    const clientCell = row.querySelector('td:nth-child(2)');
+    if (clientCell) {
+      const rowClient = clientCell.textContent.trim();
+      
+      // If "All Clients" selected or specific client matches
+      if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
+        const dateCell = row.querySelector('td:nth-child(1)');
+        const dateText = dateCell ? dateCell.textContent.trim() : '';
+        
+        const requestCell = row.querySelector('td:nth-child(3)');
+        const request = requestCell ? requestCell.textContent.trim() : '';
+        
+        // Get cost remarks from the 4th column
+        const costRemarksCell = row.querySelector('td:nth-child(4)');
+        const costRemarks = costRemarksCell ? costRemarksCell.textContent.trim() : 'N/A';
+        
+        // Get cost from the 5th column
+        const costCell = row.querySelector('td:nth-child(5) span[id^="cost-"]');
+        const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
+        const cost = parseFloat(costText) || 0;
+        
+        reports.push({
+          date: dateText,
+          request: request,
+          cost: cost,
+          costRemarks: costRemarks,
+          client: rowClient
+        });
+      }
+    }
+  });
+  
+  return reports;
+}
+
+// Group reports by client for "All Clients" view
+function groupReportsByClient(reports) {
+  const grouped = {};
+  reports.forEach(report => {
+    if (!grouped[report.client]) {
+      grouped[report.client] = [];
+    }
+    grouped[report.client].push(report);
+  });
+  return grouped;
+}
+
+// Generate PDF
+function generatePDF(clientName, reports, totalCost) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  // Set up document
+  doc.setFontSize(20);
+  doc.setFont(undefined, 'bold');
+  doc.text('Concierge Requests Cost Summary', 20, 25);
+  
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'normal');
+  doc.text(`Client: ${clientName}`, 20, 40);
+  
+  doc.setFontSize(12);
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+  
+  let yPos = 70;
+  
+  if (clientName === 'All Clients') {
+    // Group reports by client
+    const groupedReports = groupReportsByClient(reports);
+    
+    Object.keys(groupedReports).sort().forEach(client => {
+      const clientReports = groupedReports[client];
+      const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+      
+      // Check if we need a new page for client header
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 30;
+      }
+      
+      // Client header
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(230, 240, 255);
+      doc.rect(20, yPos - 8, 170, 15, 'F');
+      doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+      yPos += 20;
+      
+      // Table headers for this client
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(245, 245, 245);
+      doc.rect(20, yPos - 8, 170, 12, 'F');
+      doc.text('Date', 22, yPos);
+      doc.text('Request', 60, yPos);
+      doc.text('Cost', 130, yPos);
+      doc.text('Remarks', 155, yPos);
+      yPos += 15;
+      
+      // Client's reports
+      doc.setFont(undefined, 'normal');
+      doc.setFontSize(8);
+      clientReports.forEach((report, index) => {
+        if (yPos > 260) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(20, yPos - 8, 170, 12, 'F');
+        }
+        
+        const dateText = report.date.length > 12 ? report.date.substring(0, 12) + '...' : report.date;
+        doc.text(dateText, 22, yPos);
+        
+        const requestLines = doc.splitTextToSize(report.request, 65);
+        const requestText = requestLines.length > 2 ? requestLines.slice(0, 2).join(' ') + '...' : requestLines.join(' ');
+        doc.text(requestText, 60, yPos);
+        
+        doc.text(`$${report.cost.toFixed(2)}`, 130, yPos);
+        
+        const remarksText = report.costRemarks.length > 20 ? report.costRemarks.substring(0, 20) + '...' : report.costRemarks;
+        doc.text(remarksText, 155, yPos);
+        
+        yPos += 12;
+      });
+      
+      yPos += 10; // Space between clients
+    });
+  } else {
+    // Single client view
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'bold');
+    doc.setFillColor(245, 245, 245);
+    const headerWidth = 170;
+    doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+    doc.text('Date', 22, yPos);
+    doc.text('Request', 60, yPos);
+    doc.text('Cost', 130, yPos);
+    doc.text('Remarks', 155, yPos);
+    yPos += 15;
+    
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(8);
+    reports.forEach((report, index) => {
+      if (yPos > 260) {
+        doc.addPage();
+        yPos = 30;
+      }
+      
+      if (index % 2 === 0) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+      }
+      
+      const dateText = report.date.length > 12 ? report.date.substring(0, 12) + '...' : report.date;
+      doc.text(dateText, 22, yPos);
+      
+      const requestLines = doc.splitTextToSize(report.request, 65);
+      const requestText = requestLines.length > 2 ? requestLines.slice(0, 2).join(' ') + '...' : requestLines.join(' ');
+      doc.text(requestText, 60, yPos);
+      
+      doc.text(`$${report.cost.toFixed(2)}`, 130, yPos);
+      
+      const remarksText = report.costRemarks.length > 20 ? report.costRemarks.substring(0, 20) + '...' : report.costRemarks;
+      doc.text(remarksText, 155, yPos);
+      
+      yPos += 12;
+    });
+  }
+  
+  // Add total cost at the end
+  yPos += 15;
+  if (yPos > 260) {
+    doc.addPage();
+    yPos = 30;
+  }
+  
+  doc.setFillColor(240, 240, 240);
+  doc.rect(20, yPos - 8, 170, 20, 'F');
+  doc.setFontSize(14);
+  doc.setFont(undefined, 'bold');
+  doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+  
+  // Download the PDF
+  const fileName = clientName === 'All Clients' ? 'All_Clients_concierge_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_concierge_cost_summary.pdf`;
+  doc.save(fileName);
+}
+
+// Display cost summary
+function displayCostSummary(clientName) {
+  const reports = getClientReports(clientName);
+  const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+  
+  const displayName = clientName === 'ALL_CLIENTS' ? 'All Clients' : clientName;
+  document.getElementById('selectedClientName').textContent = displayName;
+  document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+  document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+  document.getElementById('printBtn').style.display = 'inline-block';
+  
+  const reportsList = document.getElementById('reportsList');
+  reportsList.innerHTML = '';
+  
+  if (reports.length === 0) {
+    reportsList.innerHTML = '<div style="text-align:center; padding:40px; color:#6c757d;"><p style="margin:0; font-size:16px;">No reports found.</p></div>';
+    document.getElementById('downloadPdfBtn').style.display = 'none';
+    document.getElementById('printBtn').style.display = 'none';
+  } else {
+    const tableContainer = document.createElement('div');
+    tableContainer.style.overflowX = 'auto';
+    tableContainer.style.border = '1px solid #e9ecef';
+    tableContainer.style.borderRadius = '8px';
+    tableContainer.style.background = '#fff';
+    
+    if (clientName === 'ALL_CLIENTS') {
+      // Group reports by client
+      const groupedReports = groupReportsByClient(reports);
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        // Client header
+        const clientHeader = document.createElement('div');
+        clientHeader.style.background = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+        clientHeader.style.padding = '15px 20px';
+        clientHeader.style.margin = '15px 0 10px 0';
+        clientHeader.style.borderRadius = '8px';
+        clientHeader.style.border = '2px solid #2196f3';
+        clientHeader.innerHTML = `<h4 style="margin:0; color:#1976d2; font-weight:700; font-size:16px;">Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})</h4>`;
+        tableContainer.appendChild(clientHeader);
+        
+        // Client's data table
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '20px';
+        
+        const tableRows = clientReports.map((report, index) => {
+          return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:300px; word-wrap:break-word; line-height:1.4;">${report.request}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.costRemarks}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
+          </tr>`;
+        }).join('');
+        
+        table.innerHTML = `
+          <thead>
+            <tr style="background:#f8f9fa;">
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Request</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Cost Remarks</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        `;
+        
+        tableContainer.appendChild(table);
+      });
+    } else {
+      // Single client view
+      const table = document.createElement('table');
+      table.style.width = '100%';
+      table.style.borderCollapse = 'collapse';
+      
+      const tableRows = reports.map((report, index) => {
+        return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:250px; word-wrap:break-word; line-height:1.4;">${report.request}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.costRemarks}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
+        </tr>`;
+      }).join('');
+      
+      table.innerHTML = `
+        <thead>
+          <tr style="background:#f8f9fa;">
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Request</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Cost Remarks</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      `;
+      
+      tableContainer.appendChild(table);
+    }
+    
+    reportsList.appendChild(tableContainer);
+  }
+  
+  document.getElementById('costSummaryContent').style.display = 'block';
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // View cost summary button
+  const viewCostSummaryBtn = document.getElementById('viewCostSummaryBtn');
+  if (viewCostSummaryBtn) {
+    viewCostSummaryBtn.addEventListener('click', function() {
+      populateClientDropdown();
+      document.getElementById('costSummaryModal').style.display = 'block';
+    });
+  }
+
+  // Close modal button
+  const closeCostModal = document.getElementById('closeCostModal');
+  if (closeCostModal) {
+    closeCostModal.addEventListener('click', function() {
+      document.getElementById('costSummaryModal').style.display = 'none';
+      document.getElementById('costSummaryContent').style.display = 'none';
+      const downloadBtn = document.getElementById('downloadPdfBtn');
+      const printBtn = document.getElementById('printBtn');
+      if (downloadBtn) downloadBtn.style.display = 'none';
+      if (printBtn) printBtn.style.display = 'none';
+    });
+  }
+
+  // Client select dropdown
+  const clientSelect = document.getElementById('clientSelect');
+  if (clientSelect) {
+    clientSelect.addEventListener('change', function() {
+      const selectedClient = this.value;
+      if (selectedClient) {
+        displayCostSummary(selectedClient);
+      } else {
+        document.getElementById('costSummaryContent').style.display = 'none';
+        const downloadBtn = document.getElementById('downloadPdfBtn');
+        const printBtn = document.getElementById('printBtn');
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        if (printBtn) printBtn.style.display = 'none';
+      }
+    });
+  }
+
+  // PDF download button
+  const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('click', function() {
+      const selectedClient = document.getElementById('clientSelect').value;
+      if (selectedClient) {
+        const reports = getClientReports(selectedClient);
+        const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+        const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+        generatePDF(displayName, reports, totalCost);
+      }
+    });
+  }
+
+  // Print button
+  const printBtn = document.getElementById('printBtn');
+  if (printBtn) {
+    printBtn.addEventListener('click', function() {
+      const selectedClient = document.getElementById('clientSelect').value;
+      if (selectedClient) {
+        const reports = getClientReports(selectedClient);
+        const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+        const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+        
+        let printContent = '';
+        
+        if (selectedClient === 'ALL_CLIENTS') {
+          const groupedReports = groupReportsByClient(reports);
+          let clientTables = '';
+          
+          Object.keys(groupedReports).sort().forEach(client => {
+            const clientReports = groupedReports[client];
+            const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+            
+            const clientRows = clientReports.map(report => `
+              <tr>
+                <td>${report.date}</td>
+                <td>${report.request}</td>
+                <td>${report.costRemarks}</td>
+                <td class="cost">$${report.cost.toFixed(2)}</td>
+              </tr>
+            `).join('');
+            
+            clientTables += `
+              <div class="client-section">
+                <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
+                  Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
+                </h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Request</th>
+                      <th>Cost Remarks</th>
+                      <th>Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${clientRows}
+                  </tbody>
+                </table>
+              </div>
+            `;
+          });
+          
+          printContent = `
+            <html>
+              <head>
+                <title>Concierge Cost Summary - ${displayName}</title>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 20px; }
+                  h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+                  .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                  .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
+                  .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+                  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                  th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+                  th { background: #f8f9fa; font-weight: bold; }
+                  tr:nth-child(even) { background: #f9f9f9; }
+                  .cost { text-align: right; font-weight: bold; }
+                  @media print {
+                    body { margin: 0; }
+                    .no-print { display: none; }
+                    .client-section { page-break-inside: avoid; }
+                  }
+                </style>
+              </head>
+              <body>
+                <h1>Concierge Requests Cost Summary</h1>
+                <div class="client-info">
+                  <strong>Client:</strong> ${displayName}<br>
+                  <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+                </div>
+                ${clientTables}
+                <div class="total-box">
+                  <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+                </div>
+              </body>
+            </html>
+          `;
+        } else {
+          // Single client print content
+          printContent = `
+            <html>
+              <head>
+                <title>Concierge Cost Summary - ${displayName}</title>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 20px; }
+                  h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+                  .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                  .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
+                  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                  th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+                  th { background: #f8f9fa; font-weight: bold; }
+                  tr:nth-child(even) { background: #f9f9f9; }
+                  .cost { text-align: right; font-weight: bold; }
+                  @media print {
+                    body { margin: 0; }
+                    .no-print { display: none; }
+                  }
+                </style>
+              </head>
+              <body>
+                <h1>Concierge Requests Cost Summary</h1>
+                <div class="client-info">
+                  <strong>Client:</strong> ${displayName}<br>
+                  <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+                </div>
+                <div class="total-box">
+                  <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Request</th>
+                      <th>Cost Remarks</th>
+                      <th>Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${reports.map(report => `
+                      <tr>
+                        <td>${report.date}</td>
+                        <td>${report.request}</td>
+                        <td>${report.costRemarks}</td>
+                        <td class="cost">$${report.cost.toFixed(2)}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </body>
+            </html>
+          `;
+        }
+        
+        // Open print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      }
+    });
+  }
+
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('costSummaryModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+      document.getElementById('costSummaryContent').style.display = 'none';
+      const downloadBtn = document.getElementById('downloadPdfBtn');
+      const printBtn = document.getElementById('printBtn');
+      if (downloadBtn) downloadBtn.style.display = 'none';
+      if (printBtn) printBtn.style.display = 'none';
+    }
+  });
+
+  // Button hover effects
+  const viewCostBtn = document.getElementById('viewCostSummaryBtn');
+  if (viewCostBtn) {
+    viewCostBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#5a6268';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    viewCostBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#6c757d';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  const submitChangesBtn = document.getElementById('submitChangesBtn');
+  if (submitChangesBtn) {
+    submitChangesBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#0056b3';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    submitChangesBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#007bff';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  // PDF download button hover effect
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#218838';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    downloadPdfBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#28a745';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  // Print button hover effect
+  if (printBtn) {
+    printBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#138496';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    printBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#17a2b8';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  // Select focus effect
+  if (clientSelect) {
+    clientSelect.addEventListener('focus', function() {
+      this.style.borderColor = '#007bff';
+      this.style.boxShadow = '0 0 0 3px rgba(0,123,255,0.1)';
+    });
+    
+    clientSelect.addEventListener('blur', function() {
+      this.style.borderColor = '#e9ecef';
+      this.style.boxShadow = 'none';
+    });
+  }
+
+  // Close button hover effect
+  if (closeCostModal) {
+    closeCostModal.addEventListener('mouseenter', function() {
+      this.style.background = '#f8f9fa';
+      this.style.color = '#333';
+    });
+    
+    closeCostModal.addEventListener('mouseleave', function() {
+      this.style.background = 'transparent';
+      this.style.color = '#6c757d';
+    });
+  }
+
+});
+</script>
+
+<script>
+document.getElementById("submitChangesBtn").addEventListener("click", function() {
+    if (confirm("Do you want to save the changes?")) {
+        location.reload(); // reload page if Yes
+    }
+    // if No, nothing happens
+});
+</script>
 {% endblock content %}

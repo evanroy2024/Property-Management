@@ -50,9 +50,15 @@ class PrearrivalInformation(models.Model):
         ('completed', 'Completed'),
         ('denied', 'Denied'),
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
+    status_remarks = models.TextField(blank=True, null=True)
+    completation_denied_date = models.DateField(blank=True, null=True)
+    client_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='Pending', blank=True)
+    cost = models.IntegerField(default=0)
+    cost_remarks = models.TextField(blank=True, null=True)
+
     arrival_date = models.DateField(null=True, blank=True)
     arrival_time = models.TimeField(null=True, blank=True)
     temperature = models.FloatField(null=True, blank=True)
@@ -97,12 +103,19 @@ class DepartureInformation(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     departure_date = models.DateField(null=True, blank=True)
     departure_time = models.TimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
+    status_remarks = models.TextField(blank=True, null=True)
+    completation_denied_date = models.DateField(blank=True, null=True)
+    client_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='Pending', blank=True)
+    cost = models.IntegerField(default=0)
+    cost_remarks = models.TextField(blank=True, null=True)
 
     housekeeping = models.TextField(null=True, blank=True)
     wash = models.TextField(null=True, blank=True)
     trash = models.TextField(null=True, blank=True)
     additional = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
 
     def __str__(self):
         return f"{self.name} - {self.user.username if self.user else 'No User'}"

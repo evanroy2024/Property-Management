@@ -1,6 +1,6 @@
 {% extends 'adminmanager/adminbase.html' %}
 {% load static %}
-{% block title %}Departure Requests{% endblock %}
+{% block title %}Pre-arrival Requests{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -336,24 +336,24 @@
     <!-- Page Header -->
     <div class="page-header">
         <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
-        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Departure Notifications </h1>
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Completed Pre-arrival Notifications </h1>
     </div>
 
     <!-- Filters -->
     <div class="card shadow mb-4">
         <div class="p-3">
            <div class="row g-2">
-    <div class="col-4">
+    <div class="col-6">
         <select id="filter-date" class="form-select w-100">
             <option value="">All Dates</option>
         </select>
     </div>
-    <div class="col-4">
+    <div class="col-6">
         <select id="filter-client" class="form-select w-100">
             <option value="">All Clients</option>
         </select>
     </div>
-    <div class="col-6" style="display: none;">
+    <div class="col-4" style="display: none;">
         <select id="filter-status" class="form-select">
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -362,11 +362,6 @@
             <option value="denied">Denied</option>
         </select>
     </div>
-     <div class="col-4">
-                <select id="filter-month" class="form-select">
-                    <option value="">All Months</option>
-                </select>
-            </div>
 </div>
 
         </div>
@@ -380,7 +375,7 @@
                                 CLIENT  <i class="fas fa-sort sort-icon"></i>
                             </th>
                             <th class="sortable" data-index="2" style="cursor: pointer;">
-                                DEPARTURE DATE <i class="fas fa-sort sort-icon"></i>
+                                ARRIVAL DATE <i class="fas fa-sort sort-icon"></i>
                             </th>
                             <th class="sortable" data-index="0" style="cursor: pointer;">
                                Request Submittal Date <i class="fas fa-sort sort-icon"></i>
@@ -389,6 +384,7 @@
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
+                            <th>Completion Date</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -403,10 +399,10 @@
                                 <td><strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong></td>
                                 
                                 <td>
-                                    {% if req.departure_date %}
-                                        <strong>{{ req.departure_date|date:'M d, Y' }}</strong><br>
-                                        {% if req.departure_time %}
-                                            <small class="text-muted">{{ req.departure_time|time:'g:i A' }}</small>
+                                    {% if req.arrival_date %}
+                                        <strong>{{ req.arrival_date|date:'M d, Y' }}</strong><br>
+                                        {% if req.arrival_time %}
+                                            <small class="text-muted">{{ req.arrival_time|time:'g:i A' }}</small>
                                         {% endif %}
                                     {% else %}
                                         <small class="text-muted">Not specified</small>
@@ -419,7 +415,7 @@
                               
 
                                 <td>
-                                    <a href="{% url 'adminmanager:departure_request_detail' req.id %}" class="view-details-btn">
+                                    <a href="{% url 'adminmanager:prearrival_request_detail' req.id %}" class="view-details-btn">
                                          View 
                                     </a>
                                 </td>
@@ -444,8 +440,7 @@
                                         </span>
                                     </div>
                                 </td>
-
-                              <td>
+<td>
     <span 
         id="status-{{ req.id }}"
         onclick="openUpdateStatusModal('{{ req.id }}', '{{ req.status }}', '{{ req.completation_denied_date|date:"Y-m-d" }}', '{{ req.status_remarks|default:"" }}', '{{ req.client_approval }}')"
@@ -453,31 +448,40 @@
             cursor: pointer;
             padding: 3px 7px;
             border-radius: 4px;
-            border: 1px solid;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
+            color: white;
             {% if req.status == 'completed' %}
-                border-color: black;
+                background-color: #66CC66;
+                border: 1px solid #66CC66;
             {% elif req.status == 'denied' %}
-                border-color: black;
+                background-color: #FF6666;
+                border: 1px solid #FF6666;
             {% else %}
-                border-color: black;
+                background-color: gray;
+                border: 1px solid gray;
             {% endif %}
         "
     >
-        Open
+        {{ req.status|title }}
     </span>
 </td>
-
+ <td>
+        {% if req.completation_denied_date %}
+            {{ req.completation_denied_date|date:"Y-m-d" }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
 
                             </tr>
                         {% empty %}
                             <tr>
                                 <td colspan="8">
                                     <div class="empty-state">
-                                        <i class="fas fa-plane-departure fa-4x mb-3 icon-gray"></i>
-                                        <h4 class="text-gray-800 mb-2">No departure requests found</h4>
+                                        <i class="fas fa-calendar-check fa-4x mb-3 icon-gray"></i>
+                                        <h4 class="text-gray-800 mb-2">No pre-arrival requests found</h4>
                                         <p class="text-gray-600 mb-3">All requests are currently completed or closed</p>
                                     </div>
                                 </td>
@@ -551,6 +555,7 @@
             
             <p style="color: black;">Status:</p>
             <select id="statusDropdown" class="modal-input">
+                <option value="pending">Pending</option>
                 <option value="open">Open</option>
                 <option value="completed">Completed</option>
                 <option value="denied">Denied</option>
@@ -588,6 +593,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const client = row.getAttribute("data-client");
         if (date) {
             dates.add(date);
+            // Extract month from date for month filter
             const dateObj = new Date(date);
             const monthYear = dateObj.toLocaleDateString('en-US', { 
                 year: 'numeric', 
@@ -634,11 +640,11 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         
         rows.forEach(row => {
-            const date = row.getAttribute("data-date");
+            const rowDate = row.getAttribute("data-date");
             let monthMatch = true;
             
-            if (selected.month && date) {
-                const dateObj = new Date(date);
+            if (selected.month && rowDate) {
+                const dateObj = new Date(rowDate);
                 const rowMonth = dateObj.toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long' 
@@ -683,7 +689,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let aText = a.children[index].innerText.trim().toLowerCase();
                 let bText = b.children[index].innerText.trim().toLowerCase();
                 
-                // Handle date sorting for index 0 (Request Date) and index 2 (Departure Date)
+                // Handle date sorting for index 0 (Request Date) and index 2 (Arrival Date)
                 if (index === 0 || index === 2) {
                     // Extract date from the text (handles "M d, Y" format)
                     const aDateMatch = aText.match(/[a-z]{3}\s+\d{1,2},\s+\d{4}/);
@@ -735,7 +741,7 @@ document.getElementById('editCostForm').addEventListener('submit', function(e) {
     const amount = document.getElementById('editModalAmount').value;
     const remarks = document.getElementById('editModalRemarks').value;
 
-    fetch("{% url 'adminmanager:upodate_departure_cost' %}", {
+    fetch("{% url 'adminmanager:upodate_prearrival_cost' %}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -783,7 +789,7 @@ function submitUpdateApproval() {
     const requestId = document.getElementById('approvalRequestId').value;
     const newValue = selectedApprovalStatus;
 
-    fetch("{% url 'adminmanager:upodate_departure_approval' %}", {
+    fetch("{% url 'adminmanager:upodate_prearrival_approval' %}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -805,7 +811,7 @@ function submitUpdateApproval() {
                 } else if (newValue === 'Denied') {
                     newClass += 'status-denied';
                 } else {
-                    newClass += 'status-open';
+                    newClass += 'status-pending';
                 }
 
                 span.className = newClass;
@@ -824,7 +830,7 @@ function submitUpdateApproval() {
 }
 
 // Status Modal Functions
-function openUpdateStatusModal(requestId, currentStatus, currentDate, currentRemarks, clientApproval) {
+function openUpdateStatusModal(requestId, currentStatus, currentDate, currentRemarks) {
    document.getElementById('statusRequestId').value = requestId;
    document.getElementById('completionDate').value = currentDate || '';
    document.getElementById('statusRemarks').value = currentRemarks || '';
@@ -858,7 +864,7 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
         return;
     }
 
-    fetch("{% url 'adminmanager:upodate_departure_status' %}", {
+    fetch("{% url 'adminmanager:upodate_prearrival_status' %}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -872,34 +878,36 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            // Update the status display
-            const statusDisplay = document.getElementById(`status-${requestId}`);
-            if (statusDisplay) {
-                let displayText = status;
-                if (status === 'open') {
-                    displayText = 'Open';
-                    statusDisplay.style.backgroundColor = '';
-                    statusDisplay.style.border = '';
-                    statusDisplay.style.color = '';
-                } else if (status === 'completed') {
-                    displayText = 'Completed';
-                    statusDisplay.style.backgroundColor = '#66CC66'; // light but richer green
-                    statusDisplay.style.border = '1px solid #66CC66'; // same color border
-                    statusDisplay.style.color = 'white'; // white text
-                } else if (status === 'denied') {
-                    displayText = 'Denied';
-                    statusDisplay.style.backgroundColor = '#FF6B6B'; // light red
-                    statusDisplay.style.border = '1px solid #FF6B6B'; // same color border
-                    statusDisplay.style.color = 'white'; // white text
-                }
-                statusDisplay.textContent = displayText;
+    if (data.success) {
+        // Update the status display
+        const statusDisplay = document.getElementById(`status-${requestId}`);
+        if (statusDisplay) {
+            let displayText = status;
+            if (status === 'pending') {
+                displayText = 'Pending';
+                statusDisplay.style.backgroundColor = ''; // reset
+            } else if (status === 'open') {
+                displayText = 'Open';
+                statusDisplay.style.backgroundColor = ''; // reset
+            } else if (status === 'completed') {
+                displayText = 'Completed';
+                statusDisplay.style.backgroundColor = '#66CC66'; // light but richer green
+                statusDisplay.style.border = '1px solid #66CC66'; // same color border
+                statusDisplay.style.color = 'white';
+            } else if (status === 'denied') {
+                displayText = 'Denied';
+                statusDisplay.style.backgroundColor = 'red';
+                statusDisplay.style.border = '1px solid red'; // same color border
+                statusDisplay.style.color = 'white';
             }
-            closeUpdateStatusModal();
-        } else {
-            alert('Error updating status: ' + data.error);
+            statusDisplay.textContent = displayText;
         }
-    })
+        closeUpdateStatusModal();
+    } else {
+        alert('Error updating status: ' + data.error);
+    }
+})
+
     .catch(error => {
         console.error('Error:', error);
         alert('Error updating status');
@@ -907,8 +915,9 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
 });
 
 </script>
+
 <script>
-// Calculate total cost for departure requests
+// Calculate total cost for pre-arrival requests
 (function () {
  function calculateTotalCost() {
    const rows = document.querySelectorAll('#sortable-table tbody tr.request-row');
@@ -917,7 +926,7 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
    rows.forEach(row => {
      const costCell = row.querySelector('span[id^="cost-"]');
      if (costCell) {
-       const costText = costCell.textContent.replace(', '');
+       const costText = costCell.textContent.replace('$', '');
        const cost = parseFloat(costText) || 0;
        total += cost;
      }
@@ -925,7 +934,7 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
 
    const totalButton = document.getElementById('totalCostBtn');
    if (totalButton) {
-     totalButton.textContent = `Total : ${total.toFixed(2)}`;
+     totalButton.textContent = `Total : $${total.toFixed(2)}`;
    }
  }
 

@@ -6,6 +6,8 @@ class FAQ(models.Model):
         ('billing', 'Billing'),
         ('technical', 'Technical'),
         ('general', 'General'),
+        ('services', 'Services'),
+        ('membership', 'Membership'),
     ]
 
     question = models.CharField(max_length=255)

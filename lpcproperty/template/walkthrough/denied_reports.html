@@ -309,21 +309,26 @@
         <!-- Live Filters -->
         <div class="p-3">
             <div class="row g-2">
-                <div class="col-md-4">
+                <div class="col-md-3">
                 <select id="filter-client" class="form-select">
                     <option value="">All Clients</option>
                 </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                 <select id="filter-date" class="form-select">
                     <option value="">All Dates</option>
                 </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                 <select id="filter-address" class="form-select">
                     <option value="">All Addresses</option>
                 </select>
                 </div>
+                 <div class="col-md-3">
+                <select id="filter-month" class="form-select">
+                    <option value="">All Months</option>
+                </select>
+            </div>
             </div>
             </div>
 
@@ -354,82 +359,110 @@
                         <th>EST'D COST</th>
                         <th>CLIENT STATUS</th>
                         <th>ITEM STATUS</th>
+                        <th>Denied Date</th>
                     </tr>
 
                     </thead>
-                    <tbody id="report-table">
-    {% for report in reports %}
-        {% for item in report.inspection_items %}
-        {% if item.update_status == 'Denied' %}
-        
-            <tr class="report-row"
-                data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"
-                data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"
-                data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">
-                
-                <td><strong>{{ item.category }}</strong></td>
-                <td style="word-wrap: break-word; white-space: normal; max-width: 250px;" > {{ item.question }}</td>
-                <td style="word-wrap: break-word; white-space: normal; max-width: 250px;">{{ item.remarks|default:"-" }}</td>
-
-                
-                <td>
-                    <strong>{{ report.datetime|date:'M d, Y' }}</strong><br>
-                    <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>
-                </td>
-                
-                <td><strong>{{ report.user.last_name }}, {{ report.user.first_name }}</strong></td>
-                <td>
-  <span id="cost-{{ report.id }}-{{ item.question|slugify }}">${{ item.amount|default:"-" }}</span>
-<button 
-  onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"
-  class="edit-btn"
-  title="Edit Cost">
-  <i class="fas fa-pen-to-square"></i>
-</button>
-</td>
-
-<td>
-  <div id="approval-cell-{{ report.id }}-{{ item.field_name }}" onclick="openUpdateApprovalModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.client_approval }}', '{{ item.category }}')" style="cursor: pointer;">
-    <span id="approval-span-{{ report.id }}-{{ item.field_name }}" class="status-badge {% if item.client_approval == 'Approved' %}status-approved{% elif item.client_approval == 'Denied' %}status-denied{% else %}status-pending{% endif %}">
-      {{ item.client_approval }}
-    </span>
-  </div>
-</td>
-
-<td onclick="openUpdateFieldStatusModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.category }}')" 
-    data-remarks="{{ item.update_remarks|default:'' }}" 
+                  <tbody id="report-table">     
+    {% for report in reports %}         
+        {% for item in report.inspection_items %}         
+        {% if item.update_status == 'Denied' %}                      
+            <tr class="report-row"                 
+                data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
+                data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"                 
+                data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">                                  
+                <td><strong>{{ item.category }}</strong></td>                 
+                <td style="word-wrap: break-word; white-space: normal; max-width: 250px;" > {{ item.question }}</td>                 
+                <td style="word-wrap: break-word; white-space: normal; max-width: 250px;">{{ item.remarks|default:"-" }}</td>                                   
+                <td>                     
+                    <strong>{{ report.datetime|date:'M d, Y' }}</strong><br>                     
+                    <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>                 
+                </td>                                  
+                <td><strong>{{ report.user.last_name }}, {{ report.user.first_name }}</strong></td>                 
+                <td>   
+                    <span id="cost-{{ report.id }}-{{ item.question|slugify }}">${{ item.amount|default:"-" }}</span> 
+                    <button    
+                        onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"   
+                        class="edit-btn"   
+                        title="Edit Cost">   
+                        <i class="fas fa-pen-to-square"></i> 
+                    </button> 
+                </td>  
+                <td>   
+                    <div id="approval-cell-{{ report.id }}-{{ item.field_name }}" onclick="openUpdateApprovalModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.client_approval }}', '{{ item.category }}')" style="cursor: pointer;">     
+                        <span id="approval-span-{{ report.id }}-{{ item.field_name }}" class="status-badge {% if item.client_approval == 'Approved' %}status-approved{% elif item.client_approval == 'Denied' %}status-denied{% else %}status-pending{% endif %}">       
+                            {{ item.client_approval }}     
+                        </span>   
+                    </div> 
+                </td>  
+               <td onclick="openUpdateFieldStatusModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.category }}', '{{ item.client_approval }}')" 
+    style="cursor: pointer;" 
+    id="status-cell-{{ report.id }}-{{ item.field_name }}"
     data-date="{{ item.update_date|date:'Y-m-d'|default:'' }}" 
-    id="status-cell-{{ report.id }}-{{ item.field_name }}">
-
-  <span id="status-span-{{ report.id }}-{{ item.field_name }}">
-    {% if item.update_status == 'Open' %}
-      <span class="status-badge status-open">Open</span>
-    {% elif item.update_status == 'Completed' %}
-      <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; background-color: #28a745;">Completed</span>
-    {% elif item.update_status == 'Denied' %}
-      <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; background-color: #dc3545;">Denied</span>
-    {% endif %}
-  </span>
-</td>
-
-              
-            </tr>
+    data-remarks="{{ item.update_remarks|default:'' }}">
+    <span id="status-span-{{ report.id }}-{{ item.field_name }}">
+        {% if item.update_status == 'Open' %}
+            <span class="status-badge status-open">Open</span>
+        {% elif item.update_status == 'Completed' %}
+            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; background-color: #28a745;">Completed</span>
+        {% elif item.update_status == 'Denied' %}
+            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; background-color: #dc3545;">Denied</span>
         {% endif %}
-
-        {% endfor %}
-    {% empty %}
-        <tr>
-            <td colspan="8">
-                <div class="empty-state">
-                    <i class="fas fa-clipboard-list fa-4x mb-3 icon-gray"></i>
-                    <h4 class="text-gray-800 mb-2">No open walk-through reports found</h4>
-                    <p class="text-gray-600 mb-3">All reports are currently completed or closed</p>
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
+    </span>
+</td>               
+<td 
+    style="cursor: pointer;">
+    {% if item.update_date %}
+        {{ item.update_date|date:'M d, Y' }}
+    {% else %}
+        -
+    {% endif %}
+</td>         
+            </tr>         
+        {% endif %}          
+        {% endfor %}     
+    {% empty %}         
+        <tr>             
+            <td colspan="8">                 
+                <div class="empty-state">                     
+                    <i class="fas fa-clipboard-list fa-4x mb-3 icon-gray"></i>                     
+                    <h4 class="text-gray-800 mb-2">No open walk-through reports found</h4>                     
+                    <p class="text-gray-600 mb-3">All reports are currently completed or closed</p>                 
+                </div>             
+            </td>         
+        </tr>     
+    {% endfor %} 
 </tbody>
+
                 </table>
+                {% csrf_token %}
+              <div style="text-align:right;">
+                <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
+                <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
+    View Cost Summary
+  </button>
+  <button id="submitChangesBtn" style="background-color:#007bff; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s;">
+    Submit Updates
+  </button>
+</div>
+<script>
+  let confirmed = false;
+
+  // Warn before leaving the page
+  window.onbeforeunload = function () {
+    if (!confirmed) {
+      return "Are you sure you want to leave? Unsaved changes will be lost.";
+    }
+  };
+
+  // Handle button click
+  document.getElementById("submitChangesBtn").addEventListener("click", function () {
+    if (confirm("Are you sure you want to confirm changes?")) {
+      confirmed = true;
+      location.reload();  // Reload page after confirmation
+    }
+  });
+</script>
 
             </div>
         </div>
@@ -442,7 +475,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const filters = {
         client: document.getElementById("filter-client"),
         date: document.getElementById("filter-date"),
-        address: document.getElementById("filter-address")
+        address: document.getElementById("filter-address"),
+        month: document.getElementById("filter-month")
     };
     
     const rows = document.querySelectorAll(".report-row");
@@ -451,13 +485,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const clients = new Set();
     const dates = new Set();
     const addresses = new Set();
+    const months = new Set();
     
     rows.forEach(row => {
         const client = row.getAttribute("data-client");
         const date = row.getAttribute("data-date");
         const address = row.getAttribute("data-address");
         if (client) clients.add(client);
-        if (date) dates.add(date);
+        if (date) {
+            dates.add(date);
+            // Extract month-year for month filter
+            const dateObj = new Date(date);
+            const monthYear = dateObj.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+            });
+            months.add(monthYear);
+        }
         if (address) addresses.add(address);
     });
     
@@ -485,6 +529,14 @@ document.addEventListener("DOMContentLoaded", function () {
         opt.value = val;
         opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
         filters.address.appendChild(opt);
+    });
+    
+    // Populate month filter
+    [...months].sort((a, b) => new Date(a + ' 1') - new Date(b + ' 1')).reverse().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val;
+        filters.month.appendChild(opt);
     });
     
     // Function to update address dropdown based on selected client
@@ -526,10 +578,11 @@ document.addEventListener("DOMContentLoaded", function () {
         addressDropdown.value = "";
     }
     
-    // Function to update date dropdown based on selected client and address
+    // Function to update date dropdown based on selected client, address and month
     function updateDateDropdown() {
         const selectedClient = filters.client.value;
         const selectedAddress = filters.address.value;
+        const selectedMonth = filters.month.value;
         const dateDropdown = filters.date;
         
         // Clear existing options except "All Dates"
@@ -541,11 +594,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const address = row.getAttribute("data-address");
             const date = row.getAttribute("data-date");
             
-            const clientMatch = !selectedClient || client === selectedClient;
-            const addressMatch = !selectedAddress || address === selectedAddress;
-            
-            if (clientMatch && addressMatch && date) {
-                filteredDates.add(date);
+            if (date) {
+                const dateObj = new Date(date);
+                const monthYear = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long' 
+                });
+                
+                const clientMatch = !selectedClient || client === selectedClient;
+                const addressMatch = !selectedAddress || address === selectedAddress;
+                const monthMatch = !selectedMonth || monthYear === selectedMonth;
+                
+                if (clientMatch && addressMatch && monthMatch) {
+                    filteredDates.add(date);
+                }
             }
         });
         
@@ -565,19 +627,77 @@ document.addEventListener("DOMContentLoaded", function () {
         dateDropdown.value = "";
     }
     
+    // Function to update month dropdown based on selected client and address
+    function updateMonthDropdown() {
+        const selectedClient = filters.client.value;
+        const selectedAddress = filters.address.value;
+        const monthDropdown = filters.month;
+        
+        // Clear existing options except "All Months"
+        monthDropdown.innerHTML = '<option value="">All Months</option>';
+        
+        const filteredMonths = new Set();
+        rows.forEach(row => {
+            const client = row.getAttribute("data-client");
+            const address = row.getAttribute("data-address");
+            const date = row.getAttribute("data-date");
+            
+            if (date) {
+                const dateObj = new Date(date);
+                const monthYear = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long' 
+                });
+                
+                const clientMatch = !selectedClient || client === selectedClient;
+                const addressMatch = !selectedAddress || address === selectedAddress;
+                
+                if (clientMatch && addressMatch) {
+                    filteredMonths.add(monthYear);
+                }
+            }
+        });
+        
+        [...filteredMonths].sort((a, b) => new Date(a + ' 1') - new Date(b + ' 1')).reverse().forEach(val => {
+            const opt = document.createElement("option");
+            opt.value = val;
+            opt.textContent = val;
+            monthDropdown.appendChild(opt);
+        });
+        
+        // Reset month filter value
+        monthDropdown.value = "";
+    }
+    
     // Filter function
     function filterTable() {
         const selected = {
             client: filters.client.value,
             date: filters.date.value,
-            address: filters.address.value
+            address: filters.address.value,
+            month: filters.month.value
         };
         
         rows.forEach(row => {
+            const client = row.getAttribute("data-client");
+            const date = row.getAttribute("data-date");
+            const address = row.getAttribute("data-address");
+            
+            let monthMatch = true;
+            if (selected.month && date) {
+                const dateObj = new Date(date);
+                const monthYear = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long' 
+                });
+                monthMatch = monthYear === selected.month;
+            }
+            
             const matches = 
-                (!selected.client || row.getAttribute("data-client") === selected.client) &&
-                (!selected.date || row.getAttribute("data-date") === selected.date) &&
-                (!selected.address || row.getAttribute("data-address") === selected.address);
+                (!selected.client || client === selected.client) &&
+                (!selected.date || date === selected.date) &&
+                (!selected.address || address === selected.address) &&
+                monthMatch;
             
             row.style.display = matches ? "" : "none";
         });
@@ -586,11 +706,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // Event listeners for filters
     filters.client.addEventListener("change", function() {
         updateAddressDropdown();
+        updateMonthDropdown();
         updateDateDropdown();
         filterTable();
     });
     
     filters.address.addEventListener("change", function() {
+        updateMonthDropdown();
+        updateDateDropdown();
+        filterTable();
+    });
+    
+    filters.month.addEventListener("change", function() {
         updateDateDropdown();
         filterTable();
     });
@@ -747,13 +874,13 @@ document.getElementById('confirmAllBtn').addEventListener('click', function() {
       <input type="hidden" id="editModalQuestionSlug">
       
       <p style="color: black;">Amount ($):</p>
-      <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input" readonly>
+      <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input">
       
       <p style="color: black;">calculation:</p>
-      <textarea id="editModalNote" name="calculation_note" required class="modal-input" rows="3" placeholder="list vendor cost, internal markup, and addl costs that may apply. Copy this total to the 'Amount box'" readonly></textarea>
+      <textarea id="editModalNote" name="calculation_note" required class="modal-input" rows="3" placeholder="list vendor cost, internal markup, and addl costs that may apply. Copy this total to the 'Amount box'"></textarea>
       
       <div style="display: flex; gap: 15px; justify-content: center;">
-        <!-- <button type="submit" class="btn-primary">Save Changes</button> -->
+        <button type="submit" class="btn-primary">Save Changes</button>
         <button type="button" onclick="closeEditCostModal()" class="btn-secondary">Cancel</button>
       </div>
     </form>
@@ -832,7 +959,7 @@ function slugify(text) {
 </script>
 
 <!-- Client Approval Update Modal -->
-<div id="updateApprovalModals" class="modal">
+<div id="updateApprovalModal" class="modal">
   <div class="modal-content">
     <div class="modal-header" style="align-items: center; justify-content: center;">
       <h3>Client Approval</h3>
@@ -942,19 +1069,23 @@ function submitUpdateApproval() {
     <input type="hidden" id="statusCategory" value="">
     
     <p style="color: rgb(0, 0, 0);">Date:</p>
-    <input type="date" id="statusDatetime" required class="modal-input" readonly>
+    <input type="date" id="statusDatetime" required class="modal-input">
     
-    <!-- <p style="color: rgb(0, 0, 0);">Status:</p>
-    <select id="newStatus" class="modal-input" readonly>
-      <option value="Completed">Completed</option>
-      <option value="Denied">Denied</option>
-    </select> -->
+    <p style="color: rgb(0, 0, 0);">Status:</p>
+    <div id="statusContainer">
+      <select id="newStatus" class="modal-input">
+        <option value="Open">Open</option>
+        <option value="Completed">Completed</option>
+        <option value="Denied">Denied</option>
+      </select>
+      <input type="text" id="lockedStatus" class="modal-input" readonly style="display: none; background-color: #f5f5f5; cursor: not-allowed;">
+    </div>
     
     <p style="color: rgb(0, 0, 0);">Remarks:</p>
-    <textarea id="updateStatusRemarks" required class="modal-input" placeholder="Write your remarks" readonly></textarea>
+    <textarea id="updateStatusRemarks" required class="modal-input" placeholder="Write your remarks"></textarea>
     
     <div style="display: flex; gap: 15px; justify-content: center;">
-      <!-- <button type="button" onclick="submitUpdateFieldStatus()" class="btn-primary">Save Changes</button> -->
+      <button type="button" onclick="submitUpdateFieldStatus()" class="btn-primary">Save Changes</button>
       <button type="button" onclick="closeUpdateFieldStatusModal()" class="btn-secondary">Cancel</button>
     </div>
   </div>
@@ -965,17 +1096,12 @@ function openUpdateFieldStatusModal(reportId, fieldName, category) {
   document.getElementById('statusFieldName').value = fieldName;
   document.getElementById('statusCategory').value = category;
   
-  // Populate existing data
   const statusCell = document.getElementById(`status-cell-${reportId}-${fieldName}`);
-  const remarksText = statusCell.getAttribute('data-remarks') || '';
-  const dateValue = statusCell.getAttribute('data-date') || '';
-  
-  document.getElementById('updateStatusRemarks').value = remarksText;
-  document.getElementById('statusDatetime').value = dateValue;
+  document.getElementById('statusDatetime').value = statusCell.getAttribute('data-date');
+  document.getElementById('updateStatusRemarks').value = statusCell.getAttribute('data-remarks');
   
   document.getElementById('updateFieldStatusModal').style.display = 'block';
 }
-
 function closeUpdateFieldStatusModal() {
   document.getElementById('updateFieldStatusModal').style.display = 'none';
 }
@@ -984,9 +1110,12 @@ function submitUpdateFieldStatus() {
   const reportId = document.getElementById('statusReportId').value;
   const fieldName = document.getElementById('statusFieldName').value;
   const category = document.getElementById('statusCategory').value;
-  const newStatus = document.getElementById('newStatus').value;
   const datetime = document.getElementById('statusDatetime').value;
   const remarks = document.getElementById('updateStatusRemarks').value;
+  
+  // Get status value from dropdown
+  const statusSelect = document.getElementById('newStatus');
+  const newStatus = statusSelect.value;
 
   console.log('Updating status:', { reportId, fieldName, category, newStatus, datetime, remarks });
 
@@ -1038,4 +1167,710 @@ function submitUpdateFieldStatus() {
   });
 }
 </script>
+
+<!-- Summary changes   ---------------------------------------------------------------------------------------  -->
+<!-- Modal for Cost Summary -->
+<!-- Modal for Cost Summary -->
+<div id="costSummaryModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); backdrop-filter:blur(2px);">
+  <div style="background:#fff; margin:2% auto; padding:0; border-radius:12px; width:90%; max-width:700px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-height:90vh; overflow:hidden;">
+    
+    <!-- Modal Header -->
+    <div style="padding:20px 24px; border-bottom:1px solid #e9ecef; display:flex; justify-content:space-between; align-items:center; background:#f8f9fa;">
+      <h3 style="margin:0; color:#333; font-weight:600; font-size:18px;">Client Cost Summary</h3>
+      <span id="closeCostModal" style="color:#6c757d; font-size:24px; font-weight:bold; cursor:pointer; padding:4px; border-radius:4px; transition:all 0.2s ease;">&times;</span>
+    </div>
+    
+    <!-- Modal Body -->
+    <div style="padding:24px; max-height:70vh; overflow-y:auto;">
+      <div style="margin-bottom:24px;">
+        <label for="clientSelect" style="display:block; margin-bottom:8px; font-weight:600; color:#333; font-size:14px;">Select Client:</label>
+        <select id="clientSelect" style="width:100%; padding:12px 16px; border:2px solid #e9ecef; border-radius:8px; font-size:14px; color:#333; background:#fff; transition:border-color 0.3s ease; outline:none;">
+          <option value="" style="color:#333;">Choose a client...</option>
+        </select>
+      </div>
+      
+      <div id="costSummaryContent" style="display:none;">
+        <div style="background:#f8f9fa; padding:16px; border-radius:8px; margin-bottom:20px; border-left:4px solid #007bff;">
+          <h4 id="selectedClientName" style="margin:0; color:#333; font-weight:600; font-size:16px;"></h4>
+        </div>
+        
+        <div id="reportsList" style="margin-bottom:20px;"></div>
+        
+        <div style="background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding:20px; border-radius:10px; border:2px solid #007bff;">
+          <h4 style="margin:0 0 15px 0; color:#007bff; font-weight:700; font-size:18px; text-align:center;">
+            Total Cost: $<span id="totalCost">0.00</span>
+          </h4>
+          <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+            <button id="downloadPdfBtn" style="display:none; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Download PDF</button>
+            <button id="printBtn" style="display:none; background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// Get unique clients from table
+function getUniqueClients() {
+  const clientSet = new Set();
+  const rows = document.querySelectorAll('#report-table tr.report-row');
+  
+  rows.forEach(row => {
+    const clientCell = row.querySelector('td:nth-child(5)');
+    if (clientCell) {
+      clientSet.add(clientCell.textContent.trim());
+    }
+  });
+  
+  return Array.from(clientSet).sort();
+}
+
+// Populate client dropdown
+function populateClientDropdown() {
+  const clients = getUniqueClients();
+  const select = document.getElementById('clientSelect');
+  
+  // Clear existing options except first
+  select.innerHTML = '<option value="">Choose a client...</option>';
+  
+  // Add "All Clients" option
+  const allOption = document.createElement('option');
+  allOption.value = 'ALL_CLIENTS';
+  allOption.textContent = 'All Clients';
+  select.appendChild(allOption);
+  
+  clients.forEach(client => {
+    const option = document.createElement('option');
+    option.value = client;
+    option.textContent = client;
+    select.appendChild(option);
+  });
+}
+
+// Get reports for selected client
+function getClientReports(clientName) {
+  const rows = document.querySelectorAll('#report-table tr.report-row');
+  const reports = [];
+  
+  rows.forEach(row => {
+    const clientCell = row.querySelector('td:nth-child(5)');
+    if (clientCell) {
+      const rowClient = clientCell.textContent.trim();
+      
+      // If "All Clients" selected or specific client matches
+      if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
+        const category = row.querySelector('td:nth-child(1)').textContent.trim();
+        const item = row.querySelector('td:nth-child(2)').textContent.trim();
+        const remarks = row.querySelector('td:nth-child(3)').textContent.trim();
+        const costCell = row.querySelector('td:nth-child(6) span[id^="cost-"]');
+        const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
+        const cost = parseFloat(costText) || 0;
+        const dateCell = row.querySelector('td:nth-child(4) strong');
+        const date = dateCell ? dateCell.textContent.trim() : '';
+        
+        reports.push({
+          category,
+          item,
+          remarks,
+          cost,
+          date,
+          client: rowClient
+        });
+      }
+    }
+  });
+  
+  return reports;
+}
+
+// Group reports by client for "All Clients" view
+function groupReportsByClient(reports) {
+  const grouped = {};
+  reports.forEach(report => {
+    if (!grouped[report.client]) {
+      grouped[report.client] = [];
+    }
+    grouped[report.client].push(report);
+  });
+  return grouped;
+}
+
+// Generate PDF
+function generatePDF(clientName, reports, totalCost) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  // Set up document
+  doc.setFontSize(20);
+  doc.setFont(undefined, 'bold');
+  doc.text('Cost Summary Report', 20, 25);
+  
+  doc.setFontSize(16);
+  doc.setFont(undefined, 'normal');
+  doc.text(`Client: ${clientName}`, 20, 40);
+  
+  doc.setFontSize(12);
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+  
+  let yPos = 70;
+  
+  if (clientName === 'All Clients') {
+    // Group reports by client
+    const groupedReports = groupReportsByClient(reports);
+    
+    Object.keys(groupedReports).sort().forEach(client => {
+      const clientReports = groupedReports[client];
+      const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+      
+      // Check if we need a new page for client header
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 30;
+      }
+      
+      // Client header
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(230, 240, 255);
+      doc.rect(20, yPos - 8, 170, 15, 'F');
+      doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+      yPos += 20;
+      
+      // Table headers for this client
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(245, 245, 245);
+      doc.rect(20, yPos - 8, 170, 12, 'F');
+      doc.text('Date', 22, yPos);
+      doc.text('Category', 45, yPos);
+      doc.text('Item', 70, yPos);
+      doc.text('Remarks', 110, yPos);
+      doc.text('Cost', 185, yPos, { align: 'right' });
+      yPos += 15;
+      
+      // Client's reports
+      doc.setFont(undefined, 'normal');
+      clientReports.forEach((report, index) => {
+        if (yPos > 260) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(20, yPos - 8, 170, 12, 'F');
+        }
+        
+        const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
+        doc.text(dateText, 22, yPos);
+        
+        const categoryLines = doc.splitTextToSize(report.category, 20);
+        doc.text(categoryLines, 45, yPos);
+
+        const itemLines = doc.splitTextToSize(report.item, 35);
+        doc.text(itemLines, 70, yPos);
+
+        const remarksLines = doc.splitTextToSize(report.remarks, 70);
+        doc.text(remarksLines, 110, yPos);
+
+        // Adjust yPos based on maximum lines used
+        const maxLines = Math.max(categoryLines.length, itemLines.length, remarksLines.length);
+        yPos += (maxLines - 1) * 4; // Add extra space for multiple lines
+        
+        doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
+        yPos += 12;
+      });
+      
+      yPos += 10; // Space between clients
+    });
+  } else {
+    // Single client view
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'bold');
+    doc.setFillColor(245, 245, 245);
+    const headerWidth = 170;
+    doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+    doc.text('Date', 22, yPos);
+    doc.text('Category', 45, yPos);
+    doc.text('Item', 70, yPos);
+    doc.text('Remarks', 110, yPos);
+    doc.text('Cost', 185, yPos, { align: 'right' });
+    yPos += 15;
+    
+    doc.setFont(undefined, 'normal');
+    reports.forEach((report, index) => {
+      if (yPos > 260) {
+        doc.addPage();
+        yPos = 30;
+      }
+      
+      if (index % 2 === 0) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+      }
+      
+      const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
+      doc.text(dateText, 22, yPos);
+      
+      const categoryLines = doc.splitTextToSize(report.category, 20);
+      doc.text(categoryLines, 45, yPos);
+
+      const itemLines = doc.splitTextToSize(report.item, 35);
+      doc.text(itemLines, 70, yPos);
+
+      const remarksLines = doc.splitTextToSize(report.remarks, 70);
+      doc.text(remarksLines, 110, yPos);
+
+      // Adjust yPos based on maximum lines used
+      const maxLines = Math.max(categoryLines.length, itemLines.length, remarksLines.length);
+      yPos += (maxLines - 1) * 4; // Add extra space for multiple lines
+      
+      doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
+      yPos += 12;
+    });
+  }
+  
+  // Add total cost at the end
+  yPos += 15;
+  if (yPos > 260) {
+    doc.addPage();
+    yPos = 30;
+  }
+  
+  doc.setFillColor(240, 240, 240);
+  doc.rect(20, yPos - 8, 170, 20, 'F');
+  doc.setFontSize(14);
+  doc.setFont(undefined, 'bold');
+  doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+  
+  // Download the PDF
+  const fileName = clientName === 'All Clients' ? 'All_Clients_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_cost_summary.pdf`;
+  doc.save(fileName);
+}
+
+// Display cost summary
+function displayCostSummary(clientName) {
+  const reports = getClientReports(clientName);
+  const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+  
+  const displayName = clientName === 'ALL_CLIENTS' ? 'All Clients' : clientName;
+  document.getElementById('selectedClientName').textContent = displayName;
+  document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+  document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+  document.getElementById('printBtn').style.display = 'inline-block';
+  
+  const reportsList = document.getElementById('reportsList');
+  reportsList.innerHTML = '';
+  
+  if (reports.length === 0) {
+    reportsList.innerHTML = '<div style="text-align:center; padding:40px; color:#6c757d;"><p style="margin:0; font-size:16px;">No reports found.</p></div>';
+    document.getElementById('downloadPdfBtn').style.display = 'none';
+    document.getElementById('printBtn').style.display = 'none';
+  } else {
+    const tableContainer = document.createElement('div');
+    tableContainer.style.overflowX = 'auto';
+    tableContainer.style.border = '1px solid #e9ecef';
+    tableContainer.style.borderRadius = '8px';
+    tableContainer.style.background = '#fff';
+    
+    if (clientName === 'ALL_CLIENTS') {
+      // Group reports by client
+      const groupedReports = groupReportsByClient(reports);
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        // Client header
+        const clientHeader = document.createElement('div');
+        clientHeader.style.background = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+        clientHeader.style.padding = '15px 20px';
+        clientHeader.style.margin = '15px 0 10px 0';
+        clientHeader.style.borderRadius = '8px';
+        clientHeader.style.border = '2px solid #2196f3';
+        clientHeader.innerHTML = `<h4 style="margin:0; color:#1976d2; font-weight:700; font-size:16px;">Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})</h4>`;
+        tableContainer.appendChild(clientHeader);
+        
+        // Client's data table
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '20px';
+        
+        const tableRows = clientReports.map((report, index) => {
+          return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; font-weight:500;">${report.category}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:300px; word-wrap:break-word; line-height:1.4;">${report.item}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:300px; word-wrap:break-word; line-height:1.4;">${report.remarks}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
+          </tr>`;
+        }).join('');
+        
+        table.innerHTML = `
+          <thead>
+            <tr style="background:#f8f9fa;">
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Category</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Item</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Remarks</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        `;
+        
+        tableContainer.appendChild(table);
+      });
+    } else {
+      // Single client view
+      const table = document.createElement('table');
+      table.style.width = '100%';
+      table.style.borderCollapse = 'collapse';
+      
+      const tableRows = reports.map((report, index) => {
+        return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; font-weight:500;">${report.category}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.item}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.remarks}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
+        </tr>`;
+      }).join('');
+      
+      table.innerHTML = `
+        <thead>
+          <tr style="background:#f8f9fa;">
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Category</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Item</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Remarks</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      `;
+      
+      tableContainer.appendChild(table);
+    }
+    
+    reportsList.appendChild(tableContainer);
+  }
+  
+  document.getElementById('costSummaryContent').style.display = 'block';
+}
+
+// Event listeners
+document.getElementById('viewCostSummaryBtn').addEventListener('click', function() {
+  populateClientDropdown();
+  document.getElementById('costSummaryModal').style.display = 'block';
+});
+
+document.getElementById('closeCostModal').addEventListener('click', function() {
+  document.getElementById('costSummaryModal').style.display = 'none';
+  document.getElementById('costSummaryContent').style.display = 'none';
+  document.getElementById('downloadPdfBtn').style.display = 'none';
+  document.getElementById('printBtn').style.display = 'none';
+});
+
+document.getElementById('clientSelect').addEventListener('change', function() {
+  const selectedClient = this.value;
+  if (selectedClient) {
+    displayCostSummary(selectedClient);
+  } else {
+    document.getElementById('costSummaryContent').style.display = 'none';
+    document.getElementById('downloadPdfBtn').style.display = 'none';
+    document.getElementById('printBtn').style.display = 'none';
+  }
+});
+
+// PDF download event listener
+document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+  const selectedClient = document.getElementById('clientSelect').value;
+  if (selectedClient) {
+    const reports = getClientReports(selectedClient);
+    const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+    generatePDF(displayName, reports, totalCost);
+  }
+});
+
+// Print event listener
+document.getElementById('printBtn').addEventListener('click', function() {
+  const selectedClient = document.getElementById('clientSelect').value;
+  if (selectedClient) {
+    const reports = getClientReports(selectedClient);
+    const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+    
+    let printContent = '';
+    
+    if (selectedClient === 'ALL_CLIENTS') {
+      const groupedReports = groupReportsByClient(reports);
+      let clientTables = '';
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        const clientRows = clientReports.map(report => `
+          <tr>
+            <td>${report.date}</td>
+            <td>${report.category}</td>
+            <td>${report.item}</td>
+            <td>${report.remarks}</td>
+            <td class="cost">$${report.cost.toFixed(2)}</td>
+          </tr>
+        `).join('');
+        
+        clientTables += `
+          <div class="client-section">
+            <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
+              Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
+            </h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Item</th>
+                  <th>Remarks</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${clientRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+      
+      printContent = `
+        <html>
+          <head>
+            <title>Cost Summary - ${displayName}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+              .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+              .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
+              .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+              table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+              th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+              th { background: #f8f9fa; font-weight: bold; }
+              tr:nth-child(even) { background: #f9f9f9; }
+              .cost { text-align: right; font-weight: bold; }
+              @media print {
+                body { margin: 0; }
+                .no-print { display: none; }
+                .client-section { page-break-inside: avoid; }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Cost Summary Report</h1>
+            <div class="client-info">
+              <strong>Client:</strong> ${displayName}<br>
+              <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+            </div>
+            ${clientTables}
+            <div class="total-box">
+              <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+            </div>
+          </body>
+        </html>
+      `;
+    } else {
+      // Single client print content
+      printContent = `
+        <html>
+          <head>
+            <title>Cost Summary - ${displayName}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+              .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+              .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
+              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+              th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+              th { background: #f8f9fa; font-weight: bold; }
+              tr:nth-child(even) { background: #f9f9f9; }
+              .cost { text-align: right; font-weight: bold; }
+              @media print {
+                body { margin: 0; }
+                .no-print { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Cost Summary Report</h1>
+            <div class="client-info">
+              <strong>Client:</strong> ${displayName}<br>
+              <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+            </div>
+            <div class="total-box">
+              <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Item</th>
+                  <th>Remarks</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reports.map(report => `
+                  <tr>
+                    <td>${report.date}</td>
+                    <td>${report.category}</td>
+                    <td>${report.item}</td>
+                    <td>${report.remarks}</td>
+                    <td class="cost">$${report.cost.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+    }
+    
+    // Open print window
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('costSummaryModal');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+    document.getElementById('costSummaryContent').style.display = 'none';
+    document.getElementById('downloadPdfBtn').style.display = 'none';
+    document.getElementById('printBtn').style.display = 'none';
+  }
+});
+
+// Button hover effects
+document.getElementById('viewCostSummaryBtn').addEventListener('mouseenter', function() {
+  this.style.background = '#5a6268';
+  this.style.transform = 'translateY(-1px)';
+  this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+});
+
+document.getElementById('viewCostSummaryBtn').addEventListener('mouseleave', function() {
+  this.style.background = '#6c757d';
+  this.style.transform = 'translateY(0)';
+  this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+});
+
+document.getElementById('submitChangesBtn').addEventListener('mouseenter', function() {
+  this.style.background = '#0056b3';
+  this.style.transform = 'translateY(-1px)';
+  this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+});
+
+document.getElementById('submitChangesBtn').addEventListener('mouseleave', function() {
+  this.style.background = '#007bff';
+  this.style.transform = 'translateY(0)';
+  this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+});
+
+// PDF download button hover effect
+document.getElementById('downloadPdfBtn').addEventListener('mouseenter', function() {
+  this.style.background = '#218838';
+  this.style.transform = 'translateY(-1px)';
+  this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+});
+
+document.getElementById('downloadPdfBtn').addEventListener('mouseleave', function() {
+  this.style.background = '#28a745';
+  this.style.transform = 'translateY(0)';
+  this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+});
+
+// Print button hover effect
+document.getElementById('printBtn').addEventListener('mouseenter', function() {
+  this.style.background = '#138496';
+  this.style.transform = 'translateY(-1px)';
+  this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+});
+
+document.getElementById('printBtn').addEventListener('mouseleave', function() {
+  this.style.background = '#17a2b8';
+  this.style.transform = 'translateY(0)';
+  this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+});
+
+// Select focus effect
+document.getElementById('clientSelect').addEventListener('focus', function() {
+  this.style.borderColor = '#007bff';
+  this.style.boxShadow = '0 0 0 3px rgba(0,123,255,0.1)';
+});
+
+document.getElementById('clientSelect').addEventListener('blur', function() {
+  this.style.borderColor = '#e9ecef';
+  this.style.boxShadow = 'none';
+});
+
+// Close button hover effect
+document.getElementById('closeCostModal').addEventListener('mouseenter', function() {
+  this.style.background = '#f8f9fa';
+  this.style.color = '#333';
+});
+
+document.getElementById('closeCostModal').addEventListener('mouseleave', function() {
+  this.style.background = 'transparent';
+  this.style.color = '#6c757d';
+});
+</script>
+<!-- read only cost thing  -->
+ <script>
+  // Unique total cost display function
+(function() {
+  function calculateTotalCost() {
+    const rows = document.querySelectorAll('#report-table tr.report-row');
+    let total = 0;
+    
+    rows.forEach(row => {
+      const costCell = row.querySelector('td:nth-child(6) span[id^="cost-"]');
+      if (costCell) {
+        const costText = costCell.textContent.replace('$', '').replace('-', '0');
+        const cost = parseFloat(costText) || 0;
+        total += cost;
+      }
+    });
+    
+    const totalButton = document.getElementById('totalCostBtn');
+    if (totalButton) {
+      totalButton.textContent = `Total : $${total.toFixed(2)}`;
+    }
+  }
+  
+  // Run when page loads
+  document.addEventListener('DOMContentLoaded', calculateTotalCost);
+  
+  // Run if page is already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', calculateTotalCost);
+  } else {
+    calculateTotalCost();
+  }
+})();
+ </script>
 {% endblock content %}

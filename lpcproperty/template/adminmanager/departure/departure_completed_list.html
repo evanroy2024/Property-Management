@@ -336,7 +336,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
-        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Departure Notifications </h1>
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Completed Departure Notifications </h1>
     </div>
 
     <!-- Filters -->
@@ -389,6 +389,7 @@
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
+                            <th>Completation Date</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -445,7 +446,7 @@
                                     </div>
                                 </td>
 
-                              <td>
+<td>
     <span 
         id="status-{{ req.id }}"
         onclick="openUpdateStatusModal('{{ req.id }}', '{{ req.status }}', '{{ req.completation_denied_date|date:"Y-m-d" }}', '{{ req.status_remarks|default:"" }}', '{{ req.client_approval }}')"
@@ -453,23 +454,32 @@
             cursor: pointer;
             padding: 3px 7px;
             border-radius: 4px;
-            border: 1px solid;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
+            color: white;
             {% if req.status == 'completed' %}
-                border-color: black;
+                background-color: #66CC66;
+                border: 1px solid #66CC66;
             {% elif req.status == 'denied' %}
-                border-color: black;
+                background-color: #FF6666;
+                border: 1px solid #FF6666;
             {% else %}
-                border-color: black;
+                background-color: gray;
+                border: 1px solid gray;
             {% endif %}
         "
     >
-        Open
+        {{ req.status|title }}
     </span>
 </td>
-
+ <td>
+        {% if req.completation_denied_date %}
+            {{ req.completation_denied_date|date:"Y-m-d" }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
 
                             </tr>
                         {% empty %}

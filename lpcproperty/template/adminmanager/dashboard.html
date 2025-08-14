@@ -177,8 +177,11 @@
             </div>
             <div class="sub-item"><i class="fas fa-exchange-alt"></i> Arrival / Departure Info</div>
             <div class="sub-sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">Pre-Arrival Info</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:departure_requests' %}'">Departure Info</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">Pre-Arrival Notifications</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:prearrival_completed_requests' %}'">Completed Pre-Arrival Notifications</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:departure_requests' %}'">Departure Notifications</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:departure_completed' %}'">Completed Departure Notifications</div>
+
             </div>
             <!-- <div class="sub-item"><i class="fas fa-layer-group"></i> Property Improvement</div> -->
             <div class="sub-sub-menu">

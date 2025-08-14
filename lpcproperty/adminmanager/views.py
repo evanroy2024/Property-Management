@@ -68,12 +68,11 @@ def admin_faq_create(request):
         answer = request.POST.get('answer')
         category = request.POST.get('category', 'general')
 
-        if question and answer:
+        if question and answer and category:
             FAQ.objects.create(question=question, answer=answer, category=category)
             return redirect('adminmanager:admin_faq_list')
 
     return render(request, 'adminmanager/faq/faq_create.html')
-
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -906,7 +905,8 @@ def create_vendor(request):
         # Create new vendor
         vendor = Vendor.objects.create(
             company_name=request.POST.get('company_name'),
-            name=request.POST.get('name'),
+            first_name=request.POST.get('first_name'),
+            last_name=request.POST.get('last_name'),
             street=request.POST.get('street'),
             apt_suite=request.POST.get('apt_suite'),
             notes=request.POST.get('notes'),
@@ -970,13 +970,17 @@ def create_vendor(request):
     }
 
     return render(request, 'adminmanager/vendor/create.html', context)
+
+
+
 # Edit vendor
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
 
     if request.method == 'POST':
         vendor.company_name = request.POST.get('company_name')
-        vendor.name = request.POST.get('name')
+        vendor.first_name = request.POST.get('first_name')
+        vendor.last_name = request.POST.get('last_name')
         vendor.street = request.POST.get('street')
         vendor.apt_suite = request.POST.get('apt_suite')
         vendor.notes = request.POST.get('notes')
@@ -1111,16 +1115,96 @@ def clientmanager_profile_edit(request):
 
 # Pre Arrival reqeust to client Manager ---------------------------------------------------------------------------------------------------------------
 from servicedetails.models import PrearrivalInformation, Client
-
+from django.views.decorators.http import require_http_methods
 # View all requests
 
 def clientmanager_prearrival_requests(request):
-    all_requests = PrearrivalInformation.objects.all().order_by('-id')
+    # Show only Open status
+    all_requests = PrearrivalInformation.objects.filter(status='open').order_by('-id')
 
     return render(request, 'adminmanager/prearrival/prearrival_list.html', {
         'requests': all_requests
     })
 
+
+def clientmanager_prearrival_completed_requests(request):
+    # Show only Completed status
+    all_requests = PrearrivalInformation.objects.filter(status='completed').order_by('-id')
+
+    return render(request, 'adminmanager/prearrival/prearrival_completed.html', {
+        'requests': all_requests
+    })
+
+
+from servicedetails.models import PrearrivalInformation
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_prearrival_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        prearrival_request = PrearrivalInformation.objects.get(id=request_id)
+        prearrival_request.cost = int(float(amount)) if amount else 0
+        prearrival_request.cost_remarks = remarks
+        prearrival_request.save()
+        
+        return JsonResponse({'success': True})
+    except PrearrivalInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_prearrival_approval(request):
+   try:
+       data = json.loads(request.body)
+       request_id = data.get('request_id')
+       approval_status = data.get('approval_status')
+       
+       prearrival_request = PrearrivalInformation.objects.get(id=request_id)
+       prearrival_request.client_approval = approval_status
+       
+       prearrival_request.save()
+       
+       return JsonResponse({'success': True})
+   except PrearrivalInformation.DoesNotExist:
+       return JsonResponse({'success': False, 'error': 'Request not found'})
+   except Exception as e:
+       return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_prearrival_status(request):
+   try:
+       data = json.loads(request.body)
+       request_id = data.get('request_id')
+       status = data.get('status')
+       completion_date = data.get('completion_date')
+       remarks = data.get('remarks')
+       
+       prearrival_request = PrearrivalInformation.objects.get(id=request_id)
+       prearrival_request.status = status
+       prearrival_request.status_remarks = remarks
+       
+       # Update completation_denied_date field
+       if completion_date:
+           from datetime import datetime
+           prearrival_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+       else:
+           prearrival_request.completation_denied_date = None
+       
+       prearrival_request.save()
+       
+       return JsonResponse({'success': True})
+   except PrearrivalInformation.DoesNotExist:
+       return JsonResponse({'success': False, 'error': 'Request not found'})
+   except ValueError as ve:
+       return JsonResponse({'success': False, 'error': f'Date format error: {str(ve)}'})
+   except Exception as e:
+       return JsonResponse({'success': False, 'error': str(e)})
 # View single request
 def clientmanager_prearrival_detail(request, request_id):
     request_detail = get_object_or_404(PrearrivalInformation, id=request_id)
@@ -1139,13 +1223,93 @@ def clientmanager_prearrival_detail(request, request_id):
 # views.py
 
 from servicedetails.models import DepartureInformation
-
 def clientmanager_departure_requests(request):
-    all_departure_requests = DepartureInformation.objects.all().order_by('-id')
+    all_departure_requests = DepartureInformation.objects.filter(status='open').order_by('-id')
 
     return render(request, 'adminmanager/departure/departure_list.html', {
         'requests': all_departure_requests
     })
+
+
+def clientmanager_departure_completed_requests(request):
+    all_departure_requests = DepartureInformation.objects.filter(status='completed').order_by('-id')
+
+    return render(request, 'adminmanager/departure/departure_completed_list.html', {
+        'requests': all_departure_requests
+    })
+
+
+
+# Views for departure functionality
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_departure_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        departure_request = DepartureInformation.objects.get(id=request_id)
+        departure_request.cost = int(float(amount)) if amount else 0
+        departure_request.cost_remarks = remarks
+        departure_request.save()
+        
+        return JsonResponse({'success': True})
+    except DepartureInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_departure_approval(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        approval_status = data.get('approval_status')
+        
+        departure_request = DepartureInformation.objects.get(id=request_id)
+        departure_request.client_approval = approval_status
+        departure_request.save()
+        
+        return JsonResponse({'success': True})
+    except DepartureInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_departure_status(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        status = data.get('status')
+        completion_date = data.get('completion_date')
+        remarks = data.get('remarks')
+        
+        departure_request = DepartureInformation.objects.get(id=request_id)
+        departure_request.status = status
+        departure_request.status_remarks = remarks
+        
+        # Update completation_denied_date field
+        if completion_date:
+            from datetime import datetime
+            departure_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+        else:
+            departure_request.completation_denied_date = None
+        
+        departure_request.save()
+        
+        return JsonResponse({'success': True})
+    except DepartureInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except ValueError as ve:
+        return JsonResponse({'success': False, 'error': f'Date format error: {str(ve)}'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
 def clientmanager_departure_detail(request, request_id):
     departure_request = get_object_or_404(DepartureInformation, id=request_id)
 
