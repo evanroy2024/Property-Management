@@ -14,8 +14,8 @@
       <div class="card-header p-4" style="background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <span class="badge py-2 px-3" style="background-color: #dca54c; font-size: 1rem;">Departure Request</span>
-            <h2 class="mt-2 mb-1 text-white" style="font-size: 2.2rem; font-weight: 600;">{{ request_detail.user.last_name }}, {{ request_detail.user.first_name }}</h2>
+            <!-- <span class="badge py-2 px-3" style="background-color: #dca54c; font-size: 1rem;">Departure Request</span> -->
+            <h2 class="mt-2 mb-1 text-white" style="font-size: 2.2rem; font-weight: 600;">{{ request_detail.user.last_name|title }}, {{ request_detail.user.first_name|title }}</h2>
             {% if request_detail.user.properties.first %}
               {% with property=request_detail.user.properties.first %}
                 {% if property.address %}
@@ -178,4 +178,26 @@
     </div>
   </div>
 </div>
+
+<style>
+  @media print {
+   .btn, button, .navbar, .nav, header, footer, .logo, .menu, .sidebar {
+       display: none !important;
+   }
+   
+   /* Hide page header elements */
+   .page-header, .header-text, .date-time {
+       display: none !important;
+   }
+   
+   /* Hide browser default header/footer */
+   @page {
+       margin: 0;
+   }
+   
+   body {
+       margin: 20px;
+   }
+}
+</style>
 {% endblock %}

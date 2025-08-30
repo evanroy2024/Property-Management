@@ -336,7 +336,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
-        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Completed Pre-arrival Notifications </h1>
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Completed Pre-Arrival Notifications </h1>
     </div>
 
     <!-- Filters -->
@@ -378,13 +378,13 @@
                                 ARRIVAL DATE <i class="fas fa-sort sort-icon"></i>
                             </th>
                             <th class="sortable" data-index="0" style="cursor: pointer;">
-                               Request Submittal Date <i class="fas fa-sort sort-icon"></i>
+                               REQUEST SUBMITTAL DATE <i class="fas fa-sort sort-icon"></i>
                             </th>
                             <th>DETAILS</th>
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
-                            <th>Completion Date</th>
+                            <th>COMPLETION DATE</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -396,8 +396,8 @@
                                 data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }} {{ req.name|lower }}">
                                 
                                 
-                                <td><strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong></td>
-                                
+                                <td><strong>{{ req.user.last_name|title }}, {{ req.user.first_name|title }}</strong></td>
+
                                 <td>
                                     {% if req.arrival_date %}
                                         <strong>{{ req.arrival_date|date:'M d, Y' }}</strong><br>
@@ -416,7 +416,7 @@
 
                                 <td>
                                     <a href="{% url 'adminmanager:prearrival_request_detail' req.id %}" class="view-details-btn">
-                                         View 
+                                         VIEW
                                     </a>
                                 </td>
                                 
@@ -453,7 +453,7 @@
             text-transform: uppercase;
             color: white;
             {% if req.status == 'completed' %}
-                background-color: #66CC66;
+                background-color: #28a745;
                 border: 1px solid #66CC66;
             {% elif req.status == 'denied' %}
                 background-color: #FF6666;
@@ -507,7 +507,10 @@
             <input type="hidden" id="editModalRequestId">
             
             <p style="color: black;">Amount ($):</p>
-            <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input">
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <span style="position: absolute; left: 10px; top: 18px; color: #666; pointer-events: none; z-index: 1;">$</span>
+                <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input" style="padding-left: 25px;">
+            </div>
             
             <p style="color: black;">Cost Remarks:</p>
             <textarea id="editModalRemarks" name="remarks" placeholder="Enter remarks about the cost" class="modal-input" rows="3"></textarea>
@@ -942,4 +945,10 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
  calculateTotalCost();
 })();
 </script>
+<style>
+    .status-approved {
+    background-color: #28a745;
+    color: white;
+}
+</style>
 {% endblock content %}

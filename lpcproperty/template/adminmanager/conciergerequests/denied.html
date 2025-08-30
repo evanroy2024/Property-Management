@@ -309,17 +309,18 @@
                 <table class="table table-hover" id="sortable-table">
                     <thead>
                         <tr>
+                           <th class="sortable" data-index="1" style="cursor: pointer;">
+                                CLIENT  <i class="fas fa-sort sort-icon"></i>
+                            </th>
                             <th class="sortable" data-index="0" style="cursor: pointer;">
                                 REQUEST DATE <i class="fas fa-sort sort-icon"></i>
                             </th>
-                            <th class="sortable" data-index="1" style="cursor: pointer;">
-                                CLIENT  <i class="fas fa-sort sort-icon"></i>
-                            </th>
+                           
                             <th>REQUEST</th>
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
-                            <th>Denied Date</th>
+                            <th>DENIED DATE</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -328,13 +329,13 @@
                                 data-client="{{ req.user.last_name|lower }}, {{ req.user.first_name|lower }}"
                                 data-date="{{ req.created_at|date:'Y-m-d' }}" 
                                 data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }}">
-                                
+                                <td><strong>{{ req.user.last_name|title }}, {{ req.user.first_name|title }}</strong></td>
+
                                 <td style="cursor: pointer;">
                                     <strong>{{ req.created_at|date:'M d, Y' }}</strong><br>
                                     <small class="text-muted">{{ req.created_at|time:'g:i A' }}</small>
                                 </td>
                                 
-                                <td><strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong></td>
                                 
                                 <td style="word-wrap: break-word; white-space: normal; max-width: 250px;">
                                     {{ req.description|truncatechars:300 }}
@@ -421,9 +422,7 @@
                 <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
     View Cost Summary
   </button>
-  <button id="submitChangesBtn" style="background-color:#007bff; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s;">
-    Submit Updates
-  </button>
+
 </div>
                 <!-- <div style="text-align:right;">
                     <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
@@ -444,7 +443,10 @@
             <input type="hidden" id="editModalRequestId">
             
             <p style="color: black;">Amount ($):</p>
-            <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input">
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <span style="position: absolute; left: 10px; top: 18px; color: #666; pointer-events: none; z-index: 1;">$</span>
+                <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input" style="padding-left: 25px;">
+            </div>
             
             <p style="color: black;">Cost Remarks:</p>
             <textarea id="editModalRemarks" name="remarks" placeholder="Enter remarks about the cost" class="modal-input" rows="3"></textarea>
@@ -819,6 +821,7 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
                 }
             }
             closeUpdateStatusModal();
+            location.reload();
         } else {
             alert('Error updating status: ' + data.error);
         }
@@ -905,13 +908,13 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
   </div>
 </div>
 <script>
-    // Get unique clients from table
+  // Get unique clients from table
 function getUniqueClients() {
   const clientSet = new Set();
   const rows = document.querySelectorAll('#request-table tr.request-row');
   
   rows.forEach(row => {
-    const clientCell = row.querySelector('td:nth-child(2)');
+    const clientCell = row.querySelector('td:nth-child(1)');
     if (clientCell) {
       clientSet.add(clientCell.textContent.trim());
     }
@@ -942,32 +945,45 @@ function populateClientDropdown() {
   });
 }
 
+// Get cost remarks from onclick attribute
+function getCostRemarksFromButton(requestId) {
+  const editButton = document.querySelector(`button[onclick*="openEditCostModal('${requestId}'"]`);
+  if (editButton) {
+    const onclickAttr = editButton.getAttribute('onclick');
+    const match = onclickAttr.match(/openEditCostModal\('[^']*',\s*'[^']*',\s*'([^']*)'/);
+    if (match) {
+      return match[1] || 'N/A';
+    }
+  }
+  return 'N/A';
+}
+
 // Get reports for selected client
 function getClientReports(clientName) {
   const rows = document.querySelectorAll('#request-table tr.request-row');
   const reports = [];
   
   rows.forEach(row => {
-    const clientCell = row.querySelector('td:nth-child(2)');
+    const clientCell = row.querySelector('td:nth-child(1)');
     if (clientCell) {
       const rowClient = clientCell.textContent.trim();
       
       // If "All Clients" selected or specific client matches
       if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
-        const dateCell = row.querySelector('td:nth-child(1)');
+        const dateCell = row.querySelector('td:nth-child(2)');
         const dateText = dateCell ? dateCell.textContent.trim() : '';
         
         const requestCell = row.querySelector('td:nth-child(3)');
         const request = requestCell ? requestCell.textContent.trim() : '';
         
-        // Get cost remarks from the 4th column
-        const costRemarksCell = row.querySelector('td:nth-child(4)');
-        const costRemarks = costRemarksCell ? costRemarksCell.textContent.trim() : 'N/A';
-        
-        // Get cost from the 5th column
-        const costCell = row.querySelector('td:nth-child(5) span[id^="cost-"]');
+        // Get cost from the 4th column
+        const costCell = row.querySelector('td:nth-child(4) span[id^="cost-"]');
         const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
         const cost = parseFloat(costText) || 0;
+        
+        // Get request ID and cost remarks
+        const requestId = costCell ? costCell.id.replace('cost-', '') : null;
+        const costRemarks = requestId ? getCostRemarksFromButton(requestId) : 'N/A';
         
         reports.push({
           date: dateText,
@@ -995,62 +1011,148 @@ function groupReportsByClient(reports) {
   return grouped;
 }
 
-// Generate PDF
+// Generate PDF with Lotus letterhead
 function generatePDF(clientName, reports, totalCost) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   
-  // Set up document
-  doc.setFontSize(20);
-  doc.setFont(undefined, 'bold');
-  doc.text('Concierge Requests Cost Summary', 20, 25);
+  // Load and add logo
+  const logoUrl = "{% static 'logo.png' %}";
+  const img = new Image();
+  img.onload = function() {
+    // Continue with the rest of the PDF generation...
+    continueGeneratingPDF();
+  };
+  img.onerror = function() {
+    // If logo fails to load, continue without it
+    continueGeneratingPDF();
+  };
+  img.src = logoUrl;
   
-  doc.setFontSize(16);
-  doc.setFont(undefined, 'normal');
-  doc.text(`Client: ${clientName}`, 20, 40);
-  
-  doc.setFontSize(12);
-  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
-  
-  let yPos = 70;
-  
-  if (clientName === 'All Clients') {
-    // Group reports by client
-    const groupedReports = groupReportsByClient(reports);
+  function continueGeneratingPDF() {
+    // Create blue header background (like in your design)
+    doc.setFillColor(24, 119, 242); // Blue color matching your design
+    doc.rect(0, 0, 210, 40, 'F'); // Full width header
     
-    Object.keys(groupedReports).sort().forEach(client => {
-      const clientReports = groupedReports[client];
-      const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
-      
-      // Check if we need a new page for client header
-      if (yPos > 250) {
-        doc.addPage();
-        yPos = 30;
+    // Add logo to header (white logo on blue background) - INCREASED WIDTH
+    try {
+      if (img.complete && img.naturalHeight !== 0) {
+        doc.addImage(img, 'PNG', 20, 8, 80, 25); // Increased width from 50 to 80
       }
-      
-      // Client header
-      doc.setFontSize(14);
+    } catch (e) {
+      // Fallback text if logo doesn't load
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
       doc.setFont(undefined, 'bold');
-      doc.setFillColor(230, 240, 255);
-      doc.rect(20, yPos - 8, 170, 15, 'F');
-      doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
-      yPos += 20;
+      doc.text('LOTUS', 20, 20);
+      doc.setFontSize(10);
+      doc.text('Property Management', 20, 30);
+    }
+    
+    // Add contact information on the right side of header
+    doc.setTextColor(255, 255, 255); // White text
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('Phone: (555) 123-4567 | Email: info@lotuspm.com', 210 - 5, 15, { align: 'right' });
+    doc.text('www.lotuspropertymanagement.com', 210 - 5, 25, { align: 'right' });
+    
+    // Reset text color to black for content
+    doc.setTextColor(0, 0, 0);
+    
+    // Document title - moved down to accommodate header
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('Concierge Requests Cost Summary', 20, 60);
+
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Client: ${clientName}`, 20, 75);
+
+    doc.setFontSize(12);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 85);
+
+    let yPos = 105; // Adjusted starting position for content
+    
+    if (clientName === 'All Clients') {
+      // Group reports by client
+      const groupedReports = groupReportsByClient(reports);
       
-      // Table headers for this client
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        // Check if we need a new page for client header
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        // Client header
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(230, 240, 255);
+        doc.rect(20, yPos - 8, 170, 15, 'F');
+        doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+        yPos += 20;
+        
+        // Table headers for this client
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(245, 245, 245);
+        doc.rect(20, yPos - 8, 170, 12, 'F');
+        doc.text('Date', 22, yPos);
+        doc.text('Request', 60, yPos);
+        doc.text('Cost', 130, yPos);
+        doc.text('Remarks', 155, yPos);
+        yPos += 15;
+        
+        // Client's reports
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(8);
+        clientReports.forEach((report, index) => {
+          if (yPos > 260) {
+            doc.addPage();
+            yPos = 30;
+          }
+          
+          if (index % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(20, yPos - 8, 170, 12, 'F');
+          }
+          
+          const dateText = report.date.length > 12 ? report.date.substring(0, 12) + '...' : report.date;
+          doc.text(dateText, 22, yPos);
+          
+          const requestLines = doc.splitTextToSize(report.request, 65);
+          const requestText = requestLines.length > 2 ? requestLines.slice(0, 2).join(' ') + '...' : requestLines.join(' ');
+          doc.text(requestText, 60, yPos);
+          
+          doc.text(`$${report.cost.toFixed(2)}`, 130, yPos);
+          
+          const remarksText = report.costRemarks.length > 20 ? report.costRemarks.substring(0, 20) + '...' : report.costRemarks;
+          doc.text(remarksText, 155, yPos);
+          
+          yPos += 12;
+        });
+        
+        yPos += 10; // Space between clients
+      });
+    } else {
+      // Single client view
       doc.setFontSize(9);
       doc.setFont(undefined, 'bold');
       doc.setFillColor(245, 245, 245);
-      doc.rect(20, yPos - 8, 170, 12, 'F');
+      const headerWidth = 170;
+      doc.rect(20, yPos - 8, headerWidth, 12, 'F');
       doc.text('Date', 22, yPos);
       doc.text('Request', 60, yPos);
       doc.text('Cost', 130, yPos);
       doc.text('Remarks', 155, yPos);
       yPos += 15;
       
-      // Client's reports
       doc.setFont(undefined, 'normal');
       doc.setFontSize(8);
-      clientReports.forEach((report, index) => {
+      reports.forEach((report, index) => {
         if (yPos > 260) {
           doc.addPage();
           yPos = 30;
@@ -1058,7 +1160,7 @@ function generatePDF(clientName, reports, totalCost) {
         
         if (index % 2 === 0) {
           doc.setFillColor(250, 250, 250);
-          doc.rect(20, yPos - 8, 170, 12, 'F');
+          doc.rect(20, yPos - 8, headerWidth, 12, 'F');
         }
         
         const dateText = report.date.length > 12 ? report.date.substring(0, 12) + '...' : report.date;
@@ -1075,67 +1177,25 @@ function generatePDF(clientName, reports, totalCost) {
         
         yPos += 12;
       });
-      
-      yPos += 10; // Space between clients
-    });
-  } else {
-    // Single client view
-    doc.setFontSize(9);
-    doc.setFont(undefined, 'bold');
-    doc.setFillColor(245, 245, 245);
-    const headerWidth = 170;
-    doc.rect(20, yPos - 8, headerWidth, 12, 'F');
-    doc.text('Date', 22, yPos);
-    doc.text('Request', 60, yPos);
-    doc.text('Cost', 130, yPos);
-    doc.text('Remarks', 155, yPos);
-    yPos += 15;
+    }
     
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(8);
-    reports.forEach((report, index) => {
-      if (yPos > 260) {
-        doc.addPage();
-        yPos = 30;
-      }
-      
-      if (index % 2 === 0) {
-        doc.setFillColor(250, 250, 250);
-        doc.rect(20, yPos - 8, headerWidth, 12, 'F');
-      }
-      
-      const dateText = report.date.length > 12 ? report.date.substring(0, 12) + '...' : report.date;
-      doc.text(dateText, 22, yPos);
-      
-      const requestLines = doc.splitTextToSize(report.request, 65);
-      const requestText = requestLines.length > 2 ? requestLines.slice(0, 2).join(' ') + '...' : requestLines.join(' ');
-      doc.text(requestText, 60, yPos);
-      
-      doc.text(`$${report.cost.toFixed(2)}`, 130, yPos);
-      
-      const remarksText = report.costRemarks.length > 20 ? report.costRemarks.substring(0, 20) + '...' : report.costRemarks;
-      doc.text(remarksText, 155, yPos);
-      
-      yPos += 12;
-    });
+    // Add total cost at the end
+    yPos += 15;
+    if (yPos > 260) {
+      doc.addPage();
+      yPos = 30;
+    }
+    
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, yPos - 8, 170, 20, 'F');
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+    
+    // Download the PDF
+    const fileName = clientName === 'All Clients' ? 'All_Clients_concierge_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_concierge_cost_summary.pdf`;
+    doc.save(fileName);
   }
-  
-  // Add total cost at the end
-  yPos += 15;
-  if (yPos > 260) {
-    doc.addPage();
-    yPos = 30;
-  }
-  
-  doc.setFillColor(240, 240, 240);
-  doc.rect(20, yPos - 8, 170, 20, 'F');
-  doc.setFontSize(14);
-  doc.setFont(undefined, 'bold');
-  doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
-  
-  // Download the PDF
-  const fileName = clientName === 'All Clients' ? 'All_Clients_concierge_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_concierge_cost_summary.pdf`;
-  doc.save(fileName);
 }
 
 // Display cost summary
@@ -1191,8 +1251,8 @@ function displayCostSummary(clientName) {
           return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:300px; word-wrap:break-word; line-height:1.4;">${report.request}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:center; color:#333; font-weight:600; font-size:13px;">${report.cost.toFixed(2)}</td>
             <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.costRemarks}</td>
-            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
           </tr>`;
         }).join('');
         
@@ -1201,8 +1261,8 @@ function displayCostSummary(clientName) {
             <tr style="background:#f8f9fa;">
               <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
               <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Request</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:center; font-weight:600; color:#333; font-size:14px;">Cost</th>
               <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Cost Remarks</th>
-              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
             </tr>
           </thead>
           <tbody>
@@ -1222,8 +1282,8 @@ function displayCostSummary(clientName) {
         return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
           <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.date}</td>
           <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:250px; word-wrap:break-word; line-height:1.4;">${report.request}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:center; color:#333; font-weight:600; font-size:13px;">${report.cost.toFixed(2)}</td>
           <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.costRemarks}</td>
-          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px;">$${report.cost.toFixed(2)}</td>
         </tr>`;
       }).join('');
       
@@ -1232,8 +1292,8 @@ function displayCostSummary(clientName) {
           <tr style="background:#f8f9fa;">
             <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Date</th>
             <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Request</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:center; font-weight:600; color:#333; font-size:14px;">Cost</th>
             <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Cost Remarks</th>
-            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -1306,158 +1366,244 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Print button
-  const printBtn = document.getElementById('printBtn');
-  if (printBtn) {
-    printBtn.addEventListener('click', function() {
-      const selectedClient = document.getElementById('clientSelect').value;
-      if (selectedClient) {
-        const reports = getClientReports(selectedClient);
-        const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
-        const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
-        
-        let printContent = '';
-        
-        if (selectedClient === 'ALL_CLIENTS') {
-          const groupedReports = groupReportsByClient(reports);
-          let clientTables = '';
-          
-          Object.keys(groupedReports).sort().forEach(client => {
-            const clientReports = groupedReports[client];
-            const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
-            
-            const clientRows = clientReports.map(report => `
-              <tr>
-                <td>${report.date}</td>
-                <td>${report.request}</td>
-                <td>${report.costRemarks}</td>
-                <td class="cost">$${report.cost.toFixed(2)}</td>
-              </tr>
-            `).join('');
-            
-            clientTables += `
-              <div class="client-section">
-                <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
-                  Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
-                </h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Request</th>
-                      <th>Cost Remarks</th>
-                      <th>Cost</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${clientRows}
-                  </tbody>
-                </table>
-              </div>
-            `;
-          });
-          
-          printContent = `
-            <html>
-              <head>
-                <title>Concierge Cost Summary - ${displayName}</title>
-                <style>
-                  body { font-family: Arial, sans-serif; margin: 20px; }
-                  h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-                  .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                  .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
-                  .client-section { margin-bottom: 30px; page-break-inside: avoid; }
-                  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-                  th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-                  th { background: #f8f9fa; font-weight: bold; }
-                  tr:nth-child(even) { background: #f9f9f9; }
-                  .cost { text-align: right; font-weight: bold; }
-                  @media print {
-                    body { margin: 0; }
-                    .no-print { display: none; }
-                    .client-section { page-break-inside: avoid; }
-                  }
-                </style>
-              </head>
-              <body>
-                <h1>Concierge Requests Cost Summary</h1>
-                <div class="client-info">
-                  <strong>Client:</strong> ${displayName}<br>
-                  <strong>Generated:</strong> ${new Date().toLocaleDateString()}
-                </div>
-                ${clientTables}
-                <div class="total-box">
-                  <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
-                </div>
-              </body>
-            </html>
-          `;
-        } else {
-          // Single client print content
-          printContent = `
-            <html>
-              <head>
-                <title>Concierge Cost Summary - ${displayName}</title>
-                <style>
-                  body { font-family: Arial, sans-serif; margin: 20px; }
-                  h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-                  .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                  .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
-                  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                  th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-                  th { background: #f8f9fa; font-weight: bold; }
-                  tr:nth-child(even) { background: #f9f9f9; }
-                  .cost { text-align: right; font-weight: bold; }
-                  @media print {
-                    body { margin: 0; }
-                    .no-print { display: none; }
-                  }
-                </style>
-              </head>
-              <body>
-                <h1>Concierge Requests Cost Summary</h1>
-                <div class="client-info">
-                  <strong>Client:</strong> ${displayName}<br>
-                  <strong>Generated:</strong> ${new Date().toLocaleDateString()}
-                </div>
-                <div class="total-box">
-                  <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
-                </div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Request</th>
-                      <th>Cost Remarks</th>
-                      <th>Cost</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${reports.map(report => `
-                      <tr>
-                        <td>${report.date}</td>
-                        <td>${report.request}</td>
-                        <td>${report.costRemarks}</td>
-                        <td class="cost">$${report.cost.toFixed(2)}</td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </body>
-            </html>
-          `;
-        }
-        
-        // Open print window
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
+  // Print button with Lotus letterhead
+  // Print button with Lotus letterhead
+printBtn.addEventListener('click', function() {
+  const selectedClient = document.getElementById('clientSelect').value;
+  if (selectedClient) {
+    const reports = getClientReports(selectedClient);
+    const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+    
+    // Lotus letterhead styles with print-specific colors
+    const letterheadStyles = `
+      .letterhead {
+        background: #007bff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color: white !important;
+        padding: 20px;
+        margin: 0 0 30px 0;
+        text-align: left;
+        position: relative;
       }
-    });
+      .letterhead h1 {
+        margin: 0 0 5px 0;
+        font-size: 28px;
+        font-weight: bold;
+        color: white !important;
+        border: none;
+        padding: 0;
+      }
+      .letterhead .subtitle {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+        color: white !important;
+        opacity: 0.9;
+      }
+      .letterhead .contact-info {
+        font-size: 11px;
+        color: white !important;
+        opacity: 0.8;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: right;
+      }
+      .total-box {
+        background: #e3f2fd !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+        margin: 20px 0;
+        border: 2px solid #007bff !important;
+      }
+      .total-box h2 {
+        margin: 0;
+        color: #007bff !important;
+      }
+      .client-info {
+        background: #f8f9fa !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .client-section h3 {
+        color: #1976d2 !important;
+        margin: 30px 0 15px 0;
+        padding: 10px;
+        background: #e3f2fd !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        border-radius: 5px;
+        border-left: 4px solid #2196f3 !important;
+      }
+      th {
+        background: #f8f9fa !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      tr:nth-child(even) {
+        background: #f9f9f9 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      @media print {
+        @page {
+          margin: 20px;
+        }
+        body {
+          margin: 20px !important;
+        }
+      }
+    `;
+    
+    const letterheadHTML = `
+      <div class="letterhead">
+        <h1>LOTUS</h1>
+        <div class="subtitle">Property Management</div>
+        <div class="contact-info">
+          Phone: (555) 123-4567<br>
+          Email: info@lotuspm.com<br>
+          www.lotuspropertymanagement.com
+        </div>
+      </div>
+    `;
+    
+    let printContent = '';
+    
+    if (selectedClient === 'ALL_CLIENTS') {
+      const groupedReports = groupReportsByClient(reports);
+      let clientTables = '';
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        const clientRows = clientReports.map(report => `
+          <tr>
+            <td>${report.date}</td>
+            <td>${report.request}</td>
+            <td class="cost">$${report.cost.toFixed(2)}</td>
+            <td>${report.costRemarks}</td>
+          </tr>
+        `).join('');
+        
+        clientTables += `
+          <div class="client-section">
+            <h3>Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Request</th>
+                  <th>Cost</th>
+                  <th>Cost Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${clientRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+      
+      printContent = `
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              ${letterheadStyles}
+              .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+              table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+              th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+              th { font-weight: bold; }
+              .cost { text-align: center; font-weight: bold; }
+              @media print {
+                body { margin: 20px; }
+                .no-print { display: none; }
+                .client-section { page-break-inside: avoid; }
+              }
+            </style>
+          </head>
+          <body>
+            ${letterheadHTML}
+            <div class="client-info">
+              <strong>Client:</strong> ${displayName}
+            </div>
+            ${clientTables}
+            <div class="total-box">
+              <h2>Total Cost: $${totalCost.toFixed(2)}</h2>
+            </div>
+          </body>
+        </html>
+      `;
+    } else {
+      // Single client print content
+      printContent = `
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              ${letterheadStyles}
+              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+              th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+              th { font-weight: bold; }
+              .cost { text-align: center; font-weight: bold; }
+              @media print {
+                body { margin: 20px; }
+                .no-print { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            ${letterheadHTML}
+            <div class="client-info">
+              <strong>Client:</strong> ${displayName}
+            </div>
+            <div class="total-box">
+              <h2>Total Cost: $${totalCost.toFixed(2)}</h2>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Request</th>
+                  <th>Cost</th>
+                  <th>Cost Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reports.map(report => `
+                  <tr>
+                    <td>${report.date}</td>
+                    <td>${report.request}</td>
+                    <td class="cost">$${report.cost.toFixed(2)}</td>
+                    <td>${report.costRemarks}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+    }
+    
+    // Open print window
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
   }
+});
 
   // Close modal when clicking outside
   window.addEventListener('click', function(event) {
@@ -1562,12 +1708,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script>
-document.getElementById("submitChangesBtn").addEventListener("click", function() {
-    if (confirm("Do you want to save the changes?")) {
-        location.reload(); // reload page if Yes
-    }
-    // if No, nothing happens
-});
-</script>
 {% endblock content %}

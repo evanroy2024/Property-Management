@@ -326,6 +326,8 @@
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
+                            <th>DENIED DATE </th>
+
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -335,8 +337,8 @@
                                 data-date="{{ req.created_at|date:'Y-m-d' }}" 
                                 data-type="{{ req.request_type|lower }}"
                                 data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }} {{ req.request_type|lower }}">
-                                <td><strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong></td>
-                                
+                                <td><strong>{{ req.user.last_name|title }}, {{ req.user.first_name|title }}</strong></td>
+
                                 <td style="cursor: pointer;">
                                     <strong>{{ req.created_at|date:'M d, Y' }}</strong><br>
                                     <small class="text-muted">{{ req.created_at|time:'g:i A' }}</small>
@@ -403,6 +405,15 @@
                                         {% endif %}
                                     </span>
                                 </td>
+                                <td onclick="openUpdateStatusModal('{{ req.id }}', '{{ req.status }}', '{{ req.completation_denied_date|default:"" }}', '{{ req.status_remarks|default:"" }}', '{{ req.client_approval }}')" 
+    style="cursor: pointer;">
+    {% if req.completation_denied_date %}
+        {{ req.completation_denied_date|date:'M d, Y' }}
+    {% else %}
+        -
+    {% endif %}
+</td>
+
 
                             </tr>
                         {% empty %}
@@ -423,9 +434,7 @@
                 <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
     View Cost Summary
   </button>
-  <button id="submitChangesBtn" style="background-color:#007bff; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s;">
-    Submit Updates
-  </button>
+
 </div>
             </div>
         </div>
@@ -442,7 +451,10 @@
             <input type="hidden" id="editModalRequestId">
             
             <p style="color: black;">Amount ($):</p>
-            <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input">
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <span style="position: absolute; left: 10px; top: 18px; color: #666; pointer-events: none; z-index: 1;">$</span>
+                <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input" style="padding-left: 25px;">
+            </div>
             
             <p style="color: black;">Cost Remarks:</p>
             <textarea id="editModalRemarks" name="remarks" placeholder="Enter remarks about the cost" class="modal-input" rows="3"></textarea>
@@ -838,6 +850,7 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
                 }
             }
             closeUpdateStatusModal();
+            location.reload();
         } else {
             alert('Error updating status: ' + data.error);
         }
@@ -927,19 +940,20 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
     // Complete Cost Summary Modal Script
 (function() {
     // Get unique clients from table
-    function getUniqueClients() {
-        const clientSet = new Set();
-        const rows = document.querySelectorAll('#request-table tr.request-row');
-        
-        rows.forEach(row => {
-            const clientCell = row.querySelector('td:nth-child(2)');
-            if (clientCell) {
-                clientSet.add(clientCell.textContent.trim());
-            }
-        });
-        
-        return Array.from(clientSet).sort();
-    }
+    // Get unique clients from table
+function getUniqueClients() {
+    const clientSet = new Set();
+    const rows = document.querySelectorAll('#request-table tr.request-row');
+    
+    rows.forEach(row => {
+        const clientCell = row.querySelector('td:nth-child(1)'); // CLIENT is 1st column
+        if (clientCell) {
+            clientSet.add(clientCell.textContent.trim());
+        }
+    });
+    
+    return Array.from(clientSet).sort();
+}
 
     // Populate client dropdown
     function populateClientDropdown() {
@@ -965,66 +979,65 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
 
     // Get reports for selected client (considers current filters)
     function getClientReports(clientName) {
-        const rows = document.querySelectorAll('#request-table tr.request-row');
-        const reports = [];
+    const rows = document.querySelectorAll('#request-table tr.request-row');
+    const reports = [];
+    
+    rows.forEach(row => {
+        // Only include visible rows (respects current filters)
+        if (row.style.display === 'none') return;
         
-        rows.forEach(row => {
-            // Only include visible rows (respects current filters)
-            if (row.style.display === 'none') return;
+        const clientCell = row.querySelector('td:nth-child(1)'); // CLIENT is 1st column
+        if (clientCell) {
+            const rowClient = clientCell.textContent.trim();
             
-            const clientCell = row.querySelector('td:nth-child(2)');
-            if (clientCell) {
-                const rowClient = clientCell.textContent.trim();
+            // If "All Clients" selected or specific client matches
+            if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
+                const dateCell = row.querySelector('td:nth-child(2)'); // REQUEST DATE is 2nd column
+                const dateText = dateCell ? dateCell.textContent.trim() : '';
                 
-                // If "All Clients" selected or specific client matches
-                if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
-                    const dateCell = row.querySelector('td:nth-child(1)');
-                    const dateText = dateCell ? dateCell.textContent.trim() : '';
-                    
-                    const requestTypeCell = row.querySelector('td:nth-child(3)');
-                    const requestType = requestTypeCell ? requestTypeCell.textContent.trim() : '';
-                    
-                    const descriptionCell = row.querySelector('td:nth-child(4)');
-                    const description = descriptionCell ? descriptionCell.textContent.trim() : '';
-                    
-                    // Get cost from the 5th column
-                    const costCell = row.querySelector('td:nth-child(5) span[id^="cost-"]');
-                    const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
-                    const cost = parseFloat(costText) || 0;
-                    
-                    // Get cost remarks from edit button onclick attribute
-                    let remarks = '';
-                    const costCellContainer = row.querySelector('td:nth-child(5)');
-                    if (costCellContainer) {
-                        const editButton = costCellContainer.querySelector('button[onclick*="openEditCostModal"]');
-                        if (editButton) {
-                            const onclickAttr = editButton.getAttribute('onclick');
-                            const match = onclickAttr.match(/openEditCostModal\('[^']*',\s*'[^']*',\s*'([^']*)'\)/);
-                            if (match && match[1]) {
-                                remarks = match[1];
-                            }
+                const requestTypeCell = row.querySelector('td:nth-child(3)'); // REQUEST TYPE is 3rd column
+                const requestType = requestTypeCell ? requestTypeCell.textContent.trim() : '';
+                
+                const descriptionCell = row.querySelector('td:nth-child(4)'); // REQUEST is 4th column
+                const description = descriptionCell ? descriptionCell.textContent.trim() : '';
+                
+                // Get cost from the 5th column (EST'D COST)
+                const costCell = row.querySelector('td:nth-child(5) span[id^="cost-"]');
+                const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
+                const cost = parseFloat(costText) || 0;
+                
+                // Get cost remarks from edit button onclick attribute
+                let remarks = '';
+                const costCellContainer = row.querySelector('td:nth-child(5)');
+                if (costCellContainer) {
+                    const editButton = costCellContainer.querySelector('button[onclick*="openEditCostModal"]');
+                    if (editButton) {
+                        const onclickAttr = editButton.getAttribute('onclick');
+                        const match = onclickAttr.match(/openEditCostModal\('[^']*',\s*'[^']*',\s*'([^']*)'\)/);
+                        if (match && match[1]) {
+                            remarks = match[1];
                         }
                     }
-                    // If no remarks found, display "None"
-                    if (!remarks || remarks.trim() === '') {
-                        remarks = 'None';
-                    }
-                    
-                    reports.push({
-                        date: dateText,
-                        requestType: requestType,
-                        description: description,
-                        cost: cost,
-                        remarks: remarks,
-                        client: rowClient
-                    });
                 }
+                // If no remarks found, display "None"
+                if (!remarks || remarks.trim() === '') {
+                    remarks = 'None';
+                }
+                
+                reports.push({
+                    date: dateText,
+                    requestType: requestType,
+                    description: description,
+                    cost: cost,
+                    remarks: remarks,
+                    client: rowClient
+                });
             }
-        });
-        
-        return reports;
-    }
-
+        }
+    });
+    
+    return reports;
+}
     // Group reports by client for "All Clients" view
     function groupReportsByClient(reports) {
         const grouped = {};
@@ -1038,23 +1051,67 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
     }
 
     // Generate PDF
-    function generatePDF(clientName, reports, totalCost) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+// Generate PDF
+function generatePDF(clientName, reports, totalCost) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Load and add logo
+    const logoUrl = "{% static 'logo.png' %}";
+    const img = new Image();
+    img.onload = function() {
+        // Continue with the rest of the PDF generation...
+        continueGeneratingPDF();
+    };
+    img.onerror = function() {
+        // If logo fails to load, continue without it
+        continueGeneratingPDF();
+    };
+    img.src = logoUrl;
+    
+    function continueGeneratingPDF() {
+        // Create blue header background (like in your design)
+        doc.setFillColor(24, 119, 242); // Blue color matching your design
+        doc.rect(0, 0, 210, 40, 'F'); // Full width header
         
-        // Set up document
+        // Add logo to header (white logo on blue background) - INCREASED WIDTH
+        try {
+            if (img.complete && img.naturalHeight !== 0) {
+                doc.addImage(img, 'PNG', 20, 8, 80, 25); // Increased width from 50 to 80
+            }
+        } catch (e) {
+            // Fallback text if logo doesn't load
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('LOTUS', 20, 20);
+            doc.setFontSize(10);
+            doc.text('Property Management', 20, 30);
+        }
+        
+        // Add contact information on the right side of header
+        doc.setTextColor(255, 255, 255); // White text
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Phone: (555) 123-4567 | Email: info@lotuspm.com', 210 - 5, 15, { align: 'right' });
+        doc.text('www.lotuspropertymanagement.com', 210 - 5, 25, { align: 'right' });
+        
+        // Reset text color to black for content
+        doc.setTextColor(0, 0, 0);
+        
+        // Set up document title - moved down to accommodate header
         doc.setFontSize(20);
         doc.setFont(undefined, 'bold');
-        doc.text('Service Requests Cost Summary', 20, 25);
+        doc.text('Service Requests Cost Summary', 20, 60);
         
         doc.setFontSize(16);
         doc.setFont(undefined, 'normal');
-        doc.text(`Client: ${clientName}`, 20, 40);
+        doc.text(`Client: ${clientName}`, 20, 75);
         
         doc.setFontSize(12);
-        doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+        doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 85);
         
-        let yPos = 70;
+        let yPos = 105; // Adjusted starting position for content
         
         if (clientName === 'All Clients') {
             // Group reports by client
@@ -1187,6 +1244,7 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
         const fileName = clientName === 'All Clients' ? 'All_Clients_service_requests_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_service_requests_cost_summary.pdf`;
         doc.save(fileName);
     }
+}
 
     // Display cost summary
     function displayCostSummary(clientName) {
@@ -1305,73 +1363,125 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
     }
 
     // Print function
-    function printCostSummary(clientName, reports, totalCost) {
-        let printContent = '';
+// Print function
+function printCostSummary(clientName, reports, totalCost) {
+    let printContent = '';
+    
+    if (clientName === 'All Clients') {
+        const groupedReports = groupReportsByClient(reports);
+        let clientTables = '';
         
-        if (clientName === 'All Clients') {
-            const groupedReports = groupReportsByClient(reports);
-            let clientTables = '';
+        Object.keys(groupedReports).sort().forEach(client => {
+            const clientReports = groupedReports[client];
+            const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
             
-            Object.keys(groupedReports).sort().forEach(client => {
-                const clientReports = groupedReports[client];
-                const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
-                
-                const clientRows = clientReports.map(report => `
-                    <tr>
-                        <td>${report.date}</td>
-                        <td>${report.requestType}</td>
-                        <td style="max-width:300px; word-wrap:break-word;">${report.description}</td>
-                        <td class="cost">$${report.cost.toFixed(2)}</td>
-                        <td><strong>${report.remarks}</strong></td>
-                    </tr>
-                `).join('');
-                
-                clientTables += `
-                    <div class="client-section">
-                        <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
-                            Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
-                        </h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Cost</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${clientRows}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            });
+            const clientRows = clientReports.map(report => `
+                <tr>
+                    <td>${report.date}</td>
+                    <td>${report.requestType}</td>
+                    <td style="max-width:300px; word-wrap:break-word;">${report.description}</td>
+                    <td class="cost">$${report.cost.toFixed(2)}</td>
+                    <td><strong>${report.remarks}</strong></td>
+                </tr>
+            `).join('');
             
-            printContent = `
-                <html>
-                    <head>
-                        <title>Service Requests Cost Summary - ${clientName}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-                            .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                            .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
-                            .client-section { margin-bottom: 30px; page-break-inside: avoid; }
-                            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-                            th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; font-size: 12px; }
-                            th { background: #f8f9fa; font-weight: bold; }
-                            tr:nth-child(even) { background: #f9f9f9; }
-                            .cost { text-align: right; font-weight: bold; }
-                            @media print {
-                                body { margin: 0; }
-                                .no-print { display: none; }
-                                .client-section { page-break-inside: avoid; }
+            clientTables += `
+                <div class="client-section">
+                    <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
+                        Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
+                    </h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Cost</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${clientRows}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        });
+        
+        printContent = `
+            <html>
+                <head>
+                    <title>Service Requests Cost Summary - ${clientName}</title>
+                    <style>
+                        @page { margin: 0; }
+                        * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                        .header { 
+                            background: rgb(24, 119, 242) !important; 
+                            color: white !important; 
+                            padding: 15px 20px; 
+                            display: flex; 
+                            justify-content: space-between; 
+                            align-items: center;
+                            margin-bottom: 20px;
+                            -webkit-print-color-adjust: exact !important;
+                            color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        .logo-section { 
+                            font-size: 24px; 
+                            font-weight: bold; 
+                            color: white !important;
+                            -webkit-print-color-adjust: exact !important;
+                        }
+                        .logo-subtitle { 
+                            font-size: 14px; 
+                            margin-top: 5px; 
+                            color: white !important;
+                            -webkit-print-color-adjust: exact !important;
+                        }
+                        .contact-info { 
+                            text-align: right; 
+                            font-size: 12px; 
+                            color: white !important;
+                            -webkit-print-color-adjust: exact !important;
+                        }
+                        .content { padding: 0 20px; }
+                        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin: 20px 0; }
+                        .client-info { background: #f8f9fa !important; padding: 15px; border-radius: 5px; margin: 20px 0; -webkit-print-color-adjust: exact !important; }
+                        .total-box { background: #e3f2fd !important; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; -webkit-print-color-adjust: exact !important; }
+                        .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+                        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                        th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; font-size: 12px; }
+                        th { background: #f8f9fa !important; font-weight: bold; -webkit-print-color-adjust: exact !important; }
+                        tr:nth-child(even) { background: #f9f9f9 !important; -webkit-print-color-adjust: exact !important; }
+                        .cost { text-align: right; font-weight: bold; }
+                        @media print {
+                            @page { margin: 0 !important; }
+                            * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                            .client-section { page-break-inside: avoid; }
+                            .header { 
+                                background: rgb(24, 119, 242) !important; 
+                                -webkit-print-color-adjust: exact !important;
+                                color-adjust: exact !important;
                             }
-                        </style>
-                    </head>
-                    <body>
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="logo-section">
+                            LOTUS
+                            <div class="logo-subtitle">Property Management</div>
+                        </div>
+                        <div class="contact-info">
+                            Phone: (555) 123-4567 | Email: info@lotuspm.com<br>
+                            www.lotuspropertymanagement.com
+                        </div>
+                    </div>
+                    <div class="content">
                         <h1>Service Requests Cost Summary</h1>
                         <div class="client-info">
                             <strong>Client:</strong> ${clientName}<br>
@@ -1381,32 +1491,84 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
                         <div class="total-box">
                             <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
                         </div>
-                    </body>
-                </html>
-            `;
-        } else {
-            // Single client print content
-            printContent = `
-                <html>
-                    <head>
-                        <title>Service Requests Cost Summary - ${clientName}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-                            .client-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                            .total-box { background: #e3f2fd; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; }
-                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                            th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; font-size: 12px; }
-                            th { background: #f8f9fa; font-weight: bold; }
-                            tr:nth-child(even) { background: #f9f9f9; }
-                            .cost { text-align: right; font-weight: bold; }
-                            @media print {
-                                body { margin: 0; }
-                                .no-print { display: none; }
+                    </div>
+                </body>
+            </html>
+        `;
+    } else {
+        // Single client print content
+        printContent = `
+            <html>
+                <head>
+                    <title>Service Requests Cost Summary - ${clientName}</title>
+                    <style>
+                        @page { margin: 0; }
+                        * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                        .header { 
+                            background: rgb(24, 119, 242) !important; 
+                            color: white !important; 
+                            padding: 15px 20px; 
+                            display: flex; 
+                            justify-content: space-between; 
+                            align-items: center;
+                            margin-bottom: 20px;
+                            -webkit-print-color-adjust: exact !important;
+                            color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        .logo-section { 
+                            font-size: 24px; 
+                            font-weight: bold; 
+                            color: white !important;
+                            -webkit-print-color-adjust: exact !important;
+                        }
+                        .logo-subtitle { 
+                            font-size: 14px; 
+                            margin-top: 5px; 
+                            color: white !important;
+                            -webkit-print-color-adjust: exact !important;
+                        }
+                        .contact-info { 
+                            text-align: right; 
+                            font-size: 12px; 
+                            color: white !important;
+                            -webkit-print-color-adjust: exact !important;
+                        }
+                        .content { padding: 0 20px; }
+                        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin: 20px 0; }
+                        .client-info { background: #f8f9fa !important; padding: 15px; border-radius: 5px; margin: 20px 0; -webkit-print-color-adjust: exact !important; }
+                        .total-box { background: #e3f2fd !important; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; -webkit-print-color-adjust: exact !important; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; font-size: 12px; }
+                        th { background: #f8f9fa !important; font-weight: bold; -webkit-print-color-adjust: exact !important; }
+                        tr:nth-child(even) { background: #f9f9f9 !important; -webkit-print-color-adjust: exact !important; }
+                        .cost { text-align: right; font-weight: bold; }
+                        @media print {
+                            @page { margin: 0 !important; }
+                            * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                            .header { 
+                                background: rgb(24, 119, 242) !important; 
+                                -webkit-print-color-adjust: exact !important;
+                                color-adjust: exact !important;
                             }
-                        </style>
-                    </head>
-                    <body>
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="logo-section">
+                            LOTUS
+                            <div class="logo-subtitle">Property Management</div>
+                        </div>
+                        <div class="contact-info">
+                            Phone: (555) 123-4567 | Email: info@lotuspm.com<br>
+                            www.lotuspropertymanagement.com
+                        </div>
+                    </div>
+                    <div class="content">
                         <h1>Service Requests Cost Summary</h1>
                         <div class="client-info">
                             <strong>Client:</strong> ${clientName}<br>
@@ -1437,19 +1599,20 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
                                 `).join('')}
                             </tbody>
                         </table>
-                    </body>
-                </html>
-            `;
-        }
-        
-        // Open print window
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
+                    </div>
+                </body>
+            </html>
+        `;
     }
+    
+    // Open print window
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+}
 
     // Event listeners setup
     function setupCostSummaryEventListeners() {
@@ -1624,12 +1787,6 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
 })();
 </script>
 
-<script>
-document.getElementById("submitChangesBtn").addEventListener("click", function() {
-    if (confirm("Do you want to save the changes?")) {
-        location.reload(); // reload page if Yes
-    }
-    // if No, nothing happens
-});
-</script>
+
+
 {% endblock content %}

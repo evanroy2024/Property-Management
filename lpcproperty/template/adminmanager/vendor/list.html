@@ -195,7 +195,7 @@
                 </div>
                 <div class="col-md-2">
                     <select id="filter-contact-person" class="form-select">
-                        <option value="">Name</option>
+                        <option value="">Contact</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -245,7 +245,7 @@
                     <thead>
                         <tr>
                             <th class="sortable" data-index="0">Company Name <i class="fas fa-sort sort-icon"></i></th>
-                            <th class="sortable" data-index="1">Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="1">Contact <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="2">City <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="3">State <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="4">Cell Phone <i class="fas fa-sort sort-icon"></i></th>
@@ -578,5 +578,9 @@
         });
     });
 </script>
-
+<style>
+    #filter-state option {
+    text-transform: uppercase;
+}
+</style>
 {% endblock content %}

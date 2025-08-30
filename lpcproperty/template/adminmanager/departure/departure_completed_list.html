@@ -389,7 +389,7 @@
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
-                            <th>Completation Date</th>
+                            <th>COMPLETION DATE</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -401,8 +401,8 @@
                                 data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }} {{ req.name|lower }}">
                                 
                                 
-                                <td><strong>{{ req.user.last_name }}, {{ req.user.first_name }}</strong></td>
-                                
+                                <td><strong>{{ req.user.last_name|title }}, {{ req.user.first_name|title }}</strong></td>
+
                                 <td>
                                     {% if req.departure_date %}
                                         <strong>{{ req.departure_date|date:'M d, Y' }}</strong><br>
@@ -459,7 +459,7 @@
             text-transform: uppercase;
             color: white;
             {% if req.status == 'completed' %}
-                background-color: #66CC66;
+                background-color: #28a745;
                 border: 1px solid #66CC66;
             {% elif req.status == 'denied' %}
                 background-color: #FF6666;
@@ -943,4 +943,10 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
  calculateTotalCost();
 })();
 </script>
+<style>
+    .status-approved {
+    background-color: #28a745;
+    color: white;
+}
+</style>
 {% endblock content %}

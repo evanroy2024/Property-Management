@@ -301,7 +301,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
-        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Denied Walk-Thru Reports</h1>
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Denied Walk-Thru Items</h1>
     </div>
 
     <!-- Reports Table Card -->
@@ -338,13 +338,7 @@
                 <table class="table table-hover" id="sortable-table">
                     <thead>
                         <tr>
-                        <th>WALK-THRU REPORT</th>
-                        <th>ITEMS</th>
-                        <th>REMARKS</th>
-                        <th class="sortable" data-index="0" style="cursor: pointer;">
-                            REPORT DATE <i class="fas fa-sort sort-icon"></i>
-                        </th>
-                        <th class="sortable" data-index="1" style="cursor: pointer; position: relative;">
+                           <th class="sortable" data-index="1" style="cursor: pointer; position: relative;">
                             <span>CLIENT</span>
                             <i class="fas fa-sort sort-icon"></i>
                             <span class="filter-btn" id="clientFilterBtn" title="Filter Client" style="display: none;">
@@ -356,10 +350,17 @@
                                 <option value="all">All Clients</option>
                             </select>
                         </th>
+                        <th>WALK-THRU REPORT</th>
+                        <th>ITEMS</th>
+                        <th>REMARKS</th>
+                        <th class="sortable" data-index="0" style="cursor: pointer;">
+                            REPORT DATE <i class="fas fa-sort sort-icon"></i>
+                        </th>
+                       
                         <th>EST'D COST</th>
                         <th>CLIENT STATUS</th>
                         <th>ITEM STATUS</th>
-                        <th>Denied Date</th>
+                        <th>DENIED DATE</th>
                     </tr>
 
                     </thead>
@@ -371,6 +372,8 @@
                 data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
                 data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"                 
                 data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">                                  
+                   <td><strong>{{ report.user.last_name|title }}, {{ report.user.first_name|title }}</strong></td>                 
+
                 <td><strong>{{ item.category }}</strong></td>                 
                 <td style="word-wrap: break-word; white-space: normal; max-width: 250px;" > {{ item.question }}</td>                 
                 <td style="word-wrap: break-word; white-space: normal; max-width: 250px;">{{ item.remarks|default:"-" }}</td>                                   
@@ -378,7 +381,6 @@
                     <strong>{{ report.datetime|date:'M d, Y' }}</strong><br>                     
                     <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>                 
                 </td>                                  
-                <td><strong>{{ report.user.last_name }}, {{ report.user.first_name }}</strong></td>                 
                 <td>   
                     <span id="cost-{{ report.id }}-{{ item.question|slugify }}">${{ item.amount|default:"-" }}</span> 
                     <button    
@@ -441,28 +443,9 @@
                 <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
     View Cost Summary
   </button>
-  <button id="submitChangesBtn" style="background-color:#007bff; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s;">
-    Submit Updates
-  </button>
+
 </div>
-<script>
-  let confirmed = false;
 
-  // Warn before leaving the page
-  window.onbeforeunload = function () {
-    if (!confirmed) {
-      return "Are you sure you want to leave? Unsaved changes will be lost.";
-    }
-  };
-
-  // Handle button click
-  document.getElementById("submitChangesBtn").addEventListener("click", function () {
-    if (confirm("Are you sure you want to confirm changes?")) {
-      confirmed = true;
-      location.reload();  // Reload page after confirmation
-    }
-  });
-</script>
 
             </div>
         </div>
@@ -874,7 +857,10 @@ document.getElementById('confirmAllBtn').addEventListener('click', function() {
       <input type="hidden" id="editModalQuestionSlug">
       
       <p style="color: black;">Amount ($):</p>
-      <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input">
+      <div style="position: relative; display: inline-block; width: 100%;">
+        <span style="position: absolute; left: 10px; top: 18px; color: #666; pointer-events: none; z-index: 1;">$</span>
+        <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input" style="padding-left: 25px;">
+      </div>
       
       <p style="color: black;">calculation:</p>
       <textarea id="editModalNote" name="calculation_note" required class="modal-input" rows="3" placeholder="list vendor cost, internal markup, and addl costs that may apply. Copy this total to the 'Amount box'"></textarea>
@@ -886,6 +872,7 @@ document.getElementById('confirmAllBtn').addEventListener('click', function() {
     </form>
   </div>
 </div>
+
 
 <script>
 function openEditCostModal(reportId, category, question, amount, note = '', questionSlug = '') {
@@ -1156,6 +1143,7 @@ function submitUpdateFieldStatus() {
       }
       
       closeUpdateFieldStatusModal();
+      location.reload();
     } else {
       console.error('Update failed:', data);
       alert('Failed to update status: ' + (data.error || 'Unknown error'));
@@ -1218,7 +1206,7 @@ function getUniqueClients() {
   const rows = document.querySelectorAll('#report-table tr.report-row');
   
   rows.forEach(row => {
-    const clientCell = row.querySelector('td:nth-child(5)');
+    const clientCell = row.querySelector('td:nth-child(1)');
     if (clientCell) {
       clientSet.add(clientCell.textContent.trim());
     }
@@ -1255,19 +1243,19 @@ function getClientReports(clientName) {
   const reports = [];
   
   rows.forEach(row => {
-    const clientCell = row.querySelector('td:nth-child(5)');
+    const clientCell = row.querySelector('td:nth-child(1)');
     if (clientCell) {
       const rowClient = clientCell.textContent.trim();
       
       // If "All Clients" selected or specific client matches
       if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
-        const category = row.querySelector('td:nth-child(1)').textContent.trim();
-        const item = row.querySelector('td:nth-child(2)').textContent.trim();
-        const remarks = row.querySelector('td:nth-child(3)').textContent.trim();
+        const category = row.querySelector('td:nth-child(2)').textContent.trim();
+        const item = row.querySelector('td:nth-child(3)').textContent.trim();
+        const remarks = row.querySelector('td:nth-child(4)').textContent.trim();
         const costCell = row.querySelector('td:nth-child(6) span[id^="cost-"]');
         const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
         const cost = parseFloat(costText) || 0;
-        const dateCell = row.querySelector('td:nth-child(4) strong');
+        const dateCell = row.querySelector('td:nth-child(5) strong');
         const date = dateCell ? dateCell.textContent.trim() : '';
         
         reports.push({
@@ -1298,51 +1286,144 @@ function groupReportsByClient(reports) {
 }
 
 // Generate PDF
+// Generate PDF
 function generatePDF(clientName, reports, totalCost) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   
-  // Set up document
-  doc.setFontSize(20);
-  doc.setFont(undefined, 'bold');
-  doc.text('Cost Summary Report', 20, 25);
+  // Load and add logo
+  const logoUrl = "{% static 'logo.png' %}";
+  const img = new Image();
+  img.onload = function() {
+    // Continue with the rest of the PDF generation...
+    continueGeneratingPDF();
+  };
+  img.onerror = function() {
+    // If logo fails to load, continue without it
+    continueGeneratingPDF();
+  };
+  img.src = logoUrl;
   
-  doc.setFontSize(16);
-  doc.setFont(undefined, 'normal');
-  doc.text(`Client: ${clientName}`, 20, 40);
-  
-  doc.setFontSize(12);
-  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
-  
-  let yPos = 70;
-  
-  if (clientName === 'All Clients') {
-    // Group reports by client
-    const groupedReports = groupReportsByClient(reports);
+  function continueGeneratingPDF() {
+    // Create blue header background (like in your design)
+    doc.setFillColor(24, 119, 242); // Blue color matching your design
+    doc.rect(0, 0, 210, 40, 'F'); // Full width header
     
-    Object.keys(groupedReports).sort().forEach(client => {
-      const clientReports = groupedReports[client];
-      const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
-      
-      // Check if we need a new page for client header
-      if (yPos > 250) {
-        doc.addPage();
-        yPos = 30;
+    // Add logo to header (white logo on blue background) - INCREASED WIDTH
+    try {
+      if (img.complete && img.naturalHeight !== 0) {
+        doc.addImage(img, 'PNG', 20, 8, 80, 25); // Increased width from 50 to 80
       }
-      
-      // Client header
-      doc.setFontSize(14);
+    } catch (e) {
+      // Fallback text if logo doesn't load
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
       doc.setFont(undefined, 'bold');
-      doc.setFillColor(230, 240, 255);
-      doc.rect(20, yPos - 8, 170, 15, 'F');
-      doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
-      yPos += 20;
+      doc.text('LOTUS', 20, 20);
+      doc.setFontSize(10);
+      doc.text('Property Management', 20, 30);
+    }
+    
+    // Add contact information on the right side of header
+    doc.setTextColor(255, 255, 255); // White text
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('Phone: (555) 123-4567 | Email: info@lotuspm.com', 210 - 5, 15, { align: 'right' });
+    doc.text('www.lotuspropertymanagement.com', 210 - 5, 25, { align: 'right' });
+    
+    // Reset text color to black for content
+    doc.setTextColor(0, 0, 0);
+    
+    // Set up document title - moved down to accommodate header
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('Cost Summary Report', 20, 60);
+    
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Client: ${clientName}`, 20, 75);
+    
+    doc.setFontSize(12);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 85);
+    
+    let yPos = 105; // Adjusted starting position for content
+    
+    if (clientName === 'All Clients') {
+      // Group reports by client
+      const groupedReports = groupReportsByClient(reports);
       
-      // Table headers for this client
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        // Check if we need a new page for client header
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        // Client header
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(230, 240, 255);
+        doc.rect(20, yPos - 8, 170, 15, 'F');
+        doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+        yPos += 20;
+        
+        // Table headers for this client
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(245, 245, 245);
+        doc.rect(20, yPos - 8, 170, 12, 'F');
+        doc.text('Date', 22, yPos);
+        doc.text('Category', 45, yPos);
+        doc.text('Item', 70, yPos);
+        doc.text('Remarks', 110, yPos);
+        doc.text('Cost', 185, yPos, { align: 'right' });
+        yPos += 15;
+        
+        // Client's reports
+        doc.setFont(undefined, 'normal');
+        clientReports.forEach((report, index) => {
+          if (yPos > 260) {
+            doc.addPage();
+            yPos = 30;
+          }
+          
+          if (index % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(20, yPos - 8, 170, 12, 'F');
+          }
+          
+          const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
+          doc.text(dateText, 22, yPos);
+          
+          const categoryLines = doc.splitTextToSize(report.category, 20);
+          doc.text(categoryLines, 45, yPos);
+
+          const itemLines = doc.splitTextToSize(report.item, 35);
+          doc.text(itemLines, 70, yPos);
+
+          const remarksLines = doc.splitTextToSize(report.remarks, 70);
+          doc.text(remarksLines, 110, yPos);
+
+          // Adjust yPos based on maximum lines used
+          const maxLines = Math.max(categoryLines.length, itemLines.length, remarksLines.length);
+          yPos += (maxLines - 1) * 4; // Add extra space for multiple lines
+          
+          doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
+          yPos += 12;
+        });
+        
+        yPos += 10; // Space between clients
+      });
+    } else {
+      // Single client view
       doc.setFontSize(10);
       doc.setFont(undefined, 'bold');
       doc.setFillColor(245, 245, 245);
-      doc.rect(20, yPos - 8, 170, 12, 'F');
+      const headerWidth = 170;
+      doc.rect(20, yPos - 8, headerWidth, 12, 'F');
       doc.text('Date', 22, yPos);
       doc.text('Category', 45, yPos);
       doc.text('Item', 70, yPos);
@@ -1350,9 +1431,8 @@ function generatePDF(clientName, reports, totalCost) {
       doc.text('Cost', 185, yPos, { align: 'right' });
       yPos += 15;
       
-      // Client's reports
       doc.setFont(undefined, 'normal');
-      clientReports.forEach((report, index) => {
+      reports.forEach((report, index) => {
         if (yPos > 260) {
           doc.addPage();
           yPos = 30;
@@ -1360,7 +1440,7 @@ function generatePDF(clientName, reports, totalCost) {
         
         if (index % 2 === 0) {
           doc.setFillColor(250, 250, 250);
-          doc.rect(20, yPos - 8, 170, 12, 'F');
+          doc.rect(20, yPos - 8, headerWidth, 12, 'F');
         }
         
         const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
@@ -1382,73 +1462,27 @@ function generatePDF(clientName, reports, totalCost) {
         doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
         yPos += 12;
       });
-      
-      yPos += 10; // Space between clients
-    });
-  } else {
-    // Single client view
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'bold');
-    doc.setFillColor(245, 245, 245);
-    const headerWidth = 170;
-    doc.rect(20, yPos - 8, headerWidth, 12, 'F');
-    doc.text('Date', 22, yPos);
-    doc.text('Category', 45, yPos);
-    doc.text('Item', 70, yPos);
-    doc.text('Remarks', 110, yPos);
-    doc.text('Cost', 185, yPos, { align: 'right' });
-    yPos += 15;
+    }
     
-    doc.setFont(undefined, 'normal');
-    reports.forEach((report, index) => {
-      if (yPos > 260) {
-        doc.addPage();
-        yPos = 30;
-      }
-      
-      if (index % 2 === 0) {
-        doc.setFillColor(250, 250, 250);
-        doc.rect(20, yPos - 8, headerWidth, 12, 'F');
-      }
-      
-      const dateText = report.date.length > 10 ? report.date.substring(0, 10) : report.date;
-      doc.text(dateText, 22, yPos);
-      
-      const categoryLines = doc.splitTextToSize(report.category, 20);
-      doc.text(categoryLines, 45, yPos);
-
-      const itemLines = doc.splitTextToSize(report.item, 35);
-      doc.text(itemLines, 70, yPos);
-
-      const remarksLines = doc.splitTextToSize(report.remarks, 70);
-      doc.text(remarksLines, 110, yPos);
-
-      // Adjust yPos based on maximum lines used
-      const maxLines = Math.max(categoryLines.length, itemLines.length, remarksLines.length);
-      yPos += (maxLines - 1) * 4; // Add extra space for multiple lines
-      
-      doc.text(`$${report.cost.toFixed(2)}`, 185, yPos, { align: 'right' });
-      yPos += 12;
-    });
+    // Add total cost at the end
+    yPos += 15;
+    if (yPos > 260) {
+      doc.addPage();
+      yPos = 30;
+    }
+    
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, yPos - 8, 170, 20, 'F');
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+    
+    // Download the PDF
+    const fileName = clientName === 'All Clients' ? 'All_Clients_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_cost_summary.pdf`;
+    doc.save(fileName);
   }
-  
-  // Add total cost at the end
-  yPos += 15;
-  if (yPos > 260) {
-    doc.addPage();
-    yPos = 30;
-  }
-  
-  doc.setFillColor(240, 240, 240);
-  doc.rect(20, yPos - 8, 170, 20, 'F');
-  doc.setFontSize(14);
-  doc.setFont(undefined, 'bold');
-  doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
-  
-  // Download the PDF
-  const fileName = clientName === 'All Clients' ? 'All_Clients_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_cost_summary.pdf`;
-  doc.save(fileName);
 }
+
 
 // Display cost summary
 function displayCostSummary(clientName) {
@@ -1873,4 +1907,10 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
   }
 })();
  </script>
+ <style>
+  .status-denied {
+    background-color: #dc3545;
+    color: white;
+}
+ </style>
 {% endblock content %}
