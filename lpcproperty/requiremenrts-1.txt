@@ -17,3 +17,4 @@ pip install icalendar
 
 
 rm -rf *
+https://github.com/evanroy2024/Property-Management.git

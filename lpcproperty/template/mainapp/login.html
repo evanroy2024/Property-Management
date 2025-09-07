@@ -5,7 +5,7 @@
 <style>
     body {
         background: #ffffff;
-        color: #000; /* Default text color */
+        color: #000;
         font-family: Arial, sans-serif;
     }
 
@@ -14,9 +14,11 @@
         background: #ffffff;
         padding: 40px;
         border-radius: 12px;
-        width: 40%;
+        width: 90%;
+        max-width: 500px;
         text-align: center;
-        margin: auto;
+        margin: 20px auto;
+        box-sizing: border-box;
     }
 
     /* Heading (One Line, Bold) */
@@ -27,7 +29,8 @@
         text-transform: uppercase;
         color: #d1aa6b;
         letter-spacing: 1px;
-        white-space: nowrap;
+        white-space: normal;
+        word-wrap: break-word;
     }
 
     /* Labels Above Input Fields */
@@ -49,6 +52,7 @@
         background: #fff;
         color: #000;
         font-weight: bold;
+        box-sizing: border-box;
     }
 
     .input-field::placeholder {
@@ -81,6 +85,7 @@
         font-weight: bold;
         cursor: pointer;
         transition: 0.3s;
+        box-sizing: border-box;
     }
 
     .login-btn:hover {
@@ -93,6 +98,7 @@
         justify-content: center;
         gap: 30px;
         margin-bottom: 20px;
+        flex-wrap: wrap;
     }
 
     .user-type-option {
@@ -139,11 +145,14 @@
         display: flex;
         align-items: center;
         gap: 20px;
+        flex-wrap: wrap;
     }
 
     .main-three-btn div {
         display: flex;
         flex-direction: column;
+        flex: 1;
+        min-width: 150px;
     }
 
     label {
@@ -159,63 +168,119 @@
         border: 1px solid #ccc;
         background-color: #fff;
         color: #000;
+        width: 100%;
+        box-sizing: border-box;
     }
-    body{
-        background: #ffffff;
+
+    .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    /* Media Queries for Mobile Responsiveness */
+    @media screen and (max-width: 768px) {
+        .login-container {
+            width: 95%;
+            padding: 30px 20px;
+            margin: 10px auto;
+        }
+
+        .login-container h1 {
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .user-type-container {
+            gap: 20px;
+        }
+
+        .main-three-btn {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .main-three-btn div {
+            min-width: 100%;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .login-container {
+            width: 98%;
+            padding: 20px 15px;
+        }
+
+        .login-container h1 {
+            font-size: 14px;
+        }
+
+        .input-field {
+            padding: 10px;
+        }
+
+        .login-btn {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .user-type-container {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .forgot-password {
+            font-size: 14px;
+        }
     }
 </style>
 
-  
 <!-- Your page-specific content here -->
 <div class="login-container">
   <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
-  <!-- <img src="{% static 'whitelogo.png' %}" alt="Company Logo" class="logo"> -->
-  
-  <!-- User Type Selection Tick Boxes -->
-  
-  
+
   <form method="POST">
     {% csrf_token %}
     {% if messages %}
-  {% for message in messages %}
-    {% if 'login_error' in message.tags %}
-      <div class="alert alert-danger">
-        {{ message }}
-      </div>
+      {% for message in messages %}
+        {% if 'login_error' in message.tags %}
+          <div class="alert alert-danger">
+            {{ message }}
+          </div>
+        {% endif %}
+      {% endfor %}
     {% endif %}
-  {% endfor %}
-{% endif %}
-
 
     <h2>EMAIL or USERNAME</h2>
     <input type="text" id="username" name="username" class="input-field" placeholder="Username" required>
-    
+
     <h2>PASSWORD</h2>
     <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
-    
+
     <button type="submit" class="login-btn">Login</button>
   </form>
-  
-  <a href="#" class="forgot-password">Forgot Password?</a>
+
+  <a href="{% url 'mainapp:client_password_change' %}" class="forgot-password">Forgot Password?</a>
 </div>
 
 <script>
   function selectUserType(type) {
-    // Remove check from all options
     document.getElementById('client-checkbox').classList.remove('checked');
     document.getElementById('manager-checkbox').classList.remove('checked');
-    
-    // Add check to selected option
+
     document.getElementById(type + '-checkbox').classList.add('checked');
-    
-    // If manager is selected, redirect to the client manager page
+
     if (type === 'manager') {
-        window.location.href = "{% url 'clientmanager:client_login' %}";
+      window.location.href = "{% url 'clientmanager:client_login' %}";
     }
-    // For client, we stay on the same page as requested
   }
 </script>
-
-<!-- White theme change Code  -->
 
 {% endblock %}

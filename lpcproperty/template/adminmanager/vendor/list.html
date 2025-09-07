@@ -158,6 +158,10 @@
             min-height: 700px;
         }
     }
+
+    #filter-state option {
+        text-transform: uppercase;
+    }
 </style>
 
 <div class="content-wrapper">
@@ -179,6 +183,9 @@
                 <a href="{% url 'adminmanager:create_vendor' %}" class="btn btn-primary">
                     <i class="fas fa-plus fa-sm mr-2"></i> Add New Vendor
                 </a>
+                <a href="{% url 'adminmanager:manage_vendor_services' %}" class="btn btn-primary">
+                  <i class="fas fa-tools fa-sm mr-2"></i> Manage Services
+                </a>
             </div>
         </div>
     </div>
@@ -188,12 +195,12 @@
         <!-- Live Filters -->
         <div class="p-3">
             <div class="row g-2">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <select id="filter-company" class="form-select">
                         <option value="">Company Name</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <select id="filter-contact-person" class="form-select">
                         <option value="">Contact</option>
                     </select>
@@ -208,34 +215,11 @@
                         <option value="">States</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-    <select id="filter-service" class="form-select">
-        <option value="">Services</option>
-        <option value="appliance repair">Appliance Repair</option>
-        <option value="av">AV</option>
-        <option value="car detailer">Car Detailer</option>
-        <option value="countertops">Countertops</option>
-        <option value="electrician">Electrician</option>
-        <option value="flooring, carpet">Flooring, Carpet</option>
-        <option value="flooring, epoxy">Flooring, Epoxy</option>
-        <option value="flooring, resilient">Flooring, Resilient</option>
-        <option value="flooring, tile">Flooring, Tile</option>
-        <option value="garage door">Garage Door</option>
-        <option value="glass, installation">Glass, Installation</option>
-        <option value="glass, repair">Glass, Repair</option>
-        <option value="hvac">HVAC</option>
-        <option value="landscape">Landscape</option>
-        <option value="locksmith">Locksmith</option>
-        <option value="millwork">Millwork</option>
-        <option value="painting">Painting</option>
-        <option value="plumbing">Plumbing</option>
-        <option value="pressure washer">Pressure Washer</option>
-        <option value="roofing">Roofing</option>
-        <option value="security">Security</option>
-        <option value="wall covering">Wall Covering</option>
-    </select>
-</div>
-
+                <div class="col-md-2">
+                    <select id="filter-service" class="form-select">
+                        <option value="">Services</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -248,9 +232,9 @@
                             <th class="sortable" data-index="1">Contact <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="2">City <i class="fas fa-sort sort-icon"></i></th>
                             <th class="sortable" data-index="3">State <i class="fas fa-sort sort-icon"></i></th>
-                            <th class="sortable" data-index="4">Cell Phone <i class="fas fa-sort sort-icon"></i></th>
-                            <th class="sortable" data-index="5">Email <i class="fas fa-sort sort-icon"></i></th>
-                            <th class="sortable" data-index="6">Service <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="4">Office Phone <i class="fas fa-sort sort-icon"></i></th>
+                            <th >Website </th>
+                            <th class="sortable" data-index="5">Service <i class="fas fa-sort sort-icon"></i></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -258,16 +242,22 @@
                         {% for vendor in vendors %}
                         <tr class="vendor-row"
                             data-company="{{ vendor.company_name|lower }}"
-                            data-contact-person="{{ vendor.last_name }}, {{ vendor.first_name }}"
+                            data-contact-person="{% if vendor.contacts.first %}{{ vendor.contacts.first.last_name }}, {{ vendor.contacts.first.first_name }}{% else %}No Contact{% endif %}"
                             data-city="{{ vendor.city|lower }}"
                             data-state="{{ vendor.state|lower }}"
                             data-service="{{ vendor.service|lower }}">
                             <td><strong>{{ vendor.company_name }}</strong></td>
-                            <td>{{ vendor.last_name }}, {{ vendor.first_name }}</td>
+                            <td>
+                                {% if vendor.contacts.first %}
+                                    {{ vendor.contacts.first.last_name }}, {{ vendor.contacts.first.first_name }}
+                                {% else %}
+                                    <span class="text-muted">No Contact</span>
+                                {% endif %}
+                            </td>
                             <td>{{ vendor.city }}</td>
                             <td>{{ vendor.state }}</td>
                             <td>{{ vendor.phone_number }}</td>
-                            <td>{{ vendor.email }}</td>
+                            <td>{{ vendor.website }}</td>
                             <td>
                                  <span class="service-text" title="{{ vendor.service }}">
                                 {{ vendor.first_service }}
@@ -293,16 +283,15 @@
                                   Contacts
                               </a>
                           </td>
-
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="8">
+                            <td colspan="7">
                                 <div class="empty-state">
                                     <i class="fas fa-truck fa-4x mb-3 icon-gray"></i>
                                     <h4 class="text-gray-800 mb-2">No vendors found</h4>
                                     <p class="text-gray-600 mb-3">Get started by adding your first vendor</p>
-                                    <a href="#" class="btn btn-primary">
+                                    <a href="{% url 'adminmanager:create_vendor' %}" class="btn btn-primary">
                                         <i class="fas fa-plus mr-2"></i> Add Vendor
                                     </a>
                                 </div>
@@ -333,7 +322,7 @@
                 const values = new Set();
                 rows.forEach(row => {
                     const val = row.getAttribute(dataAttr);
-                    if (val && val.trim() !== '') values.add(val);
+                    if (val && val.trim() !== '' && val.toLowerCase() !== 'no contact') values.add(val);
                 });
         
                 [...values].sort().forEach(val => {
@@ -348,6 +337,25 @@
             populateDropdown("contactPerson", "data-contact-person");
             populateDropdown("city", "data-city");
             populateDropdown("state", "data-state");
+
+            // Populate service dropdown from available services
+            const serviceValues = new Set();
+            rows.forEach(row => {
+                const services = row.getAttribute("data-service");
+                if (services && services.trim() !== '') {
+                    services.split(',').forEach(service => {
+                        const trimmed = service.trim();
+                        if (trimmed) serviceValues.add(trimmed);
+                    });
+                }
+            });
+
+            [...serviceValues].sort().forEach(val => {
+                const opt = document.createElement("option");
+                opt.value = val;
+                opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                filters.service.appendChild(opt);
+            });
         
             // Filtering function
             function filterTable() {
@@ -526,8 +534,7 @@
                             vendorContacts.push({
                                 firstName: "{{ contact.first_name|escapejs }}",
                                 lastName: "{{ contact.last_name|escapejs }}",
-                                cell: "{{ contact.cell|escapejs }}",
-                                email: "{{ contact.email|escapejs }}"
+                                cell: "{{ contact.cell|escapejs }}"
                             });
                         {% endfor %}
                     }
@@ -549,9 +556,8 @@
                         contactsHtml += `
                             <div class="contact-item">
                                 <h6>Contact ${index + 1}</h6>
-                                <div class="contact-info"><strong>Name:</strong>  ${contact.lastName}, ${contact.firstName}</div>
+                                <div class="contact-info"><strong>Name:</strong> ${contact.lastName}, ${contact.firstName}</div>
                                 <div class="contact-info"><strong>Cell Phone:</strong> ${contact.cell}</div>
-                                <div class="contact-info"><strong>Email:</strong> ${contact.email}</div>
                             </div>
                         `;
                     });
@@ -578,9 +584,4 @@
         });
     });
 </script>
-<style>
-    #filter-state option {
-    text-transform: uppercase;
-}
-</style>
 {% endblock content %}

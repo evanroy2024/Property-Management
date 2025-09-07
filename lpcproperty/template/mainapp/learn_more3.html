@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotus</title>
+   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200&display=swap" rel="stylesheet">
+
+     <!-- Bootstrap CDN -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <style> 
+          .link-secondary {
+    color: white !important;
+}
+         .bg-section {
+             background: url("{% static 'home/bg.jpg' %}") no-repeat center center/cover;
+             height: 700px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             text-align: center;
+             color: white;
+             color: #143048;
+             font-size:80px;
+             font-style: italic;
+         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Raleway', sans-serif;
+    font-weight: 200; /* Use extra light weight */
+    color: #666; /* Softer text color */
+        }
+        .navbar {
+            background-color: #13293D;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            position: sticky;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+    height: 90px;
+}
+        .logo span {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: #13293D;
+                text-align: center;
+                padding: 10px 0;
+                opacity: 0;
+                transform: translateY(-20px);
+                visibility: hidden;
+            }
+            .nav-links.active {
+                opacity: 1;
+                transform: translateY(0);
+                visibility: visible;
+            }
+            .nav-links a {
+                padding: 10px;
+                display: block;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+   
+          .image-section {
+              background-color: #d1aa6b;  
+              padding-top: 50px;  
+              padding-bottom: 50px;  
+              display: flex;
+              justify-content: center;  
+              align-items: center;  
+          }
+          
+          .image-container {
+              display: flex;
+              width: 96%;  
+              gap: 40px;  
+              justify-content: center;
+          }
+          
+          .image-container img {
+              width: 30%;  
+              height: auto;  
+              object-fit: cover;  
+              border-radius: 5px;  
+              transition: transform 0.3s ease-in-out;  /* Smooth transition */
+          }
+          
+          /* Hover Effect - Image Grows and Pops Out */
+          .image-container img:hover {
+              transform: scale(1.1);  /* Increases size by 10% */
+              box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); /* Adds a shadow effect */
+          }
+          
+          /* Medium Screens: Slightly Reduce Image Size */
+          @media screen and (max-width: 1024px) {
+              .image-container img {
+                  width: 28%;
+              }
+          }
+          
+          /* Smaller Screens: Further Reduce Image Size */
+          @media screen and (max-width: 768px) {
+              .image-container img {
+                  width: 26%;
+              }
+          }
+          
+          /* Mobile Screens: Stack Images Vertically */
+          @media screen and (max-width: 680px) {
+              .image-container {
+                  flex-direction: column;
+                  align-items: center;
+              }
+          
+              .image-container img {
+                  width: 80%;
+              }
+          }
+          
+                  .next-section{
+                      display: flex;
+                      align-self: center;
+                      justify-content: center;
+                  }
+                  .left-section{
+                      border-right: 2px solid #d1aa6b;
+                      margin-right: 10px;
+          
+                      width: 55%;
+                      /* margin-right: 20%; */
+                  }
+                  .right-section{
+                    
+                      width: 45%;
+                      margin-top: 6%;
+                      font-size: 1.1rem;
+                      font-family: 'Raleway', sans-serif;
+                      margin-left: 5%;
+                      margin-right: 5%;
+                  }
+                  .unique-button {
+                      margin-top: 5%;
+              background-color: #ffffff;
+              color: #d1aa6b;
+              padding: 12px 25px;
+              border: 1px solid #d1aa6b;
+              font-size: 16px;
+              font-weight: bold;
+              cursor: pointer;
+              transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+          }
+          
+          .unique-button:hover {
+              background-color: #c38b56;  /* Slightly darker shade of #d1aa6b */
+              color: white;
+              transform: scale(1.05);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          }
+          .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            gap: 30px;
+        }
+        
+        .box {
+            width: calc(33.33% - 20px);
+            background: #fff;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 0 0 50px 0;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #d1aa6b;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            padding: 35px;
+            min-height: 450px;
+        }
+        
+        .box:hover {
+            transform: translateY(-10px);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2);
+            border-color: #b88a54;
+        }
+        
+        .headline {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            border-bottom: 2px solid #d1aa6b;
+            padding-bottom: 15px;
+        }
+        
+        .description {
+            font-size: 17px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+        
+        .learn-more {
+            font-weight: 700;
+            color: #d1aa6b;
+            margin-bottom: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .learn-more:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #b88a54;
+            transition: width 0.3s ease;
+        }
+        
+        .learn-more:hover {
+            color: #b88a54;
+        }
+        
+        .learn-more:hover:after {
+            width: 100%;
+        }
+        
+        .category {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #777;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .main-title {
+            font-size: 42px;
+            color: #000;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .main-title::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: #d1aa6b;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .subtitle {
+            color: #777;
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            margin-top: 25px;
+        }
+        
+        /* Media Queries for Responsiveness */
+        @media screen and (max-width: 1024px) {
+            .box {
+                width: calc(50% - 15px);
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .box {
+                width: 100%;
+                max-width: 500px;
+                min-height: 400px;
+            }
+            
+            .main-title {
+                font-size: 36px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .header {
+                margin-bottom: 40px;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 20px;
+            }
+            
+            .box {
+                padding: 25px;
+                min-height: 350px;
+            }
+            
+            .headline {
+                font-size: 24px;
+            }
+            
+            .description {
+                font-size: 16px;
+            }
+            
+            .main-title {
+                font-size: 30px;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .services-section {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        
+        /* Text content styling */
+        .services-content {
+            flex: 1;
+        }
+        
+        .services-content h2 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .services-content h2:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #3498db;
+            margin-top: 10px;
+        }
+        
+        .services-content p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .services-list {
+            margin-top: 25px;
+        }
+        
+        .service-item {
+            margin-bottom: 20px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .service-item:before {
+            content: '✓';
+            color: #3498db;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .service-item h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+/* Image container styling */
+.floating-image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.floating-image {
+    width: 420px; /* Slightly bigger */
+    height: 420px; /* Perfect circle */
+    border-radius: 50%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced Floating Animation (Up-Down) */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-40px); /* Increased floating height */
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            .services-section {
+                flex-direction: column;
+            }
+            
+            .floating-image {
+                width: 100%;
+                max-width: 320px;
+                height: auto;
+                margin-top: 30px;
+            }
+        }
+        .testimonial-container {
+            width: 100%;
+            background: black;
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .content-wrapper {
+            max-width: 1920px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+        }
+        
+        .testimonial-header {
+            width: 40%;
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 2px solid #d1aa6b;
+        }
+        
+        .testimonial-title {
+            font-size: 56px;
+            line-height: 1.2;
+            color: rgb(255, 255, 255);
+            margin-bottom: 30px;
+            position: relative;
+            font-weight: 700;
+        }
+        
+        .testimonial-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -20px;
+            width: 100px;
+            height: 4px;
+            background-color: #d1aa6b;
+        }
+        
+        .testimonial-subtitle {
+            margin-top: 40px;
+            font-size: 18px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .testimonial-count {
+            margin-top: 80px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .current-count {
+            font-size: 48px;
+            color: #d1aa6b;
+            font-weight: 700;
+        }
+        
+        .total-count {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: 8px;
+            margin-top: 8px;
+        }
+        
+        .testimonial-content {
+            width: 60%;
+            padding: 80px 60px 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .testimonial-slider {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .testimonial-slide {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            padding-top: 40px;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .testimonial-slide.active {
+            opacity: 1;
+            position: relative;
+        }
+        
+        .quote-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 120px;
+            color: rgba(255, 255, 255, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .testimonial-text {
+            font-size: 24px;
+            line-height: 1.8;
+            font-style: italic;
+            color: #ffffff;
+            margin-bottom: 50px;
+            position: relative;
+            flex-grow: 1;
+            max-width: 90%;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 60px;
+        }
+        
+        .author-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 25px;
+            border: 4px solid #f8f8f8;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .author-name {
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .author-role {
+            font-size: 16px;
+            color: #ffffff;
+        }
+        
+        .testimonial-nav {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+        
+        .nav-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-button:hover {
+            background: #d1aa6b;
+            border-color: #d1aa6b;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(209, 170, 107, 0.2);
+        }
+        
+        .nav-button:hover svg {
+            fill: white;
+        }
+        
+        .nav-button svg {
+            width: 24px;
+            height: 24px;
+            fill: #333;
+            transition: fill 0.3s ease;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 100%;
+            background: #f0f0f0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 33%;
+            background: #d1aa6b;
+            transition: width 0.5s ease;
+        }
+        
+        /* Media Queries for Responsiveness */
+        @media screen and (max-width: 1200px) {
+            .testimonial-title {
+                font-size: 48px;
+            }
+            
+            .testimonial-text {
+                font-size: 22px;
+            }
+        }
+        
+        @media screen and (max-width: 992px) {
+            .testimonial-container {
+                background: white;
+                flex-direction: column;
+                min-height: auto;
+            }
+            
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .testimonial-header {
+                width: 100%;
+                padding: 60px 40px;
+                background: #0c2340;
+            }
+            
+            .testimonial-content {
+                width: 100%;
+                padding: 60px 40px 80px;
+            }
+            
+            .testimonial-title {
+                font-size: 42px;
+            }
+            
+            .testimonial-text {
+                font-size: 20px;
+                max-width: 100%;
+            }
+            
+            .testimonial-count {
+                margin-top: 50px;
+            }
+            
+            .testimonial-nav {
+                right: 40px;
+                bottom: 30px;
+            }
+        }
+        
+        @media screen and (max-width: 576px) {
+            .testimonial-header, .testimonial-content {
+                padding: 40px 25px;
+            }
+            
+            .testimonial-title {
+                font-size: 36px;
+            }
+            
+            .testimonial-subtitle {
+                font-size: 16px;
+                margin-top: 30px;
+            }
+            
+            .testimonial-text {
+                font-size: 18px;
+                line-height: 1.7;
+                margin-bottom: 30px;
+            }
+            
+            .author-image {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .author-name {
+                font-size: 18px;
+            }
+            
+            .author-role {
+                font-size: 14px;
+            }
+            
+            .testimonial-nav {
+                gap: 15px;
+            }
+            
+            .nav-button {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .testimonial-count {
+                margin-top: 30px;
+            }
+            
+            .current-count {
+                font-size: 36px;
+            }
+        }
+              </style>
+              
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="">FAQ </a>
+            <a href="">Contact</a>
+        </div>
+        <div class="logo">
+            <img src="{% static 'logo.png' %}" alt="Lotus Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'mainapp:client_login' %}">Get Started</a>
+            <a href="{% url 'mainapp:client_login' %}">Login</a>
+        </div>
+        <div class="menu-toggle">☰</div>
+    </nav>
+    <section class="bg-section">
+        <div class="container">
+            <!-- <h1>Welcome to Our Website</h1> -->
+            <p style="color: white; font-weight: 900;"> Home Improvement Services</p>
+        </div>
+    </section>
+<section style="
+    background: linear-gradient(135deg, #f8f6f3 0%, #ffffff 100%);
+    padding: 80px 20px;
+    text-align: center;
+    font-family: 'Georgia', serif;
+    color: #666666;
+    position: relative;
+">
+    <!-- Logo -->
+    <div style="margin-bottom: 40px;">
+        <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="
+            width: 80px;
+            height: auto;
+            opacity: 0.8;
+        ">
+    </div>
+
+    <!-- Main Heading -->
+    <h2 style="
+        font-size: 2.2em;
+        font-weight: 300;
+        line-height: 1.4;
+        margin: 0 auto 30px auto;
+        max-width: 800px;
+        color: #555555;
+        letter-spacing: 0.5px;
+    ">
+        Our app based approach has streamlined the property management process for discerning homeowners.
+    </h2>
+
+    <!-- Description Text -->
+    <p style="
+        font-size: 1.1em;
+        line-height: 1.7;
+        margin: 0 auto 50px auto;
+        max-width: 900px;
+        color: #777777;
+        font-weight: 400;
+    ">
+        Understanding that time is our most valuable asset, we founded our company to leverage the latest technological advancements in today's fast-paced world, prioritizing our clients' time. To support this initiative, we created our proprietary app to be the only tool the client will need for any / all of their property management needs.
+    </p>
+
+    <!-- CTA Button -->
+    <div>
+        <button style="
+            background: transparent;
+            border: 2px solid #d4a574;
+            color: #d4a574;
+            padding: 15px 35px;
+            font-size: 0.95em;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-weight: 500;
+        " onmouseover="
+            this.style.background='#d4a574';
+            this.style.color='white';
+        " onmouseout="
+            this.style.background='transparent';
+            this.style.color='#d4a574';
+        ">
+            DISCOVER OUR PROCESS
+        </button>
+    </div>
+</section>
+
+<!-- Footer 2 - Bootstrap Brain Component -->
+
+<section style="
+    background: linear-gradient(45deg, #f8f6f3 0%, #f2ede6 50%, #f5f1ec 100%);
+    padding: 100px 20px;
+    font-family: 'Georgia', serif;
+    color: #666666;
+    position: relative;
+">
+    <!-- Decorative Elements -->
+    <div style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent 0%, #d4a574 50%, transparent 100%);
+    "></div>
+    
+    <!-- Section Header -->
+    <div style="text-align: center; margin-bottom: 60px;">
+        <div style="
+            display: inline-block;
+            padding: 12px 30px;
+            border: 1px solid #d4a574;
+            margin-bottom: 25px;
+            background: rgba(212, 165, 116, 0.05);
+        ">
+            <span style="
+                font-size: 0.85em;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: #d4a574;
+                font-weight: 500;
+            ">Premium Services</span>
+        </div>
+        <h2 style="
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #555555;
+            margin: 0;
+            letter-spacing: 0.5px;
+        ">
+            Home Improvement Services
+        </h2>
+        <div style="
+            width: 80px;
+            height: 1px;
+            background: #d4a574;
+            margin: 30px auto 0 auto;
+        "></div>
+    </div>
+
+    <!-- Services Container -->
+    <div style="
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 50px;
+    " class="home-services-grid">
+        
+        <!-- Service Card 1 -->
+        <div style="
+            background: rgba(255, 255, 255, 0.6);
+            padding: 40px 35px;
+            border-left: 4px solid #d4a574;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        " class="service-card">
+            <div style="
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(135deg, #d4a574, #c09960);
+                border-radius: 50%;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <span style="color: white; font-size: 1.2em; font-weight: bold;">🏠</span>
+            </div>
+            <h3 style="
+                font-size: 1.3em;
+                font-weight: 400;
+                color: #555555;
+                margin: 0 0 15px 0;
+                letter-spacing: 0.5px;
+            ">
+                Interior Design & Renovation
+            </h3>
+            <p style="
+                font-size: 1em;
+                line-height: 1.7;
+                color: #777777;
+                margin: 0;
+                font-weight: 300;
+            ">
+                Complete home makeovers with our network of elite interior designers and contractors. From concept to completion, we manage every detail of your renovation project.
+            </p>
+        </div>
+
+        <!-- Service Card 2 -->
+        <div style="
+            background: rgba(255, 255, 255, 0.6);
+            padding: 40px 35px;
+            border-left: 4px solid #d4a574;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        " class="service-card">
+            <div style="
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(135deg, #d4a574, #c09960);
+                border-radius: 50%;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <span style="color: white; font-size: 1.2em; font-weight: bold;">🌿</span>
+            </div>
+            <h3 style="
+                font-size: 1.3em;
+                font-weight: 400;
+                color: #555555;
+                margin: 0 0 15px 0;
+                letter-spacing: 0.5px;
+            ">
+                Landscape & Garden Design
+            </h3>
+            <p style="
+                font-size: 1em;
+                line-height: 1.7;
+                color: #777777;
+                margin: 0;
+                font-weight: 300;
+            ">
+                Transform your outdoor spaces with our landscape architects and gardening specialists. From maintenance to complete redesigns including pools and outdoor entertainment areas.
+            </p>
+        </div>
+
+        <!-- Service Card 3 -->
+        <div style="
+            background: rgba(255, 255, 255, 0.6);
+            padding: 40px 35px;
+            border-left: 4px solid #d4a574;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        " class="service-card">
+            <div style="
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(135deg, #d4a574, #c09960);
+                border-radius: 50%;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <span style="color: white; font-size: 1.2em; font-weight: bold;">🔧</span>
+            </div>
+            <h3 style="
+                font-size: 1.3em;
+                font-weight: 400;
+                color: #555555;
+                margin: 0 0 15px 0;
+                letter-spacing: 0.5px;
+            ">
+                Maintenance & Repair Services
+            </h3>
+            <p style="
+                font-size: 1em;
+                line-height: 1.7;
+                color: #777777;
+                margin: 0;
+                font-weight: 300;
+            ">
+                Regular home maintenance, emergency repairs, and seasonal preparations. Our vetted professionals handle plumbing, electrical, HVAC, and general handyman services.
+            </p>
+        </div>
+
+        <!-- Service Card 4 -->
+        <div style="
+            background: rgba(255, 255, 255, 0.6);
+            padding: 40px 35px;
+            border-left: 4px solid #d4a574;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        " class="service-card">
+            <div style="
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(135deg, #d4a574, #c09960);
+                border-radius: 50%;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <span style="color: white; font-size: 1.2em; font-weight: bold;">🏡</span>
+            </div>
+            <h3 style="
+                font-size: 1.3em;
+                font-weight: 400;
+                color: #555555;
+                margin: 0 0 15px 0;
+                letter-spacing: 0.5px;
+            ">
+                Property Enhancement Projects
+            </h3>
+            <p style="
+                font-size: 1em;
+                line-height: 1.7;
+                color: #777777;
+                margin: 0;
+                font-weight: 300;
+            ">
+                Add value to your property with extensions, outdoor structures, wine cellars, home theaters, and luxury amenities. We coordinate all permits and specialized contractors.
+            </p>
+        </div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div style="text-align: center; margin-top: 70px;">
+        <p style="
+            font-size: 1.1em;
+            color: #888888;
+            margin-bottom: 30px;
+            font-style: italic;
+        ">
+            Enhancing your home's beauty, functionality, and value
+        </p>
+        <button style="
+            background: linear-gradient(135deg, #d4a574, #c09960);
+            border: none;
+            color: white;
+            padding: 18px 40px;
+            font-size: 0.95em;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.3);
+        " onmouseover="
+            this.style.transform='translateY(-2px)';
+            this.style.boxShadow='0 8px 25px rgba(212, 165, 116, 0.4)';
+        " onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.boxShadow='0 5px 15px rgba(212, 165, 116, 0.3)';
+        ">
+            Schedule Consultation
+        </button>
+    </div>
+
+    <!-- Responsive Styles -->
+    <style>
+        @media (max-width: 768px) {
+            .home-services-grid {
+                grid-template-columns: 1fr !important;
+                gap: 30px !important;
+            }
+            .service-card {
+                padding: 30px 25px !important;
+            }
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1) !important;
+        }
+    </style>
+</section>
+
+
+
+<div class="testimonial-container">
+  <div class="content-wrapper">
+      <div class="testimonial-header">
+          <h2 class="testimonial-title">Client Testimonials</h2>
+          <p class="testimonial-subtitle">Discover what our esteemed clients have to say about their experience with our premium services and dedicated team of professionals.</p>
+          
+          <div class="testimonial-count">
+              <div class="current-count" id="current-slide">01</div>
+              <div class="total-count">/03</div>
+          </div>
+      </div>
+      
+      <div class="testimonial-content">
+        <div class="testimonial-slider">
+            {% for testimonial in testimonials %}
+                <div class="testimonial-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter }}">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        {{ testimonial.comment }}
+                    </div>
+                    
+                    <div class="testimonial-author">
+                        <img src="{{ testimonial.photo.url }}" alt="Client" class="author-image">
+                        <div class="author-info">
+                            <div class="author-name">{{ testimonial.name }}</div>
+                            <div class="author-role">Client</div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="testimonial-nav">
+            <div class="nav-button" id="prev-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+            </div>
+            <div class="nav-button" id="next-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Footer start here  -->
+<style>
+    /* Reset */
+    .standalone-footer *,
+    .standalone-footer *::before,
+    .standalone-footer *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  
+    /* Main Footer Styles */
+    .standalone-footer {
+        width: 100%;
+        background: linear-gradient(145deg, #e19540, #d78a3b);
+        color: #fff;
+        padding: 2rem 1rem;
+        overflow-x: hidden;
+    }
+  
+    .standalone-footer-container {
+        max-width: 1200px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+    }
+  
+    .standalone-footer-column {
+        padding: 0 0.5rem;
+    }
+  
+    .standalone-footer-logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+  
+    .standalone-footer-about {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+  
+    .standalone-footer-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+        display: inline-block;
+        padding-bottom: 0.25rem;
+    }
+  
+    .standalone-footer-links {
+        list-style: none;
+    }
+  
+    .standalone-footer-links li {
+        margin-bottom: 0.5rem;
+    }
+  
+    .standalone-footer-links a {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-block;
+        position: relative;
+        padding-left: 1rem;
+    }
+  
+    .standalone-footer-links a::before {
+        content: '›';
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: 0.2s;
+    }
+  
+    .standalone-footer-links a:hover {
+        color: #fff;
+        transform: translateX(4px);
+    }
+  
+    .standalone-footer-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+  
+    .standalone-footer-contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
+    }
+  
+    .standalone-footer-social {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+  
+    .standalone-footer-social a {
+        width: 30px;
+        height: 30px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+  
+    .standalone-footer-social a:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: translateY(-2px);
+    }
+  
+    .standalone-footer-social svg {
+        width: 14px;
+        height: 14px;
+        fill: #fff;
+    }
+  
+    .standalone-footer-bottom {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+  
+    .standalone-footer-policy {
+        display: flex;
+        gap: 1rem;
+    }
+  
+    .standalone-footer-policy a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+    }
+  
+    .standalone-footer-policy a:hover {
+        color: #fff;
+    }
+  
+    .standalone-footer-shape {
+        display: none; /* Hides the scroll-inducing shape */
+    }
+  
+    @media (max-width: 768px) {
+        .standalone-footer-container {
+            grid-template-columns: 1fr;
+            padding: 0;
+        }
+  
+        .standalone-footer-bottom {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+  
+        .standalone-footer {
+            padding: 2rem 1rem;
+        }
+    }
+    .standalone-footer {
+    background: #13293D;
+    color: #EAEAEA;
+}
+
+.standalone-footer-title::after {
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.standalone-footer-links a {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.standalone-footer-links a:hover {
+    color: #ffffff;
+}
+
+.standalone-footer-contact-item {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.standalone-footer-about {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.standalone-footer-social a {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.standalone-footer-social a:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.standalone-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.standalone-footer-copyright {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.standalone-footer-policy a {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.standalone-footer-policy a:hover {
+    color: #ffffff;
+}
+/* Extra Css  */
+p {
+    margin-top: 0;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+.content-wrapper {
+    max-width: 1920px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    background-color: rgb(193, 198, 191);
+}
+.testimonial-subtitle {
+    margin-top: 40px;
+    font-size: 18px;
+    line-height: 1.7;
+    color: rgb(0 0 0 / 80%);
+}
+
+.testimonial-text {
+    font-style: italic;
+    font-weight: bold;
+}
+.testimonial-title {
+    font-size: 56px;
+    line-height: 1.2;
+    color: rgb(0 0 0);
+    margin-bottom: 30px;
+    position: relative;
+    font-weight: 700;
+}
+.testimonial-text {
+    font-style: italic;
+    color: black;
+    font-weight: bold;
+}
+  </style>
+  
+<footer class="standalone-footer">
+    <div class="standalone-footer-shape"></div>
+    <div class="standalone-footer-container">
+        <div class="standalone-footer-column">
+            <div class="standalone-footer-logo">CompanyName</div>
+            <p class="standalone-footer-about">We provide innovative solutions for businesses looking to transform their digital presence and achieve outstanding results.</p>
+            <div class="standalone-footer-social">
+                <a href="#" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18.77,7.46H14.5v-1.9c0-.9.6-1.1,1-1.1h3V.5L14.17.5C10.24.5,9.5,3.48,9.5,5.37V7.46h-3v4h3v12h5v-12h3.85l.42-4Z"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M23.954 4.569a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.691 8.094 4.066 6.13 1.64 3.161a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.061a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="standalone-footer-column">
+            <h3 class="standalone-footer-title">Quick Links</h3>
+            <ul class="standalone-footer-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Portfolio</a></li>
+            </ul>
+        </div>
+        <div class="standalone-footer-column">
+            <h3 class="standalone-footer-title">Services</h3>
+            <ul class="standalone-footer-links">
+                <li><a href="#">Property Management</a></li>
+                <li><a href="#">Service Request</a></li>
+                <li><a href="#">Client Managemet</a></li>
+                <li><a href="#">Property Improvements</a></li>
+            </ul>
+        </div>
+        <div class="standalone-footer-column">
+            <h3 class="standalone-footer-title">Contact Info</h3>
+            <div class="standalone-footer-contact">
+                <div class="standalone-footer-contact-item">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M12 1c-3.866 0-7 3.134-7 7 0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"/>
+                    </svg>
+                    <span>123 Street Name, City, Country</span>
+                </div>
+                <div class="standalone-footer-contact-item">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    <span>info@example.com</span>
+                </div>
+                <div class="standalone-footer-contact-item">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                    <span>+1 234 567 8900</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="standalone-footer-container">
+        <div class="standalone-footer-bottom">
+            <div class="standalone-footer-copyright">
+                © 2025 Lotus. All rights reserved.
+            </div>
+            <div class="standalone-footer-policy">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer Ends here  -->
+
+    <script>
+        const toggle = document.querySelector(".menu-toggle");
+        const navLinks = document.querySelectorAll(".nav-links");
+        
+        toggle.addEventListener("click", () => {
+            navLinks.forEach(nav => nav.classList.toggle("active"));
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+            const currentSlideElement = document.getElementById('current-slide');
+            const progressFill = document.getElementById('progress-fill');
+            
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+            
+            function updateSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                });
+                
+                // Show current slide
+                slides[index].classList.add('active');
+                
+                // Update counter
+                currentSlideElement.textContent = (index + 1).toString().padStart(2, '0');
+                
+                // Update progress bar
+                const progressWidth = ((index + 1) / totalSlides * 100) + '%';
+                progressFill.style.width = progressWidth;
+            }
+            
+            function goToNextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateSlide(currentIndex);
+            }
+            
+            function goToPrevSlide() {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                updateSlide(currentIndex);
+            }
+            
+            // Set initial state
+            updateSlide(currentIndex);
+            
+            // Add event listeners
+            nextButton.addEventListener('click', goToNextSlide);
+            prevButton.addEventListener('click', goToPrevSlide);
+            
+            // Auto-advance slides every 6 seconds
+            setInterval(goToNextSlide, 6000);
+        });
+    </script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -60,19 +60,35 @@ class ClientManagersAdmin(admin.ModelAdmin):
 from django.contrib import admin
 from .models import Vendor
 
+# @admin.register(Vendor)
+# class VendorAdmin(admin.ModelAdmin):
+#     list_display = ("company_name", "email", "phone_number", "city", "state", "service")
+#     search_fields = ("company_name", "email", "phone_number", "city")
+#     list_filter = ("state", "service")
+#     ordering = ("company_name",)
+from django.contrib import admin
+from .models import Vendor, VendorContact, VendorServices
+
+
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
-    list_display = ("company_name", "email", "phone_number", "city", "state", "service")
-    search_fields = ("company_name", "email", "phone_number", "city")
-    list_filter = ("state", "service")
-    ordering = ("company_name",)
+    list_display = (
+        "company_name", "city", "state", "phone_number", "website"
+    )
+    search_fields = ("company_name", "city", "state", "phone_number")
+    list_filter = ("state", "city")
 
-from .models import VendorService
-admin.site.register(VendorService)
-
-from django.contrib import admin
-from .models import VendorContact
 
 @admin.register(VendorContact)
 class VendorContactAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'cell', 'email', 'vendor')
+    list_display = (
+        "first_name", "last_name", "email", "cell", "vendor"
+    )
+    search_fields = ("first_name", "last_name", "email", "vendor__company_name")
+    list_filter = ("vendor",)
+
+
+@admin.register(VendorServices)
+class VendorServicesAdmin(admin.ModelAdmin):
+    list_display = ("service",)
+    search_fields = ("service",)

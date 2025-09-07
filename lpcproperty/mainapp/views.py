@@ -16,6 +16,18 @@ def home(request):
     testimonials = Testimonial.objects.all()
     return render(request, 'mainapp/home.html', {'testimonials': testimonials})
 
+def learn_more1(request):
+    return render(request, 'mainapp/learn_more1.html')
+
+def learn_more2(request):
+    return render(request, 'mainapp/learn_more2.html')
+
+
+def learn_more3(request):
+    return render(request, 'mainapp/learn_more3.html')
+
+def process(request):
+    return render(request, 'mainapp/process.html')
 # Ending of login signing here ------------------------------------------------------------------------------------------
 
 from django.shortcuts import render, redirect
@@ -63,6 +75,92 @@ def client_login(request):
         messages.error(request, "Invalid credentials or user type not found.", extra_tags='login_error')
 
     return render(request, "mainapp/login.html")
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
+from .models import Client, ClientManagers
+
+from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password
+from .models import Client, ClientManagers
+import random
+
+otp_storage = {}  # Temporary in-memory OTP storage
+
+
+class ClientPasswordChangeRequestView(View):
+    template_name = "mainapp/request_password_change.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        email = request.POST.get("email")
+
+        # check if email belongs to client or manager
+        user = None
+        user_type = None
+        try:
+            user = Client.objects.get(email=email)
+            user_type = "client"
+        except Client.DoesNotExist:
+            try:
+                user = ClientManagers.objects.get(email=email)
+                user_type = "manager"
+            except ClientManagers.DoesNotExist:
+                user = None
+
+        if user:
+            otp = str(random.randint(100000, 999999))
+            otp_storage[email] = {"otp": otp, "type": user_type}
+
+            send_mail(
+                "Your OTP for Password Change",
+                f"Your OTP is {otp}",
+                "noreply@yourdomain.com",
+                [email],
+            )
+            messages.success(request, "OTP sent to your email.")
+            return redirect("client_password_verify")
+        else:
+            messages.error(request, "No user found with this email.")
+            return render(request, self.template_name)
+        
+
+class ClientPasswordVerifyView(View):
+    template_name = "mainapp/verify_otp.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        email = request.POST.get("email")
+        otp = request.POST.get("otp")
+        new_password = request.POST.get("new_password")
+
+        if email in otp_storage and otp_storage[email]["otp"] == otp:
+            user_type = otp_storage[email]["type"]
+
+            if user_type == "client":
+                user = Client.objects.get(email=email)
+            else:
+                user = ClientManagers.objects.get(email=email)
+
+            user.password = make_password(new_password)
+            user.save()
+
+            del otp_storage[email]
+            messages.success(request, "Password changed successfully.")
+            return redirect("login")  # update with your login view name
+        else:
+            messages.error(request, "Invalid OTP.")
+            return render(request, self.template_name)
+
 
 @client_login_required
 def dashboard(request):

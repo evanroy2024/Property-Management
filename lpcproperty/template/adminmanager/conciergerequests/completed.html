@@ -320,7 +320,7 @@
                             <th>EST'D COST</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
-                            <th>COMPLETATION DATE</th>
+                            <th>COMPLETION DATE</th>
                         </tr>
                     </thead>
                     <tbody id="request-table">
@@ -1421,6 +1421,8 @@ printBtn.addEventListener('click', function() {
         text-align: center;
         margin: 20px 0;
         border: 2px solid #007bff !important;
+        margin: 10px;
+
       }
       .total-box h2 {
         margin: 0;
@@ -1433,6 +1435,8 @@ printBtn.addEventListener('click', function() {
         padding: 15px;
         border-radius: 5px;
         margin: 20px 0;
+        margin: 10px;
+
       }
       .client-section h3 {
         color: #1976d2 !important;
@@ -1448,6 +1452,8 @@ printBtn.addEventListener('click', function() {
         background: #f8f9fa !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        margin: 10px;
+
       }
       tr:nth-child(even) {
         background: #f9f9f9 !important;
@@ -1456,10 +1462,10 @@ printBtn.addEventListener('click', function() {
       }
       @media print {
         @page {
-          margin: 20px;
+          margin: 0px;
         }
         body {
-          margin: 20px !important;
+          margin: 0px !important;
         }
       }
     `;
@@ -1470,8 +1476,8 @@ printBtn.addEventListener('click', function() {
         <div class="subtitle">Property Management</div>
         <div class="contact-info">
           Phone: (555) 123-4567<br>
-          Email: info@lotuspm.com<br>
-          www.lotuspropertymanagement.com
+         <br>
+          www.lotuspmc.com
         </div>
       </div>
     `;
@@ -1710,8 +1716,14 @@ printBtn.addEventListener('click', function() {
 </script>
 <style>
   .status-approved {
-    background-color: #28a745;
+    background-color: #28a745!important;
     color: white;
 }
+@media print {
+  * { margin: 0 !important; padding: 0 !important; }
+  @page { margin: 0 !important; }
+}
+@page { margin: 0 !important; }
+html, body { margin: 0 !important; padding: 0 !important; }
 </style>
 {% endblock content %}

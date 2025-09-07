@@ -329,6 +329,7 @@ US_STATES = [
     'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
 ]
+
 def property_create_view(request):
     clients = Client.objects.all()
     managers = ClientManagers.objects.all()
@@ -342,6 +343,7 @@ def property_create_view(request):
         try:
             with transaction.atomic():
                 # Get client_id if selected
+                property_pic = request.FILES.get('property_pic')
                 client_id = request.POST.get('client_id')
                 
                 # If no existing client selected, try creating a new one
@@ -358,7 +360,7 @@ def property_create_view(request):
                     city = request.POST.get('client_city', '')
                     state = request.POST.get('client_state', '')
                     zipcode = request.POST.get('client_zipcode', '')
-
+                    
                     contact1_name = request.POST.get('contact1_name', '')
                     contact1_last_name = request.POST.get('contact1_last_name', '')
                     contact1_email = request.POST.get('contact1_email', '')
@@ -544,6 +546,8 @@ def property_create_view(request):
                     hot_tub='hot_tub' in request.POST,
                     outdoor_kitchen_gazebo='outdoor_kitchen_gazebo' in request.POST,
                     waterfront='waterfront' in request.POST,
+
+                    property_pic=property_pic,
                 )
 
                 # Loop through each floor and room
@@ -597,7 +601,8 @@ def property_update_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk)
     client = prop.client
     client_managers = ClientManagers.objects.all()
-
+    if 'delete_property_pic' in request.POST:
+        prop.property_pic.delete(save=True)
     if request.method == 'POST':
         # Handling Property and Client Info Updates
         if 'address' in request.POST:
@@ -626,6 +631,9 @@ def property_update_view(request, pk):
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
             prop.zipcode = request.POST.get('property_zipcode', '')     # Added City 
             prop.additional_info = request.POST.get('additional_info', '')
+            property_pic = request.FILES.get('property_pic')
+            if property_pic:
+                prop.property_pic = property_pic
             prop.save()
 
             # Update Client info
@@ -859,10 +867,17 @@ def export_property_pdf(request, pk):
 
 
 # Building Services  ---------------------------------------------------------------------------------------------------------------
-from mainapp.models import Vendor
-
+US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
+from mainapp.models import Vendor, VendorServices
 # List vendors
 from mainapp.models import Vendor, VendorContact
+
 def vendor_list(request):
     vendors = Vendor.objects.prefetch_related('contacts').all()
     
@@ -874,6 +889,7 @@ def vendor_list(request):
             vendor.first_service = ''
     
     return render(request, 'adminmanager/vendor/list.html', {'vendors': vendors})
+
 import uuid
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
@@ -884,37 +900,37 @@ from django.shortcuts import get_object_or_404
 from mainapp.models import Vendor, VendorContact
 def create_vendor(request):
     if request.method == 'POST':
-        # Get main service first
+        # Handle new service creation
+        new_service = request.POST.get('new_service', '').strip()
+        if new_service:
+            # Check if service already exists
+            if not VendorServices.objects.filter(service__iexact=new_service).exists():
+                VendorServices.objects.create(service=new_service)
+        
+        # Get main service and additional services
         main_service = request.POST.get('main_service', '')
+        additional_service_1 = request.POST.get('additional_service_1', '')
+        additional_service_2 = request.POST.get('additional_service_2', '')
         
-        # Get selected additional services
-        selected_services = request.POST.getlist('service[]')
-        additional_service = request.POST.get('additional_service', '')
-        
-        # Start with main service
-        combined_services = [main_service] if main_service else []
-        
-        # Add additional selected services
-        combined_services += selected_services
-        
-        # Add custom additional services
-        if additional_service:
-            additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
-            combined_services += additional_list
+        # Combine all services
+        combined_services = []
+        if main_service:
+            combined_services.append(main_service)
+        if additional_service_1:
+            combined_services.append(additional_service_1)
+        if additional_service_2:
+            combined_services.append(additional_service_2)
 
         # Create new vendor
         vendor = Vendor.objects.create(
             company_name=request.POST.get('company_name'),
-            first_name=request.POST.get('first_name'),
-            last_name=request.POST.get('last_name'),
             street=request.POST.get('street'),
-            apt_suite=request.POST.get('apt_suite'),
+            website=request.POST.get('website'),
+            suite=request.POST.get('suite'),
             notes=request.POST.get('notes'),
-            address=request.POST.get('address'),
             city=request.POST.get('city'),
             state=request.POST.get('state'),
             zip_code=request.POST.get('zip_code'),
-            email=request.POST.get('email'),
             phone_number=request.POST.get('phone_number'),
             service=', '.join(combined_services),
         )
@@ -937,82 +953,48 @@ def create_vendor(request):
 
         return redirect('adminmanager:vendor_list')
 
-    # Predefined service choices
-    service_choices = [
-        'Appliance Repair',
-        'AV',
-        'Car Detailer',
-        'Countertops',
-        'Electrician',
-        'Flooring, Carpet',
-        'Flooring, Epoxy',
-        'Flooring, Resilient',
-        'Flooring, Tile',
-        'Garage Door',
-        'Glass, Installation',
-        'Glass, Repair',
-        'HVAC',
-        'Landscape',
-        'Locksmith',
-        'Millwork',
-        'Painting',
-        'Plumbing',
-        'Pressure Washer',
-        'Roofing',
-        'Security',
-        'Wall Covering',
-    ]
-
+    # Get services from database
+    vendor_services = VendorServices.objects.all().order_by('service')
 
     context = {
-        'service_choices': service_choices,
+        'vendor_services': vendor_services,
         'US_STATES': US_STATES,
     }
 
     return render(request, 'adminmanager/vendor/create.html', context)
 
-
-
-# Edit vendor
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
 
     if request.method == 'POST':
+        # Get main service and additional services
+        main_service = request.POST.get('main_service', '')
+        additional_service_1 = request.POST.get('additional_service_1', '')
+        additional_service_2 = request.POST.get('additional_service_2', '')
+        
+        # Combine all services
+        combined_services = []
+        if main_service:
+            combined_services.append(main_service)
+        if additional_service_1:
+            combined_services.append(additional_service_1)
+        if additional_service_2:
+            combined_services.append(additional_service_2)
+
+        # Update vendor fields
         vendor.company_name = request.POST.get('company_name')
-        vendor.first_name = request.POST.get('first_name')
-        vendor.last_name = request.POST.get('last_name')
         vendor.street = request.POST.get('street')
-        vendor.apt_suite = request.POST.get('apt_suite')
+        vendor.website = request.POST.get('website')
+        vendor.suite = request.POST.get('suite')
         vendor.notes = request.POST.get('notes')
-        vendor.address = request.POST.get('address')
         vendor.city = request.POST.get('city')
         vendor.state = request.POST.get('state')
         vendor.zip_code = request.POST.get('zip_code')
-        vendor.email = request.POST.get('email')
         vendor.phone_number = request.POST.get('phone_number')
-
-        # Get main service first
-        main_service = request.POST.get('main_service', '')
-        
-        # Get selected additional services
-        selected_services = request.POST.getlist('service[]')
-        additional_service = request.POST.get('additional_service', '')
-        
-        # Start with main service
-        combined_services = [main_service] if main_service else []
-        
-        # Add additional selected services
-        combined_services += selected_services
-        
-        # Add custom additional services
-        if additional_service:
-            additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
-            combined_services += additional_list
-
         vendor.service = ', '.join(combined_services)
         vendor.save()
 
-        # Handle contacts
+        # Handle contacts - delete existing and create new ones
         VendorContact.objects.filter(vendor=vendor).delete()
 
         contact_first_names = request.POST.getlist('contact_first_name[]')
@@ -1032,44 +1014,79 @@ def edit_vendor(request, vendor_id):
 
         return redirect('adminmanager:vendor_list')
 
+    # Get existing data
     existing_contacts = VendorContact.objects.filter(vendor=vendor)
     existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
-
-    service_choices = [
-        'Appliance Repair', 'AV', 'Car Detailer', 'Countertops', 'Electrician',
-        'Flooring, Carpet', 'Flooring, Epoxy', 'Flooring, Resilient', 'Flooring, Tile',
-        'Garage Door', 'Glass, Installation', 'Glass, Repair', 'HVAC', 'Landscape',
-        'Locksmith', 'Millwork', 'Painting', 'Plumbing', 'Pressure Washer',
-        'Roofing', 'Security', 'Wall Covering'
-    ]
-
-
-    # First service is main service
-    current_main_service = existing_services[0] if existing_services else ''
     
-    # Rest are additional services
-    additional_existing = existing_services[1:] if len(existing_services) > 1 else []
-    selected_predefined = [service for service in additional_existing if service in service_choices]
-    additional_services = [service for service in additional_existing if service not in service_choices]
-    additional_services_text = ', '.join(additional_services)
+    # Parse existing services
+    main_service = existing_services[0] if existing_services else ''
+    additional_service_1 = existing_services[1] if len(existing_services) > 1 else ''
+    additional_service_2 = existing_services[2] if len(existing_services) > 2 else ''
+
+    # Get services from database
+    vendor_services = VendorServices.objects.all().order_by('service')
 
     context = {
         'vendor': vendor,
         'existing_contacts': existing_contacts,
-        'current_main_service': current_main_service,
-        'selected_services': selected_predefined,
-        'service_choices': service_choices,
-        'additional_services_text': additional_services_text,
+        'main_service': main_service,
+        'additional_service_1': additional_service_1,
+        'additional_service_2': additional_service_2,
+        'vendor_services': vendor_services,
         'US_STATES': US_STATES,
     }
 
     return render(request, 'adminmanager/vendor/edit.html', context)
+
+
 # Delete vendor
 def delete_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
     vendor.delete()
     return redirect('adminmanager:vendor_list')
 
+def manage_vendor_services(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'add':
+            service_name = request.POST.get('service', '').strip()
+            if service_name:
+                if VendorServices.objects.filter(service__iexact=service_name).exists():
+                    messages.error(request, 'This service already exists.')
+                else:
+                    VendorServices.objects.create(service=service_name)
+                    messages.success(request, 'Service added successfully.')
+            else:
+                messages.error(request, 'Service name is required.')
+        
+        elif action == 'edit':
+            service_id = request.POST.get('service_id')
+            service_name = request.POST.get('service', '').strip()
+            if service_id and service_name:
+                service = get_object_or_404(VendorServices, id=service_id)
+                if VendorServices.objects.filter(service__iexact=service_name).exclude(id=service_id).exists():
+                    messages.error(request, 'This service name already exists.')
+                else:
+                    service.service = service_name
+                    service.save()
+                    messages.success(request, 'Service updated successfully.')
+            else:
+                messages.error(request, 'Service name is required.')
+        
+        elif action == 'delete':
+            service_id = request.POST.get('service_id')
+            if service_id:
+                service = get_object_or_404(VendorServices, id=service_id)
+                service_name = service.service
+                service.delete()
+                messages.success(request, f'Service "{service_name}" deleted successfully.')
+    
+    services = VendorServices.objects.all().order_by('service')
+    context = {
+        'services': services
+    }
+    return render(request, 'adminmanager/vendor/manage.html', context)
 
 # Client Manager Profile Update ---------------------------------------------------------------------------------------------------------------   
 from django.shortcuts import render, redirect, get_object_or_404

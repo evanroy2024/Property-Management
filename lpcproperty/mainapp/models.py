@@ -173,24 +173,17 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
 
-class VendorService(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    
-    def __str__(self):
-        return self.name
+
     
 class Vendor(models.Model):
     company_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)  # Person's name
-    last_name = models.CharField(max_length=255, blank=True, null=True)
     street = models.CharField(max_length=255)
-    apt_suite = models.CharField(max_length=255, blank=True, null=True)
+    website = models.CharField(max_length=255)
+    suite = models.CharField(max_length=255, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    address = models.TextField()
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=20)
-    email = models.EmailField()
     phone_number = models.CharField(max_length=15)
     service = models.TextField(blank=True, null=True)
 
@@ -206,3 +199,6 @@ class VendorContact(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.vendor.company_name}"
+
+class VendorServices(models.Model):
+    service = models.CharField(max_length=255)

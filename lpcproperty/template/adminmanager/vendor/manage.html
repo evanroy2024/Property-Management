@@ -1,0 +1,448 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Manage Vendor Services{% endblock %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #4e73df;
+            --warning-color: #4e73df;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+     
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 11px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color:#4e73df;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -8px;
+        }
+
+        .col-md-8 {
+            flex: 0 0 66.666%;
+            max-width: 66.666%;
+            padding: 0 8px;
+        }
+
+        .col-md-4 {
+            flex: 0 0 33.333%;
+            max-width: 33.333%;
+            padding: 0 8px;
+        }
+
+        .col-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .form-floating {
+            position: relative;
+        }
+
+        .form-floating > label {
+            position: absolute;
+            top: 0;
+            left: 15px;
+            height: 100%;
+            padding: 1rem 0;
+            pointer-events: none;
+            border: 1px solid transparent;
+            transform-origin: 0 0;
+            transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+            color: #6c757d;
+        }
+
+        .form-floating > .form-control {
+            padding: 1rem 0.75rem;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            opacity: .65;
+            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .service-row {
+            transition: var(--transition);
+        }
+
+        .edit-form {
+            display: none;
+        }
+
+        .edit-form.active {
+            display: block;
+        }
+
+        .service-display.hidden {
+            display: none;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 7px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .back-link {
+                margin-top: 10px;
+            }
+
+            .col-md-8, .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .row {
+                margin: 0;
+            }
+
+            .col-md-8, .col-md-4, .col-12 {
+                padding: 0 4px;
+            }
+
+            .table {
+                font-size: 14px;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Manage Vendor Services</h1>
+            <a href="{% url 'adminmanager:vendor_list' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Vendors
+            </a>
+        </div>
+
+        <!-- Display Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Add New Service -->
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-plus"></i> Add New Service</h2>
+            <form method="post" id="add-service-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="new_service" name="service" placeholder=" " required style="color: #555;">
+                            <label for="new_service">Service Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display: flex; align-items: center;">
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            <i class="fas fa-plus"></i> Add Service
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Services List -->
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-list"></i> Existing Services</h2>
+            
+            {% if services %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in services %}
+                            <tr class="service-row" id="row-{{ service.id }}">
+                                <td>
+                                    <div class="service-display" id="display-{{ service.id }}">
+                                        {{ service.service }}
+                                    </div>
+                                    <div class="edit-form" id="edit-{{ service.id }}">
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="edit">
+                                            <input type="hidden" name="service_id" value="{{ service.id }}">
+                                            <input type="text" class="form-control" name="service" value="{{ service.service }}" required style="display: inline; width: auto;">
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="editService({{ service.id }})" id="edit-btn-{{ service.id }}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="saveService({{ service.id }})" id="save-btn-{{ service.id }}" style="display: none;">
+                                        <i class="fas fa-save"></i> Save
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="cancelEdit({{ service.id }})" id="cancel-btn-{{ service.id }}" style="display: none;">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteService({{ service.id }}, '{{ service.service|escapejs }}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p style="text-align: center; color: #6c757d; margin-top: 20px;">No services found. Add your first service above.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Form (Hidden) -->
+    <form id="delete-form" method="post" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="service_id" id="delete-service-id">
+    </form>
+
+    <script>
+        function editService(serviceId) {
+            // Hide display and show edit form
+            document.getElementById('display-' + serviceId).classList.add('hidden');
+            document.getElementById('edit-' + serviceId).classList.add('active');
+            
+            // Hide edit button, show save/cancel buttons
+            document.getElementById('edit-btn-' + serviceId).style.display = 'none';
+            document.getElementById('save-btn-' + serviceId).style.display = 'inline-block';
+            document.getElementById('cancel-btn-' + serviceId).style.display = 'inline-block';
+        }
+
+        function saveService(serviceId) {
+            // Submit the edit form
+            document.querySelector('#edit-' + serviceId + ' form').submit();
+        }
+
+        function cancelEdit(serviceId) {
+            // Show display and hide edit form
+            document.getElementById('display-' + serviceId).classList.remove('hidden');
+            document.getElementById('edit-' + serviceId).classList.remove('active');
+            
+            // Show edit button, hide save/cancel buttons
+            document.getElementById('edit-btn-' + serviceId).style.display = 'inline-block';
+            document.getElementById('save-btn-' + serviceId).style.display = 'none';
+            document.getElementById('cancel-btn-' + serviceId).style.display = 'none';
+        }
+
+        function deleteService(serviceId, serviceName) {
+            if (confirm('Are you sure you want to delete "' + serviceName + '"?')) {
+                document.getElementById('delete-service-id').value = serviceId;
+                document.getElementById('delete-form').submit();
+            }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.style.display = 'none';
+                }, 300);
+            });
+        }, 5000);
+    </script>
+{% endblock %}

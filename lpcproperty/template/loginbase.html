@@ -108,15 +108,19 @@
 <body>
     <nav class="navbar">
         <div class="nav-links">
-            <a href="">Properties </a>
-            <a href="">Services</a>
+            <a href="">FAQ </a>
+            <a href="">Contact</a>
         </div>
-        <div class="logo">
-            <img onclick="window.location.href=''" src="{% static 'logo.png' %}" alt="Lotus Logo">
-        </div>
+        <div class="logo" style="text-align: center;">
+    <img onclick="window.location.href=''" 
+         src="{% static 'logo.png' %}" 
+         alt="Lotus Logo"
+         style="width: 305px; height: auto; display: block; margin: 0 auto;">
+</div>
+
         <div class="nav-links">
-            <a href="">Dashboard</a>
-            <a href="">Logout</a>
+            <a href="">GET STARTED</a>
+            <a href="">LOGIN</a>
 
         </div>
         <div class="menu-toggle">☰</div>
@@ -126,42 +130,18 @@
     <!-- Child template content will be injected here -->
     {% endblock %}
 
- 
-
-
 <footer class="standalone-footer">
-  <div class="standalone-footer-container">
-    <div class="standalone-footer-column" style="text-align: center;">
+  <div class="standalone-footer-container" style="text-align: center;">
+    <div class="standalone-footer-column">
       <h3 class="standalone-footer-title">Contact Info</h3>
-      <div class="standalone-footer-contact" style="display: inline-block; text-align: left;">
-        <div class="standalone-footer-contact-item" style="margin-bottom: 20px;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align: top; margin-right: 10px;">
-            <path d="M12 1c-3.866 0-7 3.134-7 7 0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"/>
-          </svg>
-          <span style="line-height: 1.5;">
-            <strong>Lotus Property Management Company</strong><br>
-            2655 North Ocean Drive<br>
-            Suite 301e<br>
-            Singer Island, FL 33404
-          </span>
-        </div>
-        <div class="standalone-footer-contact-item">
+      <div class="standalone-footer-contact">
+       
+        <div class="standalone-footer-contact-item" style="margin-bottom: 40px;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align: middle; margin-right: 10px;">
-            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-          </svg>
-          <span style="font-weight: 500;">888.888.8888</span>
+    <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C10.07 22 2 13.93 2 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.35.26 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z"/>
+  </svg>
+  <span>+1 (555) 123-4567</span>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="standalone-footer-container">
-    <div class="standalone-footer-bottom">
-      <div class="standalone-footer-copyright">
-        © 2025 Lotus Property Management. All rights reserved.
-      </div>
-      <div class="standalone-footer-policy">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
       </div>
     </div>
   </div>
@@ -175,26 +155,6 @@
   padding: 40px 0 20px;
   margin-top: 50px;
   overflow: hidden;
-}
-
-.standalone-footer-shape {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #4a90e2, #50c878, #4a90e2);
-  box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
-}
-
-.standalone-footer-shape::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: linear-gradient(to bottom, rgba(44, 62, 80, 0), rgba(44, 62, 80, 1));
 }
 
 .standalone-footer-container {
@@ -217,87 +177,16 @@
   position: relative;
 }
 
-.standalone-footer-title::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, #4a90e2, #50c878);
-  border-radius: 2px;
-}
-
 .standalone-footer-contact-item {
   display: flex;
   align-items: flex-start;
+  justify-content: center;
   padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
   margin-bottom: 15px;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.standalone-footer-contact-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.standalone-footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 30px;
-  margin-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.standalone-footer-copyright {
-  color: #bdc3c7;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.standalone-footer-policy a {
-  position: relative;
-  font-weight: 500;
-  padding: 8px 0;
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  margin: 0 15px;
-}
-
-.standalone-footer-policy a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #4a90e2, #50c878);
-  transition: width 0.3s ease;
-}
-
-.standalone-footer-policy a:hover {
-  color: #50c878 !important;
-}
-
-.standalone-footer-policy a:hover::after {
-  width: 100%;
 }
 
 @media (max-width: 768px) {
-  .standalone-footer-bottom {
-    flex-direction: column;
-    text-align: center;
-  }
-  
   .standalone-footer-contact {
     text-align: center !important;
   }
@@ -309,8 +198,6 @@
 </style>
 <!-- Add footer Ends Here  -->
 
-
-    
     <script>
         const toggle = document.querySelector(".menu-toggle");
         const navLinks = document.querySelectorAll(".nav-links");

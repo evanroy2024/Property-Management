@@ -128,7 +128,19 @@
             </div>
         </div>
 
-       
+     <div class="card" style="padding: 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <h2 class="card-title" style="margin-bottom: 12px; font-size: 1.3rem;"><b>Property Image</b></h2>
+    <div class="info-value" style="padding: 12px; text-align: center;">
+        {% if property.property_pic %}
+            <img src="{{ property.property_pic.url }}" 
+                 alt="Property Image" 
+                 style="width: 60%; height: auto; border-radius: 8px; object-fit: cover;">
+        {% else %}
+            <p>No image available</p>
+        {% endif %}
+    </div>
+</div>
+
     </div>
  <!-- Floor Plans Card -->
 <div class="col-lg-40">

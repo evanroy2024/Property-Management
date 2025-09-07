@@ -45,7 +45,7 @@ class PropertyManagement(models.Model):
     additional_info = models.TextField(blank=True, null=True)
     # Floor Plan Fields (Supports Image & PDF)
   
-
+    property_pic = models.ImageField(upload_to='property_images/', null=True, blank=True)
     # Add created_at field
 
     def __str__(self):

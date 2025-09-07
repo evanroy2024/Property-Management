@@ -495,9 +495,16 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                
                 <div style="text-align:right;">
                     <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
-                </div>
+
+                <button id="viewDepartureCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
+    View Cost Summary
+  </button>
+
+</div>
             </div>
         </div>
     </div>
@@ -920,27 +927,26 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
 <script>
 // Calculate total cost for departure requests
 (function () {
- function calculateTotalCost() {
-   const rows = document.querySelectorAll('#sortable-table tbody tr.request-row');
-   let total = 0;
+  function calculateTotalCost() {
+    const rows = document.querySelectorAll('#sortable-table tbody tr.request-row');
+    let total = 0;
 
-   rows.forEach(row => {
-     const costCell = row.querySelector('span[id^="cost-"]');
-     if (costCell) {
-       const costText = costCell.textContent.replace(', '');
-       const cost = parseFloat(costText) || 0;
-       total += cost;
-     }
-   });
+    rows.forEach(row => {
+      const costCell = row.querySelector('span[id^="cost-"]');
+      if (costCell) {
+        const costText = costCell.textContent.replace(/[$,]/g, '');
+        const cost = parseFloat(costText) || 0;
+        total += cost;
+      }
+    });
 
-   const totalButton = document.getElementById('totalCostBtn');
-   if (totalButton) {
-     totalButton.textContent = `Total : ${total.toFixed(2)}`;
-   }
- }
+    const totalButton = document.getElementById('totalCostBtn');
+    if (totalButton) {
+      totalButton.textContent = 'Total : $' + total.toFixed(2);
+    }
+  }
 
- // Run when page loads
- calculateTotalCost();
+  calculateTotalCost();
 })();
 </script>
 <style>
@@ -949,4 +955,827 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
     color: white;
 }
 </style>
+<!-- View cost summery ---------------------------------------------------------------------- -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<!-- Modal for Departure Cost Summary -->
+<div id="departureCostSummaryModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); backdrop-filter:blur(2px);">
+  <div style="background:#fff; margin:2% auto; padding:0; border-radius:12px; width:90%; max-width:700px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-height:90vh; overflow:hidden;">
+    
+    <!-- Modal Header -->
+    <div style="padding:20px 24px; border-bottom:1px solid #e9ecef; display:flex; justify-content:space-between; align-items:center; background:#f8f9fa;">
+      <h3 style="margin:0; color:#333; font-weight:600; font-size:18px;">Departure Cost Summary</h3>
+      <span id="closeDepartureCostModal" style="color:#6c757d; font-size:24px; font-weight:bold; cursor:pointer; padding:4px; border-radius:4px; transition:all 0.2s ease;">&times;</span>
+    </div>
+    
+    <!-- Modal Body -->
+    <div style="padding:24px; max-height:70vh; overflow-y:auto;">
+      <div style="margin-bottom:24px;">
+        <label for="departureClientSelect" style="display:block; margin-bottom:8px; font-weight:600; color:#333; font-size:14px;">Select Client:</label>
+        <select id="departureClientSelect" style="width:100%; padding:12px 16px; border:2px solid #e9ecef; border-radius:8px; font-size:14px; color:#333; background:#fff; transition:border-color 0.3s ease; outline:none;">
+          <option value="" style="color:#333;">Choose a client...</option>
+        </select>
+      </div>
+      
+      <div id="departureCostSummaryContent" style="display:none;">
+        <div style="background:#f8f9fa; padding:16px; border-radius:8px; margin-bottom:20px; border-left:4px solid #007bff;">
+          <h4 id="selectedDepartureClientName" style="margin:0; color:#333; font-weight:600; font-size:16px;"></h4>
+        </div>
+        
+        <div id="departureReportsList" style="margin-bottom:20px;"></div>
+        
+        <div style="background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding:20px; border-radius:10px; border:2px solid #007bff;">
+          <h4 style="margin:0 0 15px 0; color:#007bff; font-weight:700; font-size:18px; text-align:center;">
+            Total Cost: $<span id="departureTotalCost">0.00</span>
+          </h4>
+          <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+            <button id="departureDownloadPdfBtn" style="display:none; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Download PDF</button>
+            <button id="departurePrintBtn" style="display:none; background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Departure specific functions
+function getUniqueDepartureClients() {
+  const clientSet = new Set();
+  const rows = document.querySelectorAll('#request-table tr.request-row');
+  
+  rows.forEach(row => {
+    const clientCell = row.querySelector('td:nth-child(1)');
+    if (clientCell) {
+      clientSet.add(clientCell.textContent.trim());
+    }
+  });
+  
+  return Array.from(clientSet).sort();
+}
+
+function populateDepartureClientDropdown() {
+  const clients = getUniqueDepartureClients();
+  const select = document.getElementById('departureClientSelect');
+  
+  // Clear existing options except first
+  select.innerHTML = '<option value="">Choose a client...</option>';
+  
+  // Add "All Clients" option
+  const allOption = document.createElement('option');
+  allOption.value = 'ALL_CLIENTS';
+  allOption.textContent = 'All Clients';
+  select.appendChild(allOption);
+  
+  clients.forEach(client => {
+    const option = document.createElement('option');
+    option.value = client;
+    option.textContent = client;
+    select.appendChild(option);
+  });
+}
+
+function getDepartureCostRemarksFromButton(requestId) {
+  const editButton = document.querySelector(`button[onclick*="openEditCostModal('${requestId}'"]`);
+  if (editButton) {
+    const onclickAttr = editButton.getAttribute('onclick');
+    const match = onclickAttr.match(/openEditCostModal\('[^']*',\s*'[^']*',\s*'([^']*)'/);
+    if (match) {
+      return match[1] || 'N/A';
+    }
+  }
+  return 'N/A';
+}
+
+function getDepartureClientReports(clientName) {
+  const rows = document.querySelectorAll('#request-table tr.request-row');
+  const reports = [];
+  
+  rows.forEach(row => {
+    const clientCell = row.querySelector('td:nth-child(1)');
+    if (clientCell) {
+      const rowClient = clientCell.textContent.trim();
+      
+      // If "All Clients" selected or specific client matches
+      if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
+        // Get departure date from 2nd column
+        const departureDateCell = row.querySelector('td:nth-child(2)');
+        const departureDateText = departureDateCell ? departureDateCell.textContent.trim() : '';
+        
+        // Get request date from 3rd column
+        const requestDateCell = row.querySelector('td:nth-child(3)');
+        const requestDateText = requestDateCell ? requestDateCell.textContent.trim() : '';
+        
+        // Get cost from the 5th column
+        const costCell = row.querySelector('td:nth-child(5) span[id^="cost-"]');
+        const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
+        const cost = parseFloat(costText) || 0;
+        
+        // Get request ID and cost remarks
+        const requestId = costCell ? costCell.id.replace('cost-', '') : null;
+        const costRemarks = requestId ? getDepartureCostRemarksFromButton(requestId) : 'N/A';
+        
+        reports.push({
+          departureDate: departureDateText,
+          requestDate: requestDateText,
+          cost: cost,
+          costRemarks: costRemarks,
+          client: rowClient
+        });
+      }
+    }
+  });
+  
+  return reports;
+}
+
+function groupDepartureReportsByClient(reports) {
+  const grouped = {};
+  reports.forEach(report => {
+    if (!grouped[report.client]) {
+      grouped[report.client] = [];
+    }
+    grouped[report.client].push(report);
+  });
+  return grouped;
+}
+
+function generateDeparturePDF(clientName, reports, totalCost) {
+  const jsPDF = window.jspdf.jsPDF;
+  const doc = new jsPDF();
+  
+  // Load and add logo
+  const logoUrl = "{% static 'logo.png' %}";
+  const img = new Image();
+  img.onload = function() {
+    continueGeneratingDeparturePDF();
+  };
+  img.onerror = function() {
+    continueGeneratingDeparturePDF();
+  };
+  img.src = logoUrl;
+  
+  function continueGeneratingDeparturePDF() {
+    // Create blue header background
+    doc.setFillColor(24, 119, 242);
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    // Add logo to header
+    try {
+      if (img.complete && img.naturalHeight !== 0) {
+        doc.addImage(img, 'PNG', 20, 8, 80, 25);
+      }
+    } catch (e) {
+      // Fallback text if logo doesn't load
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
+      doc.setFont(undefined, 'bold');
+      doc.text('LOTUS', 20, 20);
+      doc.setFontSize(10);
+      doc.text('Property Management', 20, 30);
+    }
+    
+    // Add contact information
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('Phone: (561) 766-7828 ', 210 - 5, 15, { align: 'right' });
+    doc.text('www.lotuspmc.com', 210 - 5, 25, { align: 'right' });
+    
+    // Reset text color to black for content
+    doc.setTextColor(0, 0, 0);
+    
+    // Document title
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('Departure Requests Cost Summary', 20, 60);
+
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Client: ${clientName}`, 20, 75);
+
+    doc.setFontSize(12);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 85);
+
+    let yPos = 105;
+    
+    if (clientName === 'All Clients') {
+      // Group reports by client
+      const groupedReports = groupDepartureReportsByClient(reports);
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        // Client header
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(230, 240, 255);
+        doc.rect(20, yPos - 8, 170, 15, 'F');
+        doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+        yPos += 20;
+        
+        // Table headers
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(245, 245, 245);
+        doc.rect(20, yPos - 8, 170, 12, 'F');
+        doc.text('Departure Date', 22, yPos);
+        doc.text('Request Date', 70, yPos);
+        doc.text('Cost', 130, yPos);
+        doc.text('Remarks', 155, yPos);
+        yPos += 15;
+        
+        // Client's reports
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(8);
+        clientReports.forEach((report, index) => {
+          if (yPos > 260) {
+            doc.addPage();
+            yPos = 30;
+          }
+          
+          if (index % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(20, yPos - 8, 170, 12, 'F');
+          }
+          
+          const departureText = report.departureDate.length > 12 ? report.departureDate.substring(0, 12) + '...' : report.departureDate;
+          doc.text(departureText, 22, yPos);
+          
+          const requestText = report.requestDate.length > 12 ? report.requestDate.substring(0, 12) + '...' : report.requestDate;
+          doc.text(requestText, 70, yPos);
+          
+          doc.text(`$${report.cost.toFixed(2)}`, 130, yPos);
+          
+          const remarksText = report.costRemarks.length > 20 ? report.costRemarks.substring(0, 20) + '...' : report.costRemarks;
+          doc.text(remarksText, 155, yPos);
+          
+          yPos += 12;
+        });
+        
+        yPos += 10;
+      });
+    } else {
+      // Single client view
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(245, 245, 245);
+      const headerWidth = 170;
+      doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+      doc.text('Departure Date', 22, yPos);
+      doc.text('Request Date', 70, yPos);
+      doc.text('Cost', 130, yPos);
+      doc.text('Remarks', 155, yPos);
+      yPos += 15;
+      
+      doc.setFont(undefined, 'normal');
+      doc.setFontSize(8);
+      reports.forEach((report, index) => {
+        if (yPos > 260) {
+          doc.addPage();
+          yPos = 30;
+        }
+        
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+        }
+        
+        const departureText = report.departureDate.length > 12 ? report.departureDate.substring(0, 12) + '...' : report.departureDate;
+        doc.text(departureText, 22, yPos);
+        
+        const requestText = report.requestDate.length > 12 ? report.requestDate.substring(0, 12) + '...' : report.requestDate;
+        doc.text(requestText, 70, yPos);
+        
+        doc.text(`$${report.cost.toFixed(2)}`, 130, yPos);
+        
+        const remarksText = report.costRemarks.length > 20 ? report.costRemarks.substring(0, 20) + '...' : report.costRemarks;
+        doc.text(remarksText, 155, yPos);
+        
+        yPos += 12;
+      });
+    }
+    
+    // Add total cost
+    yPos += 15;
+    if (yPos > 260) {
+      doc.addPage();
+      yPos = 30;
+    }
+    
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, yPos - 8, 170, 20, 'F');
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+    
+    // Download the PDF
+    const fileName = clientName === 'All Clients' ? 'All_Clients_departure_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_departure_cost_summary.pdf`;
+    doc.save(fileName);
+  }
+}
+
+function displayDepartureCostSummary(clientName) {
+  const reports = getDepartureClientReports(clientName);
+  const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+  
+  const displayName = clientName === 'ALL_CLIENTS' ? 'All Clients' : clientName;
+  document.getElementById('selectedDepartureClientName').textContent = displayName;
+  document.getElementById('departureTotalCost').textContent = totalCost.toFixed(2);
+  document.getElementById('departureDownloadPdfBtn').style.display = 'inline-block';
+  document.getElementById('departurePrintBtn').style.display = 'inline-block';
+  
+  const reportsList = document.getElementById('departureReportsList');
+  reportsList.innerHTML = '';
+  
+  if (reports.length === 0) {
+    reportsList.innerHTML = '<div style="text-align:center; padding:40px; color:#6c757d;"><p style="margin:0; font-size:16px;">No reports found.</p></div>';
+    document.getElementById('departureDownloadPdfBtn').style.display = 'none';
+    document.getElementById('departurePrintBtn').style.display = 'none';
+  } else {
+    const tableContainer = document.createElement('div');
+    tableContainer.style.overflowX = 'auto';
+    tableContainer.style.border = '1px solid #e9ecef';
+    tableContainer.style.borderRadius = '8px';
+    tableContainer.style.background = '#fff';
+    
+    if (clientName === 'ALL_CLIENTS') {
+      // Group reports by client
+      const groupedReports = groupDepartureReportsByClient(reports);
+      
+      Object.keys(groupedReports).sort().forEach(client => {
+        const clientReports = groupedReports[client];
+        const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+        
+        // Client header
+        const clientHeader = document.createElement('div');
+        clientHeader.style.background = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+        clientHeader.style.padding = '15px 20px';
+        clientHeader.style.margin = '15px 0 10px 0';
+        clientHeader.style.borderRadius = '8px';
+        clientHeader.style.border = '2px solid #2196f3';
+        clientHeader.innerHTML = `<h4 style="margin:0; color:#1976d2; font-weight:700; font-size:16px;">Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})</h4>`;
+        tableContainer.appendChild(clientHeader);
+        
+        // Client's data table
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '20px';
+        
+        const tableRows = clientReports.map((report, index) => {
+          return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.departureDate}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.requestDate}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:center; color:#333; font-weight:600; font-size:13px;">${report.cost.toFixed(2)}</td>
+            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.costRemarks}</td>
+          </tr>`;
+        }).join('');
+        
+        table.innerHTML = `
+          <thead>
+            <tr style="background:#f8f9fa;">
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Departure Date</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Request Date</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:center; font-weight:600; color:#333; font-size:14px;">Cost</th>
+              <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Cost Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        `;
+        
+        tableContainer.appendChild(table);
+      });
+    } else {
+      // Single client view
+      const table = document.createElement('table');
+      table.style.width = '100%';
+      table.style.borderCollapse = 'collapse';
+      
+      const tableRows = reports.map((report, index) => {
+        return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.departureDate}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px;">${report.requestDate}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:center; color:#333; font-weight:600; font-size:13px;">${report.cost.toFixed(2)}</td>
+          <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; max-width:200px; word-wrap:break-word; line-height:1.4;">${report.costRemarks}</td>
+        </tr>`;
+      }).join('');
+      
+      table.innerHTML = `
+        <thead>
+          <tr style="background:#f8f9fa;">
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Departure Date</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Request Date</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:center; font-weight:600; color:#333; font-size:14px;">Cost</th>
+            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Cost Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      `;
+      
+      tableContainer.appendChild(table);
+    }
+    
+    reportsList.appendChild(tableContainer);
+  }
+  
+  document.getElementById('departureCostSummaryContent').style.display = 'block';
+}
+
+// Event listeners for departure
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // View departure cost summary button
+  const viewDepartureCostSummaryBtn = document.getElementById('viewDepartureCostSummaryBtn');
+  if (viewDepartureCostSummaryBtn) {
+    viewDepartureCostSummaryBtn.addEventListener('click', function() {
+      populateDepartureClientDropdown();
+      document.getElementById('departureCostSummaryModal').style.display = 'block';
+    });
+  }
+
+  // Close modal button
+  const closeDepartureCostModal = document.getElementById('closeDepartureCostModal');
+  if (closeDepartureCostModal) {
+    closeDepartureCostModal.addEventListener('click', function() {
+      document.getElementById('departureCostSummaryModal').style.display = 'none';
+      document.getElementById('departureCostSummaryContent').style.display = 'none';
+      const downloadBtn = document.getElementById('departureDownloadPdfBtn');
+      const printBtn = document.getElementById('departurePrintBtn');
+      if (downloadBtn) downloadBtn.style.display = 'none';
+      if (printBtn) printBtn.style.display = 'none';
+    });
+  }
+
+  // Client select dropdown
+  const departureClientSelect = document.getElementById('departureClientSelect');
+  if (departureClientSelect) {
+    departureClientSelect.addEventListener('change', function() {
+      const selectedClient = this.value;
+      if (selectedClient) {
+        displayDepartureCostSummary(selectedClient);
+      } else {
+        document.getElementById('departureCostSummaryContent').style.display = 'none';
+        const downloadBtn = document.getElementById('departureDownloadPdfBtn');
+        const printBtn = document.getElementById('departurePrintBtn');
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        if (printBtn) printBtn.style.display = 'none';
+      }
+    });
+  }
+
+  // PDF download button
+  const departureDownloadPdfBtn = document.getElementById('departureDownloadPdfBtn');
+  if (departureDownloadPdfBtn) {
+    departureDownloadPdfBtn.addEventListener('click', function() {
+      const selectedClient = document.getElementById('departureClientSelect').value;
+      if (selectedClient) {
+        const reports = getDepartureClientReports(selectedClient);
+        const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+        const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+        generateDeparturePDF(displayName, reports, totalCost);
+      }
+    });
+  }
+
+  // Print button
+  const departurePrintBtn = document.getElementById('departurePrintBtn');
+  if (departurePrintBtn) {
+    departurePrintBtn.addEventListener('click', function() {
+      const selectedClient = document.getElementById('departureClientSelect').value;
+      if (selectedClient) {
+        const reports = getDepartureClientReports(selectedClient);
+        const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+        const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+        
+        // Lotus letterhead styles
+        const letterheadStyles = `
+          .letterhead {
+            background: #007bff !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color: white !important;
+            padding: 20px;
+            margin: 0 0 30px 0;
+            text-align: left;
+            position: relative;
+          }
+          .letterhead h1 {
+            margin: 0 0 5px 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: white !important;
+            border: none;
+            padding: 0;
+          }
+          .letterhead .subtitle {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+            color: white !important;
+            opacity: 0.9;
+          }
+          .letterhead .contact-info {
+            font-size: 11px;
+            color: white !important;
+            opacity: 0.8;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: right;
+          }
+          .total-box {
+            background: #e3f2fd !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px solid #007bff !important;
+          }
+          .total-box h2 {
+            margin: 0;
+            color: #007bff !important;
+          }
+          .client-info {
+            background: #f8f9fa !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+          }
+          .client-section h3 {
+            color: #1976d2 !important;
+            margin: 30px 0 15px 0;
+            padding: 10px;
+            background: #e3f2fd !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-radius: 5px;
+            border-left: 4px solid #2196f3 !important;
+          }
+          th {
+            background: #f8f9fa !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          tr:nth-child(even) {
+            background: #f9f9f9 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          @media print {
+            @page {
+              margin: 0px;
+            }
+            body {
+              margin: 0px !important;
+            }
+          }
+        `;
+        
+        const letterheadHTML = `
+          <div class="letterhead">
+            <h1>LOTUS</h1>
+            <div class="subtitle">Property Management</div>
+            <div class="contact-info">
+              Phone: (555) 123-4567<br>
+             <br>
+             www.lotuspmc.com
+            </div>
+          </div>
+        `;
+        
+        let printContent = '';
+        
+        if (selectedClient === 'ALL_CLIENTS') {
+          const groupedReports = groupDepartureReportsByClient(reports);
+          let clientTables = '';
+          
+          Object.keys(groupedReports).sort().forEach(client => {
+            const clientReports = groupedReports[client];
+            const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+            
+            const clientRows = clientReports.map(report => `
+              <tr>
+                <td>${report.departureDate}</td>
+                <td>${report.requestDate}</td>
+                <td class="cost">${report.cost.toFixed(2)}</td>
+                <td>${report.costRemarks}</td>
+              </tr>
+            `).join('');
+            
+            clientTables += `
+              <div class="client-section">
+                <h3>Client: ${client} (Subtotal: ${clientTotal.toFixed(2)})</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Departure Date</th>
+                      <th>Request Date</th>
+                      <th>Cost</th>
+                      <th>Cost Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${clientRows}
+                  </tbody>
+                </table>
+              </div>
+            `;
+          });
+          
+          printContent = `
+            <html>
+              <head>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 20px; }
+                  ${letterheadStyles}
+                  .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+                  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                  th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+                  th { font-weight: bold; }
+                  .cost { text-align: center; font-weight: bold; }
+                  @media print {
+                    body { margin: 20px; }
+                    .no-print { display: none; }
+                    .client-section { page-break-inside: avoid; }
+                  }
+                </style>
+              </head>
+              <body>
+                ${letterheadHTML}
+                <div class="client-info">
+                  <strong>Client:</strong> ${displayName}
+                </div>
+                ${clientTables}
+                <div class="total-box">
+                  <h2>Total Cost: ${totalCost.toFixed(2)}</h2>
+                </div>
+              </body>
+            </html>
+          `;
+        } else {
+          // Single client print content
+          printContent = `
+            <html>
+              <head>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 20px; }
+                  ${letterheadStyles}
+                  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                  th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+                  th { font-weight: bold; }
+                  .cost { text-align: center; font-weight: bold; }
+                  @media print {
+                    body { margin: 20px; }
+                    .no-print { display: none; }
+                  }
+                </style>
+              </head>
+              <body>
+                ${letterheadHTML}
+                <div class="client-info">
+                  <strong>Client:</strong> ${displayName}
+                </div>
+                <div class="total-box">
+                  <h2>Total Cost: ${totalCost.toFixed(2)}</h2>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Departure Date</th>
+                      <th>Request Date</th>
+                      <th>Cost</th>
+                      <th>Cost Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${reports.map(report => `
+                      <tr>
+                        <td>${report.departureDate}</td>
+                        <td>${report.requestDate}</td>
+                        <td class="cost">${report.cost.toFixed(2)}</td>
+                        <td>${report.costRemarks}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </body>
+            </html>
+          `;
+        }
+        
+        // Open print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      }
+    });
+  }
+
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('departureCostSummaryModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+      document.getElementById('departureCostSummaryContent').style.display = 'none';
+      const downloadBtn = document.getElementById('departureDownloadPdfBtn');
+      const printBtn = document.getElementById('departurePrintBtn');
+      if (downloadBtn) downloadBtn.style.display = 'none';
+      if (printBtn) printBtn.style.display = 'none';
+    }
+  });
+
+  // Button hover effects
+  const viewDepartureCostBtn = document.getElementById('viewDepartureCostSummaryBtn');
+  if (viewDepartureCostBtn) {
+    viewDepartureCostBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#5a6268';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    viewDepartureCostBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#6c757d';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  // PDF download button hover effect
+  if (departureDownloadPdfBtn) {
+    departureDownloadPdfBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#218838';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    departureDownloadPdfBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#28a745';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  // Print button hover effect
+  if (departurePrintBtn) {
+    departurePrintBtn.addEventListener('mouseenter', function() {
+      this.style.background = '#138496';
+      this.style.transform = 'translateY(-1px)';
+      this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+    });
+    
+    departurePrintBtn.addEventListener('mouseleave', function() {
+      this.style.background = '#17a2b8';
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    });
+  }
+
+  // Select focus effect
+  if (departureClientSelect) {
+    departureClientSelect.addEventListener('focus', function() {
+      this.style.borderColor = '#007bff';
+      this.style.boxShadow = '0 0 0 3px rgba(0,123,255,0.1)';
+    });
+    
+    departureClientSelect.addEventListener('blur', function() {
+      this.style.borderColor = '#e9ecef';
+      this.style.boxShadow = 'none';
+    });
+  }
+
+  // Close button hover effect
+  if (closeDepartureCostModal) {
+    closeDepartureCostModal.addEventListener('mouseenter', function() {
+      this.style.background = '#f8f9fa';
+      this.style.color = '#333';
+    });
+    
+    closeDepartureCostModal.addEventListener('mouseleave', function() {
+      this.style.background = 'transparent';
+      this.style.color = '#6c757d';
+    });
+  }
+
+});
+</script>
+
 {% endblock content %}

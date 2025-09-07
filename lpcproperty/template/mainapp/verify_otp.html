@@ -1,0 +1,17 @@
+<h2>Verify OTP & Change Password</h2>
+
+<form method="post" class="password-change-verify-form">
+    {% csrf_token %}
+    <label for="email" class="password-change-verify-label">Email</label>
+    <input type="email" name="email" required class="password-change-verify-input">
+
+    <label for="otp" class="password-change-verify-label">OTP</label>
+    <input type="text" name="otp" required class="password-change-verify-input">
+
+    <label for="new_password" class="password-change-verify-label">New Password</label>
+    <input type="password" name="new_password" required class="password-change-verify-input">
+
+    <button type="submit" class="password-change-verify-button">
+        Change Password
+    </button>
+</form>

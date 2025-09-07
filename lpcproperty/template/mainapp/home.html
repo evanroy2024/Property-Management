@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Navbar</title>
+    <title>Lotus</title>
    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200&display=swap" rel="stylesheet">
 
      <!-- Bootstrap CDN -->
@@ -793,8 +793,8 @@
 <body>
     <nav class="navbar">
         <div class="nav-links">
-            <a href="{% url 'contentpage:faq' %}">FAQ </a>
-            <a href="{% url 'contentpage:send_message' %}">Contact</a>
+            <a href="">FAQ </a>
+            <a href="">Contact</a>
         </div>
         <div class="logo">
             <img src="{% static 'logo.png' %}" alt="Lotus Logo">
@@ -823,7 +823,7 @@
         <p style="white-space:pre-wrap;">Welcome to the future of property management. Welcome to Lotus . </p>
         <p style="white-space:pre-wrap;">Lotus Property Management redefines luxury property management with our innovative app-based approach that is designed specifically for the prestigious homeowner who is looking for a simple, one-stop location for all of their property management needs and more. </p>  
 <p>With Lotus, our clients are treated with a seamless, transparent, and simplistic interface for both permanent and second home residences to make their lives easy. We ensure that every detail is meticulously attended to with unparalleled service. Our clients can enjoy peace of mind knowing their home is operating at its best, supported by a reliable team dedicated to excellence. Experience the elite service you deserve with Lotus Property Management.</p>
-<button class="unique-button">Get Started</button>
+<button class="unique-button" onclick="window.location.href='{% url 'mainapp:client_login' %}'">Get Started</button>
    
 </div>
 
@@ -847,21 +847,21 @@
   <div class="box">
       <div class="headline">luxury property management, simplified.</div>
       <div class="description">Our homeowners rely on us to be available and deliver services promptly.Our clients immediately receive text and/or email confirmation for all service requests as well as timely updates upon completion.</div>
-      <div class="learn-more">Learn More</div>
+      <div class="learn-more" onclick="window.location.href='{% url 'mainapp:learn_more1' %}'">Learn More</div>
       <div class="category">Property Management</div>
   </div>
   
   <div class="box">
       <div class="headline">personalized concierge service, simplified.</div>
       <div class="description">We recognize every client is unique as are their homes and their needs. While Lotus PMC offers universal services that apply to all homeowners, our app approach also provides concierge services for a more tailored approach to each client’s needs.</div>
-      <div class="learn-more">Learn More</div>
+      <div class="learn-more" onclick="window.location.href='{% url 'mainapp:learn_more2' %}'">Learn More</div>
       <div class="category">Concierge Services</div>
   </div>
   
   <div class="box">
-      <div class="headline">Home Improvement Services</div>
+      <div class="headline" style="padding-bottom: 20px;">Home Improvement Services <h6 style="user-select: none; color: white;">11111111111111111111111111</h6></div>
       <div class="description">The Lotus founders have over 55 years of combined experience in the Architectural & Construction industry. This allowed for a seamless extension of the Lotus Services into the Home Improvement Arena. We extend our network of trusted professionals to every client requesting assistance.</div>
-      <div class="learn-more">Learn More</div>
+      <div class="learn-more" onclick="window.location.href='{% url 'mainapp:learn_more3' %}'">Learn More</div>
       <div class="category">Home Improvement</div>
   </div>
 </div>
