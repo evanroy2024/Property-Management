@@ -25,6 +25,7 @@ urlpatterns = [
     path('learn_more1/', views.learn_more1, name='learn_more1'),  # ✅ Added learn_more1 URL
     path('learn-more2/', views.learn_more2, name='learn_more2'),  # ✅ Added learn_more1 URL
     path('learn-more3/', views.learn_more3, name='learn_more3'),  # ✅ Added learn_more1 URL
+    path('get-contact/', views.get_contact, name='get_contact'),  # ✅ Added learn_more1 URL
     path('process/', views.process, name='process'),  # ✅ Added learn_more1 URL
     path('pre_arrival/', pre_arrival, name='pre_arrival'),  # ✅ Added service request URL
     path('departure/', departure, name='departure'),  # ✅ Added service request URL

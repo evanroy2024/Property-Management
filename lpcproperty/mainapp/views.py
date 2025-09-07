@@ -28,6 +28,10 @@ def learn_more3(request):
 
 def process(request):
     return render(request, 'mainapp/process.html')
+
+def get_contact(request):
+    return render(request, 'mainapp/contact.html')
+
 # Ending of login signing here ------------------------------------------------------------------------------------------
 
 from django.shortcuts import render, redirect

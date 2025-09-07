@@ -808,252 +808,432 @@
     <section class="bg-section">
         <div class="container">
             <!-- <h1>Welcome to Our Website</h1> -->
-            <p style="color: white; font-weight: 900;"> Luxury Property Management, Simplified.</p>
+            <p style="color: white; font-weight: 900;">  Luxury Property Management, Simplified.</p>
         </div>
     </section>
-   <section class="next-section">
-    <div class="left-section">
-        <img src="{% static 'img/icon1.png' %}" alt="">
 
-        <h2 style="font-size: 2rem; color: #d1aa6b; margin-left: 5%; margin-top: 30px;">Your Property Our Priority</h2>
-        <p>.</p>
-        <p>.</p>
+    <!-- Form start  -->
+<section style="display: flex; max-width: 1200px; margin: 0 auto; padding: 40px 20px; font-family: Arial, sans-serif; gap: 40px;">
+    <!-- Left Content -->
+    <div style="flex: 1; padding-right: 40px;">
+        <p style="color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">LEARN MORE ABOUT WHAT'S POSSIBLE</p>
+        <h2 style="font-size: 48px; color: #333; margin-bottom: 20px; font-weight: 300; line-height: 1.2;">Let's connect.</h2>
+        <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Tell us a bit more about you and our team will reach out to continue the conversation.</p>
+        <button style="background: none; border: 1px solid #d4a574; color: #d4a574; padding: 12px 24px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-bottom: 30px;">DOWNLOAD APP</button>
+        
+        <!-- Added tall property image -->
+        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=600" alt="Modern house exterior at sunset" style="width: 100%; height: 400px; object-fit: cover; border-radius: 4px;">
     </div>
-    <div class="right-section">
-        <p style="white-space:pre-wrap;">Welcome to the future of property management. Welcome to Lotus . </p>
-        <p style="white-space:pre-wrap;">Lotus Property Management redefines luxury property management with our innovative app-based approach that is designed specifically for the prestigious homeowner who is looking for a simple, one-stop location for all of their property management needs and more. </p>  
-<p>With Lotus, our clients are treated with a seamless, transparent, and simplistic interface for both permanent and second home residences to make their lives easy. We ensure that every detail is meticulously attended to with unparalleled service. Our clients can enjoy peace of mind knowing their home is operating at its best, supported by a reliable team dedicated to excellence. Experience the elite service you deserve with Lotus Property Management.</p>
-<button class="unique-button" onclick="window.location.href='{% url 'mainapp:get_contact' %}'">Get Started</button>
-   
-</div>
-
-   </section>
-   <section class="image-section">
-    <div class="image-container">
-        <img src="{% static 'img/1.png' %}" alt="Image 1">
-        <img src="{% static 'img/2.png' %}" alt="Image 2">
-        <img src="{% static 'img/3.png' %}" alt="Image 3">
+    <!-- Right Form -->
+    <div style="flex: 1; background: white; padding: 40px; border: 1px solid #e0e0e0;">
+        <form id="contactForm">
+            <!-- Name -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">NAME <span style="color: #999;">(REQUIRED)</span></label>
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">First Name</label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">Last Name</label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                    </div>
+                </div>
+            </div>
+            <!-- Email -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">EMAIL <span style="color: #999;">(REQUIRED)</span></label>
+                <input type="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+            </div>
+            <!-- Phone -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">PHONE</label>
+                <input type="tel" style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+            </div>
+            <!-- Address -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">ADDRESS</label>
+                
+                <!-- Country -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">Country</label>
+                    <select style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                        <option>United States</option>
+                        <option>Afghanistan</option>
+                        <option>Åland Islands</option>
+                        <option>Albania</option>
+                        <option>Algeria</option>
+                        <option>American Samoa</option>
+                        <option>Andorra</option>
+                        <option>Angola</option>
+                        <option>Anguilla</option>
+                        <option>Antigua & Barbuda</option>
+                        <option>Argentina</option>
+                        <option>Armenia</option>
+                        <option>Aruba</option>
+                        <option>Ascension Island</option>
+                        <option>Australia</option>
+                        <option>Austria</option>
+                        <option>Azerbaijan</option>
+                        <option>Bahamas</option>
+                        <option>Bahrain</option>
+                        <option>Bangladesh</option>
+                        <option>Barbados</option>
+                        <option>Belarus</option>
+                        <option>Belgium</option>
+                        <option>Belize</option>
+                        <option>Benin</option>
+                        <option>Bermuda</option>
+                        <option>Bhutan</option>
+                        <option>Bolivia</option>
+                        <option>Bosnia & Herzegovina</option>
+                        <option>Botswana</option>
+                        <option>Brazil</option>
+                        <option>British Indian Ocean Territory</option>
+                        <option>British Virgin Islands</option>
+                        <option>Brunei</option>
+                        <option>Bulgaria</option>
+                        <option>Burkina Faso</option>
+                        <option>Burundi</option>
+                        <option>Cambodia</option>
+                        <option>Cameroon</option>
+                        <option>Canada</option>
+                        <option>Cape Verde</option>
+                        <option>Caribbean Netherlands</option>
+                        <option>Cayman Islands</option>
+                        <option>Central African Republic</option>
+                        <option>Chad</option>
+                        <option>Chile</option>
+                        <option>China</option>
+                        <option>Christmas Island</option>
+                        <option>Cocos (Keeling) Islands</option>
+                        <option>Colombia</option>
+                        <option>Comoros</option>
+                        <option>Congo - Brazzaville</option>
+                        <option>Congo - Kinshasa</option>
+                        <option>Cook Islands</option>
+                        <option>Costa Rica</option>
+                        <option>Côte d'Ivoire</option>
+                        <option>Croatia</option>
+                        <option>Cuba</option>
+                        <option>Curaçao</option>
+                        <option>Cyprus</option>
+                        <option>Czechia</option>
+                        <option>Denmark</option>
+                        <option>Djibouti</option>
+                        <option>Dominica</option>
+                        <option>Dominican Republic</option>
+                        <option>Ecuador</option>
+                        <option>Egypt</option>
+                        <option>El Salvador</option>
+                        <option>Equatorial Guinea</option>
+                        <option>Eritrea</option>
+                        <option>Estonia</option>
+                        <option>Eswatini</option>
+                        <option>Ethiopia</option>
+                        <option>Falkland Islands</option>
+                        <option>Faroe Islands</option>
+                        <option>Fiji</option>
+                        <option>Finland</option>
+                        <option>France</option>
+                        <option>French Guiana</option>
+                        <option>French Polynesia</option>
+                        <option>Gabon</option>
+                        <option>Gambia</option>
+                        <option>Georgia</option>
+                        <option>Germany</option>
+                        <option>Ghana</option>
+                        <option>Gibraltar</option>
+                        <option>Greece</option>
+                        <option>Greenland</option>
+                        <option>Grenada</option>
+                        <option>Guadeloupe</option>
+                        <option>Guam</option>
+                        <option>Guatemala</option>
+                        <option>Guernsey</option>
+                        <option>Guinea</option>
+                        <option>Guinea-Bissau</option>
+                        <option>Guyana</option>
+                        <option>Haiti</option>
+                        <option>Honduras</option>
+                        <option>Hong Kong SAR China</option>
+                        <option>Hungary</option>
+                        <option>Iceland</option>
+                        <option>India</option>
+                        <option>Indonesia</option>
+                        <option>Iran</option>
+                        <option>Iraq</option>
+                        <option>Ireland</option>
+                        <option>Isle of Man</option>
+                        <option>Israel</option>
+                        <option>Italy</option>
+                        <option>Jamaica</option>
+                        <option>Japan</option>
+                        <option>Jersey</option>
+                        <option>Jordan</option>
+                        <option>Kazakhstan</option>
+                        <option>Kenya</option>
+                        <option>Kiribati</option>
+                        <option>Kosovo</option>
+                        <option>Kuwait</option>
+                        <option>Kyrgyzstan</option>
+                        <option>Laos</option>
+                        <option>Latvia</option>
+                        <option>Lebanon</option>
+                        <option>Lesotho</option>
+                        <option>Liberia</option>
+                        <option>Libya</option>
+                        <option>Liechtenstein</option>
+                        <option>Lithuania</option>
+                        <option>Luxembourg</option>
+                        <option>Macao SAR China</option>
+                        <option>Madagascar</option>
+                        <option>Malawi</option>
+                        <option>Malaysia</option>
+                        <option>Maldives</option>
+                        <option>Mali</option>
+                        <option>Malta</option>
+                        <option>Marshall Islands</option>
+                        <option>Martinique</option>
+                        <option>Mauritania</option>
+                        <option>Mauritius</option>
+                        <option>Mayotte</option>
+                        <option>Mexico</option>
+                        <option>Micronesia</option>
+                        <option>Moldova</option>
+                        <option>Monaco</option>
+                        <option>Mongolia</option>
+                        <option>Montenegro</option>
+                        <option>Montserrat</option>
+                        <option>Morocco</option>
+                        <option>Mozambique</option>
+                        <option>Myanmar (Burma)</option>
+                        <option>Namibia</option>
+                        <option>Nauru</option>
+                        <option>Nepal</option>
+                        <option>Netherlands</option>
+                        <option>New Caledonia</option>
+                        <option>New Zealand</option>
+                        <option>Nicaragua</option>
+                        <option>Niger</option>
+                        <option>Nigeria</option>
+                        <option>Niue</option>
+                        <option>Norfolk Island</option>
+                        <option>Northern Mariana Islands</option>
+                        <option>North Korea</option>
+                        <option>North Macedonia</option>
+                        <option>Norway</option>
+                        <option>Oman</option>
+                        <option>Pakistan</option>
+                        <option>Palau</option>
+                        <option>Palestinian Territories</option>
+                        <option>Panama</option>
+                        <option>Papua New Guinea</option>
+                        <option>Paraguay</option>
+                        <option>Peru</option>
+                        <option>Philippines</option>
+                        <option>Poland</option>
+                        <option>Portugal</option>
+                        <option>Puerto Rico</option>
+                        <option>Qatar</option>
+                        <option>Réunion</option>
+                        <option>Romania</option>
+                        <option>Russia</option>
+                        <option>Rwanda</option>
+                        <option>Samoa</option>
+                        <option>San Marino</option>
+                        <option>São Tomé & Príncipe</option>
+                        <option>Saudi Arabia</option>
+                        <option>Senegal</option>
+                        <option>Serbia</option>
+                        <option>Seychelles</option>
+                        <option>Sierra Leone</option>
+                        <option>Singapore</option>
+                        <option>Sint Maarten</option>
+                        <option>Slovakia</option>
+                        <option>Slovenia</option>
+                        <option>Solomon Islands</option>
+                        <option>Somalia</option>
+                        <option>South Africa</option>
+                        <option>South Korea</option>
+                        <option>South Sudan</option>
+                        <option>Spain</option>
+                        <option>Sri Lanka</option>
+                        <option>St. Barthélemy</option>
+                        <option>St. Helena</option>
+                        <option>St. Kitts & Nevis</option>
+                        <option>St. Lucia</option>
+                        <option>St. Martin</option>
+                        <option>St. Pierre & Miquelon</option>
+                        <option>St. Vincent & Grenadines</option>
+                        <option>Sudan</option>
+                        <option>Suriname</option>
+                        <option>Svalbard & Jan Mayen</option>
+                        <option>Sweden</option>
+                        <option>Switzerland</option>
+                        <option>Syria</option>
+                        <option>Taiwan</option>
+                        <option>Tajikistan</option>
+                        <option>Tanzania</option>
+                        <option>Thailand</option>
+                        <option>Timor-Leste</option>
+                        <option>Togo</option>
+                        <option>Tokelau</option>
+                        <option>Tonga</option>
+                        <option>Trinidad & Tobago</option>
+                        <option>Tristan da Cunha</option>
+                        <option>Tunisia</option>
+                        <option>Türkiye</option>
+                        <option>Turkmenistan</option>
+                        <option>Turks & Caicos Islands</option>
+                        <option>Tuvalu</option>
+                        <option>U.S. Virgin Islands</option>
+                        <option>Uganda</option>
+                        <option>Ukraine</option>
+                        <option>United Arab Emirates</option>
+                        <option>United Kingdom</option>
+                        <option>Uruguay</option>
+                        <option>Uzbekistan</option>
+                        <option>Vanuatu</option>
+                        <option>Vatican City</option>
+                        <option>Venezuela</option>
+                        <option>Vietnam</option>
+                        <option>Wallis & Futuna</option>
+                        <option>Western Sahara</option>
+                        <option>Yemen</option>
+                        <option>Zambia</option>
+                        <option>Zimbabwe</option>
+                    </select>
+                </div>
+                <!-- Address Line 1 -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">Address Line 1 <span style="color: #999;">(REQUIRED)</span></label>
+                    <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                </div>
+                <!-- Address Line 2 -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">Address Line 2</label>
+                    <input type="text" style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                </div>
+                <!-- City, State, ZIP -->
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">City <span style="color: #999;">(REQUIRED)</span></label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">State <span style="color: #999;">(REQUIRED)</span></label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 10px; color: #ccc; margin-bottom: 5px;">ZIP Code <span style="color: #999;">(REQUIRED)</span></label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                    </div>
+                </div>
+            </div>
+            <!-- Size of Home -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">SIZE OF HOME</label>
+                <input type="text" style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+            </div>
+            <!-- Number of Stories -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">NUMBER OF STORIES IN HOME</label>
+                <input type="text" style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+            </div>
+            <!-- Length of Term -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">LENGTH OF TERM</label>
+                <select style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px;">
+                    <option>6 months</option>
+                    <option>12 months</option>
+                    <option>Monthly</option>
+                </select>
+            </div>
+            <!-- Message -->
+            <div style="margin-bottom: 30px;">
+                <label style="display: block; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">MESSAGE <span style="color: #999;">(REQUIRED)</span></label>
+                <textarea required rows="5" style="width: 100%; padding: 12px; border: 1px solid #ddd; background: #f8f8f8; font-size: 14px; resize: vertical;"></textarea>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" style="background: #333; color: white; border: none; padding: 15px 40px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; width: 100%;">SUBMIT</button>
+        </form>
+        
+        <!-- Success Message -->
+        <p id="submitMessage" style="color: #4CAF50; font-weight: bold; font-size: 16px; margin-top: 20px; display: none; text-align: center;">Submitted successfully!</p>
     </div>
 </section>
-<!-- Footer 2 - Bootstrap Brain Component -->
 
-
-<header class="header" style="margin-top: 2%;">
-  <h1 class="main-title">Our Offerings</h1>
-  <p class="subtitle">Exceptional service for exceptional properties</p>
-</header>
-
-<div class="container">
-  <div class="box">
-      <div class="headline">luxury property management, simplified.</div>
-      <div class="description">Our homeowners rely on us to be available and deliver services promptly.Our clients immediately receive text and/or email confirmation for all service requests as well as timely updates upon completion.</div>
-      <div class="learn-more" onclick="window.location.href='{% url 'mainapp:learn_more1' %}'">Learn More</div>
-      <div class="category">Property Management</div>
-  </div>
-  
-  <div class="box">
-      <div class="headline">personalized concierge service, simplified.</div>
-      <div class="description">We recognize every client is unique as are their homes and their needs. While Lotus PMC offers universal services that apply to all homeowners, our app approach also provides concierge services for a more tailored approach to each client’s needs.</div>
-      <div class="learn-more" onclick="window.location.href='{% url 'mainapp:learn_more2' %}'">Learn More</div>
-      <div class="category">Concierge Services</div>
-  </div>
-  
-  <div class="box">
-      <div class="headline" style="padding-bottom: 20px;">Home Improvement Services <h6 style="user-select: none; color: white;">11111111111111111111111111</h6></div>
-      <div class="description">The Lotus founders have over 55 years of combined experience in the Architectural & Construction industry. This allowed for a seamless extension of the Lotus Services into the Home Improvement Arena. We extend our network of trusted professionals to every client requesting assistance.</div>
-      <div class="learn-more" onclick="window.location.href='{% url 'mainapp:learn_more3' %}'">Learn More</div>
-      <div class="category">Home Improvement</div>
-  </div>
-</div>
-
-<div class="container">
-    <section class="services-section">
-        <!-- Left side: Services content -->
-        <div class="services-content">
-            <h2>Home Improvement Alliances</h2>
-            <p>We specialize in comprehensive home improvement solutions designed to enhance both the functionality and aesthetics of your space. Our experienced team brings your vision to life with precision and care.</p>
-            
-            <div class="services-list">
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Interior / Exterior Renovations</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Home Additions</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Architectural & Engineering Services</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Interior Design Services</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Kitchen Remodels</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Pool Repairs, Resurfacing, Etc</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Landscaping</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Window Treatment</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Patio / Pavers</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Fencing / Gating</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Flooring Replacement and Repairs</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Window Replacement</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Closet Systems</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Home Automation</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-                <div class="service-row">
-                    <div class="service-item">
-                        <h3>Security Systems</h3>
-                        <p></p>
-                    </div>
-                    <div class="service-item">
-                        <h3>Audio / Visual</h3>
-                        <p></p>
-                    </div>
-                </div>
-  
-  
-               
-  
-            </div>
-  
-            <p style="margin-top: 20px;"><a href="#contact">Request more information ➞</a></p>
-        </div>
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
         
-        <!-- Right side: Floating image -->
-        <div class="floating-image-container">
-            <img src="{% static 'home/service.jpg' %}" alt="Home Improvement Services" class="floating-image">
-           
-        </div>
+        // Show success message
+        document.getElementById('submitMessage').style.display = 'block';
+        
+        // Hide form temporarily
+        this.style.opacity = '0.5';
+        this.style.pointerEvents = 'none';
+        
+        // Reload page after 2 seconds
+        setTimeout(function() {
+            location.reload();
+        }, 2000);
+    });
+</script>
 
-    </section>
-  </div>
+    <!-- Form End  -->
+<section style="display: flex; min-height: 100vh; font-family: Arial, sans-serif;">
+    <!-- Left Content -->
+    <div style="flex: 1; background: #f5f1ed; padding: 80px 60px; display: flex; flex-direction: column; justify-content: center;">
+        <p style="color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px;">THE FUTURE OF PROPERTY MANAGEMENT IS HERE</p>
+        
+        <h1 style="font-size: 64px; color: #333; margin-bottom: 40px; font-weight: 300; line-height: 1.1;">Welcome home.</h1>
+        
+        <p style="color: #666; font-size: 18px; line-height: 1.6; margin-bottom: 50px; max-width: 500px;">Download the Lotus PMC app and experience a simple yet elevated approach to luxury property management.</p>
+        
+        <button style="background: none; border: 2px solid #d4a574; color: #d4a574; padding: 15px 30px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; width: fit-content;">DOWNLOAD APP</button>
+    </div>
 
-  
-  <style>
-    .service-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: -10px;
-}
-.service-item {
-  flex: 1;
-}
-.floating-image {
-    width: 100%;
-    height: 450px;
-    border-radius: 10px;
-    /* border-radius: 50%; */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-.image-section {
-    background-color: #fff2de;
-}
-  </style>
-
-<div class="testimonial-container">
-  <div class="content-wrapper">
-      <div class="testimonial-header">
-          <h2 class="testimonial-title">Client Testimonials</h2>
-          <p class="testimonial-subtitle">Discover what our esteemed clients have to say about their experience with our premium services and dedicated team of professionals.</p>
-          
-          <div class="testimonial-count">
-              <div class="current-count" id="current-slide">01</div>
-              <div class="total-count">/03</div>
-          </div>
-      </div>
-      
-      <div class="testimonial-content">
-        <div class="testimonial-slider">
-            {% for testimonial in testimonials %}
-                <div class="testimonial-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter }}">
-                    <div class="quote-icon">"</div>
-                    <div class="testimonial-text">
-                        {{ testimonial.comment }}
-                    </div>
-                    
-                    <div class="testimonial-author">
-                        <img src="{{ testimonial.photo.url }}" alt="Client" class="author-image">
-                        <div class="author-info">
-                            <div class="author-name">{{ testimonial.name }}</div>
-                            <div class="author-role">Client</div>
+    <!-- Right Content - Phone Image -->
+    <div style="flex: 1; background: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover; position: relative; display: flex; align-items: center; justify-content: center;">
+        <!-- Phone mockup overlay -->
+        <div style="position: relative; z-index: 2;">
+            <div style="width: 300px; height: 600px; background: #000; border-radius: 30px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                <div style="width: 100%; height: 100%; background: #fff; border-radius: 20px; position: relative; overflow: hidden;">
+                    <!-- Phone screen content -->
+                    <div style="padding: 40px 30px; text-align: center;">
+                        <div style="margin-bottom: 30px;">
+                            <h2 style="font-size: 36px; color: #2c5282; margin-bottom: 5px; font-weight: bold;">LOTUS</h2>
+                            <p style="font-size: 12px; color: #d4a574; letter-spacing: 1px;">PROPERTY MANAGEMENT</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; text-align: left; font-size: 12px; color: #666; margin-bottom: 5px;">EMAIL</label>
+                                <input type="email" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            </div>
+                            
+                            <div style="margin-bottom: 30px;">
+                                <label style="display: block; text-align: left; font-size: 12px; color: #666; margin-bottom: 5px;">PASSWORD</label>
+                                <input type="password" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            </div>
+                            
+                            <button style="width: 100%; background: #2c5282; color: white; border: none; padding: 15px; border-radius: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">LOG IN TO LOTUS PROPERTY PORTAL</button>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-        
-        <div class="testimonial-nav">
-            <div class="nav-button" id="prev-button">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                </svg>
-            </div>
-            <div class="nav-button" id="next-button">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                </svg>
             </div>
         </div>
         
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-        </div>
+        <!-- Texture overlay -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(212, 165, 116, 0.1) 0%, rgba(44, 82, 130, 0.1) 100%); z-index: 1;"></div>
     </div>
-    
-  </div>
-</div>
+</section>
+
+
+
 
 <!-- Footer start here  -->
 <style>
@@ -1318,7 +1498,7 @@ p {
     <div class="standalone-footer-shape"></div>
     <div class="standalone-footer-container">
         <div class="standalone-footer-column">
-            <img style="max-width: 200px;" src="{% static 'logo.png' %}" alt="">
+            <div class="standalone-footer-logo">CompanyName</div>
             <p class="standalone-footer-about">We provide innovative solutions for businesses looking to transform their digital presence and achieve outstanding results.</p>
             <div class="standalone-footer-social">
                 <a href="#" aria-label="Facebook">
