@@ -955,7 +955,6 @@ button.addEventListener("click", function() {
   --card-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
   --transition: all 0.25s ease;
   --border-radius: 0.375rem;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
 
@@ -1897,6 +1896,16 @@ button.addEventListener("click", function() {
     .info-item {
         flex: 1 1 100%; /* Stacks items on smaller screens */
     }
+}
+.info-item,
+.info-item:hover,
+.info-item:focus,
+.info-item:active {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 </style>

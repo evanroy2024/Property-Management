@@ -405,9 +405,9 @@
         {% if item.update_status == 'Open' %}
             <span class="status-badge status-open">Open</span>
         {% elif item.update_status == 'Completed' %}
-            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; background-color: #28a745;">Completed</span>
+            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; background-color: #28a745;">Completed</span>
         {% elif item.update_status == 'Denied' %}
-            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 13px; background-color: #dc3545;">Denied</span>
+            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; background-color: #dc3545;">Denied</span>
         {% endif %}
     </span>
 </td>                        
@@ -1282,7 +1282,7 @@ function generatePDF(clientName, reports, totalCost) {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text('Phone: (555) 123-4567 ', 210 - 5, 15, { align: 'right' });
+    doc.text('Phone: (561) 766-7828 ', 210 - 5, 15, { align: 'right' });
     doc.text('www.lotuspmc.com', 210 - 5, 25, { align: 'right' });
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(20);
@@ -1628,7 +1628,7 @@ document.getElementById('printBtn').addEventListener('click', function() {
             ${headerHtml}
             <div class="report-container">
               <div class="header-section">
-                <div class="report-title">Cost Summary Report</div>
+                <div class="report-title">Walk-Thru Cost Summary Report</div>
                 <div class="report-sub">Client: ${displayName}</div>
               </div>
               ${clientTables}
@@ -1704,7 +1704,10 @@ document.getElementById('printBtn').addEventListener('click', function() {
             ${headerHtml}
             <div class="report-container">
               <div class="header-section">
-                <div class="report-title">Cost Summary Report</div>
+                <div class="report-title" style="font-size:1.8rem" >Walk-Thru Cost Summary Report</div>
+                <hr style="border: 1.2px solid blue; margin-top: 15px; margin-bottom: 20px;">
+
+                
                 <div class="report-sub">Client: ${displayName}</div>
               </div>
               <table>
@@ -1840,4 +1843,18 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
   }
 })();
  </script>
+ <script>
+function submitUpdateFieldStatus() {
+    if (!document.getElementById('statusDatetime').value.trim()) {
+        alert('Date is required');
+        return;
+    }
+    if (!document.getElementById('updateStatusRemarks').value.trim()) {
+        alert('Remarks are required');
+        return;
+    }
+    // existing submit logic
+}
+</script>
+
 {% endblock content %}

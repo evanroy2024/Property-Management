@@ -1037,7 +1037,32 @@ def edit_vendor(request, vendor_id):
     }
 
     return render(request, 'adminmanager/vendor/edit.html', context)
+def vendor_details(request, vendor_id):
+    vendor = get_object_or_404(Vendor, id=vendor_id)
 
+    # Get existing contacts
+    existing_contacts = VendorContact.objects.filter(vendor=vendor)
+    existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
+
+    # Parse services
+    main_service = existing_services[0] if existing_services else ''
+    additional_service_1 = existing_services[1] if len(existing_services) > 1 else ''
+    additional_service_2 = existing_services[2] if len(existing_services) > 2 else ''
+
+    # Get services from database (if you want to show full list for reference)
+    vendor_services = VendorServices.objects.all().order_by('service')
+
+    context = {
+        'vendor': vendor,
+        'existing_contacts': existing_contacts,
+        'main_service': main_service,
+        'additional_service_1': additional_service_1,
+        'additional_service_2': additional_service_2,
+        'vendor_services': vendor_services,
+        'US_STATES': US_STATES,
+    }
+
+    return render(request, 'adminmanager/vendor/details.html', context)
 
 # Delete vendor
 def delete_vendor(request, vendor_id):

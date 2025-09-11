@@ -1051,50 +1051,29 @@ function getUniqueClients() {
     }
 
     // Generate PDF
-// Generate PDF
 function generatePDF(clientName, reports, totalCost) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    
-    // Load and add logo
-    const logoUrl = "{% static 'logo.png' %}";
-    const img = new Image();
-    img.onload = function() {
-        // Continue with the rest of the PDF generation...
-        continueGeneratingPDF();
-    };
-    img.onerror = function() {
-        // If logo fails to load, continue without it
-        continueGeneratingPDF();
-    };
-    img.src = logoUrl;
     
     function continueGeneratingPDF() {
         // Create blue header background (like in your design)
         doc.setFillColor(24, 119, 242); // Blue color matching your design
         doc.rect(0, 0, 210, 40, 'F'); // Full width header
         
-        // Add logo to header (white logo on blue background) - INCREASED WIDTH
-        try {
-            if (img.complete && img.naturalHeight !== 0) {
-                doc.addImage(img, 'PNG', 20, 8, 80, 25); // Increased width from 50 to 80
-            }
-        } catch (e) {
-            // Fallback text if logo doesn't load
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(16);
-            doc.setFont(undefined, 'bold');
-            doc.text('LOTUS', 20, 20);
-            doc.setFontSize(10);
-            doc.text('Property Management', 20, 30);
-        }
+        // Add text logo to header (white text on blue background) instead of image
+        doc.setTextColor(255, 255, 255); // White text
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text('LOTUS', 20, 20);
+        doc.setFontSize(14);
+        doc.text('Property Management', 20, 30);
         
         // Add contact information on the right side of header
         doc.setTextColor(255, 255, 255); // White text
-        doc.setFontSize(10);
+        doc.setFontSize(12);
         doc.setFont(undefined, 'normal');
-        doc.text('Phone: (555) 123-4567 | Email: info@lotuspm.com', 210 - 5, 15, { align: 'right' });
-        doc.text('www.lotuspropertymanagement.com', 210 - 5, 25, { align: 'right' });
+        doc.text('Phone: (561) 766-7828', 210 - 5, 20, { align: 'right' });
+        doc.text('www.lotuspmc.com', 210 - 5, 30, { align: 'right' });
         
         // Reset text color to black for content
         doc.setTextColor(0, 0, 0);
@@ -1102,7 +1081,7 @@ function generatePDF(clientName, reports, totalCost) {
         // Set up document title - moved down to accommodate header
         doc.setFontSize(20);
         doc.setFont(undefined, 'bold');
-        doc.text('Service Requests Cost Summary', 20, 60);
+        doc.text('Denied Service Requests Cost Summary', 20, 60);
         
         doc.setFontSize(16);
         doc.setFont(undefined, 'normal');
@@ -1244,8 +1223,10 @@ function generatePDF(clientName, reports, totalCost) {
         const fileName = clientName === 'All Clients' ? 'All_Clients_service_requests_cost_summary.pdf' : `${clientName.replace(/[^a-z0-9]/gi, '_')}_service_requests_cost_summary.pdf`;
         doc.save(fileName);
     }
+    
+    // Call the function directly without image loading
+    continueGeneratingPDF();
 }
-
     // Display cost summary
     function displayCostSummary(clientName) {
         const reports = getClientReports(clientName);
@@ -1411,7 +1392,7 @@ function printCostSummary(clientName, reports, totalCost) {
         printContent = `
             <html>
                 <head>
-                    <title>Service Requests Cost Summary - ${clientName}</title>
+                    <title>Denied Service Requests Cost Summary - ${clientName}</title>
                     <style>
                         @page { margin: 0; }
                         * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
@@ -1482,7 +1463,7 @@ function printCostSummary(clientName, reports, totalCost) {
                         </div>
                     </div>
                     <div class="content">
-                        <h1>Service Requests Cost Summary</h1>
+                        <h1>Denied Service Requests Cost Summary</h1>
                         <div class="client-info">
                             <strong>Client:</strong> ${clientName}<br>
                             <strong>Generated:</strong> ${new Date().toLocaleDateString()}
@@ -1500,7 +1481,7 @@ function printCostSummary(clientName, reports, totalCost) {
         printContent = `
             <html>
                 <head>
-                    <title>Service Requests Cost Summary - ${clientName}</title>
+                    <title>Denied Service Requests Cost Summary - ${clientName}</title>
                     <style>
                         @page { margin: 0; }
                         * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
@@ -1569,7 +1550,7 @@ function printCostSummary(clientName, reports, totalCost) {
                         </div>
                     </div>
                     <div class="content">
-                        <h1>Service Requests Cost Summary</h1>
+                        <h1>Denied Service Requests Cost Summary</h1>
                         <div class="client-info">
                             <strong>Client:</strong> ${clientName}<br>
                             <strong>Generated:</strong> ${new Date().toLocaleDateString()}
@@ -1786,6 +1767,4 @@ function printCostSummary(clientName, reports, totalCost) {
 
 })();
 </script>
-
-
 {% endblock content %}

@@ -59,6 +59,7 @@ urlpatterns = [
     path('vendors/<int:vendor_id>/edit/', views.edit_vendor, name='edit_vendor'),
     path('vendors/<int:vendor_id>/delete/', views.delete_vendor, name='delete_vendor'),
     path('vendors/services/', views.manage_vendor_services, name='manage_vendor_services'),
+    path('vendor/<int:vendor_id>/details/', views.vendor_details, name='vendor_details'),
 
 
     # Client Manager Profile 
