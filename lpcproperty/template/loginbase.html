@@ -131,29 +131,15 @@
     {% endblock %}
 
 <footer class="standalone-footer">
-<div class="standalone-footer-container" style="text-align: center;">
+<div class="standalone-footer-container">
   <div class="standalone-footer-column">
     <h3 class="standalone-footer-title">CONTACT INFO</h3>
-    <div class="standalone-footer-contact" style="max-width: 400px; margin: 0 auto;">
+    <div class="standalone-footer-contact">
       
-      <!-- Address Section with Background -->
-      <div class="standalone-footer-contact-item" style="
-        margin-bottom: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
-        padding: 25px;
-        display: flex;
-        align-items: flex-start;
-        text-align: left;
-        width: 100%;
-        box-sizing: border-box;
-      ">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="margin-right: 20px; margin-top: 3px; flex-shrink: 0;">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-        </svg>
-        <div style="line-height: 1.5;">
+      <!-- Address Section -->
+      <div class="standalone-footer-contact-item">
+        <img src="{% static 'img/smalllogo.png' %}" width="20" height="20" style="margin-right: 20px; margin-top: 3px; flex-shrink: 0;">
+        <div>
           <div>Lotus Property Management Company</div>
           <div>2655 North Ocean Drive</div>
           <div>Suite 301e</div>
@@ -161,29 +147,15 @@
         </div>
       </div>
 
-      <!-- Phone Section with Background -->
-      <div class="standalone-footer-contact-item" style="
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
-        padding: 25px;
-        display: flex;
-        align-items: center;
-        text-align: left;
-        width: 100%;
-        box-sizing: border-box;
-      ">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="margin-right: 20px;">
-          <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C10.07 22 2 13.93 2 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.35.26 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z"/>
-        </svg>
+      <!-- Phone Section -->
+      <div class="standalone-footer-contact-item">
+        <img src="{% static 'img/smalllogo.png' %}" width="20" height="20" style="margin-right: 20px;">
         <span>(561) 766-7828</span>
       </div>
       
     </div>
   </div>
 </div>
-
 </footer>
 
 <style>
@@ -200,10 +172,13 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .standalone-footer-column {
   margin-bottom: 30px;
+  text-align: center;
 }
 
 .standalone-footer-title {
@@ -216,25 +191,26 @@
   position: relative;
 }
 
+.standalone-footer-contact {
+  display: inline-block;
+  text-align: left;
+}
+
 .standalone-footer-contact-item {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
   padding: 12px 20px;
   margin-bottom: 15px;
   transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {
-  .standalone-footer-contact {
-    text-align: center !important;
-  }
-  
   .standalone-footer-contact-item {
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 </style>
+
 <!-- Add footer Ends Here  -->
 
     <script>

@@ -366,7 +366,7 @@
                   <tbody id="report-table">     
     {% for report in reports %}         
         {% for item in report.inspection_items %}         
-        {% if item.update_status == 'Open' %}                      
+        {% if item.update_status == 'Open' or item.client_approval == 'Pending' or item.client_approval == 'Approved' and item.update_status == 'Denied' or item.client_approval == 'Denied' and item.update_status == 'Approved' or item.client_approval == 'Denied' and item.update_status == 'Completed' %}                 
             <tr class="report-row"                 
                 data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
                 data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"                 
@@ -405,9 +405,9 @@
         {% if item.update_status == 'Open' %}
             <span class="status-badge status-open">Open</span>
         {% elif item.update_status == 'Completed' %}
-            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; background-color: #28a745;">Completed</span>
+            <span style="padding: 4px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 13px; background-color: #28a745;">Completed</span>
         {% elif item.update_status == 'Denied' %}
-            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; background-color: #dc3545;">Denied</span>
+            <span style="padding: 4px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 13px; background-color: #dc3545;">Denied</span>
         {% endif %}
     </span>
 </td>                        
@@ -1069,7 +1069,7 @@ function submitUpdateApproval() {
   </div>
 </div>
 <script>
-function openUpdateFieldStatusModal(reportId, fieldName, category) {
+  function openUpdateFieldStatusModal(reportId, fieldName, category) {
   document.getElementById('statusReportId').value = reportId;
   document.getElementById('statusFieldName').value = fieldName;
   document.getElementById('statusCategory').value = category;
@@ -1080,6 +1080,7 @@ function openUpdateFieldStatusModal(reportId, fieldName, category) {
   
   document.getElementById('updateFieldStatusModal').style.display = 'block';
 }
+
 function closeUpdateFieldStatusModal() {
   document.getElementById('updateFieldStatusModal').style.display = 'none';
 }
@@ -1090,6 +1091,12 @@ function submitUpdateFieldStatus() {
   const category = document.getElementById('statusCategory').value;
   const datetime = document.getElementById('statusDatetime').value;
   const remarks = document.getElementById('updateStatusRemarks').value;
+  
+  // Check if date is present
+  if (!datetime) {
+    alert('Please choose a date');
+    return;
+  }
   
   // Get status value from dropdown
   const statusSelect = document.getElementById('newStatus');
@@ -1843,18 +1850,6 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
   }
 })();
  </script>
- <script>
-function submitUpdateFieldStatus() {
-    if (!document.getElementById('statusDatetime').value.trim()) {
-        alert('Date is required');
-        return;
-    }
-    if (!document.getElementById('updateStatusRemarks').value.trim()) {
-        alert('Remarks are required');
-        return;
-    }
-    // existing submit logic
-}
-</script>
+
 
 {% endblock content %}

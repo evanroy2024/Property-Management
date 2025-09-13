@@ -621,12 +621,32 @@ button.addEventListener("click", function() {
                 <h4 class="floor-title">{{ floor.floor_name }}</h4>
                 
                 {% if floor.floor_imgae %}
-                <div class="floor-overview-image text-center">
-                    <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="floor-img img-responsive" 
-                         style="max-width: 300px; height: auto; margin: 0 auto; cursor: pointer;"
-                         onclick="openFloorImage('{{ floor.floor_imgae.url }}', '{{ floor.floor_name }}')">
-                </div>
-                {% endif %}
+    {% if floor.floor_imgae.url|lower|slice:"-4:" == ".pdf" %}
+        <div style="text-align:center; margin:20px 0;">
+            <a href="{{ floor.floor_imgae.url }}" target="_blank"
+               style="
+                   display:inline-block;
+                   padding:10px 20px;
+                   background:#4a90e2;
+                   color:#fff;
+                   text-decoration:none;
+                   border-radius:6px;
+                   font-weight:600;
+                   box-shadow:0 2px 6px rgba(0,0,0,0.2);
+               ">
+               View Floor Plan (PDF)
+            </a>
+        </div>
+    {% else %}
+        <div class="floor-overview-image text-center">
+            <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}"
+                 class="floor-img img-responsive"
+                 style="max-width:300px;height:auto;margin:0 auto;cursor:pointer;"
+                 onclick="openFloorImage('{{ floor.floor_imgae.url }}','{{ floor.floor_name }}')">
+        </div>
+    {% endif %}
+{% endif %}
+
                 
                 <div class="room-list">
                     {% for room in floor.rooms.all %}

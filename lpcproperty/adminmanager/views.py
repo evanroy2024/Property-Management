@@ -1392,12 +1392,24 @@ def pending_requests(request):
     requests = ServiceRequest.objects.filter(status='pending')
     return render(request, 'adminmanager/servicerequests/pending.html', {'requests': requests})
 
+from django.db.models import Q
+
+def open_requests(request):
+    # Show all except if both are approved and completed OR both are denied
+    requests = ServiceRequest.objects.exclude(
+        Q(status='completed', client_approval='Approved') |
+        Q(status='denied', client_approval='Denied')
+    )
+    return render(request, 'adminmanager/servicerequests/open.html', {'requests': requests})
+
 def completed_requests(request):
-    requests = ServiceRequest.objects.filter(status='completed')
+    # Only if both are completed and approved
+    requests = ServiceRequest.objects.filter(status='completed', client_approval='Approved')
     return render(request, 'adminmanager/servicerequests/completed.html', {'requests': requests})
 
 def denied_requests(request):
-    requests = ServiceRequest.objects.filter(status='denied')
+    # Only if both are denied
+    requests = ServiceRequest.objects.filter(status='denied', client_approval='Denied')
     return render(request, 'adminmanager/servicerequests/denied.html', {'requests': requests})
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1456,20 +1468,27 @@ def concierge_pending_requests(request):
     requests = ConciergeServiceRequest.objects.filter(status='pending')
     return render(request, 'adminmanager/conciergerequests/pending.html', {'requests': requests})
 
+from django.db.models import Q
+
 # Open
 def concierge_open_requests(request):
-    requests = ConciergeServiceRequest.objects.filter(status='open')
+    # Show all except if both are approved and completed OR both are denied
+    requests = ConciergeServiceRequest.objects.exclude(
+        Q(status='completed', client_approval='Approved') |
+        Q(status='denied', client_approval='Denied')
+    )
     return render(request, 'adminmanager/conciergerequests/open.html', {'requests': requests})
 
 # Completed
 def concierge_completed_requests(request):
-    requests = ConciergeServiceRequest.objects.filter(status='completed')
+    # Only if both are completed and approved
+    requests = ConciergeServiceRequest.objects.filter(status='completed', client_approval='Approved')
     return render(request, 'adminmanager/conciergerequests/completed.html', {'requests': requests})
 
 # Denied
 def concierge_denied_requests(request):
-   
-    requests = ConciergeServiceRequest.objects.filter(status='denied')
+    # Only if both are denied
+    requests = ConciergeServiceRequest.objects.filter(status='denied', client_approval='Denied')
     return render(request, 'adminmanager/conciergerequests/denied.html', {'requests': requests})
 
 from django.utils.dateparse import parse_date
@@ -2143,11 +2162,6 @@ def update_concierge_cost(request):
 # Service reqiuest new part starts here -------------------------------------------------------------------------
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-
-def open_requests(request):
-    requests = ServiceRequest.objects.filter(status='open')
-    return render(request, 'adminmanager/servicerequests/open.html', {'requests': requests})
-
 
 @csrf_exempt
 @require_POST
