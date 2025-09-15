@@ -622,28 +622,71 @@ button.addEventListener("click", function() {
                 
                 {% if floor.floor_imgae %}
     {% if floor.floor_imgae.url|lower|slice:"-4:" == ".pdf" %}
-        <div style="text-align:center; margin:20px 0;">
-            <a href="{{ floor.floor_imgae.url }}" target="_blank"
-               style="
-                   display:inline-block;
-                   padding:10px 20px;
-                   background:#4a90e2;
-                   color:#fff;
-                   text-decoration:none;
-                   border-radius:6px;
-                   font-weight:600;
-                   box-shadow:0 2px 6px rgba(0,0,0,0.2);
-               ">
-               View Floor Plan (PDF)
-            </a>
-        </div>
+      <div style="text-align:center; margin:20px 0;">
+    <a href="#" onclick="openAndPrint('{{ floor.floor_imgae.url }}'); return false;"
+       style="
+           display:inline-block;
+           padding:10px 20px;
+           background:#4a90e2;
+           color:#fff;
+           text-decoration:none;
+           border-radius:6px;
+           font-weight:600;
+           box-shadow:0 2px 6px rgba(0,0,0,0.2);
+       ">
+       Print Floor plan (PDF)
+    </a>
+</div>
+
+<script>
+function openAndPrint(url) {
+    const win = window.open(url);
+    win.onload = () => {
+        win.print();
+    };
+}
+</script>
+
     {% else %}
-        <div class="floor-overview-image text-center">
-            <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}"
-                 class="floor-img img-responsive"
-                 style="max-width:300px;height:auto;margin:0 auto;cursor:pointer;"
-                 onclick="openFloorImage('{{ floor.floor_imgae.url }}','{{ floor.floor_name }}')">
-        </div>
+      <div class="floor-overview-image text-center">
+    <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}"
+         class="floor-img img-responsive"
+         style="max-width:300px;height:auto;margin:0 auto;cursor:pointer;"
+         onclick="openFloorImage('{{ floor.floor_imgae.url }}','{{ floor.floor_name }}')">
+
+    <div style="margin-top:10px;">
+        <button onclick="printImage('{{ floor.floor_imgae.url }}')" 
+                style="
+                    padding:8px 16px;
+                    background:#4a90e2;
+                    color:#fff;
+                    border:none;
+                    border-radius:6px;
+                    font-weight:600;
+                    cursor:pointer;
+                    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+                ">
+            Print Floor plan
+        </button>
+    </div>
+</div>
+
+<script>
+function printImage(url) {
+    const win = window.open("");
+    win.document.write('<img src="' + url + '" style="max-width:100%;"/>');
+    win.document.close();
+    win.focus();
+
+    // Give the browser a moment to render, then print & close
+    setTimeout(() => {
+        win.print();
+        win.close();   // force-close the about:blank popup
+    }, 500);
+}
+</script>
+
+
     {% endif %}
 {% endif %}
 
