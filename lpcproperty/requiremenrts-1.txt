@@ -16,5 +16,7 @@ For calender adding ==========
 pip install icalendar
 
 
-rm -rf *
+rm -rf *  - MSUT BE CHECKED BEFORE RUNNING 
 https://github.com/evanroy2024/Property-Management.git
+
+
