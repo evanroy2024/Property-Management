@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'contacttogether',
     'contentpage',
     'adminmanager',    # For custom admin panel Custom UI 
-    'django_extensions',
+    
 ]
 
 MIDDLEWARE = [
