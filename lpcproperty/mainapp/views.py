@@ -61,7 +61,7 @@ def client_login(request):
             if check_password(password, manager.password):  # ✅ fixed
                 request.session.flush()
                 request.session['manager_id'] = manager.id
-                return redirect('clientmanager:client_dashboard')
+                return redirect('clientmanager:admin_dashboard')
         except ClientManagers.DoesNotExist:
             pass
 
@@ -79,6 +79,7 @@ def client_login(request):
         messages.error(request, "Invalid credentials or user type not found.", extra_tags='login_error')
 
     return render(request, "mainapp/login.html")
+
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
