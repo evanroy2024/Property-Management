@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Walkthrough Report</title>
+</head>
+<body>
+    <h1>Walkthrough Report Submission</h1>
+    <form method="POST">
+        <!-- Only include CSRF if you remove @csrf_exempt -->
+        <!-- {% csrf_token %} -->
+
+        <label>Select Client:</label>
+        <select name="user">
+            <option value="">Select Client</option>
+            {% for client in clients %}
+                <option value="{{ client.id }}">{{ client }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label>Description:</label>
+        <input type="text" name="description"><br><br>
+
+        <label>Cost:</label>
+        <input type="number" name="cost"><br><br>
+
+        <label>Client Approval:</label>
+        <select name="client_approval">
+            <option value="">--</option>
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+        </select><br><br>
+
+        <!-- Example GIE fields -->
+        <label>Exterior of House:</label>
+        <input type="text" name="gie1">
+        <textarea name="gie1_remarks" placeholder="Remarks..."></textarea><br><br>
+
+        <label>Drives / Walkways:</label>
+        <input type="text" name="gie2">
+        <textarea name="gie2_remarks" placeholder="Remarks..."></textarea><br><br>
+
+        <!-- Add other fields similarly -->
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

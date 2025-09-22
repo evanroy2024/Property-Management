@@ -1,0 +1,388 @@
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-home"></i> Basic Property Information</h2>
+                <div class="form-row">
+                    
+                    <!-- Existing Client Dropdown -->
+                    <div class="form-group half">
+    <label class="form-label" for="client_id">Select Existing Client</label>
+    <select class="form-control" name="client_id" id="client_id" required 
+        style="appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+               background: url('data:image/svg+xml;utf8,<svg fill=\'%23333\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+               padding-right: 35px;">
+        {% for client in clients %}
+            <option value="{{ client.id }}">{{ client.last_name }}, {{ client.first_name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+                    <div style="width: 100%; display: block; margin: 0; padding: 0; margin-left: 10px;">
+                    <button type="button" id="toggle-new-client" class="toggle-btn" style="margin: 0;">+ Add New Client</button>
+                    </div>
+
+                    <!-- Toggle Button -->
+                    
+                    <!-- New Client Form -->
+                    <div id="new-client-form" class="new-client-card" style="display: none;">
+                        <h5 style="font-weight: 600;">New Client Info</h5>
+                    
+                        <div class="form-row-flex">
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_first_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_last_name" placeholder="Last Name">
+                            </div>
+                            <!-- <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_username" placeholder="Username">
+                            </div> -->
+                    
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="new_email" placeholder="Email">
+                            </div>
+                            <!-- <div class="form-group flex-33">
+                                <input type="password" class="form-control" name="new_password" placeholder="Password">
+                            </div> -->
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_phone" placeholder="Cell Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="office_phone" name="office_phone" placeholder="Office phone" value="{{ form.office_phone.value }}">
+                              </div>
+
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="buisness_adress" name="buisness_adress" placeholder="Street Address 1" value="{{ form.buisness_adress.value }}">
+                            </div>
+
+
+
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_address" name="client_address" placeholder="Street Address 2" >
+                            </div>
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_city" name="client_city" placeholder="City" >
+                            </div>
+                            <div class="form-group flex-33">
+  <select class="form-control" id="client_state" name="client_state" >
+    <option value="" disabled selected>Select State</option>
+    {% for state in us_states %}
+      <option value="{{ state }}" {% if client.state == state %}selected{% endif %}>{{ state }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+                             <div class="form-group flex-33">
+                                <input type="text" class="form-control" id="client_zipcode" name="client_zipcode" placeholder="Zip Code" >
+                            </div>
+                            
+                              
+                        </div>
+                        <!-- Single Button -->
+
+                        <div class="form-row-flex" id="contact-f1" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 1</h5>
+
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact1_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_phone" placeholder="Cell Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact1_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact1_priority" id="contact1_priority">
+                                      <option value="" selected disabled>Select priority</option>
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                      <option value="tertiary">Tertiary</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row-flex" id="contact-f2" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 2</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact2_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_phone" placeholder="Cell Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact2_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact2_priority" id="contact2_priority">
+                                      <option value="" selected disabled>Select priority</option>
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                      <option value="tertiary">Tertiary</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row-flex" id="contact-f3" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 3</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact3_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_phone" placeholder="Cell Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact3_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact3_priority" id="contact3_priority">
+                                      <option value="" selected disabled>Select priority</option>
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                      <option value="tertiary">Tertiary</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 4 -->
+                        <div class="form-row-flex" id="contact-f4" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 4</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact4_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_phone" placeholder="Cell Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact4_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact4_priority" id="contact4_priority" >
+                                        <option value="" selected disabled>Select priority</option>
+                                        <option value="primary">Primary</option>
+                                        <option value="secondary">Secondary</option>
+                                        <option value="tertiary">Tertiary</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 5 -->
+                        <div class="form-row-flex" id="contact-f5" class="contact-form" style="display:none;">
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 5</h5>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="contact5_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_phone" placeholder="Cell Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_office_phone" placeholder="Office Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="contact5_buisness_adress" placeholder="Business Address">
+                            </div>
+                            <div class="form-group flex-33">
+                                <div class="mb-3">
+                                    <select class="form-select" name="contact5_priority" id="contact5_priority">
+                                        <option value="" selected disabled>Select priority</option>
+                                        <option value="primary">Primary</option>
+                                        <option value="secondary">Secondary</option>
+                                        <option value="tertiary">Tertiary</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="showNextContact()">Additonal Contacts</button>
+
+                        <script>
+                            let currentContact = 1;
+
+                                function showNextContact() {
+                                    // Show the next contact form
+                                    if (currentContact <= 5) {
+                                        document.getElementById("contact-f" + currentContact).style.display = "flex";
+                                        currentContact++;
+                                    } else {
+                                        alert("All contact forms are shown!");
+                                    }
+                                }
+                        </script>
+                    </div>
+              
+
+                    <!-- adding new client ends here  -->
+                
+                    <div class="form-group half">
+                        <label class="form-label" for="client_manager_id">Select Client Manager</label>
+                        <select class="form-control" name="client_manager_id" id="client_manager_id" required 
+                            style="appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+                                background: url('data:image/svg+xml;utf8,<svg fill=\'%23333\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+                                padding-right: 35px;">
+                            {% for manager in managers %}
+                                <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+
+                    
+                    <!-- Add this wrapper -->
+                    <div id="new-cm-form" style="display: none;">
+                        <div class="form-row-flex">
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_first_name" placeholder="First Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_last_name" placeholder="Last Name">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_username" placeholder="Username">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="email" class="form-control" name="new_cm_email" placeholder="Email">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="password" class="form-control" name="new_cm_password" placeholder="Password">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="new_cm_phone" placeholder="Phone">
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="office_cm_phone" placeholder="Enter office phone" >
+                            </div>
+                            <div class="form-group flex-33">
+                                <input type="text" class="form-control" name="buisness_cm_adress" placeholder="Enter business address" >
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .form-row-flex {
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 10px;
+                                margin-top: 10px;
+                            }
+                            #new-cm-form {
+                                background-color: #eef7ff;
+                                padding: 20px;
+                                border: 1px solid  #e1f0fd;
+                                border-radius: 10px;
+                            }
+                            .form-group.flex-33 {
+                                flex: 1 1 calc(33.33% - 10px);
+                                box-sizing: border-box;
+                            }
+
+                        </style>
+
+                    
+                    <div class="form-group half">
+                        <label class="form-label" for="address">Property Address</label>
+                        <input class="form-control" type="text" id="address" name="address" required placeholder="Enter the street" required>
+                    </div>
+                    <div class="form-group half">
+                        <!-- <label class="form-label" for="street_line1">Street Address Line 1</label> -->
+                        <input class="form-control" type="text" id="street_line1" name="street_line1" placeholder="Apartment, Suite, Unit, Building, Floor, etc." required>
+                    </div>
+
+                    <div class="form-group half" style="display: none;">
+                        <!-- <label class="form-label" for="street_line2">Street Address Line 2</label> -->
+                        <input class="form-control" type="text" id="street_line2" name="street_line2" placeholder="Street Address, P.O. Box, Company Name, C/O ">
+                    </div>
+
+                     <div class="form-group half">
+                        <label class="form-label" for="city">City</label>
+                        <input class="form-control" type="text" id="city" name="city" required placeholder="Enter the City Name">
+                    </div>
+                    <div class="form-group half">
+                        <label class="form-label" for="state">State</label>
+                        <select class="form-control" name="state" id="state" required>
+                            <option value="" disabled selected>Select State</option>
+                            {% for state in us_states %}
+                                <option value="{{ state }}">{{ state }}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                      <div class="form-group half">
+                        <label class="form-label" for="year_built">Zip Code</label>
+                        <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" placeholder="Enter Zip Code">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="form-label" for="size_of_home">Size of Home</label>
+                        <input class="form-control" type="text" id="size_of_home" name="size_of_home" placeholder="e.g. 2500 sqft">
+                    </div>
+        
+                    <div class="form-group half">
+                        <label class="form-label" for="number_of_stories">Number of Stories</label>
+                        <input class="form-control" type="number" id="number_of_stories" name="number_of_stories" required placeholder="Enter the number of stories" min="1">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="form-label" for="construction_type">Construction Type</label>
+                        <input class="form-control" type="text" id="construction_type" name="construction_type" placeholder="e.g. Concrete">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="form-label" for="year_built">Year Built</label>
+                        <input class="form-control" type="number" id="year_built" name="year_built" placeholder="e.g. 1995">
+                    </div>
+
+                  
+
+                    <div class="form-group half">
+    <label class="form-label" for="additional_info">Additional Property Information</label>
+    <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property"></textarea>
+</div>
+                    
+                </div>
+            </div>

@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'clientmanager/managerbase.html' %}
 {% load static %}
 
 {% block content %}
@@ -325,7 +325,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mt-5 button-animation w-100">
                                 <!-- Left Button -->
-                                <button type="button" class="btn btn-back px-5 py-3" onclick="window.location.href='{% url 'adminmanager:concierge_open_requests' %}'">
+                                <button type="button" class="btn btn-back px-5 py-3" onclick="window.location.href='{% url 'clientmanager:concierge_open_requests' %}'">
                                     <i class="bi bi-arrow-left-circle-fill me-2"></i>
                                     <span>Go Back</span>
                                 </button>

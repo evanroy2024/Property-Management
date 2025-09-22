@@ -1,353 +1,572 @@
-{% extends 'cmbase.html' %}
+{% extends 'clientmanager/managerbase.html' %}
 {% load static %}
 {% block title %}Edit Vendor{% endblock %}
 
 {% block content %}
-<!-- Custom CSS -->
-<style>
-  :root {
-    --primary-color: #4361ee;
-    --secondary-color: #3f37c9;
-    --accent-color: #4cc9f0;
-    --success-color: #2ec4b6;
-    --danger-color: #e63946;
-    --light-bg: #f8f9fa;
-    --dark-text: #2b2d42;
-    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    --gradient-bg: linear-gradient(135deg, #4361ee, #3a0ca3);
-  }
-  
-  body {
-    background-color: #f5f7fa;
-    color: var(--dark-text);
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .page-header {
-    background: var(--gradient-bg);
-    padding: 2rem 0;
-    border-radius: 0 0 20px 20px;
-    margin-bottom: 2rem;
-    box-shadow: var(--card-shadow);
-  }
-  
-  .page-title {
-    color: white;
-    font-weight: 700;
-    margin-bottom: 0;
-    font-size: 1.8rem;
-  }
-  
-  .form-card {
-    background: white;
-    border-radius: 15px;
-    box-shadow: var(--card-shadow);
-    border: none;
-    overflow: hidden;
-  }
-  
-  .form-card .card-header {
-    background: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 1.5rem;
-  }
-  
-  .form-floating > label {
-    color: #6c757d;
-  }
-  
-  .form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
-  }
-  
-  .form-floating > .form-control:focus ~ label {
-    color: var(--primary-color);
-  }
-  
-  .form-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
-  }
-  
-  .form-title {
-    font-weight: 600;
-    color: var(--dark-text);
-    margin-bottom: 1.5rem;
-  }
-  
-  .section-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  .btn-primary {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.15);
-    border-radius: 10px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .btn-primary:hover {
-    background: var(--secondary-color);
-    border-color: var(--secondary-color);
-    transform: translateY(-2px);
-  }
-  
-  .btn-secondary {
-    background: #e9ecef;
-    border-color: #e9ecef;
-    color: #6c757d;
-    box-shadow: none;
-    border-radius: 10px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .btn-secondary:hover {
-    background: #dee2e6;
-    border-color: #dee2e6;
-    color: #495057;
-  }
-  
-  .avatar-preview {
-    width: 100px;
-    height: 100px;
-    border-radius: 15px;
-    background-color: #e9ecef;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    color: white;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  
-  .form-hint {
-    font-size: 0.8rem;
-    color: #6c757d;
-  }
-  
-  .required-field::after {
-    content: "*";
-    color: var(--danger-color);
-    margin-left: 4px;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .page-header {
-      border-radius: 0;
-      padding: 1.5rem 0;
-    }
-    
-    .btn-action {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-  }
-</style>
-
-<!-- Page Header -->
-<div class="page-header">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-md-6">
-        <h1 class="page-title">Edit Vendor</h1>
-      </div>
-      <div class="col-md-6 text-md-end">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb justify-content-md-end mb-0">
-            <li class="breadcrumb-item"><a href="#" class="text-white">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="#" class="text-white">Vendors</a></li>
-            <li class="breadcrumb-item text-white opacity-75 active" aria-current="page">Edit</li>
-          </ol>
-        </nav>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <div class="form-card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center">
-            <div class="avatar-preview me-3" style="background-color: hsl({{ vendor.id|add:100|divisibleby:360 }}deg, 80%, 60%)">
-              {{ vendor.company_name|slice:":1" }}
-            </div>
-            <div>
-              <h5 class="mb-0 fw-bold">{{ vendor.company_name }}</h5>
-              <span class="text-muted">Last updated on March 20, 2025</span>
-            </div>
-          </div>
-          <div>
-            <a href="#" class="btn btn-outline-danger btn-sm">
-              <i class="bi bi-trash me-1"></i>Delete
-            </a>
-          </div>
-        </div>
-        
-        <div class="card-body p-4">
-          <form method="post" class="needs-validation" novalidate>
-            {% csrf_token %}
-            
-            <div class="row mb-4">
-              <div class="col-12">
-                <h6 class="section-title">Company Information</h6>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="company_name" name="company_name" value="{{ vendor.company_name }}" placeholder="Company Name" required>
-                  <label for="company_name" class="required-field">Company Name</label>
-                </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="username" name="username" value="{{ vendor.username }}" placeholder="Username" required>
-                  <label for="username" class="required-field">Username</label>
-                </div>
-              </div>
-              
-              <div class="col-12 mb-3">
-                <div class="form-floating">
-                  <textarea class="form-control" id="address" name="address" placeholder="Address" style="height: 100px">{{ vendor.address }}</textarea>
-                  <label for="address">Address</label>
-                </div>
-              </div>
-              
-              <div class="col-md-4 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="city" name="city" value="{{ vendor.city }}" placeholder="City">
-                  <label for="city">City</label>
-                </div>
-              </div>
-              
-              <div class="col-md-4 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="state" name="state" value="{{ vendor.state }}" placeholder="State">
-                  <label for="state">State</label>
-                </div>
-              </div>
-              
-              <div class="col-md-4 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ vendor.zip_code }}" placeholder="ZIP Code">
-                  <label for="zip_code">ZIP Code</label>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row mb-4">
-              <div class="col-12">
-                <h6 class="section-title">Contact Information</h6>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="email" class="form-control" id="email" name="email" value="{{ vendor.email }}" placeholder="Email" required>
-                  <label for="email" class="required-field">Email</label>
-                </div>
-              </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ vendor.phone_number }}" placeholder="Phone Number">
-                  <label for="phone_number">Phone Number</label>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row mb-4">
-              <div class="col-12">
-                <h6 class="section-title">Service Details</h6>
-              </div>
-            
-              <div class="">
-                <label class="form-label required-field mb-2">Service Type</label>
-            
-                <!-- Boxed service checkboxes -->
-                <div class="d-flex flex-wrap gap-2">
-                  {% for key, value in vendor.SERVICE_CHOICES %}
-                    <input type="checkbox" class="btn-check" id="service-{{ key }}" name="service[]" value="{{ key }}"
-                      {% if key in vendor.service %}checked{% endif %}>
-                    <label class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-sm" for="service-{{ key }}">{{ value }}</label>
-                  {% endfor %}
-                </div>
-            
-                <!-- Additional Services Input -->
-                <div class="form-floating mt-4">
-                  <input type="text" class="form-control" id="additional_service" name="additional_service"
-                         value="{{ vendor.additional_service }}" placeholder="cutting, painting, ...">
-                  <label for="additional_service">Add Additional Services (comma separated)</label>
-                </div>
-                <small class="text-muted mt-1 d-block">Example: cutting, painting, drilling</small>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-12">
-                <div class="d-flex justify-content-end mt-4">
-                  <a href="#" class="btn btn-secondary me-2">Cancel</a>
-                  <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check2-circle me-2"></i>Update Vendor
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-<script>
-  // Form validation
-  document.addEventListener('DOMContentLoaded', function() {
-    // Update avatar preview based on company name
-    const companyNameInput = document.getElementById('company_name');
-    const avatarPreview = document.querySelector('.avatar-preview');
-    
-    if (companyNameInput && avatarPreview) {
-      companyNameInput.addEventListener('input', function() {
-        const firstLetter = this.value.trim()[0] || '';
-        avatarPreview.textContent = firstLetter;
-      });
-    }
-    
-    // Form validation
-    const forms = document.querySelectorAll('.needs-validation');
-    
-    Array.from(forms).forEach(function(form) {
-      form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+     
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
         
-        form.classList.add('was-validated');
-      }, false);
-    });
-  });
-</script>
-{% endblock content %}
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 11px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 15px;
+        }
+        
+        .form-group {
+            flex: 1 0 100%;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-group.half {
+                flex: 1 0 50%;
+            }
+            
+            .form-group.third {
+                flex: 1 0 33.333%;
+            }
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -8px;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .col-md-4 {
+            flex: 0 0 33.333%;
+            max-width: 33.333%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .col-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .col-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .form-floating {
+            position: relative;
+        }
+
+        .form-floating > label {
+            position: absolute;
+            top: 0;
+            left: 15px;
+            height: 100%;
+            padding: 1rem 0;
+            pointer-events: none;
+            border: 1px solid transparent;
+            transform-origin: 0 0;
+            transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+            color: #6c757d;
+        }
+
+        .form-floating > .form-control {
+            padding: 1rem 0.75rem;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            opacity: .65;
+            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .contact-header h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .remove-contact {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .remove-contact:hover {
+            background: #c0392b;
+        }
+
+        .contact-item {
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .back-link {
+                margin-top: 10px;
+            }
+            
+            .form-row {
+                margin: 0 0 15px;
+            }
+            
+            .form-group {
+                padding: 0;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                margin-bottom: 10px;
+            }
+
+            .col-md-6, .col-md-4, .col-3 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .row {
+                margin: 0;
+            }
+
+            .col-md-6, .col-md-4, .col-12, .col-3 {
+                padding: 0 4px;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Edit Vendor</h1>
+            <a href="{% url 'clientmanager:vendor_list' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Vendors
+            </a>
+        </div>
+        
+        <form method="post" id="vendor-form">
+            {% csrf_token %}
+            
+            <div class="card p-3">
+                <h2 class="card-title mb-4"><i class="fas fa-building"></i> Basic Vendor Information</h2>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="company_name" name="company_name" placeholder=" " required style="color: #555;" value="{{ vendor.company_name }}">
+                            <label for="company_name" class="required-field">Company Name</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="url" class="form-control" id="website" name="website" placeholder=" " style="color: #555;" value="{{ vendor.website|default:'' }}">
+                            <label for="website">Website</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="street" name="street" placeholder=" " required style="color: #555;" value="{{ vendor.street }}">
+                            <label for="street" class="required-field">Street Address</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="suite" name="suite" placeholder=" " style="color: #555;" value="{{ vendor.suite|default:'' }}">
+                            <label for="suite">Suite/Apt</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="city" name="city" placeholder=" " required style="color: #555;" value="{{ vendor.city }}">
+                            <label for="city" class="required-field">City</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-control" name="state" id="state" required style="color: #555;">
+                                <option value="" disabled>Select State</option>
+                                {% for state in US_STATES %}
+                                    <option value="{{ state }}" {% if vendor.state == state %}selected{% endif %}>{{ state }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="state" class="required-field">State</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder=" " required style="color: #555;" value="{{ vendor.zip_code }}">
+                            <label for="zip_code" class="required-field">Zip Code</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder=" " required style="color: #555;" value="{{ vendor.phone_number }}">
+                            <label for="phone_number" class="required-field">Phone Number</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="notes" name="notes" placeholder=" " style="height: 120px; color: #555;">{{ vendor.notes|default:'' }}</textarea>
+                            <label for="notes">Notes</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-tools"></i> Services</h2>
+                
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <select class="form-control" id="main_service" name="main_service" style="color: #555;">
+                                <option value="">Select Main Service</option>
+                                {% for service in vendor_services %}
+                                    <option value="{{ service.service }}" {% if main_service == service.service %}selected{% endif %}>{{ service.service }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="main_service">Main Service</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <select class="form-control" id="additional_service_1" name="additional_service_1" style="color: #555;">
+                                <option value="">Select Additional Service</option>
+                                {% for service in vendor_services %}
+                                    <option value="{{ service.service }}" {% if additional_service_1 == service.service %}selected{% endif %}>{{ service.service }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="additional_service_1">Additional Service 1</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <select class="form-control" id="additional_service_2" name="additional_service_2" style="color: #555;">
+                                <option value="">Select Additional Service</option>
+                                {% for service in vendor_services %}
+                                    <option value="{{ service.service }}" {% if additional_service_2 == service.service %}selected{% endif %}>{{ service.service }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="additional_service_2">Additional Service 2</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-users"></i> Contacts</h2>
+                <div id="contacts">
+                    {% for contact in existing_contacts %}
+                        <div class="contact-item">
+                            <div class="contact-header">
+                                <h4>Contact {{ forloop.counter }}</h4>
+                                {% if not forloop.first %}
+                                    <button type="button" class="remove-contact" onclick="removeContact(this)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                            <div class="row g-3 contact-row">
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="contact_first_name[]" placeholder=" " style="color: #555;" value="{{ contact.first_name }}">
+                                        <label>First Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="contact_last_name[]" placeholder=" " style="color: #555;" value="{{ contact.last_name }}">
+                                        <label>Last Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" name="contact_cell[]" placeholder=" " style="color: #555;" value="{{ contact.cell }}">
+                                        <label>Cell Phone</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" name="contact_email[]" placeholder=" " style="color: #555;" value="{{ contact.email }}">
+                                        <label>Email</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="contact-item">
+                            <div class="contact-header">
+                                <h4>Contact 1</h4>
+                            </div>
+                            <div class="row g-3 contact-row">
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="contact_first_name[]" placeholder=" " style="color: #555;">
+                                        <label>First Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="contact_last_name[]" placeholder=" " style="color: #555;">
+                                        <label>Last Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" name="contact_cell[]" placeholder=" " style="color: #555;">
+                                        <label>Cell Phone</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" name="contact_email[]" placeholder=" " style="color: #555;">
+                                        <label>Email</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" onclick="addContact()" class="btn btn-primary" style="background-color: #007bff; margin-top: 15px;">Add Contact</button>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-save"></i> Update Vendor
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let contactCount = {{ existing_contacts|length|default:1 }};
+
+        function addContact() {
+            contactCount++;
+            const contactsDiv = document.getElementById('contacts');
+            const newContact = document.createElement('div');
+            newContact.className = 'contact-item';
+            newContact.innerHTML = `
+                <div class="contact-header">
+                    <h4>Contact ${contactCount}</h4>
+                    <button type="button" class="remove-contact" onclick="removeContact(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="row g-3 contact-row">
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_first_name[]" placeholder=" " style="color: #555;">
+                            <label>First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="contact_last_name[]" placeholder=" " style="color: #555;">
+                            <label>Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <input type="tel" class="form-control" name="contact_cell[]" placeholder=" " style="color: #555;">
+                            <label>Cell Phone</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" name="contact_email[]" placeholder=" " style="color: #555;">
+                            <label>Email</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+            contactsDiv.appendChild(newContact);
+        }
+
+        function removeContact(button) {
+            const contactItem = button.closest('.contact-item');
+            contactItem.remove();
+            
+            // Update contact numbers
+            const allContacts = document.querySelectorAll('.contact-item');
+            allContacts.forEach((contact, index) => {
+                const header = contact.querySelector('.contact-header h4');
+                header.textContent = `Contact ${index + 1}`;
+            });
+            
+            // Update contact count
+            contactCount = allContacts.length;
+        }
+    </script>
+{% endblock %}

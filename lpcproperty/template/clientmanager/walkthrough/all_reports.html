@@ -1,591 +1,410 @@
-{% extends 'cmbase.html' %}
+{% extends 'clientmanager/managerbase.html' %}
 {% load static %}
+{% block title %}Walk-Through Reports{% endblock %}
 
 {% block content %}
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-VzLcLQpQClj9TVXbN4y6U5V9r/0WvEylXyAVFZgmnNFEwW9Z6u3qx7wG+jGgpJjG+YrRy7v0Sk1tw5V5J9BkIA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
-            color: #334155;
-            min-height: 100vh;
-        }
+<style>
+    /* Custom Styles */
+    .content-wrapper {
+        padding: 1.5rem;
+        background-color: #f8f9fc;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .card-header h6 {
+        font-weight: 700;
+        margin: 0;
+        color: #4e73df;
+    }
+    
+    .stats-card {
+        border-left: 0.25rem solid;
+        border-radius: 0.35rem;
+    }
+    
+    .border-left-primary { border-left-color: #4e73df; }
+    .border-left-success { border-left-color: #1cc88a; }
+    .border-left-info { border-left-color: #36b9cc; }
+    .border-left-warning { border-left-color: #f6c23e; }
+    
+    .text-primary { color: #4e73df !important; }
+    .text-success { color: #1cc88a !important; }
+    .text-info { color: #36b9cc !important; }
+    .text-warning { color: #f6c23e !important; }
+    
+    .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .table th {
+        background-color: #f8f9fc;
+        border-bottom: 2px solid #e3e6f0;
+        color: #5a5c69;
+        font-weight: 700;
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+    
+    .table td {
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+    
+    .badge {
+        font-weight: 600;
+        padding: 0.25em 0.6em;
+    }
+    
+    .action-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        margin-right: 0.25rem;
+    }
+    
+    .icon-gray {
+        color: #dddfeb;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .h3, h3 {
+        color: black;
+    }
+    
+    .table th {
+        background-color: white;
+    }
 
-        header {
-            margin-top: 2%;
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 0 20px;
-        }
+    /* Professional Styling for Filter Dropdowns */
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
 
-        .logo {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
+    /* Focus Effect */
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
 
-        .logo svg {
-            margin-right: 12px;
-            color: #3b82f6;
-            transition: transform 0.3s ease;
-        }
+    .sort-icon {
+        font-size: 0.65rem;
+        color: #6c757d;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
 
-        .logo:hover svg {
-            transform: rotate(180deg);
-        }
+    th.sortable:hover .sort-icon {
+        color: #000;
+    }
 
-        .tagline {
-            font-size: 18px;
-            color: #64748b;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
 
-        .table-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin-bottom: 40px;
-            position: relative;
-            transition: all 0.3s ease;
-            overflow-x: auto; /* Enable horizontal scrolling */
-        }
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+    }
 
-        .table-container:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            transform: translateY(-5px);
-        }
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
 
-        .services-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 650px; /* Ensure minimum width */
-        }
+    .status-in-progress {
+        background-color: #cce5ff;
+        color: #004085;
+    }
 
-        .services-table thead {
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
-            color: white;
+    @media (min-width: 1000px) {
+        .content-wrapper {
+            min-height: 700px;
         }
+    }
+</style>
 
-        .services-table th {
-            padding: 18px 24px;
-            font-weight: 600;
-            font-size: 16px;
-            position: relative;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+<div class="content-wrapper">
+    <!-- Page Header -->
+ <div class="page-header" style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px; gap: 14px;">
+  <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
+  <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">All Walk-Thru Reports </h1>
+</div>
 
-        .services-table th:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 18px;
-            bottom: 18px;
-            width: 1px;
-            background: rgba(255, 255, 255, 0.2);
-        }
 
-        .services-table tbody tr {
-            border-bottom: 1px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
 
-        .services-table tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        .services-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .services-table tbody tr.active {
-            background: #eff6ff;
-            box-shadow: inset 3px 0 0 #3b82f6;
-        }
-
-        .services-table td {
-            padding: 18px 24px;
-            font-size: 15px;
-            color: #475569;
-        }
-
-        .availability-badge {
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .availability-badge svg {
-            margin-right: 8px;
-        }
-
-        .price-tag {
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .timeline {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #f1f5f9;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* Custom scrollbar for better UX */
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .table-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 8px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 8px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Scroll indicator for mobile */
-        .scroll-indicator {
-            display: none;
-            text-align: center;
-            margin-bottom: 10px;
-            color: #64748b;
-            font-size: 14px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        @media (max-width: 768px) {
-            .scroll-indicator {
-                display: block;
-            }
-            
-            .logo {
-                font-size: 28px;
-            }
-            
-            .tagline {
-                font-size: 16px;
-            }
-        }
-
-        /* Service details section */
-        .service-details {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-bottom: 40px;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .service-details:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .service-details h2 {
-            color: #1e293b;
-            font-size: 24px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .service-details h2 svg {
-            color: #3b82f6;
-        }
-
-        .service-details p {
-            color: #64748b;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .feature-card {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            transition: all 0.2s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .feature-card svg {
-            color: #3b82f6;
-            flex-shrink: 0;
-        }
-
-        .feature-card h3 {
-            font-size: 16px;
-            color: #334155;
-            margin-bottom: 5px;
-        }
-
-        .feature-card p {
-            font-size: 14px;
-            color: #64748b;
-            margin: 0;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            text-decoration: none;
-            border: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
-            color: white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #3b82f6;
-            border: 2px solid #3b82f6;
-        }
-
-        .btn-outline:hover {
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        /* Footer styles */
-        footer {
-            text-align: center;
-            color: #64748b;
-            margin-top: 30px;
-            padding: 20px 0;
-            font-size: 14px;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .footer-links a {
-            color: #3b82f6;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .footer-links a:hover {
-            color: #1d4ed8;
-            text-decoration: underline;
-        }
-    </style>
-
-    <div class="container">
-        
-        <header>
-            <div class="logo">
-               <img src="{% static 'img/smalllogo.png' %}" alt="">
-               Walk-Thru ALL Reports
+    <!-- Reports Table Card -->
+    <div class="card shadow mb-4">
+        <!-- Live Filters -->
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <select id="filter-client" class="form-select">
+                        <option value="">All Clients</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select id="filter-date" class="form-select">
+                        <option value="">All Dates</option>
+                    </select>
+                </div>
+                <div class="col-md-3" style="display: none;">
+                    <select id="filter-status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                    </select>
+                </div> 
+                 <div class="col-md-3" style="display: none;">
+                    <input type="text" id="search-report" class="form-select" placeholder="Search reports...">
+                </div>
             </div>
-        </header>
-      
-        
-        <div class="scroll-indicator">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-            Scroll horizontally to view all services
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
         </div>
 
-        <div class="table-container">
-            <table class="services-table">
-                <thead>
-                    <tr>
-                        <th id="dateHeader" style="cursor: pointer;">
-                            Date <span id="dateArrow">⬍</span>
-                        </th>
-                        <!-- <th id="clientHeader" style="cursor: pointer;">
-                            Client <span id="clientArrow">⬍</span>
-                        </th> -->
-                         <th id="clientHeader" style="position: relative; color: white;">
-  <span style="cursor: pointer;">Client</span>
-  <span id="clientArrow" style="margin-left: 4px;">⬍</span>
-
-  <!-- White rectangle with BLACK icon inside -->
-  <span id="clientFilterBtn" title="Filter Client" style="
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 12px;
-    width: 26px;
-    height: 22px;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    transition: background 0.2s ease;
-  ">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-      <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.3 8.4v5a1 1 0 0 1-.6.9l-4 2A1 1 0 0 1 9 20v-7.9L2.6 5.6A1 1 0 0 1 3 4z"/>
-    </svg>
-  </span>
-
-  <!-- Client dropdown -->
-  <select id="clientDropdown" style="
-    position: absolute;
-    top: 32px;
-    left: 0;
-    display: none;
-    z-index: 999;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 14px;
-    min-width: 180px;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    appearance: none;
-    outline: none;
-  ">
-    <option value="all">All Clients</option>
-  </select>
-</th>
-
-
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for report in reports %}
-                    <tr class="{% if request.status == 'open' %}active{% endif %}">
-                        <td>{{ report.datetime  }}</td>
-                        <td>{{ report.user.last_name }} , {{ report.user.first_name }}</td>
-                        <td style="display: flex;">
-                            <a href="{% url 'clientmanager:report_detail' report.pk %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">
-                                 View
-                            </a>
-                            <!-- <a href="{% url 'clientmanager:update_walkthrough_report' report.id %}" style="color: #007bff; text-decoration: none; border: 2px solid rgb(12, 110, 229); padding: 5px; border-radius: 7px; margin-right: 10px;">Update</a> -->
-
-                            
-                        </td>
-                        
-                    </tr>
-                    {% empty %}
-                    <p>No reports available.</p>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="sortable-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-index="0">Report Date <i class="fas fa-sort sort-icon"></i></th>
+                            <th class="sortable" data-index="1">Client Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table">
+                        {% for report in reports %}
+                        <tr class="report-row"
+                            data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"
+                            data-date="{{ report.datetime|date:'Y-m-d' }}"
+                            data-status="{{ report.status|lower }}"
+                            data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">
+                            <td><strong>{{ report.datetime|date:'M d, Y' }}</strong><br>
+                                <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>
+                            </td>
+                            <td><strong>{{ report.user.last_name }}, {{ report.user.first_name }}</strong></td>
+                            <td>
+                                <a href="{% url 'walkthroughreport:report_detail' report.pk %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Report">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-clipboard-list fa-4x mb-3 icon-gray"></i>
+                                    <h4 class="text-gray-800 mb-2">No walk-through reports found</h4>
+                                    <p class="text-gray-600 mb-3">Get started by creating your first walk-through report</p>
+                                    <a href="#" class="btn btn-primary">
+                                        <i class="fas fa-plus mr-2"></i> Create Report
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-<script>
-    const dateHeader = document.getElementById("dateHeader");
-    const clientHeader = document.getElementById("clientHeader");
-    const dateArrow = document.getElementById("dateArrow");
-    const clientArrow = document.getElementById("clientArrow");
-    const clientFilterBtn = document.getElementById("clientFilterBtn");
-    const clientDropdown = document.getElementById("clientDropdown");
+    </div>
 
-    let dateAsc = true;
-    let clientAsc = true;
-    let dateSorted = false;
-    let clientSorted = false;
+    <!-- JavaScript for Live Filtering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filters = {
+                client: document.getElementById("filter-client"),
+                date: document.getElementById("filter-date"),
+                status: document.getElementById("filter-status"),
+                search: document.getElementById("search-report")
+            };
 
-    function parseCustomDate(str) {
-        str = str.replace("a.m.", "AM").replace("p.m.", "PM");
-        return new Date(str);
-    }
+            const rows = document.querySelectorAll(".report-row");
 
-    function sortTable(index, isAsc, isDate = false) {
-        const tbody = document.querySelector(".services-table tbody");
-        const rows = Array.from(tbody.querySelectorAll("tr")).filter(
-            row => row.querySelectorAll("td").length > 0
-        );
+            // Populate Client dropdown
+            const clients = new Set();
+            rows.forEach(row => {
+                const client = row.getAttribute("data-client");
+                if (client) clients.add(client);
+            });
 
-        rows.sort((a, b) => {
-            let aText = a.children[index].innerText.trim();
-            let bText = b.children[index].innerText.trim();
+            [...clients].sort().forEach(val => {
+                const opt = document.createElement("option");
+                opt.value = val;
+                opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                filters.client.appendChild(opt);
+            });
 
-            if (isDate) {
-                let aDate = parseCustomDate(aText);
-                let bDate = parseCustomDate(bText);
-                return isAsc ? aDate - bDate : bDate - aDate;
-            } else {
-                return isAsc
-                    ? aText.localeCompare(bText)
-                    : bText.localeCompare(aText);
+            // Populate Date dropdown
+            const dates = new Set();
+            rows.forEach(row => {
+                const date = row.getAttribute("data-date");
+                if (date) dates.add(date);
+            });
+
+            [...dates].sort().reverse().forEach(val => {
+                const opt = document.createElement("option");
+                opt.value = val;
+                const dateObj = new Date(val);
+                opt.textContent = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                filters.date.appendChild(opt);
+            });
+
+            // Filtering function
+            function filterTable() {
+                const selected = {
+                    client: filters.client.value,
+                    date: filters.date.value,
+                    status: filters.status.value,
+                    search: filters.search.value.toLowerCase()
+                };
+
+                rows.forEach(row => {
+                    const matches =
+                        (!selected.client || row.getAttribute("data-client") === selected.client) &&
+                        (!selected.date || row.getAttribute("data-date") === selected.date) &&
+                        (!selected.status || row.getAttribute("data-status") === selected.status) &&
+                        (!selected.search || row.getAttribute("data-search").includes(selected.search));
+
+                    row.style.display = matches ? "" : "none";
+                });
             }
+
+            // Attach change listeners
+            Object.values(filters).forEach(filter => {
+                filter.addEventListener("change", filterTable);
+                filter.addEventListener("input", filterTable);
+            });
         });
+    </script>
 
-        rows.forEach(row => tbody.appendChild(row));
-    }
+    <!-- JavaScript for Sorting -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const table = document.getElementById("report-table");
+            const headers = document.querySelectorAll("th.sortable");
 
-    dateHeader.addEventListener("click", () => {
-        if (!dateSorted) {
-            sortTable(0, true, true);
-            dateArrow.textContent = "⬆";
-            dateAsc = false;
-            dateSorted = true;
-        } else {
-            sortTable(0, dateAsc, true);
-            dateArrow.textContent = dateAsc ? "⬆" : "⬇";
-            dateAsc = !dateAsc;
-        }
-    });
+            let currentSort = {
+                index: null,
+                direction: 1 // 1 for ascending, -1 for descending
+            };
 
-    clientHeader.addEventListener("click", () => {
-        if (!clientSorted) {
-            sortTable(1, true);
-            clientArrow.textContent = "⬆";
-            clientAsc = false;
-            clientSorted = true;
-        } else {
-            sortTable(1, clientAsc);
-            clientArrow.textContent = clientAsc ? "⬆" : "⬇";
-            clientAsc = !clientAsc;
-        }
-    });
+            headers.forEach(header => {
+                header.addEventListener("click", function () {
+                    const index = parseInt(this.getAttribute("data-index"));
 
-    // Toggle dropdown
-    clientFilterBtn.addEventListener("click", (e) => {
-        e.stopPropagation(); // prevent closing instantly
-        clientDropdown.style.display = clientDropdown.style.display === "none" ? "block" : "none";
-    });
+                    if (currentSort.index === index) {
+                        currentSort.direction *= -1;
+                    } else {
+                        currentSort.index = index;
+                        currentSort.direction = 1;
+                    }
 
-    // Auto-hide dropdown on select
-    clientDropdown.addEventListener("change", () => {
-        const selectedClient = clientDropdown.value;
-        document.querySelectorAll(".services-table tbody tr").forEach(row => {
-            const clientName = row.children[1].innerText.trim();
-            row.style.display = (selectedClient === "all" || clientName === selectedClient) ? "" : "none";
+                    const rows = Array.from(table.querySelectorAll("tr"));
+
+                    rows.sort((a, b) => {
+                        let aText = a.children[index].innerText.trim().toLowerCase();
+                        let bText = b.children[index].innerText.trim().toLowerCase();
+
+                        // Special handling for date column
+                        if (index === 0) {
+                            const aDate = new Date(aText);
+                            const bDate = new Date(bText);
+                            return currentSort.direction * (aDate - bDate);
+                        }
+
+                        if (!isNaN(aText) && !isNaN(bText)) {
+                            return currentSort.direction * (parseFloat(aText) - parseFloat(bText));
+                        }
+
+                        return currentSort.direction * aText.localeCompare(bText);
+                    });
+
+                    // Update sort icons
+                    headers.forEach(h => {
+                        const icon = h.querySelector(".sort-icon");
+                        icon.className = "fas fa-sort sort-icon";
+                    });
+
+                    const icon = this.querySelector(".sort-icon");
+                    icon.className = currentSort.direction === 1
+                        ? "fas fa-sort-up sort-icon"
+                        : "fas fa-sort-down sort-icon";
+
+                    // Re-append sorted rows
+                    rows.forEach(row => table.appendChild(row));
+                });
+            });
         });
-        clientDropdown.style.display = "none"; // auto-hide after select
-    });
+    </script>
+</div>
 
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-        if (!clientDropdown.contains(e.target) && !clientFilterBtn.contains(e.target)) {
-            clientDropdown.style.display = "none";
-        }
-    });
-
-    // Populate dropdown
-    window.addEventListener("DOMContentLoaded", () => {
-        const clientSet = new Set();
-        document.querySelectorAll(".services-table tbody tr").forEach(row => {
-            const clientName = row.children[1].innerText.trim();
-            clientSet.add(clientName);
-        });
-
-        clientSet.forEach(name => {
-            const option = document.createElement("option");
-            option.value = name;
-            option.textContent = name;
-            clientDropdown.appendChild(option);
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     });
 </script>
 
-
-
-
-
-    
-       
-        
-      
-    </div>
-
-    <script>
-        document.querySelectorAll('.services-table tbody tr').forEach(row => {
-            row.addEventListener('click', () => {
-                // Remove active class from all rows
-                document.querySelectorAll('.services-table tbody tr').forEach(r => {
-                    r.classList.remove('active');
-                });
-                
-                // Add active class to clicked row
-                row.classList.add('active');
-                
-                // Get the service name from the first cell
-                const serviceName = row.querySelector('td').textContent;
-                
-                // Update service details section
-                document.querySelector('.service-details h2').innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                    ${serviceName}
-                `;
-                
-                // In a real implementation, we would update the details content based on the selected service
-            });
-        });
-    </script>
 {% endblock content %}

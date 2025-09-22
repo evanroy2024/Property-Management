@@ -1,0 +1,93 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Edit Social Links{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: white !important;
+        color: black;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+    }
+
+    .form-wrapper h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="url"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .edit-social-btn {
+        background-color: black;
+        color: white;
+        padding: 10px 18px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .edit-social-btn:hover {
+        background-color: #333;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="form-wrapper">
+    <h2>Edit Social Links</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Facebook:</label>
+        <input type="url" name="facebook" value="{{ link.facebook }}">
+
+        <label>Instagram:</label>
+        <input type="url" name="instagram" value="{{ link.instagram }}">
+
+        <label>Pinterest:</label>
+        <input type="url" name="pinterest" value="{{ link.pinterest }}">
+
+        <label>LinkedIn:</label>
+        <input type="url" name="linkedin" value="{{ link.linkedin }}">
+
+        <button type="submit" class="edit-social-btn">Save Changes</button>
+    </form>
+
+    <a href="{% url 'adminmanager:social_links_list' %}" class="back-link">⬅ Back</a>
+</div>
+{% endblock content %}

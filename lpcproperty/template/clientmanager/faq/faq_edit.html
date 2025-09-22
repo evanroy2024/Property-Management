@@ -1,0 +1,107 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Edit FAQ{% endblock %}
+
+{% block content %}
+<style>
+    .faq-edit-container {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .faq-edit-container h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    .faq-edit-form-group {
+        margin-bottom: 20px;
+    }
+
+    .faq-edit-form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .faq-edit-form-group input[type="text"],
+    .faq-edit-form-group select,
+    .faq-edit-form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .faq-edit-form-group textarea {
+        resize: vertical;
+    }
+
+    .faq-edit-submit-btn {
+        background-color: #4f46e5;
+        color: #fff;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
+        transition: background 0.2s ease;
+    }
+
+    .faq-edit-submit-btn:hover {
+        background-color: #4338ca;
+    }
+
+    .faq-edit-back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #4f46e5;
+        font-weight: 500;
+    }
+    body{
+        background-color: white;
+    }
+</style>
+
+<div class="faq-edit-container">
+    <h2>Edit FAQ</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="faq-edit-form-group">
+            <label for="question">Question:</label>
+            <input type="text" name="question" id="question" value="{{ faq.question }}" required>
+        </div>
+
+        <div class="faq-edit-form-group">
+            <label for="answer">Answer:</label>
+            <textarea name="answer" id="answer" rows="5" required>{{ faq.answer }}</textarea>
+        </div>
+
+        <div class="faq-edit-form-group">
+            <label for="category">Category:</label>
+            <select name="category" id="category" required>
+                {% for key, label in faq.CATEGORY_CHOICES %}
+                    <option value="{{ key }}" {% if faq.category == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="faq-edit-submit-btn">Save FAQ</button>
+    </form>
+
+    <a href="{% url 'adminmanager:admin_faq_list' %}" class="faq-edit-back-link">⬅ Back to FAQ List</a>
+</div>
+{% endblock %}

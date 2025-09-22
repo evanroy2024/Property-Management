@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 {% block title %}Dashboard{% endblock %}
 
@@ -24,12 +24,7 @@
             padding: 0;
         }
         
-        body {
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            line-height: 1.5;
-        }
+
         
         .container {
             max-width: 1200px;
@@ -412,7 +407,7 @@
         <div class="content-wrapper">
             <div class="page-header">
                 <h1 class="page-title">Edit Property</h1>
-                <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon">
+                <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon">
                     <i class="fas fa-arrow-left"></i> Back to Properties
                 </a>
             </div>
@@ -448,28 +443,28 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="form-row">
                             <div class="form-col form-col-md">
                                 <div class="form-group">
-                                    <label class="form-label" for="number_of_stories">Number of Stories</label>
+                                    <label class="form-label" for="address">Apartment, Suite, Unit, Building</label>
                                     <div class="input-with-icon">
-                                        <i class="fas fa-building input-icon"></i>
-                                        <input type="number" id="number_of_stories" name="number_of_stories" class="form-control" value="{{ property.number_of_stories }}" placeholder="Enter number of stories">
+                                        <i class="fas fa-map-marker-alt input-icon"></i>
+                                        <input type="text" id="street1" name="street1" class="form-control" value="{{ property.street_line1 }}" placeholder="Enter Street 1 name">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-col form-col-md">
                                 <div class="form-group">
-                                    <label class="form-label" for="year_built">Year Built</label>
+                                    <label class="form-label" for="size_of_home">P.O. Box, Company Name, C/O</label>
                                     <div class="input-with-icon">
-                                        <i class="fas fa-calendar-alt input-icon"></i>
-                                        <input type="number" id="year_built" name="year_built" class="form-control" value="{{ property.year_built }}" placeholder="Enter year built">
+                                        <i class="fas fa-expand-arrows-alt input-icon"></i>
+                                        <input type="text" id="street2" name="street2" class="form-control" value="{{ property.street_line2 }}" placeholder="Enter Street 1 name">
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        
+                        
                         <div class="form-row">
                           <div class="form-col form-col-md">
   <div class="form-group">
@@ -500,7 +495,30 @@
                          <div class="form-group half">
                         <label class="form-label" for="year_built">Zip Code</label>
                         <input class="form-control" type="text" id="property_zipcode" name="property_zipcode" value="{{ property.zipcode }}" placeholder="Enter Zip Code">
-                    </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="number_of_stories">Number of Stories</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-building input-icon"></i>
+                                        <input type="number" id="number_of_stories" name="number_of_stories" class="form-control" value="{{ property.number_of_stories }}" placeholder="Enter number of stories">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col form-col-md">
+                                <div class="form-group">
+                                    <label class="form-label" for="year_built">Year Built</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-calendar-alt input-icon"></i>
+                                        <input type="number" id="year_built" name="year_built" class="form-control" value="{{ property.year_built }}" placeholder="Enter year built">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
                         <div class="form-group">
                             <label class="form-label" for="construction_type">Construction Type</label>
                             <div class="input-with-icon">
@@ -510,11 +528,11 @@
                         </div>
 
                     <!-- Additional Info -->
-<div class="form-group">
-    <label class="form-label" for="additional_info">Additional Property Information</label>
-    <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property">{{ property.additional_info }}</textarea>
-</div>
-                    
+                        <div class="form-group">
+                            <label class="form-label" for="additional_info">Additional Property Information</label>
+                            <textarea id="additional_info" name="additional_info" class="form-control" rows="4" placeholder="Enter any additional details about the property">{{ property.additional_info }}</textarea>
+                        </div>
+                                            
                         
                         
                     </div>
@@ -593,6 +611,29 @@
                     </div>
                 </div>
 
+<div class="card" style="padding: 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 16px; text-align: center;">
+    <h2 class="card-title" style="margin-bottom: 12px;">Property Image</h2>
+    
+    <!-- Show current image if exists -->
+    {% if property.property_pic %}
+        <div style="margin: 12px auto;">
+            <img id="edit-property-img" src="{{ property.property_pic.url }}" 
+                 alt="Property Image" 
+                 style="width: 50%; height: auto; border-radius: 8px; object-fit: cover;">
+        </div>
+        <label style="display: block; margin-top: 8px;">
+            <input type="checkbox" name="delete_property_pic" value="yes">
+            Delete current image
+        </label>
+    {% else %}
+        <p>No image available</p>
+    {% endif %}
+    
+    <!-- Upload new image -->
+    <input type="file" name="property_pic" id="property_pic" class="form-control" style="margin-top: 12px;">
+</div>
+
+
                 
                 <!-- Floor Plans Card -->
                 <div class="card">
@@ -617,7 +658,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label" for="floor_image_{{ forloop.counter }}">Floor Image</label>
-                                    <input class="form-control" type="file" name="floor_image_{{ forloop.counter }}" accept="image/*">
+                                    <input class="form-control" type="file" name="floor_image_{{ forloop.counter }}" accept="image/*,.pdf">
                                     {% if floor.floor_imgae %}
                                         <small class="text-success">Current image: {{ floor.floor_imgae.name }}</small>
                                     {% endif %}
@@ -649,7 +690,7 @@
                 <div class="card client-info-card">
                     <h2 class="card-title">Client Information</h2>
                   
-                    <div class="form-row">
+                    <div class="form-row" style="gap: 10px;">
                       <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="client_first_name" value="{{ client.first_name }}" placeholder="First Name">
@@ -660,7 +701,7 @@
                       </div>
                     </div>
                   
-                    <div class="form-row">
+                    <div class="form-row" style="gap: 10px;">
                       <div class="form-group">
                         <label>Username</label>
                         <input type="text" name="client_username" value="{{ client.username }}" placeholder="Username">
@@ -669,31 +710,21 @@
                         <label>Email</label>
                         <input type="email" name="client_email" value="{{ client.email }}" placeholder="Email">
                       </div>
-                    </div>
-                  
-                    <div class="form-row">
-                      <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="client_phone_number" value="{{ client.phone_number }}" placeholder="Phone Number">
+                     <div class="form-group">
+                          <label>Password</label>
+                          <input type="password" name="client_password" placeholder="New Password">
                       </div>
-                      <div class="form-group">
-                        <label>Preferred Contact</label>
-                        <select name="client_preferred_contact_method">
-                          {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
-                          <option value="{{ value }}" {% if client.preferred_contact_method == value %}selected{% endif %}>{{ label }}</option>
-                          {% endfor %}
-                        </select>
-                      </div>
+
                     </div>
-                  
-                    <div class="form-row">
+                     <div class="form-row" style="gap: 10px;">
                       <div class="form-group">
                         <label>Address</label>
                         <input type="text" name="client_address" value="{{ client.address }}" placeholder="Address">
                       </div>
                     </div>
                   
-                    <div class="form-row">
+                    
+                    <div class="form-row" style="gap: 10px;">
                       <div class="form-group">
                         <label>City</label>
                         <input type="text" name="client_city" value="{{ client.city }}" placeholder="City">
@@ -713,6 +744,23 @@
                         <input type="text" name="client_zipcode" value="{{ client.zipcode }}" placeholder="Zip Code">
                       </div>
                     </div>
+                    <div class="form-row" style="gap: 10px;">
+                      <div class="form-group">
+                        <label>Cell Phone</label>
+                        <input type="text" name="client_phone_number" value="{{ client.phone_number }}" placeholder="Phone Number">
+                      </div>
+                      <div class="form-group">
+                        <label>Preferred Contact</label>
+                        <select name="client_preferred_contact_method">
+                          {% for value, label in client.PREFERRED_CONTACT_CHOICES %}
+                          <option value="{{ value }}" {% if client.preferred_contact_method == value %}selected{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  
+                   
+                    
                   
                   
                     <!-- Addtional contacts adding  -->
@@ -738,7 +786,7 @@
                         <input type="email" name="contact1_email" value="{{ client.contact1_email|default:'' }}" placeholder="Email">
                       </div>
                       <div class="form-group">
-                        <label>Phone</label>
+                        <label>Cell Phone</label>
                         <input type="text" name="contact1_phone" value="{{ client.contact1_phone }}" placeholder="Phone">
                       </div>
                     </div>
@@ -795,7 +843,7 @@
                             <input type="email" name="contact2_email" value="{{ client.contact2_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
-                            <label>Phone</label>
+                            <label>Cell Phone</label>
                             <input type="text" name="contact2_phone" value="{{ client.contact2_phone }}" placeholder="Phone">
                           </div>
                         </div>
@@ -852,7 +900,7 @@
                             <input type="email" name="contact3_email" value="{{ client.contact3_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
-                            <label>Phone</label>
+                            <label>Cell Phone</label>
                             <input type="text" name="contact3_phone" value="{{ client.contact3_phone }}" placeholder="Phone">
                           </div>
                         </div>
@@ -910,7 +958,7 @@
                             <input type="text" name="contact4_email" value="{{ client.contact4_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
-                            <label>Phone</label>
+                            <label>Cell Phone</label>
                             <input type="text" name="contact4_phone" value="{{ client.contact4_phone }}" placeholder="Phone">
                           </div>
                         </div>
@@ -967,7 +1015,7 @@
                             <input type="email" name="contact5_email" value="{{ client.contact5_email|default:'' }}" placeholder="Email">
                           </div>
                           <div class="form-group">
-                            <label>Phone</label>
+                            <label>Cell Phone</label>
                             <input type="text" name="contact5_phone" value="{{ client.contact5_phone }}" placeholder="Phone">
                           </div>
                         </div>
@@ -1318,8 +1366,8 @@ function clearContactFields(contactNum) {
                     });
                   </script>
                   
-            </form>
-            <form method="POST" enctype="multipart/form-data" class="client-manager-form">
+            </form> 
+            <form method="POST" enctype="multipart/form-data" class="client-manager-form" style="display: none;">
                 {% csrf_token %}
                 
                 <h3>Update Client Manager for Property</h3>

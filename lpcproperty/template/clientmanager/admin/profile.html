@@ -1,0 +1,69 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Admin Profile{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .admin-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+    }
+
+    .admin-container h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .admin-container p {
+        margin: 12px 0;
+        font-size: 16px;
+    }
+
+    .admin-links {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .admin-links a {
+        text-decoration: none;
+        background-color: #f5f5f5;
+        color: black;
+        padding: 10px 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        text-align: center;
+        transition: background 0.2s ease;
+    }
+
+    .admin-links a:hover {
+        background-color: #eaeaea;
+    }
+</style>
+
+<div class="admin-container">
+    <h2>Admin Profile</h2>
+
+    <p><strong>Username:</strong> {{ admin_user.username }}</p>
+    <p><strong>Email:</strong> {{ admin_user.email }}</p>
+
+    <div class="admin-links">
+        <a href="{% url 'adminmanager:edit_admin_profile' %}">✏️ Edit My Profile</a>
+        <a href="{% url 'adminmanager:create_admin_user' %}">➕ Create New Admin</a>
+        <a href="{% url 'adminmanager:admin_dashboard' %}">⬅ Back to Dashboard</a>
+    </div>
+</div>
+{% endblock content %}

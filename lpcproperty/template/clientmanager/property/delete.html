@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 {% block title %}Dashboard{% endblock %}
 
@@ -154,7 +154,7 @@
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash-alt"></i> Yes, Delete
                     </button>
-                    <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary">
+                    <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Cancel
                     </a>
                 </div>

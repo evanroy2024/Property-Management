@@ -1,0 +1,143 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Mail Configurations{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: white !important;
+        color: black;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .mail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .mail-header h2 {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .add-btn {
+        background-color: black;
+        color: white;
+        padding: 8px 14px;
+        font-size: 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .add-btn:hover {
+        background-color: #333;
+    }
+
+    .config-card {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .config-card p {
+        margin: 5px 0;
+    }
+
+    .config-card strong {
+        display: inline-block;
+        width: 140px;
+        font-weight: 600;
+    }
+
+    .action-links {
+        margin-top: 10px;
+    }
+
+    .action-links a {
+        margin-right: 10px;
+        text-decoration: none;
+        color: #007BFF;
+        font-weight: bold;
+    }
+
+    .action-links a:hover {
+        text-decoration: underline;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 30px;
+        text-decoration: none;
+        color: #444;
+        font-size: 14px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #777;
+    }
+
+    .empty-state i {
+        font-size: 50px;
+        color: #bbb;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .empty-state p {
+        font-size: 16px;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-VuVDmgmAfWyA5hvWfV0A+gklzQ0U6D7Qv7hHzBOU8H3e63fSKeQw2+lIafO4IVx4UdzOHMgSHmGr7R0tN8ud7w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="container">
+    <div class="mail-header">
+        <h2>Mail Configurations</h2>
+        <a href="{% url 'adminmanager:mail_config_create' %}" class="add-btn">➕ Add Mail Config</a>
+    </div>
+
+    {% if configs %}
+        {% for config in configs %}
+            <div class="config-card">
+                <p><strong>ID:</strong> {{ config.id }}</p>
+                <p><strong>Host:</strong> {{ config.email_host }}</p>
+                <p><strong>Port:</strong> {{ config.email_port }}</p>
+                <p><strong>User:</strong> {{ config.email_host_user }}</p>
+                <p><strong>Password:</strong> {{ config.email_host_password }}</p>
+                <p><strong>Use TLS:</strong> {{ config.use_tls }}</p>
+                <p><strong>Use SSL:</strong> {{ config.use_ssl }}</p>
+                <p><strong>From Email:</strong> {{ config.default_from_email }}</p>
+
+                <div class="action-links">
+                    <a href="{% url 'adminmanager:mail_config_edit' config.id %}">✏️ Edit</a>
+                    <a href="{% url 'adminmanager:mail_config_delete' config.id %}" onclick="return confirm('Delete this config?')">🗑️ Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-envelope-open-text"></i>
+            <p>No mail configurations have been added yet.<br>Click the button above to add your first config.</p>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'adminmanager:admin_dashboard' %}" class="back-link">⬅ Back to Dashboard</a>
+</div>
+{% endblock content %}

@@ -1,0 +1,388 @@
+{% extends 'clientmanager/managerbase.html' %}
+{% load static %}
+{% block title %}Vendor Details{% endblock %}
+
+{% block content %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+     
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 11px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -8px;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .col-md-4 {
+            flex: 0 0 33.333%;
+            max-width: 33.333%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .col-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .col-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding: 0 8px;
+            margin-bottom: 5px;
+        }
+
+        .form-floating {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .form-floating > label {
+            position: absolute;
+            top: 0;
+            left: 15px;
+            height: 100%;
+            padding: 1rem 0;
+            pointer-events: none;
+            border: 1px solid transparent;
+            transform-origin: 0 0;
+            color: var(--secondary-color);
+            font-weight: 500;
+            opacity: .85;
+            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f8f9fa;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .contact-header h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .contact-item {
+            margin-bottom: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .back-link {
+                margin-top: 10px;
+            }
+            
+            .col-md-6, .col-md-4, .col-3 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .row {
+                margin: 0;
+            }
+
+            .col-md-6, .col-md-4, .col-12, .col-3 {
+                padding: 0 4px;
+                margin-bottom: 5px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Vendor Details</h1>
+            <a href="{% url 'clientmanager:vendor_list' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Vendors
+            </a>
+        </div>
+        
+        <div class="card p-3">
+            <h2 class="card-title mb-4"><i class="fas fa-building"></i> Basic Vendor Information</h2>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.company_name }}</div>
+                        <label>Company Name</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.website|default:'-' }}</div>
+                        <label>Website</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.street }}</div>
+                        <label>Street Address</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.suite|default:'-' }}</div>
+                        <label>Suite/Apt</label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.city }}</div>
+                        <label>City</label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.state }}</div>
+                        <label>State</label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.zip_code }}</div>
+                        <label>Zip Code</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-floating">
+                        <div class="form-control">{{ vendor.phone_number }}</div>
+                        <label>Phone Number</label>
+                    </div>
+                </div>
+
+              <div class="col-12">
+    <div class="form-floating">
+        <div class="form-control" style="min-height: 120px; padding-top: 2rem; line-height: 1.5;">{{ vendor.notes|default:'-'|linebreaks }}</div>
+        <label>Notes</label>
+    </div>
+</div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-tools"></i> Services</h2>
+            
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="form-floating">
+                        <div class="form-control">{{ main_service|default:'-' }}</div>
+                        <label>Main Service</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-floating">
+                        <div class="form-control">{{ additional_service_1|default:'-' }}</div>
+                        <label>Additional Service 1</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-floating">
+                        <div class="form-control">{{ additional_service_2|default:'-' }}</div>
+                        <label>Additional Service 2</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-users"></i> Contacts</h2>
+            <div id="contacts">
+                {% for contact in existing_contacts %}
+                    <div class="contact-item">
+                        <div class="contact-header">
+                            <h4>Contact {{ forloop.counter }}</h4>
+                        </div>
+                        <div class="row g-3 contact-row">
+                            <div class="col-3">
+                                <div class="form-floating">
+                                    <div class="form-control">{{ contact.first_name|default:'-' }}</div>
+                                    <label>First Name</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-floating">
+                                    <div class="form-control">{{ contact.last_name|default:'-' }}</div>
+                                    <label>Last Name</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-floating">
+                                    <div class="form-control">{{ contact.cell|default:'-' }}</div>
+                                    <label>Cell Phone</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-floating">
+                                    <div class="form-control">{{ contact.email|default:'-' }}</div>
+                                    <label>Email</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="contact-item">
+                        <div class="contact-header">
+                            <h4>No Contacts Available</h4>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'clientmanager:vendor_list' %}" class="btn" style="background-color: #6c757d; color: white;">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+            <a href="{% url 'clientmanager:edit_vendor' vendor.id %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+{% endblock %}

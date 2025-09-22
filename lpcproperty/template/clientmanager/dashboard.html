@@ -1,5 +1,5 @@
-{% extends 'cmdashboard.html' %}
-{ % load static %}
+{% extends 'clientmanager/managerbase.html' %}
+{% load static %}
 {% block content %}
 <!-- Font Awesome CDN (v6.5.0) -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -131,52 +131,69 @@
         *:not(i) {
   font-family: 'Montserrat', sans-serif !important;
 }
+
+    .manage-faq{
+        background-color: #bb8fce;
+    }
+    .manage-testimonials{
+        background-color: #8e44ad;
+    }
     </style>
 
   
     <div class="container">
         
         <!-- Property Management -->
-        <div class="menu-item property-management"  onclick="window.location.href='{% url 'clientmanager:property_list' %}'">
+        <div class="menu-item property-management" onclick="window.location.href='{% url 'clientmanager:property_list' %}'">
            Manage Client / Properties
         </div>
         
+        <div class="sub-menu">
+            
+        </div>
             <div class="sub-item"> <i class="fas fa-chart-line"></i> Walk-Thru </div>
             <div class="sub-sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:walkthrough-form' %}'">Create New Walk-Thru Report</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:all_reports' %}'" >All Walk-Thru Reports</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:walkthrough-form' %}'">Create New Walk-Thru Report</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:all_reports' %}'">All Walk-Thru Reports</div>
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:open_reports' %}'">Open Walk-Thru Items</div>
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:completed_reports' %}'">Completed Walk-Thru Items</div>
+                <!-- <div class="sub-sub-item" onclick="window.location.href='{% url 'walkthroughreport:denied_reports' %}'">Pending walk-Thru Items</div> -->
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:denied_reports' %}'">Denied Walk-Thru Items</div>
 
             </div>
             <div class="sub-item"> <i class="fas fa-cogs"></i> Service Requests</div>
             <div class="sub-sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_open_requests' %}'">Open Requests</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_completed_requests' %}'">Completed Requests</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_denied_requests' %}'">Denied Requests</div>
+                <!-- <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:clientmanager_pending_requests' %}'">Pending Requests</div> -->
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_open_requests' %}'">Open Service Requests</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_completed_requests' %}'">Completed Service Requests</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:clientmanager_denied_requests' %}'">Denied Service Requests</div>
             </div>
-            <div class="sub-item"><i class="fas fa-users"></i> Concierge Request</div>
+            <div class="sub-item"><i class="fas fa-users"></i> Concierge Requests</div>
             <div class="sub-sub-menu">
+                <!-- <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:concierge_pending_requests' %}'">Pending Requests</div> -->
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:concierge_open_requests' %}'">Open Requests</div>
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:concierge_completed_requests' %}'">Completed Requests</div>
                 <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:concierge_denied_requests' %}'">Denied Requests</div>
             </div>
-             <div class="sub-item"><i class="fas fa-exchange-alt"></i> Arrival / Departure Info</div>
+            <div class="sub-item"><i class="fas fa-exchange-alt"></i> Arrival / Departure Info</div>
             <div class="sub-sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:prearrival_requests' %}'">Pre-Arrival Info</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:departure_requests' %}'">Departure Info</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:prearrival_requests' %}'">Pre-Arrival Notifications</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:prearrival_completed_requests' %}'">Completed Pre-Arrival Notifications</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:departure_requests' %}'">Departure Notifications</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:departure_completed' %}'">Completed Departure Notifications</div>
+
             </div>
-            <!-- <div class="sub-item"><i class="fas fa-layer-group"></i> Property Improvement</div>
+            <!-- <div class="sub-item"><i class="fas fa-layer-group"></i> Property Improvement</div> -->
             <div class="sub-sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:property_pending_requests' %}'">Pending Requests</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:property_open_requests' %}'">Open Requests</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:property_completed_requests' %}'">Completed Requests</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'clientmanager:property_denied_requests' %}'">Denied Requests</div>
-            </div> -->
-        
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_pending_requests' %}'">Pending Requests</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_open_requests' %}'">Open Requests</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_completed_requests' %}'">Completed Requests</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:property_denied_requests' %}'">Denied Requests</div>
+            </div>
         <!-- Pre-Arrival Info -->
-      
+        <!-- <div class="menu-item pre-arrival" onclick="window.location.href='{% url 'adminmanager:prearrival_requests' %}'">
+            Pre-Arrival Info
+        </div> -->
         <!-- <div class="sub-menu">
             <div class="sub-item">Welcome Packages</div>
             <div class="sub-sub-menu">
@@ -191,7 +208,9 @@
         </div> -->
         
         <!-- Departure Info -->
-     
+        <!-- <div class="menu-item departure" onclick="window.location.href='{% url 'adminmanager:departure_requests' %}'">
+            Departure Info
+        </div> -->
         <!-- <div class="sub-menu">
             <div class="sub-item">Checkout Process</div>
             <div class="sub-sub-menu">
@@ -205,29 +224,35 @@
             </div>
         </div> -->
         
-        <!-- Manage Client -->
-       
-        <!-- Manage CM's -->
-        <div class="menu-item pre-arrival" onclick="window.location.href='{% url 'clientmanager:vendor_list' %}'">
+        <!-- Manage Clientclient       
+         Manage CM's -->
+          <div class="menu-item departure"  onclick="window.location.href='{% url 'clientmanager:vendor_list' %}'">
             Manage Vendors
         </div>
-       
-        
-        <!-- Manage Vendors -->
-      <div class="menu-item departure" onclick="window.location.href='{% url 'clientmanager:clientmanager_profile_edit' %}'">
-            Manage Your Details
+<!--         
+        <div class="menu-item pre-arrival"  onclick="window.location.href='{% url 'adminmanager:list' %}'">
+            Manage CM's
         </div>
+        
+
        
         
+      <div class="menu-item manage-vendors" onclick="window.location.href='{% url 'adminmanager:admin_faq_list' %}'">
+            Manage FAQ's
+        </div>
         
-         <!-- Manage Testimonials -->
+        <div class="menu-item manage-faq" onclick="window.location.href='{% url 'adminmanager:testimonial_list' %}'">
+            Manage Testimonals 
+        </div>
+
         <div class="menu-item manage-testimonials">
-            Messages & Chats 
+           Settings
         </div>
         <div class="sub-menu">
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'my_properties' %}'">open Client Chats</div>
-                <div class="sub-sub-item" onclick="window.location.href='{% url 'contentpage:send_message' %}'" >Contact Admin</div>
-        </div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:admin_profile' %}'">Admin info Settings</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:mail_config_list' %}'" >Mail Configuration</div>
+                <div class="sub-sub-item" onclick="window.location.href='{% url 'adminmanager:social_links_list' %}'" >Social Info Settings</div>
+        </div> -->
     </div>
 
     <script>

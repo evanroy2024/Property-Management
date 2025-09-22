@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Manager </title>
+   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200&display=swap" rel="stylesheet">
+
+     <!-- Bootstrap CDN -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <style>
+        .logo:hover {
+            cursor: pointer;    
+        }
+         .bg-section {
+             background: url("{% static 'img/bg.jpg' %}") no-repeat center center/cover;
+             height: 700px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             text-align: center;
+             color: white;
+             color: #143048;
+             font-size:80px;
+             font-style: italic;
+         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Raleway', sans-serif;
+    font-weight: 200; /* Use extra light weight */
+    color: #666; /* Softer text color */
+    background-color: black;
+        }
+        .navbar {
+            background-color: #13293D;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            position: sticky;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+            height: 70px;
+        }
+        .logo span {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: #13293D;
+                text-align: center;
+                padding: 10px 0;
+                opacity: 0;
+                transform: translateY(-20px);
+                visibility: hidden;
+            }
+            .nav-links.active {
+                opacity: 1;
+                transform: translateY(0);
+                visibility: visible;
+            }
+            .nav-links a {
+                padding: 10px;
+                display: block;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="{% url 'clientmanager:property_list' %}">Properties </a>
+            <a href="{% url 'clientmanager:vendor_list' %}">Vendors</a>
+        </div>
+        <div class="logo">
+            <img onclick="window.location.href='{% url 'clientmanager:admin_dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'clientmanager:admin_dashboard' %}">Dashboard</a>
+            <a href="{% url 'mainapp:client_logout' %}">Logout</a>
+
+        </div>
+        <div class="menu-toggle">☰</div>
+    </nav>
+
+    {% block content %}
+    <!-- Child template content will be injected here -->
+    {% endblock %}
+
+ 
+<!-- Add Footer Start Here  -->
+
+<footer class="standalone-footer">
+<div class="standalone-footer-container">
+  <div class="standalone-footer-column">
+    <div class="standalone-footer-contact">
+      
+      <!-- Company Header with Logo -->
+      <div class="standalone-footer-company-header">
+        <img src="{% static 'img/smalllogo.png' %}" alt="Logo" class="footer-logo">
+        <span class="company-name">Lotus Property Management Company</span>
+      </div>
+      
+      <!-- Address Section -->
+      <div class="standalone-footer-contact-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="margin-right: 20px; margin-top: 3px; flex-shrink: 0;">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+        <div>
+          <div>2655 North Ocean Drive</div>
+          <div>Suite 301e</div>
+          <div>Singer Island, FL 33404</div>
+        </div>
+      </div>
+
+      <!-- Phone Section -->
+      <div class="standalone-footer-contact-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="margin-right: 20px;">
+          <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C10.07 22 2 13.93 2 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.35.26 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z"/>
+        </svg>
+        <span>(561) 766-7828</span>
+      </div>
+      
+    </div>
+  </div>
+</div>
+</footer>
+
+<style>
+.standalone-footer {
+  position: relative;
+  background: #13293D;
+  color: #ecf0f1;
+  padding: 40px 0 20px;
+  margin-top: 50px;
+  overflow: hidden;
+}
+
+.standalone-footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.standalone-footer-column {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.standalone-footer-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.standalone-footer-contact {
+  display: inline-block;
+  text-align: left;
+}
+
+.standalone-footer-company-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  justify-content: flex-start;
+}
+
+.footer-logo {
+  height: 1em;
+  width: auto;
+  margin-right: 10px;
+}
+
+.company-name {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.standalone-footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 20px;
+  margin-bottom: 5px;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .standalone-footer-contact-item {
+    justify-content: flex-start;
+  }
+  
+  .standalone-footer-company-header {
+    justify-content: center;
+  }
+}
+</style>
+
+<!-- Add footer Ends Here  -->
+
+
+    
+    <script>
+        const toggle = document.querySelector(".menu-toggle");
+        const navLinks = document.querySelectorAll(".nav-links");
+        
+        toggle.addEventListener("click", () => {
+            navLinks.forEach(nav => nav.classList.toggle("active"));
+        });
+    </script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<style>
+body, p, h1, h2, h3, h4, h5, h6, a, span, div, li, button, input, textarea, label {
+    font-family: "Roboto", sans-serif !important;
+}
+</style>
+</body>
+</html>

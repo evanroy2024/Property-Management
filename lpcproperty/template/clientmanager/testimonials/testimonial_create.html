@@ -1,0 +1,99 @@
+{% extends 'adminmanager/adminbase.html' %}
+{ % load static %}
+
+{% block title %}Create New Testimonial{% endblock %}
+
+{% block content %}
+<style>
+    .testimonial-form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .testimonial-form-container h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .testimonial-form-container label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+        color: #374151;
+    }
+
+    .testimonial-form-container input[type="text"],
+    .testimonial-form-container textarea,
+    .testimonial-form-container input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        color: #111827;
+    }
+
+    .testimonial-form-container textarea {
+        resize: vertical;
+    }
+
+    .testimonial-submit-btn {
+        background-color: #3b82f6;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .testimonial-submit-btn:hover {
+        background-color: #2563eb;
+    }
+
+    .testimonial-back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .testimonial-back-link:hover {
+        text-decoration: underline;
+    }
+    body{
+        background-color: white;
+    }
+</style>
+
+<div class="testimonial-form-container">
+    <h2 style="color: black;">Create New Testimonial</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="comment">Comment:</label>
+        <textarea name="comment" id="comment" rows="4" required></textarea>
+
+        <label for="photo">Photo:</label>
+        <input type="file" name="photo" id="photo" accept="image/*" required>
+
+        <button type="submit" class="testimonial-submit-btn">Create</button>
+    </form>
+
+    <a href="{% url 'adminmanager:testimonial_list' %}" class="testimonial-back-link">← Back to Testimonials</a>
+</div>
+{% endblock content %}

@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'clientmanager/managerbase.html' %}
 {% load static %}
 {% block title %}Dashboard{% endblock %}
 
@@ -158,8 +158,10 @@ th.sortable:hover .sort-icon {
 <div class="content-wrapper">
     <!-- Page Header -->
     <div class="page-header">
-        <h1 class="h3 mb-0 text-gray-800">All Properties</h1>
-       
+        <h1 class="h3 mb-0 text-gray-800">All Clients / Properties</h1>
+        <a href="{% url 'clientmanager:property_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus fa-sm mr-2"></i> Add New Client / Property
+        </a>
     </div>
 
     <!-- Stats Cards -->
@@ -252,6 +254,12 @@ th.sortable:hover .sort-icon {
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Contact Person">
                                     Contact
                                 </a>
+                                <a href="#" class="btn btn-primary btn-sm action-btn open-cm-modal-btn"
+   data-cm-id="{{ prop.client_manager.id }}"
+   data-property-id="{{ prop.id }}">
+   Lotus CM
+</a>
+
 
                             </td>
                         </tr>
@@ -261,7 +269,10 @@ th.sortable:hover .sort-icon {
                                 <div class="empty-state">
                                     <i class="fas fa-home fa-4x mb-3 icon-gray"></i>
                                     <h4 class="text-gray-800 mb-2">No properties found</h4>
-                                  
+                                    <p class="text-gray-600 mb-3">Get started by adding your first property</p>
+                                    <a href="{% url 'clientmanager:property_create' %}" class="btn btn-primary">
+                                        <i class="fas fa-plus mr-2"></i> Add Property
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -510,141 +521,170 @@ th.sortable:hover .sort-icon {
   </div>
   
   <!-- Add this JavaScript to handle the modal opening and data injection -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const modalBody = document.getElementById("conModalBody");
-  
-      document.querySelectorAll(".open-con-modal").forEach(button => {
-        button.addEventListener("click", function (e) {
-          e.preventDefault();
-  
-          const contactData = this.getAttribute("data-contact");
-          if (!contactData) return;
-  
-          let data;
-          try {
-            data = JSON.parse(contactData);  // Parse the contact info from the button's data attribute
-          } catch (err) {
-            console.error("Invalid JSON in contact data", err);
-            return;
-          }
-  
-          // Update modal content with better design
-          modalBody.innerHTML = `
-            <!-- Primary Contact Section -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const modalBody = document.getElementById("conModalBody");
+
+    // Helper to check if a value is meaningful
+    function isValid(value) {
+      return value && value !== "None" && value !== "none" && value !== "null" && value !== null;
+    }
+
+    document.querySelectorAll(".open-con-modal").forEach(button => {
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const contactData = this.getAttribute("data-contact");
+        if (!contactData) return;
+
+        let data;
+        try {
+          data = JSON.parse(contactData);
+        } catch (err) {
+          console.error("Invalid JSON in contact data", err);
+          return;
+        }
+
+        // Check if at least one contact field is valid
+        const hasPrimaryContact = isValid(data.name1) || isValid(data.email1) || isValid(data.phone1);
+        const hasSecondaryContact = isValid(data.name2) || isValid(data.email2) || isValid(data.phone2);
+
+        if (!hasPrimaryContact && !hasSecondaryContact) {
+          return; // Don’t show modal if nothing useful
+        }
+
+        // Generate modal content
+        modalBody.innerHTML = `
+          ${hasPrimaryContact ? `
             <div class="contact-section">
               <h5>Primary Contact</h5>
               <div class="contact-row">
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Name:</strong> ${data.name1 || '-'} ${data.lname1 || ''}</p>
-                  <p class="contact-info"><strong>Email:</strong> ${data.email1 || '-'}</p>
+                  <p class="contact-info"><strong>Name:</strong> ${isValid(data.name1) ? data.name1 : '-'} ${isValid(data.lname1) ? data.lname1 : ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${isValid(data.email1) ? data.email1 : '-'}</p>
                 </div>
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Phone:</strong> ${data.phone1 || '-'}</p>
-                  <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone1 || '-'}</p>
+                  <p class="contact-info"><strong>Cell Phone:</strong> ${isValid(data.phone1) ? data.phone1 : '-'}</p>
                 </div>
               </div>
             </div>
-  
-            <!-- Secondary Contact Section -->
+          ` : ''}
+
+          ${hasSecondaryContact ? `
             <div class="contact-section">
               <h5>Secondary Contact</h5>
               <div class="contact-row">
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Name:</strong> ${data.name2 || '-'} ${data.lname2 || ''}</p>
-                  <p class="contact-info"><strong>Email:</strong> ${data.email2 || '-'}</p>
+                  <p class="contact-info"><strong>Name:</strong> ${isValid(data.name2) ? data.name2 : '-'} ${isValid(data.lname2) ? data.lname2 : ''}</p>
+                  <p class="contact-info"><strong>Email:</strong> ${isValid(data.email2) ? data.email2 : '-'}</p>
                 </div>
                 <div class="contact-column">
-                  <p class="contact-info"><strong>Phone:</strong> ${data.phone2 || '-'}</p>
-                  <p class="contact-info"><strong>Office Phone:</strong> ${data.officephone2 || '-'}</p>
+                  <p class="contact-info"><strong>Cell Phone:</strong> ${isValid(data.phone2) ? data.phone2 : '-'}</p>
                 </div>
               </div>
             </div>
-          `;
-  
-          // Show the modal
-          const modal = new bootstrap.Modal(document.getElementById("conModal"));
-          modal.show();
-        });
+          ` : ''}
+        `;
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById("conModal"));
+        modal.show();
       });
     });
-  </script>
-  
-    
-      
-<!-- <div class="content-wrapper">
-    <div class="page-header">
-        <h1 class="h3 mb-0 text-black-800">Manage Clients</h1>
-        <a href="{% url 'adminmanager:client_create_view' %}" class="btn btn-primary">
-            <i class="fas fa-plus fa-sm mr-2"></i> Add New Client
-        </a>
-    </div>
+  });
+</script>
 
-    <div class="card shadow mb-4">
-        <div class="card-header">
-            <h6 class="m-0 font-weight-bold">Client Listings</h6>
-            <div class="dropdown">
-                <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter mr-1"></i> Filter
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">All Properties</a></li>
-                    <li><a class="dropdown-item" href="#">Single Family</a></li>
-                    <li><a class="dropdown-item" href="#">Multi-Family</a></li>
-                    <li><a class="dropdown-item" href="#">Commercial</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Client Cell</th>
-                            <th>Address</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for client in clients %}
-                        <tr>
-                            <td><strong>{{ client.username }}</strong></td>
-                            <td>{{ client.last_name }} {{ client.first_name }} </td>
-                            <td>{{ client.email }}</td>
-                            <th>{{ client.phone_number }}</th>
-                            <th>{{ client.address  }}</th>
-                            <td>
-                                <a href="{% url 'adminmanager:client_edit_page' client.id %}" class="btn btn-primary btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{% url 'adminmanager:client_edit_page' client.id %}" class="btn btn-info btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Property">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6">
-                                <div class="empty-state">
-                                    <i class="fas fa-home fa-4x mb-3 icon-gray"></i>
-                                    <h4 class="text-gray-800 mb-2">No Cleints found</h4>
-                                    <p class="text-gray-600 mb-3">Get started by adding your first Cleint</p>
-                                    <a href="{% url 'adminmanager:property_create' %}" class="btn btn-primary">
-                                        <i class="fas fa-plus mr-2"></i> Add Cleints
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  
+  <!-- For CM Pop Up start  -->
+<form id="cmChangeForm" method="POST" style="display:none;">
+  {% csrf_token %}
+  <input type="hidden" name="property_id" id="formPropertyId">
+  <input type="hidden" name="cm_id" id="formCmId">
+</form>
+
+<div class="modal fade" id="cmAssignModal" tabindex="-1" aria-labelledby="cmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cmModalLabel" style="color: black;">Assigned Lotus CM</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <select id="cmDropdown" class="form-select mb-3"></select>
+
+              <div class="border rounded p-2 bg-light mb-3">
+              <div class="name-email" style="display: flex; color: black; gap: 50px; margin-bottom: 10px; margin-top: 10px;">
+              <div><strong>Name:</strong> <span id="cmNameDisplay"></span></div>
+              <div style="color: black;"><strong>Cell:</strong> <span id="cmPhoneDisplay"></span></div>
+              </div>
+              <div style="color: black;"><strong>Email:</strong> <span id="cmEmailDisplay"></span></div>
+
+              </div>
+
+
+        <input type="hidden" id="selectedPropertyId">
+
+        <button type="button" class="btn btn-success w-100 mt-2" id="submitCmChange">Submit</button>
+      </div>
     </div>
-</div> -->
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const allCmsData = {{ all_cms_json|safe }};
+let cmModalInstance = null;
+
+$(document).on("click", ".open-cm-modal-btn", function (e) {
+    e.preventDefault();
+    const currentCmId = $(this).data("cm-id");
+    const propertyId = $(this).data("property-id");
+
+    $("#selectedPropertyId").val(propertyId);
+
+    const $dropdown = $("#cmDropdown");
+    $dropdown.empty();
+
+    allCmsData.forEach(cm => {
+        const isSelected = cm.id === currentCmId;
+        $dropdown.append(new Option(cm.name, cm.id, isSelected, isSelected));
+    });
+
+    updateCmDetails(currentCmId);
+
+    cmModalInstance = new bootstrap.Modal(document.getElementById('cmAssignModal'));
+    cmModalInstance.show();
+
+    $dropdown.off("change").on("change", function () {
+        const selectedId = parseInt($(this).val());
+        updateCmDetails(selectedId);
+    });
+});
+
+function updateCmDetails(cmId) {
+    const selected = allCmsData.find(cm => cm.id === cmId);
+    if (selected) {
+        $("#cmNameDisplay").text(selected.name || "N/A");
+        $("#cmEmailDisplay").text(selected.email || "N/A");
+        $("#cmPhoneDisplay").text(selected.phone || "N/A");
+    }
+}
+
+$(document).on("click", "#submitCmChange", function () {
+    const selectedCmId = $("#cmDropdown").val();
+    const propertyId = $("#selectedPropertyId").val();
+
+    $("#formPropertyId").val(propertyId);
+    $("#formCmId").val(selectedCmId);
+
+    $("#cmChangeForm").submit();
+});
+</script>
+
+
+
 
 <!-- Client Ends here ----------------------------------------------------------------------------------- -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -666,4 +706,10 @@ th.sortable:hover .sort-icon {
   }
 }
 </style>
+<!-- jQuery (required for our script) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS (required for modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 {% endblock content %}

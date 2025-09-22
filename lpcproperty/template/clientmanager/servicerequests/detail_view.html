@@ -1,4 +1,6 @@
-{% extends "cmbase.html" %}
+{% extends 'clientmanager/managerbase.html' %}
+{ % load static %}
+
 {% block content %}
 <style>
     body {
@@ -202,21 +204,20 @@
                             <div class="detail-label">Description</div>
                             <div class="detail-value description-text">{{ request_obj.description }}</div>
                         </div>
-                        
-                        <tr><th>Vendor</th>
-                            <td>
-                                {% if request_obj.vendor %}
-                                    {{ request_obj.vendor.company_name }}
-                                {% else %}
-                                    Not Assigned
-                                {% endif %}
-                            </td>
-                        </tr>
-                        
-                        <tr><th>Created At</th><td>{{ request_obj.created_at }}</td></tr>
 
-                        
-                        
+                        <div class="detail-row">
+                            <div class="detail-label">Floor / Room Name :</div>
+                            <div class="detail-value description-text">{{ request_obj.floor_plan_name }}</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Vendor :</div>
+                            <div class="detail-value description-text"> {% if request_obj.vendor %}
+                                {{ request_obj.vendor.company_name }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}</div>
+                        </div>
                         
                         <div class="divider"></div>
                         
@@ -233,7 +234,7 @@
                     </div>
                     
                     <div class="detail-footer" style="display: flex; justify-content: space-between;">
-                        <a href="{% url 'clientmanager:clientmanager_pending_requests' %}" class="btn-update" style="background-color: gray; color: white; padding: 10px 20px; border-radius: 5px; display: inline-flex; align-items: center; text-decoration: none;">
+                        <a href="{% url 'clientmanager:clientmanager_open_requests' %}" class="btn-update" style="background-color: gray; color: white; padding: 10px 20px; border-radius: 5px; display: inline-flex; align-items: center; text-decoration: none;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="btn-icon me-2" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
@@ -241,7 +242,7 @@
                             Back
                         </a>
                         
-                        <a href="{% url 'clientmanager:clientmanager_update_request' request_obj.id %}" class="btn-update">
+                        <a href="{% url 'adminmanager:clientmanager_update_request' request_obj.id %}" class="btn-update">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="btn-icon" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>

@@ -1,4 +1,5 @@
-{% extends "cmbase.html" %}
+{% extends 'clientmanager/managerbase.html' %}
+{% load static %}
 {% block content %}
 <style>
     /* Custom modern styling for details page */
@@ -223,7 +224,7 @@
     
     <!-- Action Buttons -->
     <div class="d-flex gap-3">
-        <a href="{% url 'clientmanager:concierge_update_request' request_obj.id %}" class="btn btn-custom btn-update">
+        <a href="{% url 'adminmanager:concierge_update_request' request_obj.id %}" class="btn btn-custom btn-update">
             <i class="bi bi-pencil me-2"></i> Update Request
         </a>
         <a href="javascript:history.back()" class="btn btn-custom btn-back">

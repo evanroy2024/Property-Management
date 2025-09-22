@@ -212,7 +212,7 @@
                         <div class="info-box"><span>Contact Phone :</span> <div class="info-value">{{ contact.phone }}</div></div>
                     </div>
                     <div class="col-md-4">
-                        <div class="info-box"><span>Preffered Contact Type Type:</span> <div class="info-value">{{ contact.preferred }}</div></div>
+                        <div class="info-box"><span>Preffered Contact Type :</span> <div class="info-value">{{ contact.preferred }}</div></div>
                     </div>
                 </div>
             {% endfor %}
@@ -220,6 +220,54 @@
             <p>No additional contacts added.</p>
         {% endif %}
     </div>
+    <div class="property-container">
+    <p class="section-title">Property Images Overview</p>
+
+    {% for property in properties %}
+    <div class="property-card">
+        <h3 class="property-address">{{ property.address }}</h3>
+
+        {% if property.property_pic %}
+        <div class="image-gallery">
+            <div class="image-item">
+                <img src="{{ property.property_pic.url }}"
+                     alt="Property Image"
+                     class="gallery-img">
+                <button onclick="printImage('{{ property.property_pic.url }}')"
+                        style="margin-top:10px;
+                               padding:8px 16px;
+                               background:#4a90e2;
+                               color:#fff;
+                               border:none;
+                               border-radius:6px;
+                               font-weight:600;
+                               cursor:pointer;">
+                    Print Property Image
+                </button>
+            </div>
+        </div>
+        {% else %}
+        <p>No image available.</p>
+        {% endif %}
+
+    </div>
+    {% empty %}
+        <p>No properties available.</p>
+    {% endfor %}
+</div>
+
+<script>
+function printImage(url) {
+    const win = window.open("");
+    win.document.write('<img src="' + url + '" style="max-width:100%;"/>');
+    win.document.close();
+    win.focus();
+    setTimeout(() => {
+        win.print();
+        win.close();
+    }, 500);
+}
+</script>
 
     <div class="property-container">
         <p class="section-title">Floor Plans Overview</p>
@@ -235,10 +283,55 @@
                     <!-- Display Floor Image -->
                     <div class="image-gallery">
                         {% if floor.floor_imgae %}
-                        <div class="image-item">
-                            <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="gallery-img">
-                            <p class="image-caption">{{ floor.floor_name }}</p>
-                        </div>
+<div class="image-item {% if floor.floor_imgae.url|lower|slice:'-4:' == '.pdf' %}pdf-item{% endif %}">
+    {% if floor.floor_imgae %}
+        {% if floor.floor_imgae.url|lower|slice:"-4:" == ".pdf" %}
+            <button onclick="openAndPrint('{{ floor.floor_imgae.url }}')"
+                    style="padding:8px 16px;
+                           background:#4a90e2;
+                           color:#fff;
+                           border:none;
+                           border-radius:6px;
+                           font-weight:600;
+                           cursor:pointer;">
+                Print Floor plan (PDF)
+            </button>
+        {% else %}
+            <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="gallery-img">
+            <button onclick="printImage('{{ floor.floor_imgae.url }}')"
+                    style="margin-top:10px;
+                           padding:8px 16px;
+                           background:#4a90e2;
+                           color:#fff;
+                           border:none;
+                           border-radius:6px;
+                           font-weight:600;
+                           cursor:pointer;">
+                Print Floor plan
+            </button>
+        {% endif %}
+    {% endif %}
+</div>
+
+<script>
+function openAndPrint(url) {
+    const win = window.open(url);
+    win.onload = () => win.print();
+}
+
+function printImage(url) {
+    const win = window.open("");
+    win.document.write('<img src="' + url + '" style="max-width:100%;"/>');
+    win.document.close();
+    win.focus();
+    setTimeout(() => {
+        win.print();
+        win.close();
+    }, 500);
+}
+</script>
+
+
                         {% endif %}
                     </div>
                     
@@ -411,4 +504,18 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+    /* Kill hover only on PDF items */
+.image-item.pdf-item:hover,
+.image-item.pdf-item:hover::before,
+.image-item.pdf-item:hover::after {
+    background: none !important;
+    box-shadow: none !important;
+}
+.image-gallery .image-item {
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+}
+</style>
 {% endblock content %}

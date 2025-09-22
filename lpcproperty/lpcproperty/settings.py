@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os 
+import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +27,8 @@ SECRET_KEY = 'django-insecure-a%hek)ut9v!n62a3-%m=)1ot6@8qf=@@+$k#4^81#6954c(p0j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
+# ALLOWED_HOSTS = ["backend.lotuspmc.com"]
+ALLOWED_HOSTS = ['72.60.123.152', 'localhost', '127.0.0.1' , 'backend.lotuspmc.com']
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'clientmanager',
     'contacttogether',
     'contentpage',
-    'adminmanager',    # For custom admin panel Custom UI 
-    
+    'adminmanager',    # For custom admin panel Custom UI
+
 ]
 
 MIDDLEWARE = [
@@ -84,13 +84,22 @@ WSGI_APPLICATION = 'lpcproperty.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -126,9 +135,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # This assumes your CSS files are in a 'static' folder within your project directory
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATIC_ROOT = '/home/deploy/project/lpcproperty/staticfiles/'
 
 
 MEDIA_URL = '/media/'
@@ -153,16 +161,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # JAZZMIN_SETTINGS = {
 #     # Your existing Jazzmin settings...
-    
+
 #     # Add custom CSS
 #     "custom_css": "admin/css/custom_admin.css",
-    
+
 #     # Hide the default Jazzmin branding
 #     "show_sidebar_header": False,
-    
+
 #     # Customize the sidebar appearance
 #     "sidebar_fixed": True,
 #     "sidebar_collapsed": False,
 # }
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000

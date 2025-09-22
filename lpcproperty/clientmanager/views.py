@@ -1,13 +1,11 @@
 from django.shortcuts import render
-
-# Create your views here.
-# def cm_login(request):
-#     return render(request, 'clientmanager/cm_login.html')
-
 from django.shortcuts import render, redirect
 from mainapp.models import ClientManagers
 from django.contrib import messages
 
+from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def client_manager_login_view(request):
     if request.method == 'POST':
@@ -27,112 +25,111 @@ def client_manager_login_view(request):
 
     return render(request, 'clientmanager/login.html')
 
-
-
-from django.shortcuts import render
-
-def client_dashboard_view(request):
-    manager_id = request.session.get('manager_id')  # ✅ not client_id
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
+def admin_dashboard(request):
     return render(request, 'clientmanager/dashboard.html')
-
-def client_logout_view(request):
-    request.session.flush()
-    return redirect('mainapp:client_login')
-
 
 # Building Property  ---------------------------------------------------------------------------------------------------------------
 from django.shortcuts import render, redirect, get_object_or_404
 from propertydetails.models import PropertyManagement
 from django.contrib import messages
+from mainapp.models import Client, ClientManagers  # or whatever your models are named
+from propertydetails.models import PropertyManagement, Floor, Room
+from django.db import transaction
+from django.core.exceptions import ValidationError
+# def get_client_manager_id(request):
+#     return request.session.get('client_id')
 
-def get_client_manager_id(request):
-    return request.session.get('client_id')
 
-# def client_list_page(request):
-#     clients = Client.objects.all()
-#     return render(request, 'clientmanager/client/client_list_page.html', {'clients': clients})
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+# decorators.py
+from functools import wraps
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseForbidden
+
+
+from .decorators import client_manager_required
+
+@client_manager_required
 def property_list_view(request):
-    manager_id = request.session.get('manager_id') 
+    logged_in_cm = request.client_manager
+    
+    if request.method == "POST":
+        property_id = request.POST.get("property_id")
+        cm_id = request.POST.get("cm_id")
+
+        prop = get_object_or_404(PropertyManagement, id=property_id, client_manager=logged_in_cm)
+        cm = get_object_or_404(ClientManagers, id=cm_id)
+        prop.client_manager = cm
+        prop.save()
+        return redirect('clientmanager:property_list')
+
     clients = Client.objects.all()
-    properties = PropertyManagement.objects.filter(client_manager_id=manager_id)
-    return render(request, 'clientmanager/property/list.html', {'properties': properties,'clients': clients})
+    properties = PropertyManagement.objects.filter(client_manager=logged_in_cm)
+    all_cms = ClientManagers.objects.all()
+
+    all_cms_json = json.dumps([
+        {
+            "id": cm.id,
+            "name": f"{cm.last_name}, {cm.first_name}",
+            "email": cm.email,
+            "phone": cm.phone_number or cm.office_phone or ""
+        } for cm in all_cms
+    ], cls=DjangoJSONEncoder)
+
+    return render(request, 'clientmanager/property/list.html', {
+        'properties': properties,
+        'clients': clients,
+        'all_cms_json': all_cms_json
+    })
 
 
 def property_detail_view(request, pk):
-    manager_id = request.session.get('manager_id') 
-    # prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
     prop = get_object_or_404(
-        PropertyManagement.objects.prefetch_related('floors__rooms'), pk=pk, client_manager_id=manager_id
+        PropertyManagement.objects.prefetch_related('floors__rooms'), pk=pk
     )
     return render(request, 'clientmanager/property/detail.html', {'property': prop})
 
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from xhtml2pdf import pisa
-import io
-from propertydetails.models import PropertyManagement
-
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from xhtml2pdf import pisa
-from django.conf import settings
-import os
-from django.shortcuts import get_object_or_404
-
-def link_callback(uri, rel):
-    path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
-    return path
-def export_property_pdf(request, pk):
-    prop = get_object_or_404(PropertyManagement, pk=pk)
-    template_path = 'clientmanager/property/pdf_template.html'
-    context = {'property': prop}
-    html = render_to_string(template_path, context)
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="property_{prop.pk}.pdf"'
-
-    pisa.CreatePDF(
-        html,
-        dest=response,
-        link_callback=link_callback  # This fixes the image path issue
-    )
-
-    return response
-
-
-
-
-
-
-from django.shortcuts import render, redirect
-from propertydetails.models import PropertyManagement, Floor, Room
-from mainapp.models import Client 
-from django.db import transaction
+US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
 
 def property_create_view(request):
     clients = Client.objects.all()
     managers = ClientManagers.objects.all()
+    context = {
+        'clients': clients,
+        'managers': managers,
+        'us_states': US_STATES,
+    }
 
     if request.method == 'POST':
         try:
             with transaction.atomic():
                 # Get client_id if selected
+                property_pic = request.FILES.get('property_pic')
                 client_id = request.POST.get('client_id')
                 
                 # If no existing client selected, try creating a new one
                 if not client_id:
                     new_first_name = request.POST.get('new_first_name', '')
                     new_last_name = request.POST.get('new_last_name', '')
-                    new_username = request.POST.get('new_username', '')
                     new_email = request.POST.get('new_email', '')
-                    new_password = request.POST.get('new_password', '')
+                    new_username = ''
+                    new_password = ''
                     new_phone = request.POST.get('new_phone', '')
                     office_phone = request.POST.get('office_phone', '')  
-                    business_address = request.POST.get('business_address', '') 
-
+                    business_address = request.POST.get('business_address', '')
+                    address = request.POST.get('client_address', '')
+                    city = request.POST.get('client_city', '')
+                    state = request.POST.get('client_state', '')
+                    zipcode = request.POST.get('client_zipcode', '')
+                    
                     contact1_name = request.POST.get('contact1_name', '')
                     contact1_last_name = request.POST.get('contact1_last_name', '')
                     contact1_email = request.POST.get('contact1_email', '')
@@ -140,7 +137,6 @@ def property_create_view(request):
                     contact1_office_phone = request.POST.get('contact1_office_phone', '')
                     contact1_buisness_adress = request.POST.get('contact1_buisness_adress', '')
                     contact1_priority = request.POST.get('contact1_priority', '')
-
 
                     # Contact 2 (Secondary)
                     contact2_name = request.POST.get('contact2_name', '')
@@ -151,7 +147,6 @@ def property_create_view(request):
                     contact2_buisness_adress = request.POST.get('contact2_buisness_adress', '')
                     contact2_priority = request.POST.get('contact2_priority', '')
 
-
                     # Contact 3 (Tertiary)
                     contact3_name = request.POST.get('contact3_name', '')
                     contact3_last_name = request.POST.get('contact3_last_name', '')
@@ -161,7 +156,7 @@ def property_create_view(request):
                     contact3_buisness_adress = request.POST.get('contact3_buisness_adress', '')
                     contact3_priority = request.POST.get('contact3_priority', '')
 
-                    # **Contact 4**
+                    # Contact 4
                     contact4_name = request.POST.get('contact4_name', '')
                     contact4_last_name = request.POST.get('contact4_last_name', '')
                     contact4_email = request.POST.get('contact4_email', '')
@@ -170,7 +165,7 @@ def property_create_view(request):
                     contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
                     contact4_priority = request.POST.get('contact4_priority', '')
 
-                    # **Contact 5**
+                    # Contact 5
                     contact5_name = request.POST.get('contact5_name', '')
                     contact5_last_name = request.POST.get('contact5_last_name', '')
                     contact5_email = request.POST.get('contact5_email', '')
@@ -179,64 +174,67 @@ def property_create_view(request):
                     contact5_buisness_adress = request.POST.get('contact5_buisness_adress', '')
                     contact5_priority = request.POST.get('contact5_priority', '')
 
-                    if not all([new_first_name, new_last_name, new_username, new_email, new_password]):
-                        raise ValueError("Fill all required fields for new client")
+                    # Only require basic client information if creating a new client
+                    if new_first_name or new_last_name or new_username or new_email:
+                        if not all([new_first_name, new_last_name, new_email]):
+                            error_message = "Please complete all required fields for the new client"
+                            context['error_message'] = error_message
+                            return render(request, 'clientmanager/property/create.html', context)
 
-                    new_client = Client.objects.create(
-                        first_name=new_first_name,
-                        last_name=new_last_name,
-                        username=new_username,
-                        email=new_email,
-                        password=new_password,  # storing plain for now
-                        phone_number=new_phone,
-                        office_phone=office_phone,  
-                        business_address=business_address,  
+                        # Create new client
+                        new_client = Client.objects.create(
+                            first_name=new_first_name,
+                            last_name=new_last_name,
+                            email=new_email,
+                            phone_number=new_phone,
+                            office_phone=office_phone,
+                            business_address=business_address,
+                            address=address,
+                            city=city,
+                            state=state,
+                            zipcode=zipcode,
+                            
+                            contact1_name=contact1_name,
+                            contact1_last_name=contact1_last_name,
+                            contact1_email=contact1_email,
+                            contact1_phone=contact1_phone,
+                            contact1_office_phone=contact1_office_phone,
+                            contact1_buisness_adress=contact1_buisness_adress,
+                            contact1_priority=contact1_priority,
 
-                        contact1_name=contact1_name,
-                        contact1_last_name=contact1_last_name,
-                        contact1_email=contact1_email,
-                        contact1_phone=contact1_phone,
-                        contact1_office_phone=contact1_office_phone,
-                        contact1_buisness_adress=contact1_buisness_adress,
-                        contact1_priority=contact1_priority,
+                            contact2_name=contact2_name,
+                            contact2_last_name=contact2_last_name,
+                            contact2_email=contact2_email,
+                            contact2_phone=contact2_phone,
+                            contact2_office_phone=contact2_office_phone,
+                            contact2_buisness_adress=contact2_buisness_adress,
+                            contact2_priority=contact2_priority,
 
-                        contact2_name=contact2_name,
-                        contact2_last_name=contact2_last_name,
-                        contact2_email=contact2_email,
-                        contact2_phone=contact2_phone,
-                        contact2_office_phone=contact2_office_phone,
-                        contact2_buisness_adress=contact2_buisness_adress,
-                        contact2_priority=contact2_priority,
+                            contact3_name=contact3_name,
+                            contact3_last_name=contact3_last_name,
+                            contact3_email=contact3_email,
+                            contact3_phone=contact3_phone,
+                            contact3_office_phone=contact3_office_phone,
+                            contact3_buisness_adress=contact3_buisness_adress,
+                            contact3_priority=contact3_priority,
 
-                        contact3_name=contact3_name,
-                        contact3_last_name=contact3_last_name,
-                        contact3_email=contact3_email,
-                        contact3_phone=contact3_phone,
-                        contact3_office_phone=contact3_office_phone,
-                        contact3_buisness_adress=contact3_buisness_adress,
-                        contact3_priority=contact3_priority,
+                            contact4_name=contact4_name,
+                            contact4_last_name=contact4_last_name,
+                            contact4_email=contact4_email,
+                            contact4_phone=contact4_phone,
+                            contact4_office_phone=contact4_office_phone,
+                            contact4_buisness_adress=contact4_buisness_adress,
+                            contact4_priority=contact4_priority,
 
-                        # Contact 4
-                        contact4_name=contact4_name,
-                        contact4_last_name=contact4_last_name,
-                        contact4_email=contact4_email,
-                        contact4_phone=contact4_phone,
-                        contact4_office_phone=contact4_office_phone,
-                        contact4_buisness_adress=contact4_buisness_adress,
-                        contact4_priority=contact4_priority,
-
-                        # Contact 5
-                        contact5_name=contact5_name,
-                        contact5_last_name=contact5_last_name,
-                        contact5_email=contact5_email,
-                        contact5_phone=contact5_phone,
-                        contact5_office_phone=contact5_office_phone,
-                        contact5_buisness_adress=contact5_buisness_adress,
-                        contact5_priority=contact5_priority,
-                        
-                    )
-                    client_id = new_client.id
-                
+                            contact5_name=contact5_name,
+                            contact5_last_name=contact5_last_name,
+                            contact5_email=contact5_email,
+                            contact5_phone=contact5_phone,
+                            contact5_office_phone=contact5_office_phone,
+                            contact5_buisness_adress=contact5_buisness_adress,
+                            contact5_priority=contact5_priority,
+                        )
+                        client_id = new_client.id
                 
                 # Handle client manager - either get existing or create new
                 client_manager_id = request.POST.get('client_manager_id')
@@ -252,30 +250,49 @@ def property_create_view(request):
                 buisness_cm_adress = request.POST.get('buisness_cm_adress', '')
                 
                 # If new client manager details were provided, create a new client manager
-                if new_cm_first_name and new_cm_last_name and new_cm_username and new_cm_email and new_cm_password:
+                if new_cm_first_name or new_cm_last_name or new_cm_username or new_cm_email:
+                    if not all([new_cm_first_name, new_cm_last_name, new_cm_username, new_cm_email, new_cm_password]):
+                        error_message = "Please complete all required fields for the new client manager"
+                        context['error_message'] = error_message
+                        return render(request, 'clientmanager/property/create.html', context)
+                    
                     # Create new client manager
                     new_manager = ClientManagers.objects.create(
                         first_name=new_cm_first_name,
                         last_name=new_cm_last_name,
                         username=new_cm_username,
                         email=new_cm_email,
-                        password=new_cm_password,  # storing plain for now
+                        password=new_cm_password,
                         phone_number=new_cm_phone,
                         office_phone=office_cm_phone,
                         business_address=buisness_cm_adress,
                     )
                     client_manager_id = new_manager.id
                 
-                # Validate required fields
+                # Validate property fields
                 address = request.POST.get('address')
-                if not all([client_id, client_manager_id, address]):
-                    raise ValueError("Client, Client Manager, and Address are required")
+                if not address:
+                    error_message = "Property address is required"
+                    context['error_message'] = error_message
+                    return render(request, 'clientmanager/property/create.html', context)
+                
+                if not client_id:
+                    error_message = "Please select or create a client"
+                    context['error_message'] = error_message
+                    return render(request, 'clientmanager/property/create.html', context)
+                    
+                if not client_manager_id:
+                    error_message = "Please select or create a client manager"
+                    context['error_message'] = error_message
+                    return render(request, 'clientmanager/property/create.html', context)
 
                 # Create the Property
                 prop = PropertyManagement.objects.create(
                     client_id=client_id,
                     client_manager_id=client_manager_id,
                     address=address,
+                    street_line1 = request.POST.get('street_line1', ''),
+                    street_line2 = request.POST.get('street_line2', ''),
                     size_of_home=request.POST.get('size_of_home', ''),
                     number_of_stories=request.POST.get('number_of_stories', ''),
                     construction_type=request.POST.get('construction_type', ''),
@@ -286,9 +303,20 @@ def property_create_view(request):
                     has_hoa='has_hoa' in request.POST,
                     gated_property='gated_property' in request.POST,
                     preferred_contact_method=request.POST.get('preferred_contact_method', 'email'),
-                    state=request.POST.get('state', ''),  # Added state
-                    city=request.POST.get('city', ''),    # Added city
-                    
+                    state=request.POST.get('state', ''),
+                    city=request.POST.get('city', ''),
+                    zipcode=request.POST.get('property_zipcode', ''),
+                    additional_info=request.POST.get('additional_info', ''),
+
+                    # New features
+                    basketball_court='basketball_court' in request.POST,
+                    tennis_court='tennis_court' in request.POST,
+                    pickleball_court='pickleball_court' in request.POST,
+                    hot_tub='hot_tub' in request.POST,
+                    outdoor_kitchen_gazebo='outdoor_kitchen_gazebo' in request.POST,
+                    waterfront='waterfront' in request.POST,
+
+                    property_pic=property_pic,
                 )
 
                 # Loop through each floor and room
@@ -305,7 +333,7 @@ def property_create_view(request):
                     floor = Floor.objects.create(
                         property=prop,
                         floor_name=floor_name,
-                        floor_imgae=floor_image,  # Adding floor image
+                        floor_imgae=floor_image,  # Keeping original field name
                     )
 
                     # Now handle rooms under this floor
@@ -324,36 +352,33 @@ def property_create_view(request):
                 return redirect('clientmanager:property_list')
 
         except Exception as e:
-            print("Error occurred:", str(e))  # Shows error in terminal
-            return render(request, 'clientmanager/property/create.html', {
-                'clients': clients,
-                'managers': managers,
-                'error_message': str(e)
-            })
+            import traceback
+            print("Error occurred:", str(e))
+            print(traceback.format_exc())  # More detailed error for debugging
+            context['error_message'] = f"Error: {str(e)}"
+            return render(request, 'clientmanager/property/create.html', context)
 
-    return render(request, 'clientmanager/property/create.html', {
-        'clients': clients,
-        'managers': managers
-    })
+    return render(request, 'clientmanager/property/create.html', context)
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+
 from django.shortcuts import render, get_object_or_404, redirect
-US_STATES = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-]
-
+from django.contrib.auth.hashers import make_password
 def property_update_view(request, pk):
     prop = get_object_or_404(PropertyManagement, pk=pk)
     client = prop.client
     client_managers = ClientManagers.objects.all()
-
+    if 'delete_property_pic' in request.POST:
+        prop.property_pic.delete(save=True)
     if request.method == 'POST':
         # Handling Property and Client Info Updates
         if 'address' in request.POST:
             # Property fields
             prop.address = request.POST['address']
+            prop.street_line1 = request.POST.get('street1', '')
+            prop.street_line2 = request.POST.get('street2', '')
             prop.size_of_home = request.POST.get('size_of_home', '')
             prop.number_of_stories = request.POST.get('number_of_stories', '')
             prop.construction_type = request.POST.get('construction_type', '')
@@ -375,7 +400,9 @@ def property_update_view(request, pk):
             prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
             prop.zipcode = request.POST.get('property_zipcode', '')     # Added City 
             prop.additional_info = request.POST.get('additional_info', '')
-
+            property_pic = request.FILES.get('property_pic')
+            if property_pic:
+                prop.property_pic = property_pic
             prop.save()
 
             # Update Client info
@@ -389,6 +416,9 @@ def property_update_view(request, pk):
             client.zipcode = request.POST.get('client_zipcode', '')
             client.phone_number = request.POST.get('client_phone_number', '')
             client.preferred_contact_method = request.POST.get('client_preferred_contact_method', 'email')
+            new_password = request.POST.get('client_password', '')
+            if new_password and not new_password.startswith('pbkdf2_'):
+                client.password = make_password(new_password)
 
             # Update contact persons info (if necessary)
             # Contact Person 1
@@ -432,17 +462,21 @@ def property_update_view(request, pk):
             client.contact4_priority = request.POST.get('contact4_priority', '')
 
             # Contact Person 4 Update
-            client.contact4_name = request.POST.get('contact4_name', '')
-            client.contact4_last_name = request.POST.get('contact4_last_name', '')
-            client.contact4_email = request.POST.get('contact4_email', '')
-            client.contact4_phone = request.POST.get('contact4_phone', '')
-            client.contact4_office_phone = request.POST.get('contact4_office_phone', '')
-            client.contact4_buisness_adress = request.POST.get('contact4_buisness_adress', '')
-            client.contact4_preferred = request.POST.get('contact4_preferred', '')
-            client.contact4_priority = request.POST.get('contact4_priority', '')
+            client.contact5_name = request.POST.get('contact4_name', '')
+            client.contact5_last_name = request.POST.get('contact4_last_name', '')
+            client.contact5_email = request.POST.get('contact4_email', '')
+            client.contact5_phone = request.POST.get('contact4_phone', '')
+            client.contact5_office_phone = request.POST.get('contact4_office_phone', '')
+            client.contact5_buisness_adress = request.POST.get('contact4_buisness_adress', '')
+            client.contact5_preferred = request.POST.get('contact4_preferred', '')
+            client.contact5_priority = request.POST.get('contact4_priority', '')
 
             client.save()
 
+            # Update floors and rooms (including floor image)
+            # Replace the floor and room handling section in your property_update_view with this:
+
+            # Update floors and rooms (including floor image)
             existing_floors = list(prop.floors.all())
             floors_to_keep = []
 
@@ -537,92 +571,46 @@ def property_update_view(request, pk):
         'client': client,
         'client_managers': client_managers,
         'selected_client_manager': prop.client_manager,
-        'us_states': US_STATES,
+        'us_states': US_STATES,  # ✅ Pass it to the template
     })
 
 
-
 # def property_update_view(request, pk):
-#     manager_id = request.session.get('manager_id') 
-#     prop = get_object_or_404(PropertyManagement, pk=pk, client_manager_id=manager_id)
+#     prop = get_object_or_404(PropertyManagement, pk=pk)
+#     client_managers = ClientManagers.objects.all()
 
 #     if request.method == 'POST':
-#         # Update Property fields
-#         prop.address = request.POST['address']
-#         prop.size_of_home = request.POST.get('size_of_home', '')
-#         prop.number_of_stories = request.POST.get('number_of_stories', '')
-#         prop.construction_type = request.POST.get('construction_type', '')
-#         prop.year_built = request.POST.get('year_built', '')
-#         prop.has_pool = 'has_pool' in request.POST
-#         prop.gated_community = 'gated_community' in request.POST
-#         prop.impact_windows = 'impact_windows' in request.POST
-#         prop.has_hoa = 'has_hoa' in request.POST
-#         prop.gated_property = 'gated_property' in request.POST
-#         prop.preferred_contact_method = request.POST.get('preferred_contact_method', 'email')
-#         prop.save()
+#         submitted_cm_id = request.POST.get('new_cm')
+#         print("Submitted CM ID:", submitted_cm_id)
 
-#         # Process Floors and Rooms
-#         existing_floors = {f"floor_name_{i}": floor for i, floor in enumerate(prop.floors.all(), start=1)}
-
-#         i = 1
-#         while True:
-#             floor_key = f'floor_name_{i}'
-#             if floor_key not in request.POST:
-#                 break
-
-#             floor_name = request.POST.get(floor_key)
-
-#             # Reuse or create floor
-#             floor = existing_floors.get(floor_key)
-#             if floor:
-#                 floor.floor_name = floor_name
-#                 floor.save()
-#             else:
-#                 floor = Floor.objects.create(property=prop, floor_name=floor_name)
-
-#             j = 1
-#             while True:
-#                 room_name_key = f'room_name_{i}_{j}'
-#                 room_size_key = f'room_size_{i}_{j}'
-#                 room_image_key = f'room_image_{i}_{j}'
-
-#                 if room_name_key not in request.POST:
-#                     break
-
-#                 room_name = request.POST.get(room_name_key)
-#                 room_size = request.POST.get(room_size_key)
-#                 room_image = request.FILES.get(room_image_key)
-
-#                 # Try to reuse an existing room or create a new one
-#                 if j <= floor.rooms.count():
-#                     room = floor.rooms.all()[j-1]
-#                     room.room_name = room_name
-#                     room.room_size = room_size
-#                     if room_image:
-#                         room.room_image = room_image
-#                     room.save()
-#                 else:
-#                     Room.objects.create(
-#                         floor=floor,
-#                         room_name=room_name,
-#                         room_size=room_size,
-#                         room_image=room_image
-#                     )
-#                 j += 1
-#             i += 1
+#         if submitted_cm_id:
+#             new_cm = get_object_or_404(ClientManagers, pk=submitted_cm_id)
+#             prop.client_manager = new_cm
+#             prop.save()
+#             print("Client Manager updated to:", new_cm.id)
 
 #         return redirect('clientmanager:property_list')
 
-#     floors = prop.floors.prefetch_related('rooms').all()
 #     return render(request, 'clientmanager/property/edit.html', {
 #         'property': prop,
-#         'floors': floors
+#         'client_managers': client_managers
 #     })
 
 
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.conf import settings
+import os
+from django.shortcuts import get_object_or_404
+
+from mainapp.models import Vendor
+import uuid
+from mainapp.models import Vendor, VendorContact
+
 def property_delete_view(request, pk):
-    # manager_id = request.session.get('manager_id')     client_manager_id='manager_id'
-    prop = get_object_or_404(PropertyManagement, pk=pk,)
+    prop = get_object_or_404(PropertyManagement, pk=pk)
 
     if request.method == 'POST':
         prop.delete()
@@ -630,258 +618,294 @@ def property_delete_view(request, pk):
 
     return render(request, 'clientmanager/property/delete.html', {'property': prop})
 
-# Building Services  ---------------------------------------------------------------------------------------------------------------
-from mainapp.models import Vendor
+def link_callback(uri, rel):
+    path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
+    return path
+def export_property_pdf(request, pk):
+    prop = get_object_or_404(PropertyManagement, pk=pk)
+    template_path = 'clientmanager/property/pdf_template.html'
+    context = {'property': prop}
+    html = render_to_string(template_path, context)
 
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="property_{prop.pk}.pdf"'
+
+    pisa.CreatePDF(
+        html,
+        dest=response,
+        link_callback=link_callback  # This fixes the image path issue
+    )
+
+    return response
+
+# Starting of vendor -----------------------------------------------------------------------------------------------------------------
+US_STATES = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+]
+from mainapp.models import Vendor, VendorServices
 # List vendors
+from mainapp.models import Vendor, VendorContact
+
 def vendor_list(request):
-    if not request.session.get('manager_id'):
-        return redirect('clientmanager:client_login')
-    vendors = Vendor.objects.all()
+    vendors = Vendor.objects.prefetch_related('contacts').all()
+    
+    # Add first service to each vendor
+    for vendor in vendors:
+        if vendor.service:
+            vendor.first_service = vendor.service.split(',')[0].strip()
+        else:
+            vendor.first_service = ''
+    
     return render(request, 'clientmanager/vendor/list.html', {'vendors': vendors})
 
 
 def create_vendor(request):
-    if not request.session.get('manager_id'):
-        return redirect('clientmanager:client_login')
-
     if request.method == 'POST':
-        # 1. Get selected checkbox services
-        services = request.POST.getlist('service[]')  # list of checked values
+        # Handle new service creation
+        new_service = request.POST.get('new_service', '').strip()
+        if new_service:
+            # Check if service already exists
+            if not VendorServices.objects.filter(service__iexact=new_service).exists():
+                VendorServices.objects.create(service=new_service)
+        
+        # Get main service and additional services
+        main_service = request.POST.get('main_service', '')
+        additional_service_1 = request.POST.get('additional_service_1', '')
+        additional_service_2 = request.POST.get('additional_service_2', '')
+        
+        # Combine all services
+        combined_services = []
+        if main_service:
+            combined_services.append(main_service)
+        if additional_service_1:
+            combined_services.append(additional_service_1)
+        if additional_service_2:
+            combined_services.append(additional_service_2)
 
-        # 2. Get comma-separated custom services
-        additional_services = request.POST.get('additional_service', '').strip()
-        if additional_services:
-            custom_list = [s.strip() for s in additional_services.split(',') if s.strip()]
-            services.extend(custom_list)  # combine both
-
-        # 3. Join all services into one string
-        service_str = ','.join(services)
-
-        Vendor.objects.create(
+        # Create new vendor
+        vendor = Vendor.objects.create(
             company_name=request.POST.get('company_name'),
-            username=request.POST.get('username'),
-            address=request.POST.get('address'),
+            street=request.POST.get('street'),
+            website=request.POST.get('website'),
+            suite=request.POST.get('suite'),
+            notes=request.POST.get('notes'),
             city=request.POST.get('city'),
             state=request.POST.get('state'),
             zip_code=request.POST.get('zip_code'),
-            email=request.POST.get('email'),
             phone_number=request.POST.get('phone_number'),
-            service=service_str,
+            service=', '.join(combined_services),
         )
+
+        # Create contacts
+        contact_first_names = request.POST.getlist('contact_first_name[]')
+        contact_last_names = request.POST.getlist('contact_last_name[]')
+        contact_cells = request.POST.getlist('contact_cell[]')
+        contact_emails = request.POST.getlist('contact_email[]')
+
+        for i in range(len(contact_first_names)):
+            if contact_first_names[i].strip() and contact_last_names[i].strip():
+                VendorContact.objects.create(
+                    vendor=vendor,
+                    first_name=contact_first_names[i].strip(),
+                    last_name=contact_last_names[i].strip(),
+                    cell=contact_cells[i].strip() if i < len(contact_cells) else '',
+                    email=contact_emails[i].strip() if i < len(contact_emails) else ''
+                )
+
         return redirect('clientmanager:vendor_list')
 
-    return render(request, 'clientmanager/vendor/create.html', {
-        'service_choices': Vendor.SERVICE_CHOICES
-    })
+    # Get services from database
+    vendor_services = VendorServices.objects.all().order_by('service')
 
+    context = {
+        'vendor_services': vendor_services,
+        'US_STATES': US_STATES,
+    }
 
-# Edit vendor
+    return render(request, 'clientmanager/vendor/create.html', context)
+
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
 
     if request.method == 'POST':
+        # Get main service and additional services
+        main_service = request.POST.get('main_service', '')
+        additional_service_1 = request.POST.get('additional_service_1', '')
+        additional_service_2 = request.POST.get('additional_service_2', '')
+        
+        # Combine all services
+        combined_services = []
+        if main_service:
+            combined_services.append(main_service)
+        if additional_service_1:
+            combined_services.append(additional_service_1)
+        if additional_service_2:
+            combined_services.append(additional_service_2)
+
+        # Update vendor fields
         vendor.company_name = request.POST.get('company_name')
-        vendor.username = request.POST.get('username')
-        vendor.address = request.POST.get('address')
+        vendor.street = request.POST.get('street')
+        vendor.website = request.POST.get('website')
+        vendor.suite = request.POST.get('suite')
+        vendor.notes = request.POST.get('notes')
         vendor.city = request.POST.get('city')
         vendor.state = request.POST.get('state')
         vendor.zip_code = request.POST.get('zip_code')
-        vendor.email = request.POST.get('email')
         vendor.phone_number = request.POST.get('phone_number')
-
-        # Get selected services and additional services
-        selected_services = request.POST.getlist('service[]')
-        additional_service = request.POST.get('additional_service', '')
-
-        # Combine them into one string, if you're storing as comma-separated
-        combined_services = selected_services
-        if additional_service:
-            additional_list = [s.strip() for s in additional_service.split(',') if s.strip()]
-            combined_services += additional_list
-
-        # Save combined service string (e.g. comma-separated)
         vendor.service = ', '.join(combined_services)
         vendor.save()
 
-        return redirect('adminmanager:vendor_list')
+        # Handle contacts - delete existing and create new ones
+        VendorContact.objects.filter(vendor=vendor).delete()
 
-    # Prepare existing services for form pre-checking
-    existing_services = vendor.service.split(',') if vendor.service else []
+        contact_first_names = request.POST.getlist('contact_first_name[]')
+        contact_last_names = request.POST.getlist('contact_last_name[]')
+        contact_cells = request.POST.getlist('contact_cell[]')
+        contact_emails = request.POST.getlist('contact_email[]')
+
+        for i in range(len(contact_first_names)):
+            if contact_first_names[i].strip() and contact_last_names[i].strip():
+                VendorContact.objects.create(
+                    vendor=vendor,
+                    first_name=contact_first_names[i].strip(),
+                    last_name=contact_last_names[i].strip(),
+                    cell=contact_cells[i].strip() if i < len(contact_cells) else '',
+                    email=contact_emails[i].strip() if i < len(contact_emails) else ''
+                )
+
+        return redirect('clientmanager:vendor_list')
+
+    # Get existing data
+    existing_contacts = VendorContact.objects.filter(vendor=vendor)
+    existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
+    
+    # Parse existing services
+    main_service = existing_services[0] if existing_services else ''
+    additional_service_1 = existing_services[1] if len(existing_services) > 1 else ''
+    additional_service_2 = existing_services[2] if len(existing_services) > 2 else ''
+
+    # Get services from database
+    vendor_services = VendorServices.objects.all().order_by('service')
 
     context = {
         'vendor': vendor,
-        'selected_services': [s.strip() for s in existing_services],
-        'service_choices': Vendor.SERVICE_CHOICES,
+        'existing_contacts': existing_contacts,
+        'main_service': main_service,
+        'additional_service_1': additional_service_1,
+        'additional_service_2': additional_service_2,
+        'vendor_services': vendor_services,
+        'US_STATES': US_STATES,
     }
 
-    return render(request, 'adminmanager/vendor/edit.html', context)
+    return render(request, 'clientmanager/vendor/edit.html', context)
+def vendor_details(request, vendor_id):
+    vendor = get_object_or_404(Vendor, id=vendor_id)
 
+    # Get existing contacts
+    existing_contacts = VendorContact.objects.filter(vendor=vendor)
+    existing_services = [s.strip() for s in vendor.service.split(',')] if vendor.service else []
 
+    # Parse services
+    main_service = existing_services[0] if existing_services else ''
+    additional_service_1 = existing_services[1] if len(existing_services) > 1 else ''
+    additional_service_2 = existing_services[2] if len(existing_services) > 2 else ''
 
+    # Get services from database (if you want to show full list for reference)
+    vendor_services = VendorServices.objects.all().order_by('service')
+
+    context = {
+        'vendor': vendor,
+        'existing_contacts': existing_contacts,
+        'main_service': main_service,
+        'additional_service_1': additional_service_1,
+        'additional_service_2': additional_service_2,
+        'vendor_services': vendor_services,
+        'US_STATES': US_STATES,
+    }
+
+    return render(request, 'clientmanager/vendor/details.html', context)
 
 # Delete vendor
 def delete_vendor(request, vendor_id):
-    if not request.session.get('manager_id'):
-        return redirect('clientmanager:client_login')
-
     vendor = get_object_or_404(Vendor, id=vendor_id)
     vendor.delete()
     return redirect('clientmanager:vendor_list')
 
-
-# Client Manager Profile Update ---------------------------------------------------------------------------------------------------------------   
-from django.shortcuts import render, redirect, get_object_or_404
-from mainapp.models import ClientManagers
-
-def clientmanager_profile_view(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    clientmanager = get_object_or_404(ClientManagers, id=manager_id)
-    return render(request, 'clientmanager/profile/clientmanager_profile_view.html', {
-        'clientmanager': clientmanager
-    })
-
-
-def clientmanager_profile_edit(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    clientmanager = get_object_or_404(ClientManagers, id=manager_id)
-
+def manage_vendor_services(request):
     if request.method == 'POST':
-        clientmanager.first_name = request.POST.get('first_name')
-        clientmanager.last_name = request.POST.get('last_name')
-        clientmanager.email = request.POST.get('email')
-        clientmanager.phone_number = request.POST.get('phone_number')
-        clientmanager.city = request.POST.get('city')
-        clientmanager.state = request.POST.get('state')
-        clientmanager.zipcode = request.POST.get('zipcode')
-        clientmanager.preferred_contact_method = request.POST.get('preferred_contact_method')
-
-        if request.POST.get('password'):
-            clientmanager.set_password(request.POST.get('password'))
-
-        clientmanager.save()
-        return redirect('clientmanager:clientmanager_profile_view')
-
-    return render(request, 'clientmanager/profile/clientmanager_profile_edit.html', {
-        'clientmanager': clientmanager,
-        'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES
-    })
-
-
-# Pre Arrival reqeust to client Manager ---------------------------------------------------------------------------------------------------------------
-from servicedetails.models import PrearrivalInformation, Client
-
-# View all requests
-
-def clientmanager_prearrival_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    all_requests = PrearrivalInformation.objects.all().order_by('-id')
-
-    return render(request, 'clientmanager/prearrival/prearrival_list.html', {
-        'requests': all_requests
-    })
-
-# View single request
-def clientmanager_prearrival_detail(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    request_detail = get_object_or_404(PrearrivalInformation, id=request_id)
-
-    return render(request, 'clientmanager/prearrival/prearrival_detail.html', {
-        'request_detail': request_detail
-    })
+        action = request.POST.get('action')
+        
+        if action == 'add':
+            service_name = request.POST.get('service', '').strip()
+            if service_name:
+                if VendorServices.objects.filter(service__iexact=service_name).exists():
+                    messages.error(request, 'This service already exists.')
+                else:
+                    VendorServices.objects.create(service=service_name)
+                    messages.success(request, 'Service added successfully.')
+            else:
+                messages.error(request, 'Service name is required.')
+        
+        elif action == 'edit':
+            service_id = request.POST.get('service_id')
+            service_name = request.POST.get('service', '').strip()
+            if service_id and service_name:
+                service = get_object_or_404(VendorServices, id=service_id)
+                if VendorServices.objects.filter(service__iexact=service_name).exclude(id=service_id).exists():
+                    messages.error(request, 'This service name already exists.')
+                else:
+                    service.service = service_name
+                    service.save()
+                    messages.success(request, 'Service updated successfully.')
+            else:
+                messages.error(request, 'Service name is required.')
+        
+        elif action == 'delete':
+            service_id = request.POST.get('service_id')
+            if service_id:
+                service = get_object_or_404(VendorServices, id=service_id)
+                service_name = service.service
+                service.delete()
+                messages.success(request, f'Service "{service_name}" deleted successfully.')
+    
+    services = VendorServices.objects.all().order_by('service')
+    context = {
+        'services': services
+    }
+    return render(request, 'clientmanager/vendor/manage.html', context)
 
 
-# Departure requests ---------------------------------------------------------------------------------------------------------------
-# views.py
-
-from servicedetails.models import DepartureInformation
-
-def clientmanager_departure_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    all_departure_requests = DepartureInformation.objects.all().order_by('-id')
-
-    return render(request, 'clientmanager/departure/departure_list.html', {
-        'requests': all_departure_requests
-    })
-
-
-def clientmanager_departure_detail(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    departure_request = get_object_or_404(DepartureInformation, id=request_id)
-
-    return render(request, 'clientmanager/departure/departure_detail.html', {
-        'request_detail': departure_request
-    })
-
-
-# Building pending completed denied services --------------------------------------------------------------------------------
-# from django.shortcuts import render
-# from django.shortcuts import render, redirect
-
-# def client_manager_dashboard(request):
-#     client_id = request.session.get('client_id')
-
-#     if not client_id:
-#         return redirect('clientmanager:client_login')  # or wherever your login page is
-
-#     client_manager = ClientManagers.objects.get(id=client_id)
-#     clients = Client.objects.filter(properties__client_manager=client_manager).distinct()
-
-#     return render(request, 'client_manager_dashboard.html', {
-#         'client_count': clients.count(),
-#         'clients': clients,
-#     })
-
-
-# Building pending completed denied services --------------------------------------------------------------------------------
+# Building pending completed denied services ----------------------------------------------------------------------------------------------
 from django.shortcuts import render, redirect, get_object_or_404
 from servicedetails.models import ServiceRequest
 from mainapp.models import Vendor
 
 def pending_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
     requests = ServiceRequest.objects.filter(status='pending')
     return render(request, 'clientmanager/servicerequests/pending.html', {'requests': requests})
 
+from django.db.models import Q
+
 def open_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = ServiceRequest.objects.filter(status='open')
+    # Show all except if both are approved and completed OR both are denied
+    requests = ServiceRequest.objects.exclude(
+        Q(status='completed', client_approval='Approved') |
+        Q(status='denied', client_approval='Denied')
+    )
     return render(request, 'clientmanager/servicerequests/open.html', {'requests': requests})
 
 def completed_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = ServiceRequest.objects.filter(status='completed')
+    # Only if both are completed and approved
+    requests = ServiceRequest.objects.filter(status='completed', client_approval='Approved')
     return render(request, 'clientmanager/servicerequests/completed.html', {'requests': requests})
 
 def denied_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = ServiceRequest.objects.filter(status='denied')
+    # Only if both are denied
+    requests = ServiceRequest.objects.filter(status='denied', client_approval='Denied')
     return render(request, 'clientmanager/servicerequests/denied.html', {'requests': requests})
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -889,9 +913,6 @@ from django.utils.dateparse import parse_date
 from django.contrib import messages
 
 def update_service_request(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
     request_obj = get_object_or_404(ServiceRequest, id=request_id)
     vendors = Vendor.objects.all()
 
@@ -912,7 +933,7 @@ def update_service_request(request, request_id):
         parsed_date = parse_date(date_str)
         if not parsed_date:
             messages.error(request, "Completation Denied Date is required and must be valid.")
-            return render(request, 'adminmanager/servicerequests/update.html', {
+            return render(request, 'clientmanager/servicerequests/update.html', {
                 'request_obj': request_obj,
                 'vendors': vendors,
             })
@@ -928,109 +949,116 @@ def update_service_request(request, request_id):
     })
 
 
-
-# def update_service_request(request, request_id):
-#     manager_id = request.session.get('manager_id') 
-#     if not manager_id:
-#         return redirect('clientmanager:client_login')
-
-#     request_obj = get_object_or_404(ServiceRequest, id=request_id)
-#     vendors = Vendor.objects.all()
-
-#     if request.method == 'POST':
-#         request_obj.status = request.POST.get('status')
-#         vendor_id = request.POST.get('vendor')
-#         if vendor_id:
-#             request_obj.vendor = Vendor.objects.get(id=vendor_id)
-#         else:
-#             request_obj.vendor = None
-
-        
-#         request_obj.save()
-#         messages.success(request, 'Request Updated Successfully!')
-#         return redirect(request.META.get('HTTP_REFERER', '/'))
-
-#     return render(request, 'clientmanager/servicerequests/update.html', {
-#         'request_obj': request_obj,
-#         'vendors': vendors,
-#     })
-
 def service_request_detail(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
     request_obj = get_object_or_404(ServiceRequest, id=request_id)
 
     return render(request, 'clientmanager/servicerequests/detail_view.html', {
         'request_obj': request_obj
     })
 
-# Congiure Request ----------------------------------------------------------------------------------------------------------------------
+
+
+# Service reqiuest new part starts here -------------------------------------------------------------------------
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+@csrf_exempt
+@require_POST
+def update_service_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        service_request.cost = amount
+        service_request.cost_remarks = remarks
+        service_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def modify_client_approval(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        approval_status = data.get('approval_status')
+        
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        service_request.client_approval = approval_status
+        service_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_POST
+def change_request_status(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        status = data.get('status')
+        completion_date = data.get('completion_date')
+        remarks = data.get('remarks', '')
+        
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        service_request.status = status
+        
+        if completion_date:
+            from datetime import datetime
+            service_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+        
+        service_request.status_remarks = remarks
+        service_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+
+
+
+
+# Consiguerge requests -------------------------------------------------------------------------------------------------
 from servicedetails.models import ConciergeServiceRequest
 
 # Pending
 def concierge_pending_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
     requests = ConciergeServiceRequest.objects.filter(status='pending')
     return render(request, 'clientmanager/conciergerequests/pending.html', {'requests': requests})
 
+from django.db.models import Q
+
 # Open
 def concierge_open_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = ConciergeServiceRequest.objects.filter(status='open')
+    # Show all except if both are approved and completed OR both are denied
+    requests = ConciergeServiceRequest.objects.exclude(
+        Q(status='completed', client_approval='Approved') |
+        Q(status='denied', client_approval='Denied')
+    )
     return render(request, 'clientmanager/conciergerequests/open.html', {'requests': requests})
 
 # Completed
 def concierge_completed_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = ConciergeServiceRequest.objects.filter(status='completed')
+    # Only if both are completed and approved
+    requests = ConciergeServiceRequest.objects.filter(status='completed', client_approval='Approved')
     return render(request, 'clientmanager/conciergerequests/completed.html', {'requests': requests})
 
 # Denied
 def concierge_denied_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = ConciergeServiceRequest.objects.filter(status='denied')
+    # Only if both are denied
+    requests = ConciergeServiceRequest.objects.filter(status='denied', client_approval='Denied')
     return render(request, 'clientmanager/conciergerequests/denied.html', {'requests': requests})
 
-# # Update
-# def update_concierge_request(request, request_id):
-#     manager_id = request.session.get('manager_id') 
-#     if not manager_id:
-#         return redirect('clientmanager:client_login')
-
-#     request_obj = get_object_or_404(ConciergeServiceRequest, id=request_id)
-#     vendors = Vendor.objects.all()
-
-#     if request.method == 'POST':
-#         request_obj.status = request.POST.get('status')
-#         vendor_id = request.POST.get('vendor')
-#         if vendor_id:
-#             request_obj.vendor = Vendor.objects.get(id=vendor_id)
-#         else:
-#             request_obj.vendor = None
-#         request_obj.save()
-#         messages.success(request, 'Request Updated Successfully!')
-#         return redirect(request.META.get('HTTP_REFERER', '/'))
-
-#     return render(request, 'clientmanager/conciergerequests/update.html', {
-#         'request_obj': request_obj,
-#         'vendors': vendors,
-#     })
+from django.utils.dateparse import parse_date
+from django.contrib import messages
 
 def update_concierge_request(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
     request_obj = get_object_or_404(ConciergeServiceRequest, id=request_id)
     vendors = Vendor.objects.all()
 
@@ -1051,7 +1079,7 @@ def update_concierge_request(request, request_id):
 
         if not parsed_date:
             messages.error(request, "Completation Denied Date is required and must be valid.")
-            return render(request, 'clientnager/conciergerequests/update.html', {
+            return render(request, 'clientmanager/conciergerequests/update.html', {
                 'request_obj': request_obj,
                 'vendors': vendors,
             })
@@ -1069,178 +1097,406 @@ def update_concierge_request(request, request_id):
 
 # View
 def view_concierge_request(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
     request_obj = get_object_or_404(ConciergeServiceRequest, id=request_id)
     return render(request, 'clientmanager/conciergerequests/view.html', {
         'request_obj': request_obj
     })
 
 
-# property Improvement Request ---------------------------------------------------------------------------------------------------------------
-from propertydetails.models import PropertyImprovement
+@csrf_exempt
+@require_POST
+def update_concierge_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        concierge_request = get_object_or_404(ConciergeServiceRequest, id=request_id)
+        concierge_request.cost = amount
+        concierge_request.cost_remarks = remarks
+        concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
-# Pending
-def property_pending_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = PropertyImprovement.objects.filter(status='pending')
-    return render(request, 'clientmanager/propertyimprovement/pending.html', {'requests': requests})
+@csrf_exempt
+@require_POST
+def modify_concierge_approval(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        approval_status = data.get('approval_status')
+        
+        concierge_request = get_object_or_404(ConciergeServiceRequest, id=request_id)
+        concierge_request.client_approval = approval_status
+        concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
-# Open
-def property_open_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = PropertyImprovement.objects.filter(status='open')
-    return render(request, 'clientmanager/propertyimprovement/open.html', {'requests': requests})
-
-# Completed
-def property_completed_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = PropertyImprovement.objects.filter(status='completed')
-    return render(request, 'clientmanager/propertyimprovement/completed.html', {'requests': requests})
-
-# Denied
-def property_denied_requests(request):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-    requests = PropertyImprovement.objects.filter(status='denied')
-    return render(request, 'clientmanager/propertyimprovement/denied.html', {'requests': requests})
-
-# Update
-def update_property_request(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    request_obj = get_object_or_404(PropertyImprovement, id=request_id)
-    vendors = Vendor.objects.all()
-
-    if request.method == 'POST':
-        status = request.POST.get('status')
-        cost = request.POST.get('cost')
-        vendor_id = request.POST.get('vendor')
-
-        if status:
-            request_obj.status = status
-
-        if cost:
-            request_obj.cost = cost
-
-        if vendor_id:
-            try:
-                request_obj.vendor = Vendor.objects.get(id=vendor_id)
-            except Vendor.DoesNotExist:
-                request_obj.vendor = None
-
-        request_obj.save()
-        messages.success(request, 'Request Updated Successfully!')
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-
-    return render(request, 'clientmanager/propertyimprovement/update.html', {
-        'request_obj': request_obj,
-        'vendors': vendors,
-    })
-
-# View
-def view_property_request(request, request_id):
-    manager_id = request.session.get('manager_id') 
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    request_obj = get_object_or_404(PropertyImprovement, id=request_id)
-    return render(request, 'clientmanager/propertyimprovement/view.html', {
-        'request_obj': request_obj
-    })
-
-
-# Building WALKTHROUGH REPORT ------------------------------------------------------------------------------------------
-from django.shortcuts import render
-from django.http import HttpResponse
-from walkthroughreport.models import WalkthroughReport
-from mainapp.models import Client
-from django.views.decorators.csrf import csrf_exempt
-
-# def submit_walkthrough(request):
-#     if request.method == "POST":
-#         data = request.POST
-
-#         # Only set fields that are present
-#         kwargs = {}
-#         if data.get("user"):
-#             try:
-#                 kwargs["user"] = Client.objects.get(id=data.get("user"))
-#             except Client.DoesNotExist:
-#                 return HttpResponse("Invalid client", status=400)
-
-#         for field in WalkthroughReport._meta.get_fields():
-#             if field.name in data and field.name != 'user':
-#                 val = data.get(field.name)
-#                 if val != "":
-#                     kwargs[field.name] = val
-
-#         WalkthroughReport.objects.create(**kwargs)
-#         return HttpResponse("Submitted Successfully")
+@csrf_exempt
+@require_POST
+def change_concierge_status(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        status = data.get('status')
+        completion_date = data.get('completion_date')
+        remarks = data.get('remarks', '')
+        
+        concierge_request = get_object_or_404(ConciergeServiceRequest, id=request_id)
+        concierge_request.status = status
+        
+        if completion_date:
+            from datetime import datetime
+            concierge_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+        
+        concierge_request.status_remarks = remarks
+        concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
     
-#     clients = Client.objects.all()
-#     return render(request, "clientmanager/walkthrough/submit_walkthrough.html", {"clients": clients})
 
-from django import forms
+# Pre Arrival reqeust to client Manager ---------------------------------------------------------------------------------------------------------------
+from servicedetails.models import PrearrivalInformation, Client
+from django.views.decorators.http import require_http_methods
+# View all requests
 
-class WalkthroughReportForm(forms.ModelForm):
-    class Meta:
-        model = WalkthroughReport
-        fields = '__all__'
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
-        self.fields['user'].label_from_instance = lambda obj: f"{obj.last_name}, {obj.first_name}"
-        self.fields['property'].label_from_instance = lambda obj: obj.address  # Only show address
+def clientmanager_prearrival_requests(request):
+    # Show only Open status
+    all_requests = PrearrivalInformation.objects.filter(status='open').order_by('-id')
 
-
-def walkthrough_report_view(request):
-    if request.method == 'POST':
-        form = WalkthroughReportForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('clientmanager:walkthrough-success')
-    else:
-        form = WalkthroughReportForm()
-    return render(request, 'clientmanager/walkthrough/walkthrough_form.html', {'form': form})
-
-def walkthrough_success_view(request):
-    return render(request, 'clientmanager/walkthrough_success.html')
-
-def update_walkthrough_report(request, report_id):
-    report = get_object_or_404(WalkthroughReport, id=report_id)
-
-    if request.method == 'POST':
-        status = request.POST.get('status')
-        cost = request.POST.get('cost')
-
-        if status:
-            report.status = status
-        if cost:
-            try:
-                report.cost = int(cost)
-            except ValueError:
-                pass
-
-        report.save()
-        return redirect('clientmanager:all_reports')
-
-    return render(request, 'clientmanager/walkthrough/update_report.html', {
-        'report': report,
-        'base_template': 'cmbase.html'
+    return render(request, 'clientmanager/prearrival/prearrival_list.html', {
+        'requests': all_requests
     })
+
+
+def clientmanager_prearrival_completed_requests(request):
+    # Show only Completed status
+    all_requests = PrearrivalInformation.objects.filter(status='completed').order_by('-id')
+
+    return render(request, 'clientmanager/prearrival/prearrival_completed.html', {
+        'requests': all_requests
+    })
+
+
+from servicedetails.models import PrearrivalInformation
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_prearrival_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        prearrival_request = PrearrivalInformation.objects.get(id=request_id)
+        prearrival_request.cost = int(float(amount)) if amount else 0
+        prearrival_request.cost_remarks = remarks
+        prearrival_request.save()
+        
+        return JsonResponse({'success': True})
+    except PrearrivalInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_prearrival_approval(request):
+   try:
+       data = json.loads(request.body)
+       request_id = data.get('request_id')
+       approval_status = data.get('approval_status')
+       
+       prearrival_request = PrearrivalInformation.objects.get(id=request_id)
+       prearrival_request.client_approval = approval_status
+       
+       prearrival_request.save()
+       
+       return JsonResponse({'success': True})
+   except PrearrivalInformation.DoesNotExist:
+       return JsonResponse({'success': False, 'error': 'Request not found'})
+   except Exception as e:
+       return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_prearrival_status(request):
+   try:
+       data = json.loads(request.body)
+       request_id = data.get('request_id')
+       status = data.get('status')
+       completion_date = data.get('completion_date')
+       remarks = data.get('remarks')
+       
+       prearrival_request = PrearrivalInformation.objects.get(id=request_id)
+       prearrival_request.status = status
+       prearrival_request.status_remarks = remarks
+       
+       # Update completation_denied_date field
+       if completion_date:
+           from datetime import datetime
+           prearrival_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+       else:
+           prearrival_request.completation_denied_date = None
+       
+       prearrival_request.save()
+       
+       return JsonResponse({'success': True})
+   except PrearrivalInformation.DoesNotExist:
+       return JsonResponse({'success': False, 'error': 'Request not found'})
+   except ValueError as ve:
+       return JsonResponse({'success': False, 'error': f'Date format error: {str(ve)}'})
+   except Exception as e:
+       return JsonResponse({'success': False, 'error': str(e)})
+# View single request
+def clientmanager_prearrival_detail(request, request_id):
+    request_detail = get_object_or_404(PrearrivalInformation, id=request_id)
+
+    if request.method == 'POST' and 'complete' in request.POST:
+        request_detail.status = 'completed'
+        request_detail.save()
+        return redirect('clientmanager:prearrival_requests')
+
+    return render(request, 'clientmanager/prearrival/prearrival_detail.html', {
+        'request_detail': request_detail
+    })
+
+
+# Departure requests ---------------------------------------------------------------------------------------------------------------
+# views.py
+
+from servicedetails.models import DepartureInformation
+def clientmanager_departure_requests(request):
+    all_departure_requests = DepartureInformation.objects.filter(status='open').order_by('-id')
+
+    return render(request, 'clientmanager/departure/departure_list.html', {
+        'requests': all_departure_requests
+    })
+
+
+def clientmanager_departure_completed_requests(request):
+    all_departure_requests = DepartureInformation.objects.filter(status='completed').order_by('-id')
+
+    return render(request, 'clientmanager/departure/departure_completed_list.html', {
+        'requests': all_departure_requests
+    })
+
+
+
+# Views for departure functionality
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_departure_cost(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        amount = data.get('amount')
+        remarks = data.get('remarks', '')
+        
+        departure_request = DepartureInformation.objects.get(id=request_id)
+        departure_request.cost = int(float(amount)) if amount else 0
+        departure_request.cost_remarks = remarks
+        departure_request.save()
+        
+        return JsonResponse({'success': True})
+    except DepartureInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_departure_approval(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        approval_status = data.get('approval_status')
+        
+        departure_request = DepartureInformation.objects.get(id=request_id)
+        departure_request.client_approval = approval_status
+        departure_request.save()
+        
+        return JsonResponse({'success': True})
+    except DepartureInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def upodate_departure_status(request):
+    try:
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        status = data.get('status')
+        completion_date = data.get('completion_date')
+        remarks = data.get('remarks')
+        
+        departure_request = DepartureInformation.objects.get(id=request_id)
+        departure_request.status = status
+        departure_request.status_remarks = remarks
+        
+        # Update completation_denied_date field
+        if completion_date:
+            from datetime import datetime
+            departure_request.completation_denied_date = datetime.strptime(completion_date, '%Y-%m-%d').date()
+        else:
+            departure_request.completation_denied_date = None
+        
+        departure_request.save()
+        
+        return JsonResponse({'success': True})
+    except DepartureInformation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found'})
+    except ValueError as ve:
+        return JsonResponse({'success': False, 'error': f'Date format error: {str(ve)}'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+def clientmanager_departure_detail(request, request_id):
+    departure_request = get_object_or_404(DepartureInformation, id=request_id)
+
+    if request.method == 'POST' and 'complete' in request.POST:
+        departure_request.status = 'completed'
+        departure_request.save()
+        return redirect('clientmanager:departure_requests')
+
+    return render(request, 'clientmanager/departure/departure_detail.html', {
+        'request_detail': departure_request
+    })
+
+# WALK TRUG REPORTS  -------------------------------------------------------------------------------------------------------
+from walkthroughreport.models import WalkthroughReport
+
 import copy
+from django.shortcuts import render, get_object_or_404
+
+from django.db.models import Q
+from walkthroughreport.models import (
+    WalkthroughReport, GeneralItemsExterior, GeneralItemsInterior,
+    Garage, Laundry, Kitchen, Butlers, BreakfastArea, EntryFoyer,
+    GreatRoom, DiningRoom, ClosetsMainLevel, ClosetsUpperLevel,
+    HallwaysMainLevel, HallwaysUpperLevel, Bedroom1, Bedroom2, Bedroom3,
+    Bedroom4, Bedroom5, Bedroom6, Bedroom7, Bedroom8, Bedroom9, Bedroom10,
+    Bathroom1, Bathroom2, Bathroom3, Bathroom4, Bathroom5, Bathroom6,
+    Bathroom7, Bathroom8, Bathroom9, Bathroom10, Bathroom11, Bathroom12,
+    Gym, TheatreMusicRoom, GuestHouseSleepingLiving, GuestHouseBathroom
+)
+
+def get_category_from_model_name(model_name):
+    """Get category name from model name"""
+    model_to_category = {
+        'GeneralItemsExterior': 'gie',
+        'GeneralItemsInterior': 'gii',
+        'Garage': 'garage',
+        'Laundry': 'laundry',
+        'Kitchen': 'kitchen',
+        'Butlers': 'butlers',
+        'BreakfastArea': 'breakfast',
+        'EntryFoyer': 'entry',
+        'GreatRoom': 'great',
+        'DiningRoom': 'dining',
+        'ClosetsMainLevel': 'closets_main',
+        'ClosetsUpperLevel': 'closets_upper',
+        'HallwaysMainLevel': 'hallways_main',
+        'HallwaysUpperLevel': 'hallways_upper',
+        'Bedroom1': 'bedroom1',
+        'Bedroom2': 'bedroom2',
+        'Bedroom3': 'bedroom3',
+        'Bedroom4': 'bedroom4',
+        'Bedroom5': 'bedroom5',
+        'Bedroom6': 'bedroom6',  
+        'Bedroom7': 'bedroom7',
+        'Bedroom8': 'bedroom8',
+        'Bedroom9': 'bedroom9',
+        'Bedroom10': 'bedroom10',
+        'Bathroom1': 'bathroom1',
+        'Bathroom2': 'bathroom2',
+        'Bathroom3': 'bathroom3',
+        'Bathroom4': 'bathroom4',
+        'Bathroom5': 'bathroom5',
+        'Bathroom6': 'bathroom6',
+        'Bathroom7': 'bathroom7',
+        'Bathroom8': 'bathroom8',
+        'Bathroom9': 'bathroom9',
+        'Bathroom10': 'bathroom10',
+        'Bathroom11': 'bathroom11',
+        'Bathroom12': 'bathroom12',
+        'Gym': 'gym',
+        'TheatreMusicRoom': 'theatre',
+        'GuestHouseSleepingLiving': 'guest_house_sleeping',
+        'GuestHouseBathroom': 'guest_house_bathroom',
+    }
+    return model_to_category.get(model_name, model_name.lower())
+
+def process_model_fields(model_instance, report, model_name):
+    """Process fields from a specific model and return inspection items"""
+    inspection_items = []
+    category_key = get_category_from_model_name(model_name)
+    category = CATEGORY_MAP.get(category_key, model_name)
+    
+    for field in model_instance._meta.get_fields():
+        field_name = field.name
+        
+        # Skip non-relevant fields
+        if (
+            field_name in ['id', 'walkthrough_report'] or
+            field_name.endswith('_remarks') or
+            field_name.endswith('_amount') or
+            field_name.endswith('_calculation_note') or
+            field_name.endswith('_client_approval') or
+            field_name.endswith('_udpate_status') or
+            field_name.endswith('_update_date') or
+            field_name.endswith('_update_remarks')
+        ):
+            continue
+        
+        field_value = getattr(model_instance, field_name, None)
+        if field_value != "Non-Compliant":
+            continue
+        
+        # Get related fields
+        base = field_name
+        remarks = getattr(model_instance, f"{base}_remarks", '')
+        amount = getattr(model_instance, f"{base}_amount", None)
+        calculation_note = getattr(model_instance, f"{base}_calculation_note", '')
+        client_approval = getattr(model_instance, f"{base}_client_approval", '')
+        update_status = getattr(model_instance, f"{base}_udpate_status", '')
+        update_date = getattr(model_instance, f"{base}_update_date", None)
+        update_remarks = getattr(model_instance, f"{base}_update_remarks", '')
+        
+        # Human-readable question
+        verbose_name = field.verbose_name if hasattr(field, 'verbose_name') else base.replace('_', ' ').title()
+        
+        inspection_items.append({
+            'category': category,
+            'question': verbose_name,
+            'remarks': remarks,
+            'amount': amount,
+            'calculation_note': calculation_note,
+            'client_approval': client_approval,
+            'update_status': update_status,
+            'update_date': update_date,
+            'update_remarks': update_remarks,
+            'value': field_value,
+            'field_name': base,
+            'model_name': model_name,
+            'model_id': model_instance.id,
+            'completion_date': update_date,  # Add this
+        })
+    
+    return inspection_items
+
+def all_reports_view(request):
+    reports = WalkthroughReport.objects.all()
+    return render(request, 'clientmanager/walkthrough/all_reports.html', {'reports': reports})
+
 def report_open_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
     
@@ -1272,466 +1528,306 @@ def report_open_detail_view(request, pk):
 
     return render(request, 'clientmanager/walkthrough/report_open_detail.html', {'report': filtered_report,'client_first_name': client_first_name,
         'client_last_name': client_last_name,'report_datetime': report_datetime,'report_description':report_description,'report_property':report_property}) 
-    
-
-# Client Management 
-from django.shortcuts import render, get_object_or_404, redirect
-from mainapp.models import Client
-
-def client_list_page(request):
-    clients = Client.objects.all()
-    return render(request, 'clientmanager/client/client_list_page.html', {'clients': clients})
-
-def client_edit_page(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-
-    if request.method == 'POST':
-        client.first_name = request.POST.get('first_name')
-        client.last_name = request.POST.get('last_name')
-        client.username = request.POST.get('username')
-        client.email = request.POST.get('email')
-        client.address = request.POST.get('address')
-        client.city = request.POST.get('city')
-        client.state = request.POST.get('state')
-        client.zipcode = request.POST.get('zipcode')
-        client.phone_number = request.POST.get('phone_number')
-        client.preferred_contact_method = request.POST.get('preferred_contact_method')
-        
-        client.contact1_name = request.POST.get('contact1_name')
-        client.contact1_email = request.POST.get('contact1_email')
-        client.contact1_phone = request.POST.get('contact1_phone')
-        client.contact1_preferred = request.POST.get('contact1_preferred')
-
-        client.contact2_name = request.POST.get('contact2_name')
-        client.contact2_email = request.POST.get('contact2_email')
-        client.contact2_phone = request.POST.get('contact2_phone')
-        client.contact2_preferred = request.POST.get('contact2_preferred')
-
-        client.contact3_name = request.POST.get('contact3_name')
-        client.contact3_email = request.POST.get('contact3_email')
-        client.contact3_phone = request.POST.get('contact3_phone')
-        client.contact3_preferred = request.POST.get('contact3_preferred')
-
-        client.save()
-        return redirect('clientmanager:client_list_page')
-
-    return render(request, 'clientmanager/client/client_edit_page.html', {'client': client})
-
-
-def create_new_client_view(request):
-    if request.method == 'POST':
-        Client.objects.create(
-            first_name=request.POST.get('first_name'),
-            last_name=request.POST.get('last_name'),
-            username=request.POST.get('username'),
-            email=request.POST.get('email'),
-            password=request.POST.get('password'),
-            address=request.POST.get('address'),
-            city=request.POST.get('city'),
-            state=request.POST.get('state'),
-            zipcode=request.POST.get('zipcode'),
-            phone_number=request.POST.get('phone_number'),
-            preferred_contact_method=request.POST.get('preferred_contact_method'),
-            contact1_name=request.POST.get('contact1_name'),
-            contact1_email=request.POST.get('contact1_email'),
-            contact1_phone=request.POST.get('contact1_phone'),
-            contact1_preferred=request.POST.get('contact1_preferred'),
-            contact2_name=request.POST.get('contact2_name'),
-            contact2_email=request.POST.get('contact2_email'),
-            contact2_phone=request.POST.get('contact2_phone'),
-            contact2_preferred=request.POST.get('contact2_preferred'),
-            contact3_name=request.POST.get('contact3_name'),
-            contact3_email=request.POST.get('contact3_email'),
-            contact3_phone=request.POST.get('contact3_phone'),
-            contact3_preferred=request.POST.get('contact3_preferred'),
-        )
-        return redirect('client_list_view')  # change if needed
-    return render(request, 'clientmanager/client/create.html')
-
-
-
-
-# walkthrough all pages starts here ---------------------------------------------------------------
-
-def all_reports_view(request):
-    manager_id = request.session.get('manager_id')
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    reports = WalkthroughReport.objects.all()
-    return render(request, 'clientmanager/walkthrough/all_reports.html', {
-        'reports': reports,
-        'base_template': 'cmbase.html'
-    })
 
 def report_detail_view(request, pk):
-    manager_id = request.session.get('manager_id')
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
     report = get_object_or_404(WalkthroughReport, pk=pk)
-    return render(request, 'clientmanager/walkthrough/report_detail.html', {
-        'report': report,
-        'base_template': 'cmbase.html'
-    })
+    
+    # All related models to check (same as in open_reports_view)
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    # Create a context dictionary with the report and all related model instances
+    context = {'report': report}
+    
+    # Add each related model instance to the context
+    for model_class, relation_name in related_models:
+        try:
+            # Get the related model instance
+            model_instance = getattr(report, relation_name, None)
+            context[relation_name] = model_instance
+        except Exception as e:
+            # Handle cases where relation doesn't exist
+            context[relation_name] = None
+    
+    # Add verbose names for all model fields
+    def get_verbose_names():
+        verbose_names = {}
+        for model_class, relation_name in related_models:
+            if context.get(relation_name):
+                for field in model_class._meta.fields:
+                    if hasattr(field, 'verbose_name') and field.name != 'id':
+                        verbose_names[f"{field.name}_verbose"] = field.verbose_name
+        return verbose_names
+    
+    context.update(get_verbose_names())
+    print(f"Bedroom9: {getattr(report, 'bedroom9', 'NOT FOUND')}")
+    return render(request, 'clientmanager/walkthrough/report_detail.html', context)
 
-def completed_reports_view(request):
-    manager_id = request.session.get('manager_id')
-    if not manager_id:
-        return redirect('clientmanager:client_login')
 
-    reports = WalkthroughReport.objects.filter(status='Completed')
-    return render(request, 'clientmanager/walkthrough/completed_reports.html', {
-        'reports': reports,
-        'base_template': 'cmbase.html'
-    })
-
-def denied_reports_view(request):
-    manager_id = request.session.get('manager_id')
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    reports = WalkthroughReport.objects.filter(status='Denied')
-    return render(request, 'clientmanager/walkthrough/denied_reports.html', {
-        'reports': reports,
-        'base_template': 'cmbase.html'
-    })
 
 def open_reports_view(request):
-    manager_id = request.session.get('manager_id')
-    if not manager_id:
-        return redirect('clientmanager:client_login')
-
-    reports = WalkthroughReport.objects.filter(status="Open")
-    return render(request, 'clientmanager/walkthrough/open_reports.html', {
-        'reports': reports,
-        'base_template': 'cmbase.html'
-    })
-
-
-
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.utils.text import slugify
-import csv
-from openpyxl import Workbook
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-
-from django.http import HttpResponse, Http404
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from walkthroughreport.models import WalkthroughReport
-
-from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from reportlab.platypus import Table, TableStyle
-from reportlab.lib.units import inch
-
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
-from django.shortcuts import render, redirect
-from mainapp.models import Client
-CATEGORY_LABELS = {
-    "GIE": "General Items - Exterior",
-    "GII": "General Items - Interior",
-    "GARAGE": "Garage",
-    "LAUNDRY": "Laundry / Mudroom",
-    "KITCHEN": "Kitchen",
-    "BUTLERS": "Butlers",
-    "BREAKFAST_AREA": "Breakfast Area",
-    "ENTRY_FOYER": "Entry / Foyer",
-    "GREAT_ROOM": "Great Room / Family Room",
-    "DINING_ROOM": "Dining Room / Area",
-    "CLOSETS_MAIN_LEVEL": "Closets - Main Level",
-    "CLOSETS_UPPER_LEVEL": "Closets - Upper Level",
-    "HALLWAYS_MAIN_LEVEL": "Hallways - Main Level",
-    "HALLWAYS_UPPER_LEVEL": "Hallways - Upper Level",
-    "BEDROOM1": "Bedroom 1 (Master Bedroom)",
-    "BEDROOM2": "Bedroom 2",
-    "BEDROOM3": "Bedroom 3",
-    "BEDROOM4": "Bedroom 4",
-    "BATHROOM1": "Bathroom 1 (Master Bath)",
-    "BATHROOM2": "Bathroom 2",
-    "BATHROOM3": "Bathroom 3",
-    "BATHROOM4": "Bathroom 4",
-    "BATHROOM5": "Bathroom 5",
-    "GYM": "Gym",
-    "THEATRE_MUSIC_ROOM": "Theatre / Music Room",
-    "GUEST_HOUSE_SLEEPING_LIVING": "Guest House - Sleeping / Living",
-    "GUEST_HOUSE_BATHROOM": "Guest House - Bathroom",
-}
-
-MCQ_CHOICES = [
-    ("N/A", "N/A"),
-    ("Compliant", "Compliant"),
-    ("Heads-Up", "Heads-Up"),
-    ("Non-Compliant", "Non-Compliant"),
-]
-def get_verbose_data(report):
-    data = []
-    for field in report._meta.fields:
-        name = field.name
-        if name[-1:].isdigit() and not name.endswith('_remarks'):
-            answer = getattr(report, name)
-            remark = getattr(report, f"{name}_remarks", '')
-
-            if answer:
-                verbose = field.verbose_name or name.replace('_', ' ').capitalize()
-                prefix = ''.join(filter(str.isalpha, name)).upper()  # extract 'GIE' from 'gie1'
-                data.append((verbose, answer, remark, prefix))
-    return data
-
-
-def walk_export_pdf(request, report_id):
-    from reportlab.lib.styles import ParagraphStyle
-    from reportlab.platypus import TableStyle
-
-    report = WalkthroughReport.objects.get(pk=report_id)
-    data = get_verbose_data(report)
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=walkthrough_report_{report_id}.pdf'
-
-    doc = SimpleDocTemplate(
-        response,
-        pagesize=letter,
-        leftMargin=30,
-        rightMargin=30,
-        topMargin=50,
-        bottomMargin=30
-    )
-
-    elements = []
-    styles = getSampleStyleSheet()
-
-    # Title with green color
-    styles.add(ParagraphStyle(
-        name='GreenTitle',
-        fontSize=18,
-        leading=22,
-        textColor=colors.HexColor("#2e7d32"),
-        fontName="Helvetica-Bold",
-        alignment=1,  # Center
-        spaceAfter=6
-    ))
-
-    styles.add(ParagraphStyle(
-        name='SectionTitle',
-        fontSize=13,
-        leading=16,
-        spaceAfter=10,
-        textColor=colors.HexColor("#003366"),
-        fontName="Helvetica-Bold"
-    ))
-
-    # Top Title
-    elements.append(Paragraph("🏠 Walkthrough Report", styles['GreenTitle']))
-
-    # Underline
-    elements.append(Table([[""]], colWidths=[6.3 * inch], style=[
-        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor("#2e7d32")),
-    ]))
-
-    elements.append(Spacer(1, 12))
-
-    # Grouping data by category
-    grouped = {}
-    for question, answer, remark, category in data:
-        if category not in grouped:
-            grouped[category] = []
-        grouped[category].append((question, answer, remark))
-
-    for category_code, rows in grouped.items():
-        label = CATEGORY_LABELS.get(category_code, category_code)
-
-        elements.append(Spacer(1, 14))
-        elements.append(Paragraph(f"📌 {label}", styles['SectionTitle']))
-        elements.append(Spacer(1, 4))
-
-        table_data = [["Question", "N/A", "Compliant", "Heads-Up", "Non-Compliant", "Remarks"]]
-
-        for i, (question, answer, remark) in enumerate(rows):
-            row = [question]
-            for choice, _ in MCQ_CHOICES:
-                row.append("✔" if answer == choice else "")
-            row.append(remark or "-")
-            table_data.append(row)
-
-        table = Table(table_data, colWidths=[
-            2.3 * inch, 0.7 * inch, 0.8 * inch, 0.9 * inch, 0.9 * inch, 2 * inch
-        ])
-
-        style = TableStyle([
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d9eaf7")),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#003366")),
-            ('ALIGN', (1, 1), (-2, -1), 'CENTER'),
-            ('FONTSIZE', (0, 1), (-1, -1), 9),
-            ('LEFTPADDING', (0, 0), (-1, -1), 6),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-            ('TOPPADDING', (0, 0), (-1, -1), 4),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-        ])
-
-        for i in range(1, len(table_data)):
-            bg = colors.whitesmoke if i % 2 == 0 else colors.white
-            style.add('BACKGROUND', (0, i), (-1, i), bg)
-
-        table.setStyle(style)
-        elements.append(table)
-
-    doc.build(elements)
-    return response
-
-from django.http import HttpResponse
-from openpyxl import Workbook
-from walkthroughreport.models import WalkthroughReport
-from walkthroughreport.models import CategoryCharField
-
-def walk_export_excel(request, report_id):
-    report = WalkthroughReport.objects.get(pk=report_id)
-
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    filename = f"walkthrough_report_{report_id}.xlsx"
-    response['Content-Disposition'] = f'attachment; filename={filename}'
-
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Walkthrough Report"
-
-    fields = report._meta.get_fields()
-    grouped_data = {}
-
-    for field in fields:
-        if isinstance(field, CategoryCharField) and getattr(report, field.name):
-            category = getattr(field, 'category', None)
-            if category not in grouped_data:
-                grouped_data[category] = []
-            remarks_field = f"{field.name}_remarks"
-            grouped_data[category].append((
-                field.verbose_name,
-                getattr(report, field.name),
-                getattr(report, remarks_field, "")
-            ))
-
-    for category_code, entries in grouped_data.items():
-        label = CATEGORY_LABELS.get(category_code, category_code)
-        ws.append([label])
-        ws.append(['Question', 'Answer', 'Remarks'])
-        for q, a, r in entries:
-            ws.append([q, a, r])
-        ws.append([])
-
-    wb.save(response)
-    return response
-
-
-
-
-def walk_export_csv(request, report_id):
-    report = WalkthroughReport.objects.get(pk=report_id)
-    data = get_verbose_data(report)
-
-    response = HttpResponse(content_type='text/csv')
-    filename = f"walkthrough_report_{report_id}.csv"
-    response['Content-Disposition'] = f'attachment; filename={filename}'
-
-    writer = csv.writer(response)
+    reports = WalkthroughReport.objects.filter(
+        Q(status__in=['Open', 'Completed']) | 
+        Q(item_status_check=False)
+    ).select_related('user', 'property')
     
-    # Adding a title row
-    writer.writerow(["🏠 Walkthrough Report"])
-    writer.writerow([])  # Blank row for spacing
+    processed_reports = []
     
-    # Add headers (emphasizing structure)
-    writer.writerow(['Category', 'Question', 'Answer', 'Remarks'])
+    # All related models to check
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    for report in reports:
+        all_inspection_items = []
+        
+        # Process each related model
+        for model_class, relation_name in related_models:
+            try:
+                # Get the related model instance
+                model_instance = getattr(report, relation_name, None)
+                if model_instance:
+                    items = process_model_fields(model_instance, report, model_class.__name__)
+                    all_inspection_items.extend(items)
+            except Exception as e:
+                # Handle cases where relation doesn't exist
+                continue
+        
+        # Only add reports that have inspection items
+        if all_inspection_items:
+            report.inspection_items = all_inspection_items
+            processed_reports.append(report)
+    
+    return render(request, 'clientmanager/walkthrough/open_reports.html', {'reports': processed_reports})
 
-    # Group data by category and write to the CSV
-    grouped = {}
-    for question, answer, remark, category in data:
-        if category not in grouped:
-            grouped[category] = []
-        grouped[category].append((question, answer, remark))
-
-    # Add each category and its rows without unwanted emoji or label
-    for category, rows in grouped.items():
-        # Get category label without any unwanted prefix (emoji or special chars)
-        label = CATEGORY_LABELS.get(category, category).replace("📌", "").strip()  # Remove unwanted parts
-
-        writer.writerow([label])  # Only the clean category name
-        for question, answer, remark in rows:
-            writer.writerow([category, question, answer, remark or "-"])
-        writer.writerow([])  # Blank row to separate categories
-
-    return response
-# Creating Reports 
 
 
 
+def completed_reports_view(request):
+    reports = WalkthroughReport.objects.filter(
+        Q(status__in=['Open', 'Completed']) | 
+        Q(item_status_check=False)
+    ).select_related('user', 'property')
+    
+    processed_reports = []
+    
+    # All related models to check
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    for report in reports:
+        all_inspection_items = []
+        
+        # Process each related model
+        for model_class, relation_name in related_models:
+            try:
+                # Get the related model instance
+                model_instance = getattr(report, relation_name, None)
+                if model_instance:
+                    items = process_model_fields(model_instance, report, model_class.__name__)
+                    all_inspection_items.extend(items)
+            except Exception as e:
+                # Handle cases where relation doesn't exist
+                continue
+        
+        # Only add reports that have inspection items
+        if all_inspection_items:
+            report.inspection_items = all_inspection_items
+            processed_reports.append(report)
+    
+    return render(request, 'clientmanager/walkthrough/completed_reports.html', {'reports': processed_reports})
 
 
-# Report Updates ----------------------------------------------------------------------
-from django.http import JsonResponse
-from walkthroughreport.models import WalkthroughReport
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+def denied_reports_view(request):
+    reports = WalkthroughReport.objects.filter(
+        Q(status__in=['Open', 'Completed']) | 
+        Q(item_status_check=False)
+    ).select_related('user', 'property')
+    
+    processed_reports = []
+    
+    # All related models to check
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    for report in reports:
+        all_inspection_items = []
+        
+        # Process each related model
+        for model_class, relation_name in related_models:
+            try:
+                # Get the related model instance
+                model_instance = getattr(report, relation_name, None)
+                if model_instance:
+                    items = process_model_fields(model_instance, report, model_class.__name__)
+                    all_inspection_items.extend(items)
+            except Exception as e:
+                # Handle cases where relation doesn't exist
+                continue
+        
+        # Only add reports that have inspection items
+        if all_inspection_items:
+            report.inspection_items = all_inspection_items
+            processed_reports.append(report)
+    
+    return render(request, 'clientmanager/walkthrough/denied_reports.html', {'reports': processed_reports})
 
-
-
-@csrf_exempt
-def update_cost_ajax(request, report_id):
-    if request.method == 'POST':
-        cost = request.POST.get('cost')
-        report = WalkthroughReport.objects.get(id=report_id)
-        report.cost = int(cost)
-        report.save()
-        return JsonResponse({'success': True, 'new_cost': report.cost})
-    return JsonResponse({'success': False})
-@csrf_exempt
-def update_client_approval(request, report_id):
-    if request.method == 'POST':
-        status = request.POST.get('approval')
-        if status not in ['Approved', 'Denied']:
-            return JsonResponse({'success': False})
-        try:
-            report = WalkthroughReport.objects.get(id=report_id)
-            report.client_approval = status
-            report.save()
-            return JsonResponse({'success': True, 'new_status': report.client_approval})
-        except:
-            return JsonResponse({'success': False})
-    return JsonResponse({'success': False})
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from walkthroughreport.models import WalkthroughReport
-from datetime import datetime
-
-@csrf_exempt
-def update_status(request, report_id):
-    if request.method == 'POST':
-        new_status = request.POST.get('status')
-        date_str = request.POST.get('date')
-
-        if new_status not in ['Completed', 'Denied'] or not date_str:
-            return JsonResponse({'success': False})
-
-        try:
-            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
-            report = WalkthroughReport.objects.get(id=report_id)
-            report.status = new_status
-            report.completation_denied_date = date_obj
-            report.save()
-            return JsonResponse({'success': True, 'new_status': new_status, 'new_date': str(date_obj)})
-        except:
-            return JsonResponse({'success': False})
-
-    return JsonResponse({'success': False})

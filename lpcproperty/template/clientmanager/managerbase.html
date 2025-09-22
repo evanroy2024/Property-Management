@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Navbar</title>
+   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200&display=swap" rel="stylesheet">
+
+     <!-- Bootstrap CDN -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <style>
+        .logo:hover {
+            cursor: pointer;    
+        }
+         .bg-section {
+             background: url("{% static 'img/bg.jpg' %}") no-repeat center center/cover;
+             height: 700px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             text-align: center;
+             color: white;
+             color: #143048;
+             font-size:80px;
+             font-style: italic;
+         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Raleway', sans-serif;
+    font-weight: 200; /* Use extra light weight */
+    color: #666; /* Softer text color */
+    background-color: black;
+        }
+        .navbar {
+            background-color: #13293D;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            position: sticky;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            transition: all 0.3s ease-in-out;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+            height: 70px;
+        }
+        .logo span {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: #13293D;
+                text-align: center;
+                padding: 10px 0;
+                opacity: 0;
+                transform: translateY(-20px);
+                visibility: hidden;
+            }
+            .nav-links.active {
+                opacity: 1;
+                transform: translateY(0);
+                visibility: visible;
+            }
+            .nav-links a {
+                padding: 10px;
+                display: block;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+        .logout-btn {
+    background: none;
+    color: #e6e6e6;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    color: #e74c3c;
+}
+body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #fff;
+        }
+        
+    </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-links">
+        <a href="{% url 'clientmanager:property_list' %}">Properties</a>
+        <a href="{% url 'clientmanager:vendor_list' %}">Vendors</a>
+    </div>
+    <div class="logo">
+        <img onclick="window.location.href='{% url 'clientmanager:admin_dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
+    </div>
+    <div class="nav-links">
+        <a href="{% url 'clientmanager:admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'adminmanager:admin_logout' %}">Logout</a>
+
+    </div>
+    <div class="menu-toggle">☰</div>
+</nav>
+
+    {% block content %}
+    <!-- Child template content will be injected here -->
+    {% endblock %}
+
+ 
+
+
+    
+    <script>
+        const toggle = document.querySelector(".menu-toggle");
+        const navLinks = document.querySelectorAll(".nav-links");
+        
+        toggle.addEventListener("click", () => {
+            navLinks.forEach(nav => nav.classList.toggle("active"));
+        });
+    </script>
+    <style>
+        /* .nav-links a {
+    font-weight: 600;
+} */
+
+    </style>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<style>
+body, p, h1, h2, h3, h4, h5, h6, a, span, div, li, button, input, textarea, label {
+    font-family: "Roboto", sans-serif !important;
+}
+</style>
+</body>
+</html>

@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'clientmanager/managerbase.html' %}
 {% load static %}
 {% block title %}Property Detail{% endblock %}
 
@@ -25,21 +25,13 @@
                     <h4 class="property-address">{{ property.address }}</h4>
 
                     <div class="property-info">
-                        <div class="info-item">
-                            <span class="info-label">Size</span>
-                            <div class="info-value">{{ property.size_of_home }} sq ft</div>
+                       <div class="info-item">
+                            <span class="info-label">Apartment, Suite, Unit, Building</span>
+                            <div class="info-value">{{ property.street_line1 }}</div>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Stories</span>
-                            <div class="info-value">{{ property.number_of_stories }}</div>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Year Built</span>
-                            <div class="info-value">{{ property.year_built }}</div>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Construction Type</span>
-                            <div class="info-value">{{ property.construction_type }}</div>
+                            <span class="info-label">P.O. Box, Company Name, C/O </span>
+                            <div class="info-value">{{ property.street_line2 }}</div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">City</span>
@@ -50,17 +42,42 @@
                             <div class="info-value">{{ property.state }}</div>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Zip Code</span>
+                            <span class="info-label">Zip code</span>
                             <div class="info-value">{{ property.zipcode }}</div>
                         </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Year Built</span>
+                            <div class="info-value">{{ property.year_built }}</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Construction Type</span>
+                            <div class="info-value">{{ property.construction_type }}</div>
+                        </div>
+                        
                         <div class="info-item">
                             <span class="info-label">Preferred Contact Method</span>
                             <div class="info-value">{{ property.preferred_contact_method }}</div>
                         </div>
+
                         <div class="info-item">
                             <span class="info-label">Additional Property Information</span>
                             <div class="info-value">{{ property.additional_info }}</div>
                         </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Size</span>
+                            <div class="info-value">{{ property.size_of_home }} sq ft</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Stories</span>
+                            <div class="info-value">{{ property.number_of_stories }}</div>
+                        </div>
+                       
+                        
+                        
+                        
                         
                     </div>
                     <div class="property-features">
@@ -111,7 +128,19 @@
             </div>
         </div>
 
-       
+     <div class="card" style="padding: 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <h2 class="card-title" style="margin-bottom: 12px; font-size: 1.3rem;"><b>Property Image</b></h2>
+    <div class="info-value" style="padding: 12px; text-align: center;">
+        {% if property.property_pic %}
+            <img src="{{ property.property_pic.url }}" 
+                 alt="Property Image" 
+                 style="width: 60%; height: auto; border-radius: 8px; object-fit: cover;">
+        {% else %}
+            <p>No image available</p>
+        {% endif %}
+    </div>
+</div>
+
     </div>
  <!-- Floor Plans Card -->
 <div class="col-lg-40">
@@ -155,7 +184,7 @@
     </div>
     
     <!-- Client info grid - 3 items per row -->
-    <div class="row">
+    <div class="row" style="color: black;">
         <!-- Row 1: First 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
@@ -167,16 +196,16 @@
                 <strong>Email:</strong> {{ property.client.email }}
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <!-- <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Username:</strong> {{ property.client.username }}
             </div>
-        </div>
+        </div> -->
         
         <!-- Row 2: Next 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone:</strong> {{ property.client.phone_number }}
+                <strong>Cell Phone:</strong> {{ property.client.phone_number }}
             </div>
         </div>
         <div class="col-md-4 mb-3">
@@ -225,10 +254,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact1_phone }}
+                <strong>Cell Phone :</strong> {{ property.client.contact1_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact1_office_phone }}
             </div>
@@ -247,7 +276,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact1_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact2_name or property.client.contact2_last_name or property.client.contact2_email or property.client.contact2_phone %}
@@ -267,10 +296,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact2_phone }}
+                <strong>Cell Phone:</strong> {{ property.client.contact2_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact2_office_phone }}
             </div>
@@ -289,7 +318,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact2_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact3_name or property.client.contact3_last_name or property.client.contact3_email or property.client.contact3_phone %}
@@ -309,10 +338,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact3_phone }}
+                <strong>Cell Phone:</strong> {{ property.client.contact3_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact3_office_phone }}
             </div>
@@ -331,7 +360,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact3_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact4_name or property.client.contact4_last_name or property.client.contact4_email or property.client.contact4_phone %}
@@ -351,10 +380,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact4_phone }}
+                <strong>Cell Phone :</strong> {{ property.client.contact4_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact4_office_phone }}
             </div>
@@ -373,7 +402,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Contact Type :</strong> {{ property.client.contact4_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
     {% if property.client.contact5_name or property.client.contact5_last_name or property.client.contact5_email or property.client.contact5_phone %}
@@ -393,10 +422,10 @@
         </div>
         <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
-                <strong>Phone :</strong> {{ property.client.contact5_phone }}
+                <strong>Cell Phone :</strong> {{ property.client.contact5_phone }}
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 mb-3">
+        <!-- <div class="col-md-4 col-sm-12 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Office Phone:</strong> {{ property.client.contact5_office_phone }}
             </div>
@@ -415,7 +444,7 @@
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Priority :</strong> {{ property.client.contact5_priority  }}
             </div>
-        </div>
+        </div> -->
     </div>
     {% endif %}
  <button id="revealContactsBtn" class="btn btn-primary">Show Contacts</button>
@@ -483,17 +512,14 @@ button.addEventListener("click", function() {
     
 </div>
 <!-- Client Manager Information with 3 fields per row -->
-<div class="container-fluid mt-4">
-    <!-- Header -->
+<!-- <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-12 mb-3">
             <h3 class="section-title">Client Manager Information</h3>
         </div>
     </div>
     
-    <!-- Client Manager info grid - 3 items per row -->
     <div class="row">
-        <!-- Row 1: First 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Name:</strong> {{ property.client_manager.last_name }}, {{ property.client_manager.first_name }}
@@ -510,7 +536,6 @@ button.addEventListener("click", function() {
             </div>
         </div>
         
-        <!-- Row 2: Next 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>Phone:</strong> {{ property.client_manager.phone_number }}
@@ -527,7 +552,6 @@ button.addEventListener("click", function() {
             </div>
         </div>
         
-        <!-- Row 3: Last 3 items -->
         <div class="col-md-4 mb-3">
             <div class="info-box p-3 rounded shadow-sm bg-light">
                 <strong>City:</strong> {{ property.client_manager.city }}
@@ -545,9 +569,7 @@ button.addEventListener("click", function() {
         </div>
     </div>
 </div>
-<!-- CSS for Styling -->
 <style>
-    /* Basic styling for info-box */
     .info-box {
         background-color: #f9f9f9;
         border: 1px solid #ddd;
@@ -560,7 +582,6 @@ button.addEventListener("click", function() {
         color: #333;
     }
 
-    /* Title styling */
     .section-title {
         font-size: 1.5rem;
         font-weight: 600;
@@ -568,14 +589,12 @@ button.addEventListener("click", function() {
         color: #4b4b4b;
     }
 
-    /* Styling for each section */
     .row .col-md-6 .info-box {
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
 
-    /* Responsive styling */
     @media (max-width: 767px) {
         .row .col-md-6 {
             flex: 0 0 100%;
@@ -585,8 +604,11 @@ button.addEventListener("click", function() {
             margin-bottom: 20px;
         }
     }
-</style>
-   <!-- Floor Plans Overview Section -->
+</style> -->
+  
+
+
+<!-- Floor Plans Overview Section -->
    <div class="property-container mt7">
     <p class="section-title">Floor Plans Overview</p>
     
@@ -599,16 +621,79 @@ button.addEventListener("click", function() {
                 <h4 class="floor-title">{{ floor.floor_name }}</h4>
                 
                 {% if floor.floor_imgae %}
-                <div class="floor-overview-image text-center">
-                    <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="floor-img img-responsive" 
-                         style="max-width: 300px; height: auto; margin: 0 auto; cursor: pointer;"
-                         onclick="openFloorImage('{{ floor.floor_imgae.url }}', '{{ floor.floor_name }}')">
-                </div>
-                {% endif %}
+    {% if floor.floor_imgae.url|lower|slice:"-4:" == ".pdf" %}
+      <div style="text-align:center; margin:20px 0;">
+    <a href="#" onclick="openAndPrint('{{ floor.floor_imgae.url }}'); return false;"
+       style="
+           display:inline-block;
+           padding:10px 20px;
+           background:#4a90e2;
+           color:#fff;
+           text-decoration:none;
+           border-radius:6px;
+           font-weight:600;
+           box-shadow:0 2px 6px rgba(0,0,0,0.2);
+       ">
+       Print Floor plan (PDF)
+    </a>
+</div>
+
+<script>
+function openAndPrint(url) {
+    const win = window.open(url);
+    win.onload = () => {
+        win.print();
+    };
+}
+</script>
+
+    {% else %}
+      <div class="floor-overview-image text-center">
+    <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}"
+         class="floor-img img-responsive"
+         style="max-width:300px;height:auto;margin:0 auto;cursor:pointer;"
+         onclick="openFloorImage('{{ floor.floor_imgae.url }}','{{ floor.floor_name }}')">
+
+    <div style="margin-top:10px;">
+        <button onclick="printImage('{{ floor.floor_imgae.url }}')" 
+                style="
+                    padding:8px 16px;
+                    background:#4a90e2;
+                    color:#fff;
+                    border:none;
+                    border-radius:6px;
+                    font-weight:600;
+                    cursor:pointer;
+                    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+                ">
+            Print Floor plan
+        </button>
+    </div>
+</div>
+
+<script>
+function printImage(url) {
+    const win = window.open("");
+    win.document.write('<img src="' + url + '" style="max-width:100%;"/>');
+    win.document.close();
+    win.focus();
+
+    // Give the browser a moment to render, then print & close
+    setTimeout(() => {
+        win.print();
+        win.close();   // force-close the about:blank popup
+    }, 500);
+}
+</script>
+
+
+    {% endif %}
+{% endif %}
+
                 
                 <div class="room-list">
                     {% for room in floor.rooms.all %}
-                        <div class="room-item" style="border: 1px solid rgb(227, 227, 227); height: 50px;">
+                        <div class="room-item" style="border: 1px solid rgb(227, 227, 227); height: 50px; color: black;">
                             <p class="text-left" style="display: flex; align-items: center; ">{{ room.room_name }} </p>
                         </div>
                     {% endfor %}
@@ -933,17 +1018,8 @@ button.addEventListener("click", function() {
   --card-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
   --transition: all 0.25s ease;
   --border-radius: 0.375rem;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
-body {
-  font-family: var(--font-family);
-  color: var(--text-color);
-  background-color: #f9fafb;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
 
 /* Layout optimization */
 .content-wrapper {
@@ -1883,6 +1959,16 @@ body {
     .info-item {
         flex: 1 1 100%; /* Stacks items on smaller screens */
     }
+}
+.info-item,
+.info-item:hover,
+.info-item:focus,
+.info-item:active {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 </style>

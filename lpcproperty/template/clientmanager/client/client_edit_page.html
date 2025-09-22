@@ -1,176 +1,199 @@
 
-{% extends 'cmbase.html' %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 {% block title %}Vendor Dashboard{% endblock %}
 
 {% block content %}
-    <style>
-        :root {
-            --primary-color: #6366f1;
-            --primary-hover: #4f46e5;
-            --text-color: #374151;
-            --border-color: #e5e7eb;
-            --background-light: #f9fafb;
-            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, #f6f7ff 0%, #eef1f5 100%);
-            color: var(--text-color);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        h2 {
-            color: var(--primary-color);
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: #64748b;
-            font-size: 16px;
-            margin-bottom: 40px;
-        }
-        
-        form {
-            background: white;
-            border-radius: 16px;
-            box-shadow: var(--box-shadow);
-        }
-        
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin: 0 -10px;
-        }
-        
-        .form-group {
-            padding: 30px;
 
-            flex: 1 0 calc(50% - 20px);
-            margin: 0 10px 20px;
-        }
-        
-        .form-group.full-width {
-            flex: 1 0 calc(100% - 20px);
-        }
-        
-        .section-title {
-            font-size: 18px;
-            color: var(--primary-color);
-            padding-bottom: 10px;
-            margin: 30px 10px 20px;
-            border-bottom: 2px solid var(--border-color);
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background-color: var(--primary-color);
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #4b5563;
-            font-size: 14px;
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-        
-        .button-group {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 30px;
-            padding: 0 10px;
-        }
-        
-        button {
-            padding: 12px 24px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 16px;
-        }
-        
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        .contact-section {
-            background-color: var(--background-light);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .contact-title {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .contact-number {
-            background-color: var(--primary-color);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-        
-        @media (max-width: 768px) {
-            .form-group {
-                flex: 1 0 calc(100% - 20px);
-            }
-        }
-    </style>
+<style>
+    /* Base Styling */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 0;
+}
 
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Header Styling */
+.page-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e5e9f2;
+    padding-bottom: 1rem;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #6c757d;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #3498db;
+    margin: 1.5rem 0 0.8rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e9f2;
+}
+
+/* Form Layout */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -0.5rem 1rem -0.5rem;
+    align-items: flex-start;
+}
+
+.form-group {
+    flex: 1 0 calc(50% - 1rem);
+    margin: 0 0.5rem 1rem 0.5rem;
+    min-width: 250px;
+}
+
+.form-group.full-width {
+    flex: 1 0 calc(100% - 1rem);
+}
+
+/* Form Controls */
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: #2d3748;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: #3498db;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8.5l4-4H2z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    padding-right: 2.5rem;
+}
+
+/* Contact Sections */
+.contact-section {
+    background-color: #f8fafc;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.contact-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+}
+
+.contact-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #3498db;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 0.8rem;
+}
+
+/* Buttons */
+button {
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+button[type="submit"] {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+}
+
+button[type="submit"]:hover {
+    background-color: #1a252f;
+}
+
+#add-contact-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+#add-contact-button:hover {
+    background-color: #2980b9;
+}
+
+.button-group {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-group {
+        flex: 1 0 100%;
+    }
+    
+    .form-row {
+        margin-bottom: 0;
+    }
+    
+    .contact-section .form-row {
+        flex-direction: column;
+    }
+}
+</style>
     <div class="container">
         <div class="page-header">
             <h2>Edit Client Information</h2>
@@ -243,112 +266,391 @@
                     <select id="preferred_contact_method" name="preferred_contact_method">
                         <option value="email" {% if client.preferred_contact_method == 'email' %}selected{% endif %}>Email</option>
                         <option value="phone" {% if client.preferred_contact_method == 'phone' %}selected{% endif %}>Phone</option>
+                        <option value="phone" {% if client.preferred_contact_method == 'text' %}selected{% endif %}>text</option>
                     </select>
                 </div>
             </div>
             
             <div class="section-title">Additional Contacts</div>
-            
+            <!-- Contact Person 1 (Always visible) -->
             <div class="contact-section">
                 <div class="contact-title">
                     <div class="contact-number">1</div>
                     <strong>Contact Person 1</strong>
                 </div>
-                
+            
                 <div class="form-row">
                     <div class="form-group">
                         <label for="contact1_name">Name</label>
                         <input type="text" id="contact1_name" name="contact1_name" value="{{ client.contact1_name }}">
                     </div>
-                    
+            
+                    <div class="form-group">
+                        <label for="contact1_name">Last Name</label>
+                        <input type="text" name="contact1_last_name" value="{{ client.contact1_last_name }}">
+                    </div>
+            
                     <div class="form-group">
                         <label for="contact1_email">Email</label>
                         <input type="email" id="contact1_email" name="contact1_email" value="{{ client.contact1_email }}">
                     </div>
-                    
+            
                     <div class="form-group">
                         <label for="contact1_phone">Phone</label>
                         <input type="text" id="contact1_phone" name="contact1_phone" value="{{ client.contact1_phone }}">
                     </div>
-                    
+            
                     <div class="form-group">
                         <label for="contact1_preferred">Preferred Contact Method</label>
                         <select id="contact1_preferred" name="contact1_preferred">
                             <option value="">-- Select --</option>
                             <option value="email" {% if client.contact1_preferred == 'email' %}selected{% endif %}>Email</option>
                             <option value="phone" {% if client.contact1_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                            <option value="text" {% if client.contact1_preferred == 'text' %}selected{% endif %}>Text</option>
                         </select>
                     </div>
                 </div>
             </div>
             
-            <div class="contact-section">
-                <div class="contact-title">
-                    <div class="contact-number">2</div>
-                    <strong>Contact Person 2</strong>
+            <!-- Contact Person 2 -->
+            {% if client.contact2_name or client.contact2_email or client.contact2_phone or client.contact2_preferred %}
+                <div class="contact-section" id="contact2">
+                    <div class="contact-title">
+                        <div class="contact-number">2</div>
+                        <strong>Contact Person 2</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact2_name">Name</label>
+                            <input type="text" id="contact2_name" name="contact2_name" value="{{ client.contact2_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact1_name">Last Name</label>
+                            <input type="text" name="contact2_last_name" value="{{ client.contact2_last_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact2_email">Email</label>
+                            <input type="email" id="contact2_email" name="contact2_email" value="{{ client.contact2_email }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact2_phone">Phone</label>
+                            <input type="text" id="contact2_phone" name="contact2_phone" value="{{ client.contact2_phone }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact2_preferred">Preferred Contact Method</label>
+                            <select id="contact2_preferred" name="contact2_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email" {% if client.contact2_preferred == 'email' %}selected{% endif %}>Email</option>
+                                <option value="phone" {% if client.contact2_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                                <option value="text" {% if client.contact2_preferred == 'text' %}selected{% endif %}>Text</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+            {% else %}
+                <div class="contact-section" id="contact2" style="display: none;">
+                    <div class="contact-title">
+                        <div class="contact-number">2</div>
+                        <strong>Contact Person 2</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact2_name">First Name</label>
+                            <input type="text" id="contact2_name" name="contact2_name">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact1_name">Last Name</label>
+                            <input type="text" name="contact2_last_name">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact2_email">Email</label>
+                            <input type="email" id="contact2_email" name="contact2_email">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact2_phone">Phone</label>
+                            <input type="text" id="contact2_phone" name="contact2_phone">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact2_preferred">Preferred Contact Method</label>
+                            <select id="contact2_preferred" name="contact2_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone</option>
+                                <option value="text">Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Contact Person 3 -->
+            {% if client.contact3_name or client.contact3_email or client.contact3_phone or client.contact3_preferred %}
+                <div class="contact-section" id="contact3">
+                    <div class="contact-title">
+                        <div class="contact-number">3</div>
+                        <strong>Contact Person 3</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact3_name">Name</label>
+                            <input type="text" id="contact3_name" name="contact3_name" value="{{ client.contact3_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact1_name">Last Name</label>
+                            <input type="text" name="contact3_last_name" value="{{ client.contact3_last_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact3_email">Email</label>
+                            <input type="email" id="contact3_email" name="contact3_email" value="{{ client.contact3_email }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact3_phone">Phone</label>
+                            <input type="text" id="contact3_phone" name="contact3_phone" value="{{ client.contact3_phone }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact3_preferred">Preferred Contact Method</label>
+                            <select id="contact3_preferred" name="contact3_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email" {% if client.contact3_preferred == 'email' %}selected{% endif %}>Email</option>
+                                <option value="phone" {% if client.contact3_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                                <option value="text" {% if client.contact3_preferred == 'text' %}selected{% endif %}>Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="contact-section" id="contact3" style="display: none;">
+                    <div class="contact-title">
+                        <div class="contact-number">3</div>
+                        <strong>Contact Person 3</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact3_name">Name</label>
+                            <input type="text" id="contact3_name" name="contact3_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact1_name">Last Name</label>
+                            <input type="text" name="contact3_last_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact3_email">Email</label>
+                            <input type="email" id="contact3_email" name="contact3_email">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact3_phone">Phone</label>
+                            <input type="text" id="contact3_phone" name="contact3_phone">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact3_preferred">Preferred Contact Method</label>
+                            <select id="contact3_preferred" name="contact3_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone</option>
+                                <option value="text">Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Contact Person 4 -->
+            {% if client.contact4_name or client.contact4_email or client.contact4_phone or client.contact4_preferred %}
+                <div class="contact-section" id="contact4">
+                    <div class="contact-title">
+                        <div class="contact-number">4</div>
+                        <strong>Contact Person 4</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact4_name">Name</label>
+                            <input type="text" id="contact4_name" name="contact4_name" value="{{ client.contact4_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact4_last_name">Last Name</label>
+                            <input type="text" name="contact4_last_name" value="{{ client.contact4_last_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact4_email">Email</label>
+                            <input type="email" id="contact4_email" name="contact4_email" value="{{ client.contact4_email }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact4_phone">Phone</label>
+                            <input type="text" id="contact4_phone" name="contact4_phone" value="{{ client.contact4_phone }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact4_preferred">Preferred Contact Method</label>
+                            <select id="contact4_preferred" name="contact4_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email" {% if client.contact4_preferred == 'email' %}selected{% endif %}>Email</option>
+                                <option value="phone" {% if client.contact4_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                                <option value="text" {% if client.contact4_preferred == 'text' %}selected{% endif %}>Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="contact-section" id="contact4" style="display: none;">
+                    <div class="contact-title">
+                        <div class="contact-number">4</div>
+                        <strong>Contact Person 4</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact4_name">Name</label>
+                            <input type="text" id="contact4_name" name="contact4_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact4_last_name">Last Name</label>
+                            <input type="text" name="contact4_last_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact4_email">Email</label>
+                            <input type="email" id="contact4_email" name="contact4_email">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact4_phone">Phone</label>
+                            <input type="text" id="contact4_phone" name="contact4_phone">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact4_preferred">Preferred Contact Method</label>
+                            <select id="contact4_preferred" name="contact4_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone</option>
+                                <option value="text">Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Contact Person 5 -->
+            {% if client.contact5_name or client.contact5_email or client.contact5_phone or client.contact5_preferred %}
+                <div class="contact-section" id="contact5">
+                    <div class="contact-title">
+                        <div class="contact-number">5</div>
+                        <strong>Contact Person 5</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact5_name">Name</label>
+                            <input type="text" id="contact5_name" name="contact5_name" value="{{ client.contact5_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact5_last_name">Last Name</label>
+                            <input type="text" name="contact5_last_name" value="{{ client.contact5_last_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact5_email">Email</label>
+                            <input type="email" id="contact5_email" name="contact5_email" value="{{ client.contact5_email }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact5_phone">Phone</label>
+                            <input type="text" id="contact5_phone" name="contact5_phone" value="{{ client.contact5_phone }}">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact5_preferred">Preferred Contact Method</label>
+                            <select id="contact5_preferred" name="contact5_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email" {% if client.contact5_preferred == 'email' %}selected{% endif %}>Email</option>
+                                <option value="phone" {% if client.contact5_preferred == 'phone' %}selected{% endif %}>Phone</option>
+                                <option value="text" {% if client.contact5_preferred == 'text' %}selected{% endif %}>Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="contact-section" id="contact5" style="display: none;">
+                    <div class="contact-title">
+                        <div class="contact-number">5</div>
+                        <strong>Contact Person 5</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact5_name">Name</label>
+                            <input type="text" id="contact5_name" name="contact5_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact5_last_name">Last Name</label>
+                            <input type="text" name="contact5_last_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact5_email">Email</label>
+                            <input type="email" id="contact5_email" name="contact5_email">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact5_phone">Phone</label>
+                            <input type="text" id="contact5_phone" name="contact5_phone">
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="contact5_preferred">Preferred Contact Method</label>
+                            <select id="contact5_preferred" name="contact5_preferred">
+                                <option value="">-- Select --</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone</option>
+                                <option value="text">Text</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Single Add Contact button -->
+            <button type="button" id="add-contact-button" onclick="showNextContact()">Add Contact Person</button>
+            
+            <script>
+            function showNextContact() {
+                // Find the next hidden contact section
+                for (let i = 2; i <= 5; i++) {
+                    const contactSection = document.getElementById('contact' + i);
+                    if (contactSection && contactSection.style.display === 'none') {
+                        contactSection.style.display = 'block';
+                        
+                        // Hide the button if we've reached the maximum number of contacts
+                        if (i === 5) {
+                            document.getElementById('add-contact-button').style.display = 'none';
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+            
+            // Initial setup - hide the button if all contacts are already visible
+            window.addEventListener('DOMContentLoaded', function() {
+                let allContactsVisible = true;
+                for (let i = 2; i <= 5; i++) {
+                    const contactSection = document.getElementById('contact' + i);
+                    if (contactSection && contactSection.style.display === 'none') {
+                        allContactsVisible = false;
+                        break;
+                    }
+                }
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact2_name">Name</label>
-                        <input type="text" id="contact2_name" name="contact2_name" value="{{ client.contact2_name }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact2_email">Email</label>
-                        <input type="email" id="contact2_email" name="contact2_email" value="{{ client.contact2_email }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact2_phone">Phone</label>
-                        <input type="text" id="contact2_phone" name="contact2_phone" value="{{ client.contact2_phone }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact2_preferred">Preferred Contact Method</label>
-                        <select id="contact2_preferred" name="contact2_preferred">
-                            <option value="">-- Select --</option>
-                            <option value="email" {% if client.contact2_preferred == 'email' %}selected{% endif %}>Email</option>
-                            <option value="phone" {% if client.contact2_preferred == 'phone' %}selected{% endif %}>Phone</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="contact-section">
-                <div class="contact-title">
-                    <div class="contact-number">3</div>
-                    <strong>Contact Person 3</strong>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contact3_name">Name</label>
-                        <input type="text" id="contact3_name" name="contact3_name" value="{{ client.contact3_name }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact3_email">Email</label>
-                        <input type="email" id="contact3_email" name="contact3_email" value="{{ client.contact3_email }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact3_phone">Phone</label>
-                        <input type="text" id="contact3_phone" name="contact3_phone" value="{{ client.contact3_phone }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact3_preferred">Preferred Contact Method</label>
-                        <select id="contact3_preferred" name="contact3_preferred">
-                            <option value="">-- Select --</option>
-                            <option value="email" {% if client.contact3_preferred == 'email' %}selected{% endif %}>Email</option>
-                            <option value="phone" {% if client.contact3_preferred == 'phone' %}selected{% endif %}>Phone</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="button-group">
+                if (allContactsVisible) {
+                    document.getElementById('add-contact-button').style.display = 'none';
+                }
+            });
+            </script>            <div class="button-group">
                 <button type="submit">Update Client</button>
             </div>
         </form>

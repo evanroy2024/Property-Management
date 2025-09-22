@@ -1,0 +1,167 @@
+{% extends 'adminmanager/adminbase.html' %}
+{ % load static %}
+
+{% block title %}Manage Testimonials{% endblock %}
+
+{% block content %}
+<style>
+    .testimonial-table-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .testimonial-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .testimonial-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .testimonial-back-btn,
+    .testimonial-add-btn {
+        background: #4e73df;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+        color: #ffffff;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .testimonial-add-btn {
+        margin-left: auto;
+        background-color: #4e73df;
+    color: white;    }
+
+    .testimonial-back-btn:hover,
+    .testimonial-add-btn:hover {
+        background-color: #f1f5f9;
+    }
+
+    .testimonial-search {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    table.testimonial-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table.testimonial-table thead {
+        background-color: #f3f4f6;
+    }
+
+    table.testimonial-table th,
+    table.testimonial-table td {
+        padding: 16px;
+        text-align: left;
+        font-size: 15px;
+    }
+
+    table.testimonial-table th {
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    table.testimonial-table td {
+        border-top: 1px solid #e5e7eb;
+        vertical-align: middle;
+        color: #374151;
+    }
+
+    .testimonial-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .testimonial-actions .btn-edit,
+    .testimonial-actions .btn-delete {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-right: 6px;
+    }
+
+    .btn-edit {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+    .btn-delete {
+        background-color: #f60000;
+        color: rgb(255, 255, 255);
+    }
+
+    .testimonial-empty {
+        text-align: center;
+        padding: 30px 0;
+        color: #999;
+    }
+    body{
+        background-color: white;
+    }
+</style>
+
+<div class="testimonial-table-container">
+    <div class="testimonial-header">
+        <a href="{% url 'adminmanager:admin_dashboard' %}" class="testimonial-back-btn">← Go to Dashboard</a>
+        <h2>Manage Testimonials</h2>
+        <a href="{% url 'adminmanager:testimonial_create' %}" class="testimonial-add-btn">＋ Add New Testimonial</a>
+    </div>
+
+    <table class="testimonial-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Client Name</th>
+                <th>Image</th>
+                <th>Quote</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in testimonials %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ t.name }}</strong></td>
+                <td><img src="{{ t.photo.url }}" class="testimonial-img" alt="{{ t.name }}"></td>
+                <td>{{ t.comment|truncatechars:40 }}</td>
+                <td class="testimonial-actions">
+                    <a href="{% url 'adminmanager:testimonial_edit' t.id %}">
+                        <button class="btn-edit">Edit</button>
+                    </a>
+                    <a href="{% url 'adminmanager:testimonial_delete' t.id %}" onclick="return confirm('Delete this testimonial?')">
+                        <button class="btn-delete">Delete</button>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="testimonial-empty">No testimonials found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

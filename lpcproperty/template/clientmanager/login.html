@@ -43,7 +43,7 @@
     .input-field {
         width: 100%;
         padding: 12px;
-        margin-bottom: 18px;
+        margin-bottom: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
         background: #fff;
@@ -163,71 +163,148 @@
     body{
         background: #ffffff;
     }
-    #username{
-        margin-top: 5px;
-        height: 57px;
-        border-radius: 8px;
-    }
-    #password{
-        height: 57px;
-        border-radius: 8px;
-    }
-    .login-btn {
-        color: white;
-        height: 60px;
-    }
 </style>
   
 <!-- Your page-specific content here -->
 <div class="login-container">
   <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
   <img src="{% static 'whitelogo.png' %}" alt="Company Logo" class="logo">
-  <!-- User Type Selection Tick Boxes -->
-  <!-- User Type Selection Tick Boxes -->
-  <div class="user-type-container">
-    <div class="user-type-option" id="client-option" onclick="selectUserType('admin')">
-      <div class="user-type-checkbox" id="client-checkbox"></div>
+   <!-- User Type Selection Tick Boxes -->
+   <div class="user-type-container">
+    <div class="user-type-option" id="client-option" onclick="selectUserType('client')">
+      <div class="user-type-checkbox checked" id="client-checkbox"></div>
       <span class="user-type-label">Admin</span>
     </div>
-    <div class="user-type-option" id="manager-option" onclick="selectUserType('client')">
-      <div class="user-type-checkbox checked" id="manager-checkbox"></div>
+    <div class="user-type-option" id="manager-option" onclick="selectUserType('manager')">
+      <div class="user-type-checkbox" id="manager-checkbox"></div>
       <span class="user-type-label">Client Manager</span>
     </div>
   </div>
-  
-  <form method="POST">
-    {% csrf_token %}
-    {% for message in messages %}
-    <div class="alert alert-warning">{{ message }}</div>
-    {% endfor %}
+  {% if messages %}
+  {% for message in messages %}
+    {% if 'login_error' in message.tags %}
+      <div class="error-message">
+          <p>{{ message }}</p>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
-    <h2>Username :</h2>
-    <input type="text" id="username" name="username" class="input-field" placeholder="Username" required>
-    
-    <h2>Password :</h2>
-    <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
-    
-    <button type="submit" class="login-btn">Login</button>
-  </form>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+</form>
   
   <a href="#" class="forgot-password">Forgot Password?</a>
 </div>
 
+<style>
+    /* Form container styling */
+form {
+    width: 100%;
+    margin: 20px 0;
+}
+
+/* Django form as_p styling */
+form p {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+/* Label styling */
+form label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+/* Input field styling */
+form input[type="text"],
+form input[type="password"],
+form input[type="email"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #212529;
+    font-size: 16px;
+    font-weight: 500;
+    transition: border-color 0.3s;
+}
+
+/* Input focus state */
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    border-color: #d1aa6b;
+    box-shadow: 0 0 0 3px rgba(209, 170, 107, 0.25);
+}
+
+/* Error messages */
+form .errorlist {
+    color: #dc3545;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0;
+}
+
+/* Help text */
+form .helptext {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+/* Login button */
+form button[type="submit"] {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #d1aa6b;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+/* Button hover state */
+form button[type="submit"]:hover {
+    background-color: #c19a5b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(209, 170, 107, 0.3);
+}
+
+/* Button active state */
+form button[type="submit"]:active {
+    transform: translateY(0);
+}
+</style>
 <script>
     function selectUserType(type) {
-      // Uncheck both
+      // Remove check from all options
       document.getElementById('client-checkbox').classList.remove('checked');
       document.getElementById('manager-checkbox').classList.remove('checked');
-  
-      // Check the one selected
-      if (type === 'admin') {
-        document.getElementById('client-checkbox').classList.add('checked');
-        window.location.href = "{% url 'adminmanager:admin_login' %}";
-      } else {
-        document.getElementById('manager-checkbox').classList.add('checked');
-        // Stay on current page
+      
+      // Add check to selected option
+      document.getElementById(type + '-checkbox').classList.add('checked');
+      
+      // If manager is selected, redirect to the client manager page
+      if (type === 'manager') {
+          window.location.href = "{% url 'clientmanager:client_login' %}";
       }
+      // For client, we stay on the same page as requested
     }
   </script>
-  
 {% endblock %}

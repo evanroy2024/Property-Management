@@ -1,4 +1,4 @@
-{% extends 'adminmanager/adminbase.html' %}
+{% extends base_template %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -3383,5 +3383,9 @@ document.addEventListener('DOMContentLoaded', function() {
     min-width: 150px;
 }
 </style>
-
+<style>
+    body {
+    background-color: rgb(255, 255, 255);
+}
+</style>
 {% endblock content %}

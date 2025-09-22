@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 {% block title %}Vendor Dashboard{% endblock %}
 
@@ -179,6 +179,12 @@
 }
 
     </style>
+{% if error_message %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{ error_message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
 
     <div class="client-form-container">
         <h2 class="page-title">Create New Client</h2>
@@ -252,12 +258,12 @@
                     <select id="preferred_contact_method" name="preferred_contact_method" class="form-select">
                         <option value="email">Email</option>
                         <option value="phone">Phone</option>
-                        <option value="text">text</option>
+                        <option value="text">Text</option>
                     </select>
                 </div>
             </div>
-
-            <div class="contact-section" style="display: none;">
+            
+            <div class="contact-section" id="contact1" class="contact-section" style="display: none;">
                 <div class="contact-header">
                     <div class="contact-badge">1</div>
                     <div class="section-title">Contact Person 1</div>
@@ -265,10 +271,13 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="contact1_name">Name</label>
+                        <label class="form-label" for="contact1_name">First Name</label>
                         <input type="text" id="contact1_name" name="contact1_name" class="form-input">
                     </div>
-                    
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_name">Last Name</label>
+                        <input type="text" name="contact1_last_name" class="form-input">
+                    </div>
                     <div class="form-group">
                         <label class="form-label" for="contact1_email">Email</label>
                         <input type="email" id="contact1_email" name="contact1_email" class="form-input">
@@ -285,12 +294,13 @@
                             <option value="">-- Select --</option>
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="text">Text</option>
                         </select>
                     </div>
                 </div>
             </div>
             
-            <div class="contact-section" style="display: none;">
+            <div class="contact-section" id="contact2" class="contact-section" style="display: none;">
                 <div class="contact-header">
                     <div class="contact-badge">2</div>
                     <div class="section-title">Contact Person 2</div>
@@ -298,8 +308,12 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="contact2_name">Name</label>
+                        <label class="form-label" for="contact2_name">First Name</label>
                         <input type="text" id="contact2_name" name="contact2_name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_name">Last Name</label>
+                        <input type="text" name="contact2_last_name" class="form-input">
                     </div>
                     
                     <div class="form-group">
@@ -318,12 +332,13 @@
                             <option value="">-- Select --</option>
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="text">Text</option>
                         </select>
                     </div>
                 </div>
             </div>
             
-            <div class="contact-section" style="display: none;">
+            <div class="contact-section" id="contact3" class="contact-section" style="display: none;">
                 <div class="contact-header">
                     <div class="contact-badge">3</div>
                     <div class="section-title">Contact Person 3</div>
@@ -331,8 +346,12 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="contact3_name">Name</label>
+                        <label class="form-label" for="contact3_name">First Name</label>
                         <input type="text" id="contact3_name" name="contact3_name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact1_name">Last Name</label>
+                        <input type="text"  name="contact3_last_name" class="form-input">
                     </div>
                     
                     <div class="form-group">
@@ -351,47 +370,29 @@
                             <option value="">-- Select --</option>
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="text">Text</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <button id="showContactBtn" class="show-button">Add additional Contact Person</button>
-            
+            <button type="button" id="add-contact-btn" class="btn btn-secondary mb-3">Add Contact Person</button>
+
             <button type="submit" class="form-button">Create Client</button>
         </form>
     </div>
 
     <script>
-        const sections = document.querySelectorAll('.contact-section');
-        const button = document.getElementById('showContactBtn');
-        let currentIndex = 0;
-    
-        button.addEventListener('click', () => {
-            if (currentIndex < sections.length) {
-                sections[currentIndex].style.display = 'block';
-                currentIndex++;
-    
-                if (currentIndex === sections.length) {
-                    button.style.display = 'none'; // Hide the button after showing all
-                }
+        let contactCount = 0;
+        
+        document.getElementById('add-contact-btn').addEventListener('click', () => {
+            contactCount++;
+            if (contactCount <= 3) {
+                document.getElementById(`contact${contactCount}`).style.display = 'block';
+            }
+            if (contactCount === 3) {
+                document.getElementById('add-contact-btn').style.display = 'none'; // Hide after 3
             }
         });
-    </script>
-<style>
-    .show-button {
-        padding: 10px 20px;
-        background: #6e8efb;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-
-    .show-button:hover {
-        background: #a777e3;
-    }
-</style>
-    
+        </script>
+        
 {% endblock content %}

@@ -1,5 +1,4 @@
-{% extends 'cmbase.html' %}
-
+{% extends 'clientmanager/managerbase.html' %}
 {% block content %}
 <style>
     body{
@@ -11,7 +10,7 @@
     <div class="col-md-8" style="border: 1px solid;">
       <div class="card shadow-sm border-0 rounded-lg">
         <div class="card-header bg-white border-bottom border-light">
-          <h3 class="text-center font-weight-bold text-primary mb-0">Update Walkthrough Report</h3>
+          <h3 class="text-center font-weight-bold text-primary mb-0">Update Walk-Thru Report</h3>
         </div>
         <div class="card-body p-4">
           <form method="post" class="needs-validation" novalidate>
@@ -43,7 +42,7 @@
           </form>
         </div>
         <div class="card-footer bg-white text-center border-top border-light py-3">
-          <a href="{% url 'clientmanager:all_reports' %}" class="btn btn-outline-secondary">
+          <a href="{% url 'walkthroughreport:all_reports' %}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Back to Reports
           </a>
         </div>

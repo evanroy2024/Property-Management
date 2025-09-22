@@ -1,0 +1,1772 @@
+{% extends 'clientmanager/managerbase.html' %}
+{% load static %}
+{% block title %}Pre-arrival Requests{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body{
+        background-color: white;
+    }
+    .content-wrapper {
+        padding: 1.5rem;
+        background-color: #f8f9fc;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 14px;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .table th {
+        background-color: white;
+        color: black;
+        border-bottom: 2px solid #e3e6f0;
+        font-weight: 700;
+        padding: 0.75rem;
+        vertical-align: middle;
+        position: relative;
+    }
+    
+    .table td {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .status-approved {
+        background-color: #2ecc71;
+        color: white;
+    }
+    
+    .status-denied {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .status-pending {
+        background-color: #f1c40f;
+        color: black;
+    }
+    
+    .status-open {
+        background-color: white;
+        color: black;
+        border: 1px solid #ccc;
+    }
+    
+    .status-completed {
+        background-color: #2ecc71;
+        color: white;
+    }
+    
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+    
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+
+    .status-dropdown {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px 8px;
+        font-size: 13px;
+        background-color: white;
+        cursor: pointer;
+        min-width: 100px;
+    }
+    
+    .sort-icon {
+        font-size: 0.65rem;
+        color: #999;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+    
+    th.sortable:hover .sort-icon {
+        color: #333;
+    }
+    
+    .edit-btn {
+        background: none;
+        border: none;
+        color: #2c3e50;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+    
+    .edit-btn:hover {
+        color: #4e73df;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        backdrop-filter: blur(2px);
+    }
+    
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        width: 40%;
+        max-width: 800px;
+        min-width: 300px;
+        border: 1px solid rgba(255,255,255,0.2);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 600;
+        font-size: 24px;
+    }
+    
+    .modal-input {
+        width: 100%;
+        padding: 16px;
+        border: 2px solid #e3f2fd;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: #fafbfc;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+    }
+    
+    .modal-input:focus {
+        border-color: #3498db;
+        background: #fff;
+        outline: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6, #bdc3c7);
+        color: white;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #e74c3c, #ec7063);
+        color: white;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        min-width: 130px;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+    
+    .h3, h3 {
+        color: black;
+    }
+    
+    .icon-gray {
+        color: #dddfeb;
+    }
+
+    .view-details-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    .view-details-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        color: black;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    .view-details-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #007bff; /* Simple blue */
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.view-details-btn i {
+    font-size: 14px;
+}
+
+.view-details-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+</style>
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Completed Pre-Arrival Notifications </h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow mb-4">
+        <div class="p-3">
+           <div class="row g-2">
+    <div class="col-6">
+        <select id="filter-date" class="form-select w-100">
+            <option value="">All Dates</option>
+        </select>
+    </div>
+    <div class="col-6">
+        <select id="filter-client" class="form-select w-100">
+            <option value="">All Clients</option>
+        </select>
+    </div>
+    <div class="col-4" style="display: none;">
+        <select id="filter-status" class="form-select">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="open">Open</option>
+            <option value="completed">Completed</option>
+            <option value="denied">Denied</option>
+        </select>
+    </div>
+</div>
+
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="sortable-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-index="1" style="cursor: pointer;">
+                                CLIENT  <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-index="2" style="cursor: pointer;">
+                                ARRIVAL DATE <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th class="sortable" data-index="0" style="cursor: pointer;">
+                               REQUEST SUBMITTAL DATE <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            <th>DETAILS</th>
+                            <th>EST'D COST</th>
+                            <th>CLIENT APPROVAL</th>
+                            <th>ITEM STATUS</th>
+                            <th>COMPLETION DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="request-table">
+                        {% for req in requests %}
+                            <tr class="request-row"
+                                data-client="{{ req.user.last_name|lower }}, {{ req.user.first_name|lower }}"
+                                data-date="{{ req.created_at|date:'Y-m-d' }}" 
+                                data-status="{{ req.status|lower }}"
+                                data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }} {{ req.name|lower }}">
+                                
+                                
+                                <td><strong>{{ req.user.last_name|title }}, {{ req.user.first_name|title }}</strong></td>
+
+                                <td>
+                                    {% if req.arrival_date %}
+                                        <strong>{{ req.arrival_date|date:'M d, Y' }}</strong><br>
+                                        {% if req.arrival_time %}
+                                            <small class="text-muted">{{ req.arrival_time|time:'g:i A' }}</small>
+                                        {% endif %}
+                                    {% else %}
+                                        <small class="text-muted">Not specified</small>
+                                    {% endif %}
+                                </td>
+                                <td style="cursor: pointer;">
+                                    <strong>{{ req.created_at|date:'M d, Y' }}</strong><br>
+                                    <small class="text-muted">{{ req.created_at|time:'g:i A' }}</small>
+                                </td>
+                              
+
+                                <td>
+                                    <a href="{% url 'clientmanager:prearrival_request_detail' req.id %}" class="view-details-btn">
+                                         VIEW
+                                    </a>
+                                </td>
+                                
+                                <td>
+                                    <span id="cost-{{ req.id }}">${{ req.cost|default:"0" }}</span>
+                                    <button 
+                                        onclick="openEditCostModal('{{ req.id }}', '{{ req.cost|default:0 }}', '{{ req.cost_remarks|default:"" }}')"
+                                        class="edit-btn"
+                                        title="Edit Cost">
+                                        <i class="fas fa-pen-to-square"></i>
+                                    </button>
+                                </td>
+
+                                <td>
+                                    <div id="approval-cell-{{ req.id }}" 
+                                         onclick="openUpdateApprovalModal('{{ req.id }}', '{{ req.client_approval }}')" 
+                                         style="cursor: pointer;">
+                                        <span id="approval-span-{{ req.id }}" 
+                                              class="status-badge {% if req.client_approval == 'Approved' %}status-approved{% elif req.client_approval == 'Denied' %}status-denied{% else %}status-pending{% endif %}">
+                                            {{ req.client_approval }}
+                                        </span>
+                                    </div>
+                                </td>
+<td>
+    <span 
+        id="status-{{ req.id }}"
+        onclick="openUpdateStatusModal('{{ req.id }}', '{{ req.status }}', '{{ req.completation_denied_date|date:"Y-m-d" }}', '{{ req.status_remarks|default:"" }}', '{{ req.client_approval }}')"
+        style="
+            cursor: pointer;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+            {% if req.status == 'completed' %}
+                background-color: #28a745;
+                border: 1px solid #66CC66;
+            {% elif req.status == 'denied' %}
+                background-color: #FF6666;
+                border: 1px solid #FF6666;
+            {% else %}
+                background-color: gray;
+                border: 1px solid gray;
+            {% endif %}
+        "
+    >
+        {{ req.status|title }}
+    </span>
+</td>
+ <td>
+        {% if req.completation_denied_date %}
+            {{ req.completation_denied_date|date:"Y-m-d" }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-check fa-4x mb-3 icon-gray"></i>
+                                        <h4 class="text-gray-800 mb-2">No pre-arrival requests found</h4>
+                                        <p class="text-gray-600 mb-3">All requests are currently completed or closed</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                 <div style="text-align:right;">
+                    <button id="totalCostBtn" style="background-color:#FF5722; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">Total : $0.00</button>
+
+                <button id="viewCostSummaryBtn" style="background-color:#28a745; color:#fff; padding:8px 16px; font-size:14px; border:none; border-radius:4px; cursor:pointer; transition:background-color 0.3s; margin-right:10px;">
+    View Cost Summary
+  </button>
+
+</div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Cost Modal -->
+<div id="editCostModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Estimated Cost</h3>
+        </div>
+        <form id="editCostForm">
+            <input type="hidden" id="editModalRequestId">
+            
+            <p style="color: black;">Amount ($):</p>
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <span style="position: absolute; left: 10px; top: 18px; color: #666; pointer-events: none; z-index: 1;">$</span>
+                <input type="number" id="editModalAmount" name="amount" required placeholder="0.00" step="0.01" class="modal-input" style="padding-left: 25px;">
+            </div>
+            
+            <p style="color: black;">Cost Remarks:</p>
+            <textarea id="editModalRemarks" name="remarks" placeholder="Enter remarks about the cost" class="modal-input" rows="3"></textarea>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" onclick="closeEditCostModal()" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Client Approval Update Modal -->
+<div id="updateApprovalModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="align-items: center; justify-content: center;">
+            <h3>Client Approval</h3>
+        </div>
+        
+        <input type="hidden" id="approvalRequestId">
+        
+        <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px;">
+            <button onclick="setApprovalStatus('Approved')" class="btn-primary">Approved</button>
+            <button onclick="setApprovalStatus('Denied')" class="btn-danger">Denied</button>
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="closeUpdateApprovalModal()" class="btn-secondary">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Status Update Modal -->
+<div id="updateStatusModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header" style="align-items: center; justify-content: center;">
+            <h3>Status Update</h3>
+        </div>
+        
+        <form id="updateStatusForm">
+            <input type="hidden" id="statusRequestId">
+            
+            <p style="color: black;">Completion Date:</p>
+            <input type="date" id="completionDate" class="modal-input">
+            
+            <p style="color: black;">Status:</p>
+            <select id="statusDropdown" class="modal-input">
+                <option value="pending">Pending</option>
+                <option value="open">Open</option>
+                <option value="completed">Completed</option>
+                <option value="denied">Denied</option>
+            </select>
+            
+            <p style="color: black;">Remarks:</p>
+            <textarea id="statusRemarks" class="modal-input" rows="3" placeholder="Enter remarks"></textarea>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" onclick="closeUpdateStatusModal()" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize filters
+    const filters = {
+        date: document.getElementById("filter-date"),
+        client: document.getElementById("filter-client"),
+        status: document.getElementById("filter-status"),
+        month: document.getElementById("filter-month")
+    };
+    
+    const rows = document.querySelectorAll(".request-row");
+    
+    // Populate dropdowns
+    const dates = new Set();
+    const clients = new Set();
+    const months = new Set();
+    
+    rows.forEach(row => {
+        const date = row.getAttribute("data-date");
+        const client = row.getAttribute("data-client");
+        if (date) {
+            dates.add(date);
+            // Extract month from date for month filter
+            const dateObj = new Date(date);
+            const monthYear = dateObj.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+            });
+            months.add(monthYear);
+        }
+        if (client) clients.add(client);
+    });
+    
+    [...dates].sort().reverse().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        const dateObj = new Date(val);
+        opt.textContent = dateObj.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+        filters.date.appendChild(opt);
+    });
+    
+    [...clients].sort().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+        filters.client.appendChild(opt);
+    });
+    
+    [...months].sort().reverse().forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val;
+        filters.month.appendChild(opt);
+    });
+    
+    // Filter function
+    function filterTable() {
+        const selected = {
+            date: filters.date.value,
+            client: filters.client.value,
+            status: filters.status.value,
+            month: filters.month.value
+        };
+        
+        rows.forEach(row => {
+            const rowDate = row.getAttribute("data-date");
+            let monthMatch = true;
+            
+            if (selected.month && rowDate) {
+                const dateObj = new Date(rowDate);
+                const rowMonth = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long' 
+                });
+                monthMatch = rowMonth === selected.month;
+            }
+            
+            const matches = 
+                (!selected.date || row.getAttribute("data-date") === selected.date) &&
+                (!selected.client || row.getAttribute("data-client") === selected.client) &&
+                (!selected.status || row.getAttribute("data-status") === selected.status) &&
+                monthMatch;
+            
+            row.style.display = matches ? "" : "none";
+        });
+    }
+    
+    // Event listeners for filters
+    Object.values(filters).forEach(filter => {
+        filter.addEventListener("change", filterTable);
+    });
+    
+    // Sorting
+    const table = document.getElementById("request-table");
+    const headers = document.querySelectorAll("th.sortable");
+    let currentSort = { index: null, direction: 1 };
+    
+    headers.forEach(header => {
+        header.addEventListener("click", function () {
+            const index = parseInt(this.getAttribute("data-index"));
+            
+            if (currentSort.index === index) {
+                currentSort.direction *= -1;
+            } else {
+                currentSort.index = index;
+                currentSort.direction = 1;
+            }
+            
+            const rows = Array.from(table.querySelectorAll("tr"));
+            
+            rows.sort((a, b) => {
+                let aText = a.children[index].innerText.trim().toLowerCase();
+                let bText = b.children[index].innerText.trim().toLowerCase();
+                
+                // Handle date sorting for index 0 (Request Date) and index 2 (Arrival Date)
+                if (index === 0 || index === 2) {
+                    // Extract date from the text (handles "M d, Y" format)
+                    const aDateMatch = aText.match(/[a-z]{3}\s+\d{1,2},\s+\d{4}/);
+                    const bDateMatch = bText.match(/[a-z]{3}\s+\d{1,2},\s+\d{4}/);
+                    
+                    if (aDateMatch && bDateMatch) {
+                        const aDate = new Date(aDateMatch[0]);
+                        const bDate = new Date(bDateMatch[0]);
+                        return currentSort.direction * (aDate - bDate);
+                    }
+                    // Handle "not specified" cases - put them at the end
+                    if (!aDateMatch) return currentSort.direction;
+                    if (!bDateMatch) return -currentSort.direction;
+                }
+                
+                return currentSort.direction * aText.localeCompare(bText);
+            });
+            headers.forEach(h => {
+                const icon = h.querySelector(".sort-icon");
+                icon.className = "fas fa-sort sort-icon";
+            });
+            
+            const icon = this.querySelector(".sort-icon");
+            icon.className = currentSort.direction === 1 ? "fas fa-sort-up sort-icon" : "fas fa-sort-down sort-icon";
+            
+            rows.forEach(row => table.appendChild(row));
+        });
+    });
+});
+
+
+
+
+// Cost Modal Functions
+function openEditCostModal(requestId, currentCost, currentRemarks) {
+    document.getElementById('editModalRequestId').value = requestId;
+    document.getElementById('editModalAmount').value = currentCost || '';
+    document.getElementById('editModalRemarks').value = currentRemarks || '';
+    document.getElementById('editCostModal').style.display = 'block';
+}
+
+function closeEditCostModal() {
+    document.getElementById('editCostModal').style.display = 'none';
+}
+
+document.getElementById('editCostForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const requestId = document.getElementById('editModalRequestId').value;
+    const amount = document.getElementById('editModalAmount').value;
+    const remarks = document.getElementById('editModalRemarks').value;
+
+    fetch("{% url 'clientmanager:upodate_prearrival_cost' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            request_id: requestId,
+            amount: amount,
+            remarks: remarks
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`cost-${requestId}`).textContent = `${amount}`;
+            closeEditCostModal();
+        } else {
+            alert('Error updating cost: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating cost');
+    });
+});
+
+// Approval Modal Functions
+let selectedApprovalStatus = '';
+
+function openUpdateApprovalModal(requestId, currentApproval) {
+    document.getElementById('approvalRequestId').value = requestId;
+    selectedApprovalStatus = currentApproval;
+    document.getElementById('updateApprovalModal').style.display = 'block';
+}
+
+function closeUpdateApprovalModal() {
+    document.getElementById('updateApprovalModal').style.display = 'none';
+}
+
+function setApprovalStatus(status) {
+    selectedApprovalStatus = status;
+    submitUpdateApproval();
+}
+
+function submitUpdateApproval() {
+    const requestId = document.getElementById('approvalRequestId').value;
+    const newValue = selectedApprovalStatus;
+
+    fetch("{% url 'clientmanager:upodate_prearrival_approval' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            request_id: requestId,
+            approval_status: newValue
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const span = document.getElementById(`approval-span-${requestId}`);
+            
+            if (span) {
+                let newClass = 'status-badge ';
+                if (newValue === 'Approved') {
+                    newClass += 'status-approved';
+                } else if (newValue === 'Denied') {
+                    newClass += 'status-denied';
+                } else {
+                    newClass += 'status-pending';
+                }
+
+                span.className = newClass;
+                span.textContent = newValue;
+            }
+            
+            closeUpdateApprovalModal();
+        } else {
+            alert('Error updating approval: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating approval');
+    });
+}
+
+// Status Modal Functions
+function openUpdateStatusModal(requestId, currentStatus, currentDate, currentRemarks) {
+   document.getElementById('statusRequestId').value = requestId;
+   document.getElementById('completionDate').value = currentDate || '';
+   document.getElementById('statusRemarks').value = currentRemarks || '';
+   
+   const statusDropdown = document.getElementById('statusDropdown');
+   statusDropdown.value = currentStatus || 'open';
+   statusDropdown.disabled = false;
+   
+   document.getElementById('updateStatusModal').style.display = 'block';
+}
+
+function closeUpdateStatusModal() {
+    document.getElementById('updateStatusModal').style.display = 'none';
+}
+
+document.getElementById('updateStatusForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const requestId = document.getElementById('statusRequestId').value;
+    const status = document.getElementById('statusDropdown').value;
+    const completionDate = document.getElementById('completionDate').value;
+    const remarks = document.getElementById('statusRemarks').value;
+
+    if (!completionDate) {
+        alert('Please select a completion date');
+        return;
+    }
+    
+    if (!remarks.trim()) {
+        alert('Please enter remarks');
+        return;
+    }
+
+    fetch("{% url 'clientmanager:upodate_prearrival_status' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            request_id: requestId,
+            status: status,
+            completion_date: completionDate,
+            remarks: remarks
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+    if (data.success) {
+        // Update the status display
+        const statusDisplay = document.getElementById(`status-${requestId}`);
+        if (statusDisplay) {
+            let displayText = status;
+            if (status === 'pending') {
+                displayText = 'Pending';
+                statusDisplay.style.backgroundColor = ''; // reset
+            } else if (status === 'open') {
+                displayText = 'Open';
+                statusDisplay.style.backgroundColor = ''; // reset
+            } else if (status === 'completed') {
+                displayText = 'Completed';
+                statusDisplay.style.backgroundColor = '#66CC66'; // light but richer green
+                statusDisplay.style.border = '1px solid #66CC66'; // same color border
+                statusDisplay.style.color = 'white';
+            } else if (status === 'denied') {
+                displayText = 'Denied';
+                statusDisplay.style.backgroundColor = 'red';
+                statusDisplay.style.border = '1px solid red'; // same color border
+                statusDisplay.style.color = 'white';
+            }
+            statusDisplay.textContent = displayText;
+        }
+        closeUpdateStatusModal();
+    } else {
+        alert('Error updating status: ' + data.error);
+    }
+})
+
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating status');
+    });
+});
+
+</script>
+
+<script>
+// Calculate total cost for pre-arrival requests
+(function () {
+ function calculateTotalCost() {
+   const rows = document.querySelectorAll('#sortable-table tbody tr.request-row');
+   let total = 0;
+
+   rows.forEach(row => {
+     const costCell = row.querySelector('span[id^="cost-"]');
+     if (costCell) {
+       const costText = costCell.textContent.replace('$', '');
+       const cost = parseFloat(costText) || 0;
+       total += cost;
+     }
+   });
+
+   const totalButton = document.getElementById('totalCostBtn');
+   if (totalButton) {
+     totalButton.textContent = `Total : $${total.toFixed(2)}`;
+   }
+ }
+
+ // Run when page loads
+ calculateTotalCost();
+})();
+</script>
+<style>
+    .status-approved {
+    background-color: #28a745!important;
+    color: white;
+}
+</style>
+
+
+<!-- View cost summery ---------------------------------------------------------------------- -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<!-- Modal for Pre-arrival Cost Summary -->
+<div id="costSummaryModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); backdrop-filter:blur(2px);">
+  <div style="background:#fff; margin:2% auto; padding:0; border-radius:12px; width:90%; max-width:700px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-height:90vh; overflow:hidden;">
+    
+    <!-- Modal Header -->
+    <div style="padding:20px 24px; border-bottom:1px solid #e9ecef; display:flex; justify-content:space-between; align-items:center; background:#f8f9fa;">
+      <h3 style="margin:0; color:#333; font-weight:600; font-size:18px;">Pre-Arrival Cost Summary</h3>
+      <span id="closePreArrivalCostModal" style="color:#6c757d; font-size:24px; font-weight:bold; cursor:pointer; padding:4px; border-radius:4px; transition:all 0.2s ease;">&times;</span>
+    </div>
+    
+    <!-- Modal Body -->
+    <div style="padding:24px; max-height:70vh; overflow-y:auto;">
+      <div style="margin-bottom:24px;">
+        <label for="preArrivalClientSelect" style="display:block; margin-bottom:8px; font-weight:600; color:#333; font-size:14px;">Select Client:</label>
+        <select id="preArrivalClientSelect" style="width:100%; padding:12px 16px; border:2px solid #e9ecef; border-radius:8px; font-size:14px; color:#333; background:#fff; transition:border-color 0.3s ease; outline:none;">
+          <option value="" style="color:#333;">Choose a client...</option>
+        </select>
+      </div>
+      
+      <div id="preArrivalCostSummaryContent" style="display:none;">
+        <div style="background:#f8f9fa; padding:16px; border-radius:8px; margin-bottom:20px; border-left:4px solid #007bff;">
+          <h4 id="selectedPreArrivalClientName" style="margin:0; color:#333; font-weight:600; font-size:16px;"></h4>
+        </div>
+        
+        <div id="preArrivalReportsList" style="margin-bottom:20px;"></div>
+        
+        <div style="background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding:20px; border-radius:10px; border:2px solid #007bff;">
+          <h4 style="margin:0 0 15px 0; color:#007bff; font-weight:700; font-size:18px; text-align:center;">
+            Total Cost: $<span id="preArrivalTotalCost">0.00</span>
+          </h4>
+          <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+            <button id="preArrivalDownloadPdfBtn" style="display:none; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Download PDF</button>
+            <button id="preArrivalPrintBtn" style="display:none; background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Pre-Arrival Cost Summary Modal Script
+(function() {
+    // Get unique clients from table
+    function getUniqueClients() {
+        const clientSet = new Set();
+        const rows = document.querySelectorAll('#request-table tr.request-row');
+        
+        rows.forEach(row => {
+            const clientCell = row.querySelector('td:first-child');
+            if (clientCell) {
+                clientSet.add(clientCell.textContent.trim());
+            }
+        });
+        
+        return Array.from(clientSet).sort();
+    }
+
+    // Populate client dropdown for pre-arrival modal
+    function populatePreArrivalClientDropdown() {
+        const clients = getUniqueClients();
+        const select = document.getElementById('preArrivalClientSelect');
+        
+        if (!select) return;
+        
+        select.innerHTML = '<option value="">Choose a client...</option>';
+        
+        const allOption = document.createElement('option');
+        allOption.value = 'ALL_CLIENTS';
+        allOption.textContent = 'All Clients';
+        select.appendChild(allOption);
+        
+        clients.forEach(client => {
+            const option = document.createElement('option');
+            option.value = client;
+            option.textContent = client;
+            select.appendChild(option);
+        });
+    }
+
+    // Get reports for selected client
+    function getPreArrivalClientReports(clientName) {
+        const rows = document.querySelectorAll('#request-table tr.request-row');
+        const reports = [];
+        
+        rows.forEach(row => {
+            if (row.style.display === 'none') return;
+            
+            const clientCell = row.querySelector('td:first-child');
+            if (clientCell) {
+                const rowClient = clientCell.textContent.trim();
+                
+                if (clientName === 'ALL_CLIENTS' || rowClient === clientName) {
+                    const arrivalDateCell = row.querySelector('td:nth-child(2)');
+                    const arrivalDate = arrivalDateCell ? arrivalDateCell.textContent.trim() : '';
+                    
+                    const submittalDateCell = row.querySelector('td:nth-child(3)');
+                    const submittalDate = submittalDateCell ? submittalDateCell.textContent.trim() : '';
+                    
+                    const costCell = row.querySelector('td:nth-child(5) span[id^="cost-"]');
+                    const costText = costCell ? costCell.textContent.replace('$', '').replace('-', '0') : '0';
+                    const cost = parseFloat(costText) || 0;
+                    
+                    let remarks = '';
+                    const costCellContainer = row.querySelector('td:nth-child(5)');
+                    if (costCellContainer) {
+                        const editButton = costCellContainer.querySelector('button[onclick*="openEditCostModal"]');
+                        if (editButton) {
+                            const onclickAttr = editButton.getAttribute('onclick');
+                            const match = onclickAttr.match(/openEditCostModal\('[^']*',\s*'[^']*',\s*'([^']*)'\)/);
+                            if (match && match[1]) {
+                                remarks = match[1];
+                            }
+                        }
+                    }
+                    
+                    if (!remarks || remarks.trim() === '') {
+                        remarks = 'None';
+                    }
+                    
+                    reports.push({
+                        arrivalDate: arrivalDate,
+                        submittalDate: submittalDate,
+                        cost: cost,
+                        remarks: remarks,
+                        client: rowClient
+                    });
+                }
+            }
+        });
+        
+        return reports;
+    }
+
+    // Group reports by client
+    function groupReportsByClient(reports) {
+        const grouped = {};
+        reports.forEach(report => {
+            if (!grouped[report.client]) {
+                grouped[report.client] = [];
+            }
+            grouped[report.client].push(report);
+        });
+        return grouped;
+    }
+
+function generatePreArrivalPDF(clientName, reports, totalCost) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    function continueGeneratingPDF() {
+        // Create blue header background (like in your design)
+        doc.setFillColor(24, 119, 242); // Blue color matching your design
+        doc.rect(0, 0, 210, 40, 'F'); // Full width header
+        
+        // Add text logo to header (white text on blue background) instead of image
+        doc.setTextColor(255, 255, 255); // White text
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text('LOTUS', 20, 20);
+        doc.setFontSize(14);
+        doc.text('Property Management', 20, 30);
+        
+        // Add contact information on the right side of header
+        doc.setTextColor(255, 255, 255); // White text
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.text('Phone: (561) 766-7828', 210 - 5, 20, { align: 'right' });
+        doc.text('www.lotuspmc.com', 210 - 5, 30, { align: 'right' });
+        
+        // Reset text color to black for content
+        doc.setTextColor(0, 0, 0);
+        
+        // Set up document title - moved down to accommodate header
+        doc.setFontSize(20);
+        doc.setFont(undefined, 'bold');
+        doc.text('Completed Pre-Arrival Cost Summary', 20, 60);
+        
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Client: ${clientName}`, 20, 75);
+        
+        doc.setFontSize(12);
+        doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 85);
+        
+        let yPos = 105; // Adjusted starting position for content
+        
+        if (clientName === 'All Clients') {
+            // Group reports by client
+            const groupedReports = groupReportsByClient(reports);
+            
+            Object.keys(groupedReports).sort().forEach(client => {
+                const clientReports = groupedReports[client];
+                const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+                
+                // Check if we need a new page for client header
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 30;
+                }
+                
+                // Client header
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.setFillColor(230, 240, 255);
+                doc.rect(20, yPos - 8, 170, 15, 'F');
+                doc.text(`Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})`, 25, yPos + 2);
+                yPos += 20;
+                
+                // Table headers for this client
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'bold');
+                doc.setFillColor(245, 245, 245);
+                doc.rect(20, yPos - 8, 170, 12, 'F');
+                doc.text('Arrival Date', 22, yPos);
+                doc.text('Submittal Date', 70, yPos);
+                doc.text('Cost', 120, yPos);
+                doc.text('Remarks', 145, yPos);
+                yPos += 15;
+                
+                // Client's reports
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(7);
+                clientReports.forEach((report, index) => {
+                    if (yPos > 260) {
+                        doc.addPage();
+                        yPos = 30;
+                    }
+                    
+                    if (index % 2 === 0) {
+                        doc.setFillColor(250, 250, 250);
+                        doc.rect(20, yPos - 8, 170, 12, 'F');
+                    }
+                    
+                    const arrivalText = report.arrivalDate.length > 15 ? report.arrivalDate.substring(0, 15) + '...' : report.arrivalDate;
+                    doc.text(arrivalText, 22, yPos);
+                    
+                    const submittalText = report.submittalDate.length > 15 ? report.submittalDate.substring(0, 15) + '...' : report.submittalDate;
+                    doc.text(submittalText, 70, yPos);
+                    
+                    doc.text(`$${report.cost.toFixed(2)}`, 120, yPos);
+                    
+                    const remarksText = report.remarks.length > 15 ? report.remarks.substring(0, 15) + '...' : report.remarks;
+                    doc.text(remarksText, 145, yPos);
+                    
+                    yPos += 12;
+                });
+                
+                yPos += 10; // Space between clients
+            });
+        } else {
+            // Single client view
+            doc.setFontSize(8);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(245, 245, 245);
+            const headerWidth = 170;
+            doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+            doc.text('Arrival Date', 22, yPos);
+            doc.text('Submittal Date', 70, yPos);
+            doc.text('Cost', 120, yPos);
+            doc.text('Remarks', 145, yPos);
+            yPos += 15;
+            
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(7);
+            reports.forEach((report, index) => {
+                if (yPos > 260) {
+                    doc.addPage();
+                    yPos = 30;
+                }
+                
+                if (index % 2 === 0) {
+                    doc.setFillColor(250, 250, 250);
+                    doc.rect(20, yPos - 8, headerWidth, 12, 'F');
+                }
+                
+                const arrivalText = report.arrivalDate.length > 15 ? report.arrivalDate.substring(0, 15) + '...' : report.arrivalDate;
+                doc.text(arrivalText, 22, yPos);
+                
+                const submittalText = report.submittalDate.length > 15 ? report.submittalDate.substring(0, 15) + '...' : report.submittalDate;
+                doc.text(submittalText, 70, yPos);
+                
+                doc.text(`$${report.cost.toFixed(2)}`, 120, yPos);
+                
+                const remarksText = report.remarks.length > 15 ? report.remarks.substring(0, 15) + '...' : report.remarks;
+                doc.text(remarksText, 145, yPos);
+                
+                yPos += 12;
+            });
+        }
+        
+        // Add total cost at the end
+        yPos += 15;
+        if (yPos > 260) {
+            doc.addPage();
+            yPos = 30;
+        }
+        
+        doc.setFillColor(240, 240, 240);
+        doc.rect(20, yPos - 8, 170, 20, 'F');
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 105, yPos + 5, { align: 'center' });
+        
+        // Download the PDF
+        const fileName = clientName === 'All Clients' ? 'Pre_Arrival_All_Clients_cost_summary.pdf' : `Pre_Arrival_${clientName.replace(/[^a-z0-9]/gi, '_')}_cost_summary.pdf`;
+        doc.save(fileName);
+    }
+    
+    // Call the function directly without image loading
+    continueGeneratingPDF();
+}
+    // Display cost summary for pre-arrival
+    function displayPreArrivalCostSummary(clientName) {
+        const reports = getPreArrivalClientReports(clientName);
+        const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+        
+        const displayName = clientName === 'ALL_CLIENTS' ? 'All Clients' : clientName;
+        const selectedClientNameEl = document.getElementById('selectedPreArrivalClientName');
+        const totalCostEl = document.getElementById('preArrivalTotalCost');
+        const downloadBtn = document.getElementById('preArrivalDownloadPdfBtn');
+        const printBtn = document.getElementById('preArrivalPrintBtn');
+        
+        if (selectedClientNameEl) selectedClientNameEl.textContent = displayName;
+        if (totalCostEl) totalCostEl.textContent = totalCost.toFixed(2);
+        if (downloadBtn) downloadBtn.style.display = 'inline-block';
+        if (printBtn) printBtn.style.display = 'inline-block';
+        
+        const reportsList = document.getElementById('preArrivalReportsList');
+        if (!reportsList) return;
+        
+        reportsList.innerHTML = '';
+        
+        if (reports.length === 0) {
+            reportsList.innerHTML = '<div style="text-align:center; padding:40px; color:#6c757d;"><p style="margin:0; font-size:16px;">No reports found for the current filters.</p></div>';
+            if (downloadBtn) downloadBtn.style.display = 'none';
+            if (printBtn) printBtn.style.display = 'none';
+        } else {
+            const tableContainer = document.createElement('div');
+            tableContainer.style.overflowX = 'auto';
+            tableContainer.style.border = '1px solid #e9ecef';
+            tableContainer.style.borderRadius = '8px';
+            tableContainer.style.background = '#fff';
+            
+            if (clientName === 'ALL_CLIENTS') {
+                const groupedReports = groupReportsByClient(reports);
+                
+                Object.keys(groupedReports).sort().forEach(client => {
+                    const clientReports = groupedReports[client];
+                    const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+                    
+                    const clientHeader = document.createElement('div');
+                    clientHeader.style.background = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+                    clientHeader.style.padding = '15px 20px';
+                    clientHeader.style.margin = '15px 0 10px 0';
+                    clientHeader.style.borderRadius = '8px';
+                    clientHeader.style.border = '2px solid #2196f3';
+                    clientHeader.innerHTML = `<h4 style="margin:0; color:#1976d2; font-weight:700; font-size:16px;">Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})</h4>`;
+                    tableContainer.appendChild(clientHeader);
+                    
+                    const table = document.createElement('table');
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.marginBottom = '20px';
+                    
+                    const tableRows = clientReports.map((report, index) => {
+                        return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+                            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; min-width:120px;">${report.arrivalDate}</td>
+                            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; min-width:120px;">${report.submittalDate}</td>
+                            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px; min-width:80px;">$${report.cost.toFixed(2)}</td>
+                            <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; min-width:120px;"><strong>${report.remarks}</strong></td>
+                        </tr>`;
+                    }).join('');
+                    
+                    table.innerHTML = `
+                        <thead>
+                            <tr style="background:#f8f9fa;">
+                                <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Arrival Date</th>
+                                <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Submittal Date</th>
+                                <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+                                <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    `;
+                    
+                    tableContainer.appendChild(table);
+                });
+            } else {
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                
+                const tableRows = reports.map((report, index) => {
+                    return `<tr style="background:${index % 2 === 0 ? '#fff' : '#f8f9fa'}; transition:background-color 0.2s ease;" onmouseenter="this.style.background='#e3f2fd'" onmouseleave="this.style.background='${index % 2 === 0 ? '#fff' : '#f8f9fa'}'">
+                        <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; min-width:120px;">${report.arrivalDate}</td>
+                        <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; min-width:120px;">${report.submittalDate}</td>
+                        <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; text-align:right; color:#333; font-weight:600; font-size:13px; min-width:80px;">$${report.cost.toFixed(2)}</td>
+                        <td style="padding:12px 16px; border-bottom:1px solid #e9ecef; color:#333; font-size:13px; min-width:120px;"><strong>${report.remarks}</strong></td>
+                    </tr>`;
+                }).join('');
+                
+                table.innerHTML = `
+                    <thead>
+                        <tr style="background:#f8f9fa;">
+                            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Arrival Date</th>
+                            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Submittal Date</th>
+                            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:right; font-weight:600; color:#333; font-size:14px;">Cost</th>
+                            <th style="padding:12px 16px; border-bottom:2px solid #e9ecef; text-align:left; font-weight:600; color:#333; font-size:14px;">Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                `;
+                
+                tableContainer.appendChild(table);
+            }
+            
+            reportsList.appendChild(tableContainer);
+        }
+        
+        const contentEl = document.getElementById('preArrivalCostSummaryContent');
+        if (contentEl) contentEl.style.display = 'block';
+    }
+
+    // Print function for pre-arrival
+    function printPreArrivalCostSummary(clientName, reports, totalCost) {
+        let printContent = '';
+        
+        if (clientName === 'All Clients') {
+            const groupedReports = groupReportsByClient(reports);
+            let clientTables = '';
+            
+            Object.keys(groupedReports).sort().forEach(client => {
+                const clientReports = groupedReports[client];
+                const clientTotal = clientReports.reduce((sum, report) => sum + report.cost, 0);
+                
+                const clientRows = clientReports.map(report => `
+                    <tr>
+                        <td>${report.arrivalDate}</td>
+                        <td>${report.submittalDate}</td>
+                        <td class="cost">$${report.cost.toFixed(2)}</td>
+                        <td><strong>${report.remarks}</strong></td>
+                    </tr>
+                `).join('');
+                
+                clientTables += `
+                    <div class="client-section">
+                        <h3 style="color: #1976d2; margin: 30px 0 15px 0; padding: 10px; background: #e3f2fd; border-radius: 5px; border-left: 4px solid #2196f3;">
+                            Client: ${client} (Subtotal: $${clientTotal.toFixed(2)})
+                        </h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Arrival Date</th>
+                                    <th>Submittal Date</th>
+                                    <th>Cost</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${clientRows}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+            
+            printContent = `
+                <html>
+                    <head>
+                        <title>Completed Pre-Arrival Cost Summary - ${clientName}</title>
+                        <style>
+                            @page { margin: 0; }
+                            * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                            body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                            .header { 
+                                background: rgb(24, 119, 242) !important; 
+                                color: white !important; 
+                                padding: 15px 20px; 
+                                display: flex; 
+                                justify-content: space-between; 
+                                align-items: center;
+                                margin-bottom: 20px;
+                                -webkit-print-color-adjust: exact !important;
+                                color-adjust: exact !important;
+                            }
+                            .logo-section { 
+                                font-size: 24px; 
+                                font-weight: bold; 
+                                color: white !important;
+                            }
+                            .logo-subtitle { 
+                                font-size: 14px; 
+                                margin-top: 5px; 
+                                color: white !important;
+                            }
+                            .contact-info { 
+                                text-align: right; 
+                                font-size: 12px; 
+                                color: white !important;
+                            }
+                            .content { padding: 0 20px; }
+                            h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin: 20px 0; }
+                            .client-info { background: #f8f9fa !important; padding: 15px; border-radius: 5px; margin: 20px 0; -webkit-print-color-adjust: exact !important; }
+                            .total-box { background: #e3f2fd !important; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; -webkit-print-color-adjust: exact !important; }
+                            .client-section { margin-bottom: 30px; page-break-inside: avoid; }
+                            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                            th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; font-size: 12px; }
+                            th { background: #f8f9fa !important; font-weight: bold; -webkit-print-color-adjust: exact !important; }
+                            tr:nth-child(even) { background: #f9f9f9 !important; -webkit-print-color-adjust: exact !important; }
+                            .cost { text-align: right; font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <div class="logo-section">
+                                LOTUS
+                                <div class="logo-subtitle">Property Management</div>
+                            </div>
+                            <div class="contact-info">
+                                Phone: (561) 766-7828<br>
+                                www.lotuspmc.com
+                            </div>
+                        </div>
+                        <div class="content">
+                            <h1>Pre-Arrival Cost Summary</h1>
+                            <div class="client-info">
+                                <strong>Client:</strong> ${clientName}<br>
+                                <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+                            </div>
+                            ${clientTables}
+                            <div class="total-box">
+                                <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+                            </div>
+                        </div>
+                    </body>
+                </html>
+            `;
+        } else {
+            printContent = `
+                <html>
+                    <head>
+                        <title>Completed Pre-Arrival Cost Summary - ${clientName}</title>
+                        <style>
+                            @page { margin: 0; }
+                            * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                            body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                            .header { 
+                                background: rgb(24, 119, 242) !important; 
+                                color: white !important; 
+                                padding: 15px 20px; 
+                                display: flex; 
+                                justify-content: space-between; 
+                                align-items: center;
+                                margin-bottom: 20px;
+                                -webkit-print-color-adjust: exact !important;
+                                color-adjust: exact !important;
+                            }
+                            .logo-section { 
+                                font-size: 24px; 
+                                font-weight: bold; 
+                                color: white !important;
+                            }
+                            .logo-subtitle { 
+                                font-size: 14px; 
+                                margin-top: 5px; 
+                                color: white !important;
+                            }
+                            .contact-info { 
+                                text-align: right; 
+                                font-size: 12px; 
+                                color: white !important;
+                            }
+                            .content { padding: 0 20px; }
+                            h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin: 20px 0; }
+                            .client-info { background: #f8f9fa !important; padding: 15px; border-radius: 5px; margin: 20px 0; -webkit-print-color-adjust: exact !important; }
+                            .total-box { background: #e3f2fd !important; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; border: 2px solid #007bff; -webkit-print-color-adjust: exact !important; }
+                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; font-size: 12px; }
+                            th { background: #f8f9fa !important; font-weight: bold; -webkit-print-color-adjust: exact !important; }
+                            tr:nth-child(even) { background: #f9f9f9 !important; -webkit-print-color-adjust: exact !important; }
+                            .cost { text-align: right; font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <div class="logo-section">
+                                LOTUS
+                                <div class="logo-subtitle">Property Management</div>
+                            </div>
+                            <div class="contact-info">
+                                Phone: (561) 766-7828<br>
+                                www.lotuspmc.com
+                            </div>
+                        </div>
+                        <div class="content">
+                            <h1>Completed Pre-Arrival Cost Summary</h1>
+                            <div class="client-info">
+                                <strong>Client:</strong> ${clientName}<br>
+                                <strong>Generated:</strong> ${new Date().toLocaleDateString()}
+                            </div>
+                            <div class="total-box">
+                                <h2 style="margin: 0; color: #007bff;">Total Cost: $${totalCost.toFixed(2)}</h2>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Arrival Date</th>
+                                        <th>Submittal Date</th>
+                                        <th>Cost</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${reports.map(report => `
+                                        <tr>
+                                            <td>${report.arrivalDate}</td>
+                                            <td>${report.submittalDate}</td>
+                                            <td class="cost">$${report.cost.toFixed(2)}</td>
+                                            <td><strong>${report.remarks}</strong></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </body>
+                </html>
+            `;
+        }
+        
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }
+
+    // Setup event listeners
+    function setupPreArrivalEventListeners() {
+        const viewCostSummaryBtn = document.getElementById('viewCostSummaryBtn');
+        if (viewCostSummaryBtn) {
+            viewCostSummaryBtn.addEventListener('click', function() {
+                populatePreArrivalClientDropdown();
+                const modal = document.getElementById('costSummaryModal');
+                if (modal) modal.style.display = 'block';
+            });
+        }
+
+        const closeCostModal = document.getElementById('closePreArrivalCostModal');
+        if (closeCostModal) {
+            closeCostModal.addEventListener('click', function() {
+                const modal = document.getElementById('costSummaryModal');
+                if (modal) modal.style.display = 'none';
+                const contentEl = document.getElementById('preArrivalCostSummaryContent');
+                if (contentEl) contentEl.style.display = 'none';
+                const downloadBtn = document.getElementById('preArrivalDownloadPdfBtn');
+                const printBtn = document.getElementById('preArrivalPrintBtn');
+                if (downloadBtn) downloadBtn.style.display = 'none';
+                if (printBtn) printBtn.style.display = 'none';
+            });
+        }
+
+        const clientSelect = document.getElementById('preArrivalClientSelect');
+        if (clientSelect) {
+            clientSelect.addEventListener('change', function() {
+                const selectedClient = this.value;
+                if (selectedClient) {
+                    displayPreArrivalCostSummary(selectedClient);
+                } else {
+                    const contentEl = document.getElementById('preArrivalCostSummaryContent');
+                    if (contentEl) contentEl.style.display = 'none';
+                    const downloadBtn = document.getElementById('preArrivalDownloadPdfBtn');
+                    const printBtn = document.getElementById('preArrivalPrintBtn');
+                    if (downloadBtn) downloadBtn.style.display = 'none';
+                    if (printBtn) printBtn.style.display = 'none';
+                }
+            });
+        }
+
+        const downloadPdfBtn = document.getElementById('preArrivalDownloadPdfBtn');
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('click', function() {
+                const selectedClient = document.getElementById('preArrivalClientSelect').value;
+                if (selectedClient) {
+                    const reports = getPreArrivalClientReports(selectedClient);
+                    const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+                    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+                    generatePreArrivalPDF(displayName, reports, totalCost);
+                }
+            });
+        }
+
+        const printBtn = document.getElementById('preArrivalPrintBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                const selectedClient = document.getElementById('preArrivalClientSelect').value;
+                if (selectedClient) {
+                    const reports = getPreArrivalClientReports(selectedClient);
+                    const totalCost = reports.reduce((sum, report) => sum + report.cost, 0);
+                    const displayName = selectedClient === 'ALL_CLIENTS' ? 'All Clients' : selectedClient;
+                    printPreArrivalCostSummary(displayName, reports, totalCost);
+                }
+            });
+        }
+
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('costSummaryModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                const contentEl = document.getElementById('preArrivalCostSummaryContent');
+                if (contentEl) contentEl.style.display = 'none';
+                const downloadBtn = document.getElementById('preArrivalDownloadPdfBtn');
+                const printBtn = document.getElementById('preArrivalPrintBtn');
+                if (downloadBtn) downloadBtn.style.display = 'none';
+                if (printBtn) printBtn.style.display = 'none';
+            }
+        });
+
+        const viewCostBtn = document.getElementById('viewCostSummaryBtn');
+        if (viewCostBtn) {
+            viewCostBtn.addEventListener('mouseenter', function() {
+                this.style.background = '#218838';
+                this.style.transform = 'translateY(-1px)';
+                this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+            });
+            
+            viewCostBtn.addEventListener('mouseleave', function() {
+                this.style.background = '#28a745';
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            });
+        }
+
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('mouseenter', function() {
+                this.style.background = '#218838';
+                this.style.transform = 'translateY(-1px)';
+                this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+            });
+            
+            downloadPdfBtn.addEventListener('mouseleave', function() {
+                this.style.background = '#28a745';
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            });
+        }
+
+        if (printBtn) {
+            printBtn.addEventListener('mouseenter', function() {
+                this.style.background = '#138496';
+                this.style.transform = 'translateY(-1px)';
+                this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+            });
+            
+            printBtn.addEventListener('mouseleave', function() {
+                this.style.background = '#17a2b8';
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            });
+        }
+
+        if (clientSelect) {
+            clientSelect.addEventListener('focus', function() {
+                this.style.borderColor = '#007bff';
+                this.style.boxShadow = '0 0 0 3px rgba(0,123,255,0.1)';
+            });
+            
+            clientSelect.addEventListener('blur', function() {
+                this.style.borderColor = '#e9ecef';
+                this.style.boxShadow = 'none';
+            });
+        }
+
+        if (closeCostModal) {
+            closeCostModal.addEventListener('mouseenter', function() {
+                this.style.background = '#f8f9fa';
+                this.style.color = '#333';
+            });
+            
+            closeCostModal.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+                this.style.color = '#6c757d';
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupPreArrivalEventListeners);
+    } else {
+        setupPreArrivalEventListeners();
+    }
+
+    window.getUniqueClients = getUniqueClients;
+    window.populatePreArrivalClientDropdown = populatePreArrivalClientDropdown;
+    window.getPreArrivalClientReports = getPreArrivalClientReports;
+    window.displayPreArrivalCostSummary = displayPreArrivalCostSummary;
+    window.generatePreArrivalPDF = generatePreArrivalPDF;
+    window.printPreArrivalCostSummary = printPreArrivalCostSummary;
+
+})();
+</script>
+{% endblock content %}

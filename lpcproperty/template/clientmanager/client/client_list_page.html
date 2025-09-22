@@ -1,5 +1,4 @@
-
-{% extends 'cmbase.html' %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 {% block title %}Vendor Dashboard{% endblock %}
 
@@ -263,7 +262,7 @@
         <h1 class="dashboard-title">Client Management</h1>
       </div>
       <div class="col-md-4 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'clientmanager:client_create_view' %}" class="btn-add">
+        <a href="{% url 'adminmanager:create_vendor' %}" class="btn-add">
           <i class="bi bi-plus-circle"></i>Add New Client
         </a>
       </div>
@@ -381,7 +380,7 @@
             <span class="text-muted">{{ client.email  }}</span>
           </td>
           <td>
-            <a href="{% url 'clientmanager:client_edit_page' client.id %}">Edit</a>
+            <a href="{% url 'adminmanager:client_edit_page' client.id %}">Edit</a>
           </td>
          
           
@@ -394,7 +393,7 @@
             <div class="empty-state">
               <i class="bi bi-building-add"></i>
               <p>You haven't added any vendors yet. Get started by adding your first vendor.</p>
-              <a href="{% url 'clientmanager:create_vendor' %}" class="btn btn-primary px-4 py-2">
+              <a href="{% url 'adminmanager:create_vendor' %}" class="btn btn-primary px-4 py-2">
                 <i class="bi bi-plus-circle me-2"></i>Add Your First Vendor
               </a>
             </div>

@@ -1,0 +1,101 @@
+{% extends 'adminmanager/adminbase.html' %}
+{% load static %}
+{% block title %}Admin Profile{% endblock %}
+
+{% block content %}
+    <title>Edit Admin Profile</title>
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .edit-admin-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .edit-admin-container h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .edit-admin-container label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .edit-admin-container input[type="text"],
+        .edit-admin-container input[type="email"],
+        .edit-admin-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .edit-admin-btn {
+            background-color: black;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .edit-admin-btn:hover {
+            background-color: #333;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+
+<div class="edit-admin-container">
+    <h2>Edit Admin Profile</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Username:</label>
+        <input type="text" name="username" value="{{ admin_user.username }}">
+
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ admin_user.email }}">
+
+        <label>New Password (leave blank to keep old):</label>
+        <input type="password" name="password">
+
+        <button type="submit" class="edit-admin-btn">Save Changes</button>
+    </form>
+
+    <a href="{% url 'adminmanager:admin_profile' %}" class="back-link">⬅ Back</a>
+</div>
+
+{% endblock content %}
+

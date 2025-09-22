@@ -1,4 +1,4 @@
-{% extends 'cmbase.html' %}
+{% extends 'adminmanager/adminbase.html' %}
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -279,7 +279,7 @@
     
         <!-- Centered Text -->
         <div>
-            <h1 class="page-title mb-1">Pending Concierge Requests</h1>
+            <h1 class="page-title mb-1">Pending Property Improvement Requests</h1>
             <p class="page-subtitle">Track and manage your client service requests</p>
         </div>
     </div>
@@ -288,7 +288,7 @@
     <!-- Stats Row -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <a href="{% url 'clientmanager:property_pending_requests' %}" class="text-decoration-none">
+            <a href="{% url 'adminmanager:property_pending_requests' %}" class="text-decoration-none">
                 <div class="stats-card primary">
                     <div>
                         <div class="stats-value text-black">Pending</div>
@@ -301,7 +301,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{% url 'clientmanager:property_open_requests' %}" class="text-decoration-none">
+            <a href="{% url 'adminmanager:property_open_requests' %}" class="text-decoration-none">
                 <div class="stats-card warning">
                     <div>
                         <div class="stats-value text-black">Open</div>
@@ -314,7 +314,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{% url 'clientmanager:property_completed_requests' %}" class="text-decoration-none">
+            <a href="{% url 'adminmanager:property_completed_requests' %}" class="text-decoration-none">
                 <div class="stats-card success">
                     <div>
                         <div class="stats-value text-black">Completed</div>
@@ -327,7 +327,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{% url 'clientmanager:property_denied_requests' %}" class="text-decoration-none">
+            <a href="{% url 'adminmanager:property_denied_requests' %}" class="text-decoration-none">
                 <div class="stats-card danger">
                     <div>
                         <div class="stats-value text-black">Denied</div>
@@ -381,10 +381,10 @@
                         {% endif %}</td>
                         <td class="text-end">
                             <div class="d-flex gap-2 justify-content-end">
-                                <a href="{% url 'clientmanager:property_view_request' req.id %}" class="btn btn-custom btn-view">
+                                <a href="{% url 'adminmanager:property_view_request' req.id %}" class="btn btn-custom btn-view">
                                     <i class="bi bi-eye me-1"></i> 
                                 </a>
-                                <a href="{% url 'clientmanager:property_update_request' req.id %}" class="btn btn-custom btn-update">
+                                <a href="{% url 'adminmanager:property_update_request' req.id %}" class="btn btn-custom btn-update">
                                     <i class="bi bi-pencil me-1"></i> 
                                 </a>
                             </div>
