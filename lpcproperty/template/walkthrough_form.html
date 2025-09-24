@@ -2412,10 +2412,10 @@
 
                     <!-- Submit Button -->
                     <div class="form-actions">
-                        <button type="button" class="btn" style="background-color: #6c757d;" onclick="backToBasic()">
+                        <button style="display: none;" type="button" class="btn" style="background-color: #6c757d;" onclick="backToBasic()">
                             <i class="fas fa-arrow-left"></i> Back to Basic Info
                         </button>
-                        <button type="submit" class="btn" id="submit-btn" disabled>
+                        <button style="margin-left: 84%;" type="submit" class="btn" id="submit-btn" disabled>
                             <i class="fas fa-check"></i> Submit Report
                         </button>
                         <!-- <button type="submit">Trail submit </button> -->
@@ -3388,4 +3388,22 @@ document.addEventListener('DOMContentLoaded', function() {
     background-color: rgb(255, 255, 255);
 }
 </style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form'); // replace with your form selector if needed
+
+    form.addEventListener('submit', function(event) {
+        const property = document.getElementById('id_property');
+        const description = document.getElementById('id_description');
+
+        if (!property.value.trim() || !description.value.trim()) {
+            event.preventDefault(); // stop form submission
+            alert('Please fill out both Property and Inspection Summary fields.');
+        }
+    });
+});
+</script>
+
 {% endblock content %}

@@ -600,20 +600,7 @@
                         </script>
                     </div>
               
-        <!-- Client Manager Full Width -->
-        <div class="col-12">
-            <div class="form-floating">
-                <select class="form-control" name="client_manager_id" id="client_manager_id" required
-                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
-                           background: url('data:image/svg+xml;utf8,<svg fill=\'%23999\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
-                           padding-right: 35px; color: #555;">
-                    {% for manager in managers %}
-                        <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
-                    {% endfor %}
-                </select>
-                <label for="client_manager_id" class="required-field">Select Client Manager</label>
-            </div>
-        </div>
+     
 
         <!-- Rest of the fields in 2-column layout -->
         <div class="col-md-6">
@@ -701,8 +688,23 @@
 </div>
 
 
-
-            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-check"></i> Select Client Manager</h2>
+               <!-- Client Manager Full Width -->
+        <div class="col-12">
+            <div class="form-floating">
+                <select class="form-control" name="client_manager_id" id="client_manager_id" required
+                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
+                           background: url('data:image/svg+xml;utf8,<svg fill=\'%23999\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+                           padding-right: 35px; color: #555;">
+                    {% for manager in managers %}
+                        <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
+                    {% endfor %}
+                </select>
+                <label for="client_manager_id" class="required-field">Select Client Manager</label>
+            </div>
+        </div>
+    </div>
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-list-check"></i> Property Features</h2>
                 <div class="checkbox-group">
@@ -772,82 +774,86 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
-            
-                <div id="floors-container">
-                    <div class="floor-section" id="floor-section-1">
-                        <h2>Floor 1</h2>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="floor_name_1">Floor Name</label>
-                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor" required>
-                            </div>
-                        </div>
-                            <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="floor_image_1">Floor Image</label>
-                            <input class="form-control" type="file" id="floor_image_1" name="floor_image_1" accept="image/*">
-                        </div>
-                    </div>
-                        <div class="rooms-container" id="rooms-container-1">
-                            <h3>Rooms for Floor 1</h3>
-                            <div class="room-group" id="room-group-1-1">
-                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name" required>
-                            </div>
-                        </div>
-            
-                        <button type="button" onclick="addRoom(1)">Add Room</button>
-                    </div>
+         <div class="card">
+    <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
+
+    <div id="floors-container">
+        <div class="floor-section" id="floor-section-1">
+            <h2>Floor 1</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_name_1">Floor Name</label>
+                    <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor" required>
                 </div>
-            
-                <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
-            
             </div>
-            <script>
-                let floorCount = 1;
-            
-                function addFloor() {
-                    floorCount++;
-                    const floorSection = document.createElement("div");
-                    floorSection.className = "floor-section";
-                    floorSection.id = `floor-section-${floorCount}`;
-            
-                    floorSection.innerHTML = `
-                        <h2>Floor ${floorCount}</h2>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                                <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
-                            </div>
-                        </div>
-                        <div class="rooms-container" id="rooms-container-${floorCount}">
-                            <h3>Rooms for Floor ${floorCount}</h3>
-                            <div class="room-group" id="room-group-${floorCount}-1">
-                                <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
-                    `;
-            
-                    document.getElementById("floors-container").appendChild(floorSection);
-                }
-            
-                function addRoom(floorId) {
-                    const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
-                    const roomGroup = document.createElement("div");
-                    roomGroup.className = "room-group";
-                    roomGroup.id = `room-group-${floorId}-${roomCount}`;
-            
-                    roomGroup.innerHTML = `
-                        <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-                    `;
-            
-                    document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
-                }
-            </script>
-            
-            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_image_1">Floor Image</label>
+                    <input class="form-control" type="file" id="floor_image_1" name="floor_image_1" accept="image/*">
+                </div>
+            </div>
+            <div class="rooms-container" id="rooms-container-1">
+                <h3>Rooms for Floor 1</h3>
+                <div class="room-group" id="room-group-1-1">
+                    <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name" required>
+                </div>
+            </div>
+            <button type="button" onclick="addRoom(1)">Add Room</button>
+        </div>
+    </div>
+
+    <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
+</div>
+
+<script>
+    let floorCount = 1;
+
+    function addFloor() {
+        floorCount++;
+        const floorSection = document.createElement("div");
+        floorSection.className = "floor-section";
+        floorSection.id = `floor-section-${floorCount}`;
+
+        floorSection.innerHTML = `
+            <h2>Floor ${floorCount}</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                    <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_image_${floorCount}">Floor Image</label>
+                    <input class="form-control" type="file" id="floor_image_${floorCount}" name="floor_image_${floorCount}" accept="image/*">
+                </div>
+            </div>
+            <div class="rooms-container" id="rooms-container-${floorCount}">
+                <h3>Rooms for Floor ${floorCount}</h3>
+                <div class="room-group" id="room-group-${floorCount}-1">
+                    <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                </div>
+            </div>
+            <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+        `;
+
+        document.getElementById("floors-container").appendChild(floorSection);
+    }
+
+    function addRoom(floorId) {
+        const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+        const roomGroup = document.createElement("div");
+        roomGroup.className = "room-group";
+        roomGroup.id = `room-group-${floorId}-${roomCount}`;
+
+        roomGroup.innerHTML = `
+            <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+        `;
+
+        document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+    }
+</script>
+
             <style>
 
 /* Headings */
