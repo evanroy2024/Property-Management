@@ -25,8 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a%hek)ut9v!n62a3-%m=)1ot6@8qf=@@+$k#4^81#6954c(p0j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 
 # ALLOWED_HOSTS = ["backend.lotuspmc.com"]
