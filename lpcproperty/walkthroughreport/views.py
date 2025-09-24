@@ -874,6 +874,7 @@ def process_model_fields(model_instance, report, model_name):
     
     return inspection_items
 
+
 def open_reports_view(request):
     reports = WalkthroughReport.objects.filter(
         Q(status__in=['Open', 'Completed']) | 
@@ -1357,6 +1358,9 @@ def report_detail_view(request, pk):
     context.update(get_verbose_names())
     print(f"Bedroom9: {getattr(report, 'bedroom9', 'NOT FOUND')}")
     return render(request, 'walkthrough/report_detail.html', context)
+
+
+
 # Report Updates ----------------------------------------------------------------------
 from django.http import JsonResponse
 from .models import WalkthroughReport

@@ -1644,6 +1644,15 @@ def process_form_data(post_data):
     return cleaned_data
 
 def walkthrough_report_view(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        # Admin is logged in
+        base_template = 'adminmanager/dashboardbase.html'
+    elif 'manager_id' in request.session:
+        # Client manager is logged in
+        base_template = 'clientmanager/managerbase.html'
+    else:
+        # Default fallback (or client)
+        base_template = 'adminmanager/dashboardbase.html'
     if request.method == 'POST':
         # Clean the POST data
         cleaned_post_data = process_form_data(request.POST)
@@ -1832,6 +1841,7 @@ def walkthrough_report_view(request):
         guest_house_bath_form = GuestHouseBathForm()
 
     return render(request, 'walkthrough_form.html', {
+        'base_template': base_template,
         'form': report_form,
         'exterior_form': exterior_form,
         'interior_form': interior_form,
@@ -1874,6 +1884,8 @@ def walkthrough_report_view(request):
         'guest_house_sleeping_form': guest_house_sleeping_form,
         'guest_house_bath_form': guest_house_bath_form,
     })
+
+
 
 def walkthrough_success_view(request):
     return render(request, 'walkthrough_success.html')
