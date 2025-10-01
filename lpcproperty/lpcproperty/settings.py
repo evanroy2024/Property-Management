@@ -160,6 +160,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # EMAIL_HOST_PASSWORD = 'cehc dkyq gter jksz'
 # DEFAULT_FROM_EMAIL = 'noreplys2000@gmail.com'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.sbnai.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'lotusonboard@sbnai.net'
+EMAIL_HOST_PASSWORD = 'LetMeIn2025!'
+DEFAULT_FROM_EMAIL = 'lotusonboard@sbnai.net'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
