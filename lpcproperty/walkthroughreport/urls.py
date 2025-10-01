@@ -39,7 +39,12 @@ urlpatterns = [
 
     
 
-
+    # Email send 
+     path(
+        'send-last-email/<int:report_id>/',
+        views.send_last_item_email,
+        name='send-last-email'
+    ),
 ]
 
 

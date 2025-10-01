@@ -1822,3 +1822,201 @@ def bulk_update_status(request):
         
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
+
+
+# Email send funcalities --------------------------------------------------------------------------------------------------------
+from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import WalkthroughReport
+def send_last_item_email(request, report_id):
+    if request.method == "POST":
+        try:
+            report = WalkthroughReport.objects.get(id=report_id)
+            client = report.user
+            
+            print(f"Report user: {client.first_name} {client.last_name}, Email: {client.email}")
+            
+            # Model mapping - same as your update_field_status_ajax
+            model_mapping = {
+                'General Items - Exterior': ('general_items_exterior', GeneralItemsExterior),
+                'General Items - Interior': ('general_items_interior', GeneralItemsInterior),
+                'Garage': ('garage', Garage),
+                'Laundry / Mudroom': ('laundry', Laundry),
+                'Kitchen': ('kitchen', Kitchen),
+                'Butlers': ('butlers', Butlers),
+                'Breakfast Area': ('breakfastarea', BreakfastArea),
+                'Entry / Foyer': ('entryfoyer', EntryFoyer),
+                'Great Room / Family Room': ('greatroom', GreatRoom),
+                'Dining Room / Area': ('diningroom', DiningRoom),
+                'Closets - Main Level': ('closetsmainlevel', ClosetsMainLevel),
+                'Closets - Upper Level': ('closetsupperlevel', ClosetsUpperLevel),
+                'Hallways - Main Level': ('hallwaysmainlevel', HallwaysMainLevel),
+                'Hallways - Upper Level': ('hallwaysupperlevel', HallwaysUpperLevel),
+                'Bedroom 1 (Master Bedroom)': ('bedroom1', Bedroom1),
+                'Bedroom 2': ('bedroom2', Bedroom2),
+                'Bedroom 3': ('bedroom3', Bedroom3),
+                'Bedroom 4': ('bedroom4', Bedroom4),
+                'Bedroom 5': ('bedroom5', Bedroom5),
+                'Bedroom 6': ('bedroom6', Bedroom6),
+                'Bedroom 7': ('bedroom7', Bedroom7),
+                'Bedroom 8': ('bedroom8', Bedroom8),
+                'Bedroom 9': ('bedroom9', Bedroom9),
+                'Bedroom 10': ('bedroom10', Bedroom10),
+                'Bathroom 1 (Master Bath)': ('bathroom1', Bathroom1),
+                'Bathroom 2': ('bathroom2', Bathroom2),
+                'Bathroom 3': ('bathroom3', Bathroom3),
+                'Bathroom 4': ('bathroom4', Bathroom4),
+                'Bathroom 5': ('bathroom5', Bathroom5),
+                'Bathroom 6': ('bathroom6', Bathroom6),
+                'Bathroom 7': ('bathroom7', Bathroom7),
+                'Bathroom 8': ('bathroom8', Bathroom8),
+                'Bathroom 9': ('bathroom9', Bathroom9),
+                'Bathroom 10': ('bathroom10', Bathroom10),
+                'Bathroom 11': ('bathroom11', Bathroom11),
+                'Bathroom 12': ('bathroom12', Bathroom12),
+                'Gym': ('gym', Gym),
+                'Theatre / Music Room': ('theatremusicroom', TheatreMusicRoom),
+                'Guest House - Sleeping / Living': ('guesthousesleepingliving', GuestHouseSleepingLiving),
+                'Guest House - Bathroom': ('guesthousebathroom', GuestHouseBathroom),
+            }
+            
+            open_count = 0
+            open_items_list = []
+            
+            for category_name, (related_name, model_class) in model_mapping.items():
+                try:
+                    related_instance = getattr(report, related_name, None)
+                    if related_instance:
+                        for field in related_instance._meta.get_fields():
+                            if field.name.endswith('_udpate_status'):
+                                # Get the base field name (remove _udpate_status)
+                                base_field_name = field.name.replace('_udpate_status', '')
+                                
+                                # Check if the corresponding MCQ field is "Non-Compliant"
+                                mcq_value = getattr(related_instance, base_field_name, None)
+                                
+                                if mcq_value == "Non-Compliant":
+                                    # Only check status if the item is Non-Compliant
+                                    status_value = getattr(related_instance, field.name, None)
+                                    if status_value == "Open":
+                                        open_count += 1
+                                        open_items_list.append(f"{category_name} - {base_field_name}")
+                except:
+                    continue
+            
+            print(f"Report {report_id}: Open Non-Compliant items count = {open_count}")
+            if open_items_list:
+                print("Open Non-Compliant items:")
+                for item in open_items_list[:10]:
+                    print(f"  - {item}")
+                if len(open_items_list) > 10:
+                    print(f"  ... and {len(open_items_list) - 10} more")
+            
+            if open_count == 0:
+                print(f"Sending email to {client.email}")
+                
+                html_message = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+                        <tr>
+                            <td align="center">
+                                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <!-- Header -->
+                                    <tr>
+                                        <td style="background-color: #2c3e50; padding: 30px; text-align: center;">
+                                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Walkthrough Report Completed</h1>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Content -->
+                                    <tr>
+                                        <td style="padding: 40px 30px;">
+                                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                                                Dear {client.first_name} {client.last_name},
+                                            </p>
+                                            
+                                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                                                We are pleased to inform you that all items for your walkthrough report have been completed or resolved.
+                                            </p>
+                                            
+                                            <div style="background-color: #f8f9fa; border-left: 4px solid #2c3e50; padding: 15px; margin: 20px 0;">
+                                                <p style="color: #555555; font-size: 14px; margin: 0; line-height: 1.5;">
+                                                    <strong style="color: #2c3e50;">Property Address:</strong><br>
+                                                    {report.property.address}
+                                                </p>
+                                            </div>
+                                            
+                                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+                                                You can view the complete report details by clicking the button below:
+                                            </p>
+                                            
+                                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                                                <tr>
+                                                    <td align="center">
+                                                        <a href="http://backend.lotuspmc.com/" style="display: inline-block; background-color: #2c3e50; color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 4px; font-size: 16px; font-weight: 600;">View Report</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            
+                                            <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 20px 0 0 0;">
+                                                If you have any questions or concerns, please don't hesitate to contact us.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Footer -->
+                                    <tr>
+                                        <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                                            <p style="color: #6c757d; font-size: 14px; margin: 0; line-height: 1.5;">
+                                                Best regards,<br>
+                                                <strong>Lotus Property Management</strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+                """
+                
+                plain_message = f"""Dear {client.last_name}, {client.first_name} ,
+
+We are pleased to inform you that all items for your walkthrough report have been completed or resolved.
+
+Property Address: {report.property.address}
+
+You can view the complete report at: http://backend.lotuspmc.com/
+
+If you have any questions or concerns, please don't hesitate to contact us.
+
+Best regards,
+Lotus Property Management"""
+                
+                send_mail(
+                    subject=f"Walkthrough Report Completed - {report.property.address}",
+                    message=plain_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[client.email],
+                    fail_silently=False,
+                    html_message=html_message,
+                )
+                print(f"Email sent successfully to {client.email}")
+                
+            return JsonResponse({'success': True, 'open_count': open_count, 'email_sent': open_count == 0})
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

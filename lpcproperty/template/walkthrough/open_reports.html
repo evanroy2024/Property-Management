@@ -1136,6 +1136,17 @@ function submitUpdateFieldStatus() {
 
         statusSpan.innerHTML = statusHtml;
         console.log('Updated status span successfully');
+        fetch("{% url 'walkthroughreport:send-last-email' 0 %}".replace("0", reportId), {
+  method: 'POST',
+  headers: {
+    'X-CSRFToken': '{{ csrf_token }}',
+  },
+})
+.catch(error => {
+  console.error('Error sending last item email:', error);
+});
+
+        
       } else {
         console.log('Status span not found:', `status-span-${reportId}-${fieldName}`);
       }
@@ -1146,7 +1157,9 @@ function submitUpdateFieldStatus() {
       console.error('Update failed:', data);
       alert('Failed to update status: ' + (data.error || 'Unknown error'));
     }
+    
   })
+  
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to update status.');
@@ -1852,4 +1865,40 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
  </script>
 
 
+<!-- Cost checking before status update ---------------------------------------------------------- -->
+<script>
+const originalOpenUpdateFieldStatusModal = openUpdateFieldStatusModal;
+
+function openUpdateFieldStatusModal(reportId, fieldName, category) {
+  const costElements = document.querySelectorAll(`[id^="cost-${reportId}-"]`);
+  let costSpan = null;
+  
+  for (let el of costElements) {
+    const rowStatusCell = el.closest('tr').querySelector(`[id="status-cell-${reportId}-${fieldName}"]`);
+    if (rowStatusCell) {
+      costSpan = el;
+      break;
+    }
+  }
+  
+  if (costSpan) {
+    const costText = costSpan.textContent.replace('$', '').trim();
+    
+    if (costText === '-' || costText === '') {
+      alert('Please add a cost before updating status');
+      return;
+    }
+  }
+  
+  document.getElementById('statusReportId').value = reportId;
+  document.getElementById('statusFieldName').value = fieldName;
+  document.getElementById('statusCategory').value = category;
+  
+  const statusCell = document.getElementById(`status-cell-${reportId}-${fieldName}`);
+  document.getElementById('statusDatetime').value = statusCell.getAttribute('data-date');
+  document.getElementById('updateStatusRemarks').value = statusCell.getAttribute('data-remarks');
+  
+  document.getElementById('updateFieldStatusModal').style.display = 'block';
+}
+</script>
 {% endblock content %}
