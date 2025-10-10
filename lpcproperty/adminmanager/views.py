@@ -4,7 +4,7 @@ from django.contrib import messages
 from .forms import AdminLoginForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
-
+from .models import SocialLinks, MailConfiguration
 def admin_login(request):
     if request.method == 'POST':
         form = AdminLoginForm(request.POST)
@@ -2288,6 +2288,55 @@ def change_concierge_status(request):
         
         concierge_request.status_remarks = remarks
         concierge_request.save()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+# for email send to contact purpose only ---------------------------------------------------------------------------------
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.core.mail import send_mail, get_connection
+from django.views.decorators.http import require_POST
+import json
+
+from adminmanager.models import MailConfiguration
+
+
+@require_POST
+def send_contact_email(request):
+    try:
+        data = json.loads(request.body)
+        email = data.get('email')
+        subject = data.get('subject')
+        content = data.get('content')
+        
+        # Fetch mail configuration
+        mail_config = MailConfiguration.objects.first()
+        
+        if not mail_config:
+            return JsonResponse({'success': False, 'error': 'Mail configuration not found'})
+        
+        # Create email connection with configuration from database
+        connection = get_connection(
+            backend='django.core.mail.backends.smtp.EmailBackend',
+            host=mail_config.email_host,
+            port=mail_config.email_port,
+            username=mail_config.email_host_user,
+            password=mail_config.email_host_password,
+            use_tls=mail_config.use_tls,
+            use_ssl=mail_config.use_ssl,
+        )
+        
+        send_mail(
+            subject,
+            content,
+            mail_config.default_from_email,
+            [email],
+            fail_silently=False,
+            connection=connection,
+        )
         
         return JsonResponse({'success': True})
     except Exception as e:

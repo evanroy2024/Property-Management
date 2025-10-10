@@ -1827,6 +1827,8 @@ def bulk_update_status(request):
 
 # Email send funcalities --------------------------------------------------------------------------------------------------------
 from django.http import JsonResponse
+from django.core.mail import get_connection
+from adminmanager.models import MailConfiguration
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import WalkthroughReport
@@ -2001,14 +2003,26 @@ If you have any questions or concerns, please don't hesitate to contact us.
 
 Best regards,
 Lotus Property Management"""
-                
+                mail_config = MailConfiguration.objects.first()
+
+                connection = get_connection(
+                    backend='django.core.mail.backends.smtp.EmailBackend',
+                    host=mail_config.email_host,
+                    port=mail_config.email_port,
+                    username=mail_config.email_host_user,
+                    password=mail_config.email_host_password,
+                    use_tls=mail_config.use_tls,
+                    use_ssl=mail_config.use_ssl,
+                )
+
                 send_mail(
                     subject=f"Walkthrough Report Completed - {report.property.address}",
                     message=plain_message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    from_email=mail_config.default_from_email,
                     recipient_list=[client.email],
                     fail_silently=False,
                     html_message=html_message,
+                    connection=connection,
                 )
                 print(f"Email sent successfully to {client.email}")
                 

@@ -131,7 +131,10 @@ urlpatterns = [
     path('update-cost/', views.update_cost, name='update_cost'),
     path('update-concierge-cost/', views.update_concierge_cost, name='update_concierge_cost'),
 
-    # For services updates 
+    
+    
+    # Django email send url 
+    path('send-contact-email/', views.send_contact_email, name='send_contact_email'),
 
 
 ]

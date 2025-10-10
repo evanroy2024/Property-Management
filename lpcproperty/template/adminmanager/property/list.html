@@ -525,7 +525,6 @@ th.sortable:hover .sort-icon {
   document.addEventListener("DOMContentLoaded", function () {
     const modalBody = document.getElementById("conModalBody");
 
-    // Helper to check if a value is meaningful
     function isValid(value) {
       return value && value !== "None" && value !== "none" && value !== "null" && value !== null;
     }
@@ -545,15 +544,13 @@ th.sortable:hover .sort-icon {
           return;
         }
 
-        // Check if at least one contact field is valid
         const hasPrimaryContact = isValid(data.name1) || isValid(data.email1) || isValid(data.phone1);
         const hasSecondaryContact = isValid(data.name2) || isValid(data.email2) || isValid(data.phone2);
 
         if (!hasPrimaryContact && !hasSecondaryContact) {
-          return; // Don’t show modal if nothing useful
+          return;
         }
 
-        // Generate modal content
         modalBody.innerHTML = `
           ${hasPrimaryContact ? `
             <div class="contact-section">
@@ -567,9 +564,13 @@ th.sortable:hover .sort-icon {
                   <p class="contact-info"><strong>Cell Phone:</strong> ${isValid(data.phone1) ? data.phone1 : '-'}</p>
                 </div>
               </div>
+              <div class="contact-actions">
+                ${isValid(data.email1) ? `<button class="btn btn-primary btn-sm" onclick="openEmailModal('${data.email1}', '${data.name1}')"><i class="fas fa-envelope"></i> Email</button>` : ''}
+                ${isValid(data.phone1) ? `<button class="btn btn-success btn-sm" onclick="openTextModal('${data.phone1}', '${data.name1}')"><i class="fas fa-sms"></i> Text</button>` : ''}
+              </div>
             </div>
           ` : ''}
-
+          
           ${hasSecondaryContact ? `
             <div class="contact-section">
               <h5>Secondary Contact</h5>
@@ -582,18 +583,152 @@ th.sortable:hover .sort-icon {
                   <p class="contact-info"><strong>Cell Phone:</strong> ${isValid(data.phone2) ? data.phone2 : '-'}</p>
                 </div>
               </div>
+              <div class="contact-actions">
+                ${isValid(data.email2) ? `<button class="btn btn-primary btn-sm" onclick="openEmailModal('${data.email2}', '${data.name2}')"><i class="fas fa-envelope"></i> Email</button>` : ''}
+                ${isValid(data.phone2) ? `<button class="btn btn-success btn-sm" onclick="openTextModal('${data.phone2}', '${data.name2}')"><i class="fas fa-sms"></i> Text</button>` : ''}
+              </div>
             </div>
           ` : ''}
         `;
 
-        // Show modal
         const modal = new bootstrap.Modal(document.getElementById("conModal"));
         modal.show();
       });
     });
   });
+
+  function openEmailModal(email, name) {
+    document.getElementById('emailRecipient').value = email;
+    document.getElementById('emailRecipientName').textContent = name;
+    document.getElementById('emailSubject').value = '';
+    document.getElementById('emailContent').value = '';
+    const emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+    emailModal.show();
+  }
+
+  function openTextModal(phone, name) {
+    document.getElementById('textRecipient').value = phone;
+    document.getElementById('textRecipientName').textContent = name;
+    document.getElementById('textContent').value = '';
+    const textModal = new bootstrap.Modal(document.getElementById('textModal'));
+    textModal.show();
+  }
+
+  function sendEmail() {
+    const email = document.getElementById('emailRecipient').value;
+    const subject = document.getElementById('emailSubject').value;
+    const content = document.getElementById('emailContent').value;
+    const sendBtn = document.getElementById('sendEmailBtn');
+    
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    fetch("{% url 'adminmanager:send_contact_email' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify({ email, subject, content })
+    })
+    .then(res => res.json())
+    .then(data => {
+      setTimeout(() => {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+        
+        if (data.success) {
+          alert('Email sent successfully');
+          bootstrap.Modal.getInstance(document.getElementById('emailModal')).hide();
+        } else {
+          alert('Failed to send email: ' + data.error);
+        }
+      }, 2000);
+    })
+    .catch(err => {
+      setTimeout(() => {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+        alert('Failed to send email: ' + err);
+      }, 2000);
+    });
+  }
+
+  function sendText() {
+    const phone = document.getElementById('textRecipient').value;
+    const content = document.getElementById('textContent').value;
+    const sendBtn = document.getElementById('sendTextBtn');
+    
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    
+    setTimeout(() => {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+      alert('Text message to ' + phone + ': ' + content);
+      bootstrap.Modal.getInstance(document.getElementById('textModal')).hide();
+    }, 2000);
+  }
 </script>
 
+<style>
+  .contact-info {
+    color: #000 !important;
+  }
+  .contact-section h5 {
+    color: #000 !important;
+  }
+</style>
+
+<!-- Email Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div style="border-bottom: 3px solid #9f9d9d" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="color: #000;">Send Email to <span id="emailRecipientName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="emailRecipient">
+        <div class="mb-3">
+          <label class="form-label" style="color: #000;">Subject</label>
+          <input type="text" class="form-control" id="emailSubject" style="color: #000;">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="color: #000;">Content</label>
+          <textarea class="form-control" id="emailContent" rows="5" style="color: #000;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="sendEmailBtn" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Text Modal -->
+<div  class="modal fade" id="textModal" tabindex="-1">
+  <div  class="modal-dialog">
+    <div style="border-bottom: 3px solid #9f9d9d" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="color: #000;">Send Text to <span id="textRecipientName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="textRecipient">
+        <div class="mb-3">
+          <label class="form-label" style="color: #000;">Message</label>
+          <textarea class="form-control" id="textContent" rows="5" style="color: #000;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" id="sendTextBtn" onclick="sendText()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+</div>
   
   <!-- For CM Pop Up start  -->
 <form id="cmChangeForm" method="POST" style="display:none;">
