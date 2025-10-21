@@ -837,3 +837,7 @@ def update_report_status(request, report_id, status):
     
     # Redirect back to the previous page
     return redirect(request.META.get('HTTP_REFERER', 'mainapp:report_list'))
+
+
+def privacy_view(request):
+    return render(request, 'privacy.html')
