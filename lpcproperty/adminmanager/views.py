@@ -2341,3 +2341,65 @@ def send_contact_email(request):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
+
+
+# To SEND SMS using SlickText API -------------------------------------------------------------------------------------------------
+# In your views.py, add this import at the top
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+import json
+import sys
+import os
+
+# Add the parent directory to Python path to import sms_service
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from sms_service import SlickTextSMSService
+
+# Add this new view
+@csrf_exempt
+@require_http_methods(["POST"])
+def send_sms_view(request):
+    try:
+        data = json.loads(request.body)
+        phone_number = data.get('phone_number', '').strip()
+        message = data.get('message', '').strip()
+        
+        if not phone_number:
+            return JsonResponse({
+                'success': False, 
+                'error': 'Phone number is required'
+            }, status=400)
+        
+        if not message:
+            return JsonResponse({
+                'success': False, 
+                'error': 'Message is required'
+            }, status=400)
+        
+        # Send SMS
+        sms_service = SlickTextSMSService()
+        result = sms_service.send_sms(phone_number, message)
+        
+        if result['success']:
+            return JsonResponse({
+                'success': True,
+                'message': 'SMS sent successfully!'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': result['error']
+            }, status=400)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Server error: {str(e)}'
+        }, status=500)

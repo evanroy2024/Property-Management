@@ -136,5 +136,6 @@ urlpatterns = [
     # Django email send url 
     path('send-contact-email/', views.send_contact_email, name='send_contact_email'),
 
-
+    # To send SMS 
+    path('send-sms/', views.send_sms_view, name='send_sms'),
 ]

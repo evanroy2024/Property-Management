@@ -655,20 +655,69 @@ th.sortable:hover .sort-icon {
   }
 
   function sendText() {
-    const phone = document.getElementById('textRecipient').value;
-    const content = document.getElementById('textContent').value;
-    const sendBtn = document.getElementById('sendTextBtn');
-    
-    sendBtn.disabled = true;
-    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    
-    setTimeout(() => {
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
-      alert('Text message to ' + phone + ': ' + content);
-      bootstrap.Modal.getInstance(document.getElementById('textModal')).hide();
-    }, 2000);
+  const phone = document.getElementById('textRecipient').value;
+  const content = document.getElementById('textContent').value;
+  const sendBtn = document.getElementById('sendTextBtn');
+  
+  if (!content.trim()) {
+    alert('Please enter a message');
+    return;
   }
+  
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  
+  // Send AJAX request to Django
+  fetch("{% url 'adminmanager:send_sms' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || getCookie('csrftoken')
+    },
+    body: JSON.stringify({
+      'phone_number': phone,
+      'message': content
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+    
+    if (data.success) {
+      alert('SMS sent successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('textModal')).hide();
+      // Clear the text content
+      document.getElementById('textContent').value = '';
+    } else {
+      alert('Failed to send SMS: ' + data.error);
+    }
+  })
+  .catch(error => {
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+    console.error('Error:', error);
+    alert('Network error occurred while sending SMS');
+  });
+}
+
+// Helper function to get CSRF cookie
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
 </script>
 
 <style>
