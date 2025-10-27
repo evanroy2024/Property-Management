@@ -422,11 +422,12 @@ th.sortable:hover .sort-icon {
 <!-- Client starts here --------------------------------------------------------------------------------- -->
  <!-- Unique Contact Modal -->
 <!-- Add this CSS for the improved layout and styling -->
+<!-- Contact Modal -->
 <style>
     .con-modal-content {
       background-color: #fff;
       border-radius: 12px;
-      color: #333; /* Ensures text is black */
+      color: #333;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       padding: 1rem;
     }
@@ -435,6 +436,9 @@ th.sortable:hover .sort-icon {
       background-color: #f5f5f5;
       border-bottom: 1px solid #dee2e6;
       border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   
     .con-modal-title {
@@ -498,7 +502,41 @@ th.sortable:hover .sort-icon {
   
     .contact-info strong {
       font-weight: bold;
-      color: #0056b3; /* Color for the headings */
+      color: #0056b3;
+    }
+
+    .contact-info {
+      color: #000 !important;
+    }
+    
+    .contact-section h5 {
+      color: #000 !important;
+    }
+
+    .owner-contact-actions {
+      display: flex;
+      gap: 15px;
+      margin: 20px 15px;
+      justify-content: center;
+    }
+
+    .owner-contact-actions .btn {
+      padding: 12px 30px;
+      font-size: 16px;
+    }
+
+    .owner-contact-text {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
   </style>
   
@@ -508,10 +546,13 @@ th.sortable:hover .sort-icon {
       <div class="modal-content con-modal-content">
         <div class="modal-header con-modal-header">
           <h5 class="modal-title con-modal-title">Contact Information</h5>
-          <button type="button" class="btn-close con-close-btn" data-bs-dismiss="modal" aria-label="Close">
-            <span style="color: red; ">&times;</span> <!-- Red Cross Icon -->
-        </button>
-        
+          <div class="header-buttons">
+            <button type="button" class="btn btn-secondary btn-sm" id="backContactBtn" style="display: none;">Back</button>
+            <button type="button" class="btn btn-primary btn-sm" id="ownerContactBtn">Owner</button>
+            <button type="button" class="btn-close con-close-btn" data-bs-dismiss="modal" aria-label="Close">
+              <span style="color: red;">&times;</span>
+            </button>
+          </div>
         </div>
         <div class="modal-body con-modal-body" id="conModalBody">
           Loading...
@@ -519,15 +560,41 @@ th.sortable:hover .sort-icon {
       </div>
     </div>
   </div>
-  
-  <!-- Add this JavaScript to handle the modal opening and data injection -->
-<script>
+
+  <script>
   document.addEventListener("DOMContentLoaded", function () {
     const modalBody = document.getElementById("conModalBody");
+    const ownerBtn = document.getElementById("ownerContactBtn");
+    const backBtn = document.getElementById("backContactBtn");
+    let currentOwnerData = null;
+    let originalContent = '';
 
     function isValid(value) {
       return value && value !== "None" && value !== "none" && value !== "null" && value !== null;
     }
+
+    ownerBtn.addEventListener("click", function() {
+      if (currentOwnerData) {
+        modalBody.innerHTML = `
+          <div class="contact-section">
+            <h5>Owner Contact</h5>
+            <div class="owner-contact-actions">
+              ${currentOwnerData.email ? `<button class="btn btn-primary" onclick="openEmailModal('${currentOwnerData.email}', '${currentOwnerData.name}')"><i class="fas fa-envelope"></i> Email</button>` : ''}
+              ${currentOwnerData.phone ? `<button class="btn btn-success" onclick="openTextModal('${currentOwnerData.phone}', '${currentOwnerData.name}')"><i class="fas fa-sms"></i> Text</button>` : ''}
+            </div>
+            <p class="owner-contact-text">Directly contact the client through email or SMS</p>
+          </div>
+        `;
+        backBtn.style.display = 'block';
+        ownerBtn.style.display = 'none';
+      }
+    });
+
+    backBtn.addEventListener("click", function() {
+      modalBody.innerHTML = originalContent;
+      backBtn.style.display = 'none';
+      ownerBtn.style.display = 'block';
+    });
 
     document.querySelectorAll(".open-con-modal").forEach(button => {
       button.addEventListener("click", function (e) {
@@ -544,6 +611,13 @@ th.sortable:hover .sort-icon {
           return;
         }
 
+        // Store owner data
+        currentOwnerData = {
+          email: data.email1,
+          phone: data.phone1,
+          name: `${data.name1 || ''} ${data.lname1 || ''}`.trim()
+        };
+
         const hasPrimaryContact = isValid(data.name1) || isValid(data.email1) || isValid(data.phone1);
         const hasSecondaryContact = isValid(data.name2) || isValid(data.email2) || isValid(data.phone2);
 
@@ -551,7 +625,7 @@ th.sortable:hover .sort-icon {
           return;
         }
 
-        modalBody.innerHTML = `
+        originalContent = `
           ${hasPrimaryContact ? `
             <div class="contact-section">
               <h5>Primary Contact</h5>
@@ -590,6 +664,10 @@ th.sortable:hover .sort-icon {
             </div>
           ` : ''}
         `;
+
+        modalBody.innerHTML = originalContent;
+        backBtn.style.display = 'none';
+        ownerBtn.style.display = 'block';
 
         const modal = new bootstrap.Modal(document.getElementById("conModal"));
         modal.show();
@@ -655,70 +733,115 @@ th.sortable:hover .sort-icon {
   }
 
   function sendText() {
-  const phone = document.getElementById('textRecipient').value;
-  const content = document.getElementById('textContent').value;
-  const sendBtn = document.getElementById('sendTextBtn');
-  
-  if (!content.trim()) {
-    alert('Please enter a message');
-    return;
-  }
-  
-  sendBtn.disabled = true;
-  sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-  
-  // Send AJAX request to Django
-  fetch("{% url 'adminmanager:send_sms' %}", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || getCookie('csrftoken')
-    },
-    body: JSON.stringify({
-      'phone_number': phone,
-      'message': content
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    sendBtn.disabled = false;
-    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+    const phone = document.getElementById('textRecipient').value;
+    const content = document.getElementById('textContent').value;
+    const sendBtn = document.getElementById('sendTextBtn');
     
-    if (data.success) {
-      alert('SMS sent successfully!');
-      bootstrap.Modal.getInstance(document.getElementById('textModal')).hide();
-      // Clear the text content
-      document.getElementById('textContent').value = '';
-    } else {
-      alert('Failed to send SMS: ' + data.error);
+    if (!content.trim()) {
+      alert('Please enter a message');
+      return;
     }
-  })
-  .catch(error => {
-    sendBtn.disabled = false;
-    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
-    console.error('Error:', error);
-    alert('Network error occurred while sending SMS');
-  });
-}
+    
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    
+    fetch("{% url 'adminmanager:send_sms' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || getCookie('csrftoken')
+      },
+      body: JSON.stringify({
+        'phone_number': phone,
+        'message': content
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+      
+      if (data.success) {
+        alert('SMS sent successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('textModal')).hide();
+        document.getElementById('textContent').value = '';
+      } else {
+        alert('Failed to send SMS: ' + data.error);
+      }
+    })
+    .catch(error => {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+      console.error('Error:', error);
+      alert('Network error occurred while sending SMS');
+    });
+  }
 
-// Helper function to get CSRF cookie
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
       }
     }
+    return cookieValue;
   }
-  return cookieValue;
-}
-
-
 </script>
+
+<!-- Email Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div style="border-bottom: 3px solid #9f9d9d" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="color: #000;">Send Email to <span id="emailRecipientName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="emailRecipient">
+        <div class="mb-3">
+          <label class="form-label" style="color: #000;">Subject</label>
+          <input type="text" class="form-control" id="emailSubject" style="color: #000;">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="color: #000;">Content</label>
+          <textarea class="form-control" id="emailContent" rows="5" style="color: #000;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="sendEmailBtn" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Text Modal -->
+<div class="modal fade" id="textModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div style="border-bottom: 3px solid #9f9d9d" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="color: #000;">Send Text to <span id="textRecipientName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="textRecipient">
+        <div class="mb-3">
+          <label class="form-label" style="color: #000;">Message</label>
+          <textarea class="form-control" id="textContent" rows="5" style="color: #000;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" id="sendTextBtn" onclick="sendText()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <style>
   .contact-info {
@@ -757,7 +880,7 @@ function getCookie(name) {
 </div>
 
 <!-- Text Modal -->
-<div  class="modal fade" id="textModal" tabindex="-1">
+<!-- <div  class="modal fade" id="textModal" tabindex="-1">
   <div  class="modal-dialog">
     <div style="border-bottom: 3px solid #9f9d9d" class="modal-content">
       <div class="modal-header">
@@ -778,7 +901,7 @@ function getCookie(name) {
     </div>
   </div>
 </div>
-  
+   -->
   <!-- For CM Pop Up start  -->
 <form id="cmChangeForm" method="POST" style="display:none;">
   {% csrf_token %}
