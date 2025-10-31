@@ -41,9 +41,11 @@ from .models import Client ,ClientManagers
 
 from mainapp.models import Client, ClientManagers
 from django.contrib.auth import authenticate, login as django_login
+from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.hashers import check_password
 
+@csrf_exempt
 def client_login(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -837,7 +839,6 @@ def update_report_status(request, report_id, status):
     
     # Redirect back to the previous page
     return redirect(request.META.get('HTTP_REFERER', 'mainapp:report_list'))
-
 
 def privacy_view(request):
     return render(request, 'privacy.html')
