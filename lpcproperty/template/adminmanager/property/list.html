@@ -226,6 +226,10 @@ th.sortable:hover .sort-icon {
                             data-city="{{ prop.city|lower }}"
                             data-state="{{ prop.state|lower }}">
                             <td><strong>{{ prop.client.last_name }}, {{ prop.client.first_name }} </strong></td>
+                            <td style="display: none;">{{ prop.client.email }}</td>
+                            <td style="display: none;">{{ prop.client.phone_number }}</td>
+                            
+
                             <td>{{ prop.city }}</td>
                             <td>{{ prop.address }}</td>
                             <td>{{ prop.state }}</td>
@@ -560,8 +564,7 @@ th.sortable:hover .sort-icon {
       </div>
     </div>
   </div>
-
-  <script>
+<script>
   document.addEventListener("DOMContentLoaded", function () {
     const modalBody = document.getElementById("conModalBody");
     const ownerBtn = document.getElementById("ownerContactBtn");
@@ -570,7 +573,7 @@ th.sortable:hover .sort-icon {
     let originalContent = '';
 
     function isValid(value) {
-      return value && value !== "None" && value !== "none" && value !== "null" && value !== null;
+      return value && value !== "None" && value !== "none" && value !== "null" && value !== null && value !== "";
     }
 
     ownerBtn.addEventListener("click", function() {
@@ -578,9 +581,18 @@ th.sortable:hover .sort-icon {
         modalBody.innerHTML = `
           <div class="contact-section">
             <h5>Owner Contact</h5>
+            <div class="contact-row">
+              <div class="contact-column">
+                <p class="contact-info"><strong>Name:</strong> ${currentOwnerData.ownerName || '-'}</p>
+                <p class="contact-info"><strong>Email:</strong> ${currentOwnerData.ownerEmail || '-'}</p>
+              </div>
+              <div class="contact-column">
+                <p class="contact-info"><strong>Cell Phone:</strong> ${currentOwnerData.ownerPhone || '-'}</p>
+              </div>
+            </div>
             <div class="owner-contact-actions">
-              ${currentOwnerData.email ? `<button class="btn btn-primary" onclick="openEmailModal('${currentOwnerData.email}', '${currentOwnerData.name}')"><i class="fas fa-envelope"></i> Email</button>` : ''}
-              ${currentOwnerData.phone ? `<button class="btn btn-success" onclick="openTextModal('${currentOwnerData.phone}', '${currentOwnerData.name}')"><i class="fas fa-sms"></i> Text</button>` : ''}
+              ${isValid(currentOwnerData.ownerEmail) ? `<button class="btn btn-primary" onclick="openEmailModal('${currentOwnerData.ownerEmail}', '${currentOwnerData.ownerName}')"><i class="fas fa-envelope"></i> Email</button>` : ''}
+              ${isValid(currentOwnerData.ownerPhone) ? `<button class="btn btn-success" onclick="openTextModal('${currentOwnerData.ownerPhone}', '${currentOwnerData.ownerName}')"><i class="fas fa-sms"></i> Text</button>` : ''}
             </div>
             <p class="owner-contact-text">Directly contact the client through email or SMS</p>
           </div>
@@ -611,22 +623,44 @@ th.sortable:hover .sort-icon {
           return;
         }
 
-        // Store owner data
+        const row = this.closest('tr');
+        let ownerName = '';
+        let ownerEmail = '';
+        let ownerPhone = '';
+
+        if (row) {
+          const cells = row.querySelectorAll('td');
+          
+          // Get owner name from first cell
+          const firstCell = cells[0]?.querySelector('strong');
+          if (firstCell) {
+            ownerName = firstCell.textContent.trim();
+          }
+          
+          // Get email from second cell (index 1)
+          if (cells[1]) {
+            ownerEmail = cells[1].textContent.trim();
+          }
+          
+          // Get phone from third cell (index 2)
+          if (cells[2]) {
+            ownerPhone = cells[2].textContent.trim();
+          }
+        }
+
         currentOwnerData = {
-          email: data.email1,
-          phone: data.phone1,
-          name: `${data.name1 || ''} ${data.lname1 || ''}`.trim()
+          ownerName: ownerName || '-',
+          ownerEmail: ownerEmail || '-',
+          ownerPhone: ownerPhone || '-'
         };
+
+        console.log('Owner Data:', currentOwnerData);
 
         const hasPrimaryContact = isValid(data.name1) || isValid(data.email1) || isValid(data.phone1);
         const hasSecondaryContact = isValid(data.name2) || isValid(data.email2) || isValid(data.phone2);
 
-        if (!hasPrimaryContact && !hasSecondaryContact) {
-          return;
-        }
-
         originalContent = `
-          ${hasPrimaryContact ? `
+          ${hasPrimaryContact || !hasSecondaryContact ? `
             <div class="contact-section">
               <h5>Primary Contact</h5>
               <div class="contact-row">
