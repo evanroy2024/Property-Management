@@ -40,7 +40,7 @@ class Client(models.Model):
     contact1_email = models.EmailField(blank=True, null=True)
     contact1_phone = models.CharField(max_length=15, blank=True, null=True)
     contact1_office_phone = models.CharField(max_length=15, blank=True, null=True)
-    contact1_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
+    contact1_buisness_adress = models.CharField(max_length=155, blank=True, null=True)
     contact1_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
@@ -54,7 +54,7 @@ class Client(models.Model):
     contact2_email = models.EmailField(blank=True, null=True)
     contact2_phone = models.CharField(max_length=15, blank=True, null=True)
     contact2_office_phone = models.CharField(max_length=15, blank=True, null=True)
-    contact2_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
+    contact2_buisness_adress = models.CharField(max_length=155, blank=True, null=True)
     contact2_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
@@ -69,7 +69,7 @@ class Client(models.Model):
     contact3_email = models.EmailField(blank=True, null=True)
     contact3_phone = models.CharField(max_length=15, blank=True, null=True)
     contact3_office_phone = models.CharField(max_length=15, blank=True, null=True)
-    contact3_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
+    contact3_buisness_adress = models.CharField(max_length=155, blank=True, null=True)
     contact3_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
@@ -82,7 +82,7 @@ class Client(models.Model):
     contact4_email = models.EmailField(blank=True, null=True)
     contact4_phone = models.CharField(max_length=15, blank=True, null=True)
     contact4_office_phone = models.CharField(max_length=15, blank=True, null=True)
-    contact4_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
+    contact4_buisness_adress = models.CharField(max_length=155, blank=True, null=True)
     contact4_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
@@ -96,7 +96,7 @@ class Client(models.Model):
     contact5_email = models.EmailField(blank=True, null=True)
     contact5_phone = models.CharField(max_length=15, blank=True, null=True)
     contact5_office_phone = models.CharField(max_length=15, blank=True, null=True)
-    contact5_buisness_adress = models.CharField(max_length=15, blank=True, null=True)
+    contact5_buisness_adress = models.CharField(max_length=155, blank=True, null=True)
     contact5_preferred = models.CharField(
         max_length=10, choices=PREFERRED_CONTACT_CHOICES, blank=True, null=True
     )
@@ -202,3 +202,5 @@ class VendorContact(models.Model):
 
 class VendorServices(models.Model):
     service = models.CharField(max_length=255)
+
+    
