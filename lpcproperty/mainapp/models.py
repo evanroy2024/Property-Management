@@ -232,75 +232,12 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)  # Verify password
-    def send_credentials_email(self, raw_password):
-        subject = "Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM - Your Login Credentials"
-        from_email = settings.DEFAULT_FROM_EMAIL
-        to = [self.email]
-
-        text_content = f"""
-    Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM!
-
-    You can login here: https://backend.lotuspmc.com/login
-
-    Your credentials are:
-    Username: {self.username}
-    Password: {raw_password}
-
-    Please keep this information confidential.
-    """
-
-        html_content = f"""
-    <html>
-    <body>
-        <h2>Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM!</h2>
-        <p>You can login here: <a href="https://backend.lotuspmc.com/login">Login Page</a></p>
-        <p><strong>Your credentials are:</strong></p>
-        <ul>
-        <li>Username: {self.username}</li>
-        <li>Password: {raw_password}</li>
-        </ul>
-        <p>Please keep this information confidential.</p>
-    </body>
-    </html>
-    """
-
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send(fail_silently=False)
 
     def save(self, *args, **kwargs):
-        send_email = False
-        raw_password = None
-
-        is_new = self.pk is None
-
-        if is_new:
-            # Always treat as plaintext for new record
-            raw_password = self.password
-            self.password = make_password(raw_password)
-            send_email = True
-        else:
-            old_instance = ClientManagers.objects.get(pk=self.pk)
-
-            # Detect if password was changed
-            if self.password != old_instance.password:
-                # Always assume the new one is plaintext
-                raw_password = self.password
-                self.password = make_password(raw_password)
-                send_email = True
-
-            # Detect if username changed (optional to resend)
-            elif self.username != old_instance.username:
-                send_email = True
-                raw_password = None  # Don’t resend password unless changed
-
+        if not self.password.startswith('pbkdf2_sha256$'):  # Avoid double hashing
+            self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
-        # Send email only if new user or password changed
-        if send_email and raw_password:
-            self.send_credentials_email(raw_password)
-
-        
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
 

@@ -2011,10 +2011,13 @@ def clientmanager_detail_view(request, pk):
     clientmanager = get_object_or_404(ClientManagers, pk=pk)
     return render(request, 'adminmanager/clientmanager/clientmanager_detail.html', {'clientmanager': clientmanager})
 
-# Create View
+from django.core.mail import EmailMultiAlternatives
 def clientmanager_create_view(request):
     if request.method == 'POST':
         data = request.POST
+        password = data.get('password')
+
+        # Create Client Manager
         cm = ClientManagers(
             first_name=data.get('first_name'),
             last_name=data.get('last_name'),
@@ -2027,15 +2030,80 @@ def clientmanager_create_view(request):
             office_phone=data.get('office_phone'),
             preferred_contact_method=data.get('preferred_contact_method'),
         )
-        cm.set_password(data.get('password'))
+        cm.set_password(password)
         cm.save()
-        messages.success(request, "Client Manager created successfully.")
+
+        # Send Welcome Email (simple professional HTML)
+        subject = "Welcome to LPC Properties"
+        message = f"""
+Hello {cm.first_name},
+
+Welcome to LPC Properties!
+
+Your account has been successfully created.
+
+You can log in here:
+https://backend.lotuspmc.com/login/
+
+Your credentials are:
+Username: {cm.username}
+Password: {password}
+
+Please keep this information safe.
+
+Best regards,
+LPC Properties Team
+        """.strip()
+
+        html_message = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 30px;">
+            <div style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <div style="background-color: #004aad; color: white; padding: 15px 25px; border-radius: 8px 8px 0 0;">
+                    <h2 style="margin: 0;">Welcome to LPC Properties</h2>
+                </div>
+                <div style="padding: 25px; color: #333;">
+                    <p>Hi <strong>{cm.first_name}</strong>,</p>
+                    <p>Welcome to <strong>LPC Properties</strong>! Your account has been created successfully.</p>
+                    <p>Here are your login credentials:</p>
+                    <div style="background-color: #f4f4f4; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
+                        <p><strong>Username:</strong> {cm.username}</p>
+                        <p><strong>Password:</strong> {password}</p>
+                    </div>
+                    <p style="margin-top: 20px;">You can log in using the link below:</p>
+                    <a href="https://backend.lotuspmc.com/login/" 
+                       style="display: inline-block; background-color: #004aad; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; margin-top: 10px;">
+                       Log In to Your Account
+                    </a>
+                    <p style="margin-top: 25px;">Please keep this information safe.</p>
+                    <p>Best regards,<br><strong>LPC Properties Team</strong></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [cm.email],
+                fail_silently=False,
+                html_message=html_message,
+            )
+        except Exception as e:
+            messages.warning(request, f"Client Manager created, but failed to send email: {e}")
+
+        messages.success(request, "Client Manager created successfully and credentials sent via email.")
         return redirect('adminmanager:list')
+
     return render(request, 'adminmanager/clientmanager/clientmanager_form.html', {
         'action': 'Create',
         'contact_choices': ClientManagers.PREFERRED_CONTACT_CHOICES,
         'US_STATES': US_STATES,
     })
+
 
 US_STATES = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -2047,6 +2115,7 @@ US_STATES = [
 # Edit View
 def clientmanager_edit_view(request, pk):
     cm = get_object_or_404(ClientManagers, pk=pk)
+
     if request.method == 'POST':
         data = request.POST
         cm.first_name = data.get('first_name')
@@ -2057,14 +2126,16 @@ def clientmanager_edit_view(request, pk):
         cm.city = data.get('city')
         cm.state = data.get('state')
         cm.zipcode = data.get('zipcode')
-        cm.office_phone=data.get('office_phone'),
-
+        cm.office_phone = data.get('office_phone')  # ✅ fixed — removed comma
         cm.preferred_contact_method = data.get('preferred_contact_method')
+
         if data.get('password'):
             cm.set_password(data.get('password'))
+
         cm.save()
         messages.success(request, "Client Manager updated successfully.")
         return redirect('adminmanager:list')
+
     return render(request, 'adminmanager/clientmanager/clientmanager_edit.html', {
         'clientmanager': cm,
         'action': 'Edit',
