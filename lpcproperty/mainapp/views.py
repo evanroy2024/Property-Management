@@ -127,13 +127,13 @@ class ClientPasswordChangeRequestView(View):
             otp_storage[email] = {"otp": otp, "type": user_type}
 
             send_mail(
-                "Your OTP for Password Change",
-                f"Your OTP is {otp}",
-                "noreply@yourdomain.com",
-                [email],
-            )
+                    "Your OTP for Password Change",
+                    f"Your OTP is {otp}",
+                    "lotusonboard@sbnai.net",  # ✅ Must match EMAIL_HOST_USER
+                    [email],
+                )
             messages.success(request, "OTP sent to your email.")
-            return redirect("client_password_verify")
+            return redirect("mainapp:client_password_verify")
         else:
             messages.error(request, "No user found with this email.")
             return render(request, self.template_name)
@@ -163,7 +163,7 @@ class ClientPasswordVerifyView(View):
 
             del otp_storage[email]
             messages.success(request, "Password changed successfully.")
-            return redirect("login")  # update with your login view name
+            return redirect("mainapp:client_login")  # update with your login view name
         else:
             messages.error(request, "Invalid OTP.")
             return render(request, self.template_name)

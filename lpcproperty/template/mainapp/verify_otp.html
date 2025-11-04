@@ -1,17 +1,111 @@
-<h2>Verify OTP & Change Password</h2>
+{% extends "loginbase.html" %}
+{% load static %}
 
-<form method="post" class="password-change-verify-form">
-    {% csrf_token %}
-    <label for="email" class="password-change-verify-label">Email</label>
-    <input type="email" name="email" required class="password-change-verify-input">
+{% block content %}
+<style>
+    body {
+        background: #ffffff;
+        color: #000;
+        font-family: Arial, sans-serif;
+    }
 
-    <label for="otp" class="password-change-verify-label">OTP</label>
-    <input type="text" name="otp" required class="password-change-verify-input">
+    .login-container {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+        margin: 20px auto;
+        box-sizing: border-box;
+    }
 
-    <label for="new_password" class="password-change-verify-label">New Password</label>
-    <input type="password" name="new_password" required class="password-change-verify-input">
+    .login-container h1 {
+        font-size: 17px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #d1aa6b;
+        letter-spacing: 1px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
 
-    <button type="submit" class="password-change-verify-button">
-        Change Password
-    </button>
-</form>
+    .login-container h2 {
+        font-size: 16px;
+        text-align: left;
+        font-weight: bold;
+        margin: 10px 0 5px 0;
+        color: #333;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: #fff;
+        color: #000;
+        font-weight: bold;
+        box-sizing: border-box;
+    }
+
+    .input-field::placeholder {
+        color: #888;
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        background: #d1aa6b;
+        color: #000;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        box-sizing: border-box;
+    }
+
+    .login-btn:hover {
+        background: #c29655;
+    }
+
+    .forgot-password {
+        display: block;
+        margin: 10px 0;
+        color: #007bff;
+        font-size: 16px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="login-container">
+    <h1>WELCOME TO Lotus PROPERTY MANAGEMENT COMPANY</h1>
+    <h2 style="text-align: center;">Verify OTP & Change Password</h2>
+
+    <form method="post" class="password-change-verify-form">
+        {% csrf_token %}
+
+        <label for="email" style="display:block; text-align:left; font-weight:bold; color:#333; margin-bottom:5px;">Email</label>
+        <input type="email" name="email" required class="input-field" placeholder="Please enter your Email to confirm you received the OTP">
+
+        <label for="otp" style="display:block; text-align:left; font-weight:bold; color:#333; margin-bottom:5px;">OTP</label>
+        <input type="text" name="otp" required class="input-field" placeholder="Enter OTP">
+
+        <label for="new_password" style="display:block; text-align:left; font-weight:bold; color:#333; margin-bottom:5px;">New Password</label>
+        <input type="password" name="new_password" required class="input-field" placeholder="Enter New Password">
+
+        <button type="submit" class="login-btn">Change Password</button>
+    </form>
+
+    <a href="{% url 'mainapp:client_login' %}" class="forgot-password">Back to Login</a>
+</div>
+{% endblock %}
