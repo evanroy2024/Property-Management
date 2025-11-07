@@ -22,6 +22,7 @@ urlpatterns = [
     path('my-properties/', client_properties, name='client_properties'),
     path('servierequest/', service_request, name='service_request'),  # ✅ Added service request URL
 
+    path("profile/update/", views.client_profile_update, name="client_profile_update"),
     path('learn_more1/', views.learn_more1, name='learn_more1'),  # ✅ Added learn_more1 URL
     path('learn-more2/', views.learn_more2, name='learn_more2'),  # ✅ Added learn_more1 URL
     path('learn-more3/', views.learn_more3, name='learn_more3'),  # ✅ Added learn_more1 URL

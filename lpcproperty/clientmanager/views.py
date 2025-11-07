@@ -1831,3 +1831,35 @@ def denied_reports_view(request):
     
     return render(request, 'clientmanager/walkthrough/denied_reports.html', {'reports': processed_reports})
 
+
+
+@require_http_methods(["GET", "POST"])
+def cm_profile_update(request):
+    cm_id = request.session.get("manager_id")   # ✅ FIXED
+    if not cm_id:
+        return redirect("mainapp:client_login")
+
+    cm = ClientManagers.objects.get(id=cm_id)
+
+    if request.method == "POST":
+        new_username = request.POST.get("username")
+        new_email = request.POST.get("email")
+        new_password = request.POST.get("password")
+
+        # ✅ Unique check against BOTH tables
+        if ClientManagers.objects.exclude(id=cm.id).filter(username=new_username).exists() or \
+           Client.objects.filter(username=new_username).exists():
+            messages.error(request, "Username already taken.")
+            return redirect("clientmanager:cm_profile_update")
+
+        cm.username = new_username
+        cm.email = new_email
+
+        if new_password:
+            cm.password = make_password(new_password)
+
+        cm.save()
+        messages.success(request, "Updated successfully.")
+        return redirect("clientmanager:cm_profile_update")
+
+    return render(request, "clientmanager/cm_profile_update.html", {"cm": cm})

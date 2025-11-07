@@ -9,6 +9,8 @@ app_name = 'clientmanager'
 urlpatterns = [
     path('', client_manager_login_view, name='client_login'),
     path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
+
+    path("profile/update/", views.cm_profile_update, name="cm_profile_update"),
     # property 
     path('properties/', views.property_list_view, name='property_list'),
     path('properties/create/', views.property_create_view, name='property_create'),

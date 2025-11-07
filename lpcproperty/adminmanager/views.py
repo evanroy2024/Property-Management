@@ -2436,24 +2436,31 @@ def send_sms_view(request):
         data = json.loads(request.body)
         phone_number = data.get('phone_number', '').strip()
         message = data.get('message', '').strip()
-        
+
         if not phone_number:
             return JsonResponse({
-                'success': False, 
+                'success': False,
                 'error': 'Phone number is required'
             }, status=400)
-        
+
         if not message:
             return JsonResponse({
-                'success': False, 
+                'success': False,
                 'error': 'Message is required'
             }, status=400)
-        
+
+        # Append automated disclaimer
+        disclaimer = (
+            "\n\nThis is an automated message. Replies to this number are not monitored. "
+            "If you need assistance, please contact us at (561) 766-7828 or visit https://lotuspmc.com"
+        )
+        full_message = f"{message}{disclaimer}"
+
         # Send SMS
         sms_service = SlickTextSMSService()
-        result = sms_service.send_sms(phone_number, message)
-        
-        if result['success']:
+        result = sms_service.send_sms(phone_number, full_message)
+
+        if result.get('success'):
             return JsonResponse({
                 'success': True,
                 'message': 'SMS sent successfully!'
@@ -2461,9 +2468,9 @@ def send_sms_view(request):
         else:
             return JsonResponse({
                 'success': False,
-                'error': result['error']
+                'error': result.get('error', 'Failed to send SMS')
             }, status=400)
-            
+
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,

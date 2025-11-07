@@ -111,12 +111,8 @@ class Client(models.Model):
     def generate_username(self):
         base = (self.first_name + self.last_name).lower()
         return f"{base}{uuid.uuid4().hex[:6]}"
-
-    def generate_password(self, length=10):
-        chars = string.ascii_letters + string.digits
-        return ''.join(random.choices(chars, k=length))
-    
     def send_credentials_email(self):
+
         subject = "Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM - Your Login Credentials"
         from_email = settings.DEFAULT_FROM_EMAIL
         to = [self.email]
@@ -131,27 +127,63 @@ class Client(models.Model):
         Password: {self._raw_password}
 
         Please keep this information confidential.
+
+        How to Change Your Username and Password:
+        1. Go to https://backend.lotuspmc.com/login and log in using your temporary credentials.
+        2. Once logged in, open 'Profile & Security'.
+        3. Update your Username, Email, and/or Password.
+        4. Save the changes.
+        5. Use your updated credentials for future logins.
+
+        If you encounter any issues, please contact support at (561) 766-7828 or visit https://lotuspmc.com
+
+        This is an automated message. Replies to this email are not monitored.
         """
 
         html_content = f"""
-        <html>
-        <body>
-            <h2>Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM!</h2>
-            <p>You can login here: <a href="https://backend.lotuspmc.com/login">Login Page</a></p>
-            <p><strong>Your credentials are:</strong></p>
-            <ul>
-            <li>Username: {self.username}</li>
-            <li>Password: {self._raw_password}</li>
-            </ul>
-            <p>Please keep this information confidential.</p>
-        </body>
-        </html>
+        <html><body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h2 style="color: #2b4b80; text-align: center;">Welcome to Lotus Property Management</h2>
+                <p style="font-size: 15px; color: #333;">You can login here: <a href="https://backend.lotuspmc.com/login" style="color: #2b4b80; text-decoration: none;">Login Page</a></p>
+
+                <p><strong>Below are your temporary username and password:</strong></p>
+                <ul style="background: #f8f9fb; padding: 15px; border-radius: 8px; list-style: none;">
+                    <li><strong>Username:</strong> {self.username}</li>
+                    <li><strong>Password:</strong> {self._raw_password}</li>
+                </ul>
+
+                <p>Please keep this information confidential.</p>
+
+                <h3 style="color: #2b4b80;">How to Change Your Username and Password</h3>
+                <ol style="padding-left: 20px; color: #333;">
+                    <li>Go to the <a href="https://backend.lotuspmc.com/login" style="color: #2b4b80;">Login Page</a> and enter your temporary credentials.</li>
+                    <li>After logging in, you’ll be redirected to the dashboard.</li>
+                    <li>Navigate to <strong>Profile & Security</strong>.</li>
+                    <li>Update your <strong>Username</strong>, <strong>Email</strong>, and/or <strong>Password</strong>.</li>
+                    <li>Click <strong>Save</strong> to apply the changes.</li>
+                    <li>Use your new credentials for all future logins.</li>
+                </ol>
+
+                <p>If you encounter any issues, please contact our support team immediately.</p>
+
+                <p style="font-size: 13px; color: #666;"><strong>This is an automated message. Replies to this email are not monitored.</strong></p>
+                <p style="font-size: 14px; color: #333;">For assistance, call us at <strong>(561) 766-7828</strong> or visit 
+                <a href="https://lotuspmc.com" style="color: #2b4b80;">https://lotuspmc.com</a></p>
+            </div>
+        </body></html>
         """
 
         msg = EmailMultiAlternatives(subject, text_content, from_email, to)
         msg.attach_alternative(html_content, "text/html")
         msg.send(fail_silently=False)
 
+
+    def generate_password(self):
+        import random
+        import string
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    
+        
     def save(self, *args, **kwargs):
         self._raw_password = None
         username_added = False
@@ -233,13 +265,94 @@ class ClientManagers(models.Model):  # Unique name to avoid conflicts
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)  # Verify password
 
+    def generate_username(self):
+        import uuid
+        base = (self.first_name + self.last_name).lower()
+        return f"{base}{uuid.uuid4().hex[:6]}"
+
+    def generate_password(self):
+        import random, string
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+    def send_credentials_email(self):
+        from django.core.mail import EmailMultiAlternatives
+        from django.conf import settings
+
+        subject = "Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM - Your Login Credentials"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to = [self.email]
+
+        text_content = f"""
+        Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM!
+
+        You can login here: https://backend.lotuspmc.com/login
+
+        Your credentials are:
+        Username: {self.username}
+        Password: {self._raw_password}
+        """
+
+        html_content = f"""
+        <html><body>
+            <h2>Welcome to Lotus Property Management</h2>
+            <p>You can login here: <a href="https://backend.lotuspmc.com/login">Login Page</a></p>
+            <ul>
+                <li>Username: {self.username}</li>
+                <li>Password: {self._raw_password}</li>
+            </ul>
+            <p>Please change your password after login.</p>
+
+             <h3 style="color: #2b4b80;">How to Change Your Username and Password</h3>
+                <ol style="padding-left: 20px; color: #333;">
+                    <li>Go to the <a href="https://backend.lotuspmc.com/login" style="color: #2b4b80;">Login Page</a> and enter your temporary credentials.</li>
+                    <li>After logging in, you’ll be redirected to the dashboard.</li>
+                    <li>Navigate to <strong>Profile & Security</strong>.</li>
+                    <li>Update your <strong>Username</strong>, <strong>Email</strong>, and/or <strong>Password</strong>.</li>
+                    <li>Click <strong>Save</strong> to apply the changes.</li>
+                    <li>Use your new credentials for all future logins.</li>
+                </ol>
+        </body></html>
+        """
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send(fail_silently=False)
+
     def save(self, *args, **kwargs):
-        if not self.password.startswith('pbkdf2_sha256$'):  # Avoid double hashing
-            self.password = make_password(self.password)
+        self._raw_password = None
+        username_added = False
+        password_added = False
+        is_new = self.pk is None
+
+        if is_new:
+            if not self.username:
+                self.username = self.generate_username()
+                username_added = True
+
+            if not self.password:
+                raw_password = self.generate_password()
+                self._raw_password = raw_password
+                self.password = make_password(raw_password)
+                password_added = True
+            elif not self.password.startswith('pbkdf2_'):
+                self._raw_password = self.password
+                self.password = make_password(self.password)
+                password_added = True
+        else:
+            old_instance = ClientManagers.objects.get(pk=self.pk)
+            if self.username != old_instance.username:
+                username_added = True
+            if self.password != old_instance.password:
+                if not self.password.startswith('pbkdf2_'):
+                    self._raw_password = self.password
+                    self.password = make_password(self.password)
+                password_added = True
+
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.username})"
+        if username_added or password_added:
+            self.send_credentials_email()
+
 
 
     

@@ -82,6 +82,34 @@ def client_login(request):
 
     return render(request, "mainapp/login.html")
 
+def client_profile_update(request):
+    client_id = request.session.get("client_id")
+    if not client_id:
+        return redirect("mainapp:login")
+
+    client = Client.objects.get(id=client_id)
+
+    if request.method == "POST":
+        new_username = request.POST.get("username")
+        new_email = request.POST.get("email")
+        new_password = request.POST.get("password")
+
+        # username unique check only inside Client model
+        if Client.objects.exclude(id=client.id).filter(username=new_username).exists():
+            messages.error(request, "Username already taken.")
+            return redirect("mainapp:client_profile_update")
+
+        client.username = new_username
+        client.email = new_email
+
+        if new_password:
+            client.password = make_password(new_password)
+
+        client.save()
+        messages.success(request, "Updated successfully.")
+        return redirect("mainapp:client_profile_update")
+
+    return render(request, "mainapp/client_profile_update.html", {"client": client})
 
 from django.shortcuts import render, redirect
 from django.contrib import messages

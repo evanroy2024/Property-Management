@@ -1,4 +1,4 @@
-{% extends 'adminmanager/adminbase.html' %}
+{% extends 'clientmanager/managerbase.html' %}
 {% load static %}
 {% block title %}Dashboard{% endblock %}
 
@@ -321,7 +321,7 @@
     <div class="container">
         <div class="page-header">
             <h1 class="page-title">Create Property</h1>
-            <a href="{% url 'adminmanager:property_list' %}" class="back-link">
+            <a href="{% url 'clientmanager:property_list' %}" class="back-link">
                 <i class="fas fa-arrow-left"></i> Back to Properties
             </a>
         </div>
@@ -343,7 +343,7 @@
             {% endif %}
 
 <div class="card p-3">
-    <h2 class="card-title mb-4"><i class="fas fa-home"></i> Basic Property Information</h2>
+    <h2 class="card-title mb-4"><i class="fas fa-home"></i> Property Information</h2>
 
     <div class="row g-3">
         <!-- Existing Client Dropdown + Button -->
@@ -366,7 +366,7 @@
         </div>
    <!-- New Client Form -->
                     <div id="new-client-form" class="new-client-card" style="display: none;">
-                        <h5 style="font-weight: 600;">New Client Info</h5>
+                        <h5 style="font-weight: 100; margin-left: 12px; margin-bottom: 10px; font-size: 1rem;">New Client / Owner</h5>
                     
                         <div class="form-row-flex">
                             <div class="form-group flex-33">
@@ -398,9 +398,9 @@
 
 
 
-                             <div class="form-group flex-33">
+                             <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="client_address" name="client_address" placeholder="Street Address 2" >
-                            </div>
+                            </div> -->
                              <div class="form-group flex-33">
                                 <input type="text" class="form-control" id="client_city" name="client_city" placeholder="City" >
                             </div>
@@ -436,12 +436,12 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact1_phone" placeholder="Cell Phone">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact1_office_phone" placeholder="Office Phone">
                             </div>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact1_buisness_adress" placeholder="Business Address">
-                            </div>
+                            </div> -->
                             <div class="form-group flex-33">
                                 <div class="mb-3">
                                     <select class="form-select" name="contact1_priority" id="contact1_priority">
@@ -468,12 +468,12 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact2_phone" placeholder="Cell Phone">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact2_office_phone" placeholder="Office Phone">
                             </div>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact2_buisness_adress" placeholder="Business Address">
-                            </div>
+                            </div> -->
                             <div class="form-group flex-33">
                                 <div class="mb-3">
                                     <select class="form-select" name="contact2_priority" id="contact2_priority">
@@ -500,12 +500,12 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact3_phone" placeholder="Cell Phone">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact3_office_phone" placeholder="Office Phone">
                             </div>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact3_buisness_adress" placeholder="Business Address">
-                            </div>
+                            </div> -->
                             <div class="form-group flex-33">
                                 <div class="mb-3">
                                     <select class="form-select" name="contact3_priority" id="contact3_priority">
@@ -533,12 +533,12 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact4_phone" placeholder="Cell Phone">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact4_office_phone" placeholder="Office Phone">
                             </div>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact4_buisness_adress" placeholder="Business Address">
-                            </div>
+                            </div> -->
                             <div class="form-group flex-33">
                                 <div class="mb-3">
                                     <select class="form-select" name="contact4_priority" id="contact4_priority" >
@@ -566,12 +566,12 @@
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact5_phone" placeholder="Cell Phone">
                             </div>
-                            <div class="form-group flex-33">
+                            <!-- <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact5_office_phone" placeholder="Office Phone">
                             </div>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact5_buisness_adress" placeholder="Business Address">
-                            </div>
+                            </div> -->
                             <div class="form-group flex-33">
                                 <div class="mb-3">
                                     <select class="form-select" name="contact5_priority" id="contact5_priority">
@@ -600,32 +600,19 @@
                         </script>
                     </div>
               
-        <!-- Client Manager Full Width -->
-        <div class="col-12">
-            <div class="form-floating">
-                <select class="form-control" name="client_manager_id" id="client_manager_id" required
-                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
-                           background: url('data:image/svg+xml;utf8,<svg fill=\'%23999\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
-                           padding-right: 35px; color: #555;">
-                    {% for manager in managers %}
-                        <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
-                    {% endfor %}
-                </select>
-                <label for="client_manager_id" class="required-field">Select Client Manager</label>
-            </div>
-        </div>
+     
 
         <!-- Rest of the fields in 2-column layout -->
         <div class="col-md-6">
             <div class="form-floating">
                 <input type="text" class="form-control" id="address" name="address" placeholder=" " required style="color: #555;">
-                <label for="address" class="required-field">Street</label>
+                <label for="address" >Street</label>
             </div>
         </div>
 
         <div class="col-md-6">
             <div class="form-floating">
-                <input type="text" class="form-control" id="street_line1" name="street_line1" placeholder=" " required style="color: #555;">
+                <input type="text" class="form-control" id="street_line1" name="street_line1" placeholder=" " style="color: #555;">
                 <label for="street_line1">Apartment, Suite, Unit, etc.</label>
             </div>
         </div>
@@ -640,7 +627,7 @@
         <div class="col-md-6">
             <div class="form-floating">
                 <input type="text" class="form-control" id="city" name="city" placeholder=" " required style="color: #555;">
-                <label for="city" class="required-field">City</label>
+                <label for="city" >City</label>
             </div>
         </div>
 
@@ -652,7 +639,7 @@
                         <option value="{{ state }}">{{ state }}</option>
                     {% endfor %}
                 </select>
-                <label for="state" class="required-field">State</label>
+                <label for="state" >State</label>
             </div>
         </div>
 
@@ -673,7 +660,7 @@
         <div class="col-md-6">
             <div class="form-floating">
                 <input type="number" class="form-control" id="number_of_stories" name="number_of_stories" placeholder=" " min="1" required style="color: #555;">
-                <label for="number_of_stories" class="required-field">Number of Stories</label>
+                <label for="number_of_stories" >Number of Stories</label>
             </div>
         </div>
 
@@ -701,8 +688,23 @@
 </div>
 
 
-
-            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-check"></i> Select Client Manager</h2>
+               <!-- Client Manager Full Width -->
+        <div class="col-12">
+            <div class="form-floating">
+                <select class="form-control" name="client_manager_id" id="client_manager_id" required
+                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;
+                           background: url('data:image/svg+xml;utf8,<svg fill=\'%23999\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 10px center; 
+                           padding-right: 35px; color: #555;">
+                    {% for manager in managers %}
+                        <option value="{{ manager.id }}">{{ manager.last_name }}, {{ manager.first_name }}</option>
+                    {% endfor %}
+                </select>
+                <label for="client_manager_id" class="required-field">Select Client Manager</label>
+            </div>
+        </div>
+    </div>
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-list-check"></i> Property Features</h2>
                 <div class="checkbox-group">
@@ -754,9 +756,12 @@
             </div>
            <div class="card">
     <h2 class="card-title"><i class="fas fa-image"></i> Property Picture</h2>
+    <p style="text-align: center; font-weight: 500;">Upload file type must be a .jpg</p>
+
     <div class="form-group">
         <input type="file" name="property_pic" id="property_pic" class="form-control">
     </div>
+
 </div>
 
             <div class="card" style="display: none;">
@@ -772,82 +777,86 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
-            
-                <div id="floors-container">
-                    <div class="floor-section" id="floor-section-1">
-                        <h2>Floor 1</h2>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="floor_name_1">Floor Name</label>
-                                <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor" required>
-                            </div>
-                        </div>
-                            <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="floor_image_1">Floor Image</label>
-                            <input class="form-control" type="file" id="floor_image_1" name="floor_image_1" accept="image/*">
-                        </div>
-                    </div>
-                        <div class="rooms-container" id="rooms-container-1">
-                            <h3>Rooms for Floor 1</h3>
-                            <div class="room-group" id="room-group-1-1">
-                                <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name" required>
-                            </div>
-                        </div>
-            
-                        <button type="button" onclick="addRoom(1)">Add Room</button>
-                    </div>
+         <div class="card">
+    <h2 class="card-title"><i class="fas fa-blueprint"></i> Floor Plans</h2>
+
+    <div id="floors-container">
+        <div class="floor-section" id="floor-section-1">
+            <h2>Floor 1</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_name_1">Floor Name</label>
+                    <input class="form-control" type="text" id="floor_name_1" name="floor_name_1" placeholder="e.g. Main Floor" required>
                 </div>
-            
-                <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
-            
             </div>
-            <script>
-                let floorCount = 1;
-            
-                function addFloor() {
-                    floorCount++;
-                    const floorSection = document.createElement("div");
-                    floorSection.className = "floor-section";
-                    floorSection.id = `floor-section-${floorCount}`;
-            
-                    floorSection.innerHTML = `
-                        <h2>Floor ${floorCount}</h2>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
-                                <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
-                            </div>
-                        </div>
-                        <div class="rooms-container" id="rooms-container-${floorCount}">
-                            <h3>Rooms for Floor ${floorCount}</h3>
-                            <div class="room-group" id="room-group-${floorCount}-1">
-                                <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
-                            </div>
-                        </div>
-                        <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
-                    `;
-            
-                    document.getElementById("floors-container").appendChild(floorSection);
-                }
-            
-                function addRoom(floorId) {
-                    const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
-                    const roomGroup = document.createElement("div");
-                    roomGroup.className = "room-group";
-                    roomGroup.id = `room-group-${floorId}-${roomCount}`;
-            
-                    roomGroup.innerHTML = `
-                        <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
-                    `;
-            
-                    document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
-                }
-            </script>
-            
-            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_image_1">Floor Image ( upload file type must me a .jpg )</label>
+                    <input class="form-control" type="file" id="floor_image_1" name="floor_image_1" accept="image/*">
+                </div>
+            </div>
+            <div class="rooms-container" id="rooms-container-1">
+                <h3>Rooms for Floor 1</h3>
+                <div class="room-group" id="room-group-1-1">
+                    <input class="form-control" type="text" name="room_name_1_1" placeholder="Room Name" required>
+                </div>
+            </div>
+            <button type="button" onclick="addRoom(1)">Add Room</button>
+        </div>
+    </div>
+
+    <button type="button" style="width: 25%;" onclick="addFloor()">Add Another Floor</button>
+</div>
+
+<script>
+    let floorCount = 1;
+
+    function addFloor() {
+        floorCount++;
+        const floorSection = document.createElement("div");
+        floorSection.className = "floor-section";
+        floorSection.id = `floor-section-${floorCount}`;
+
+        floorSection.innerHTML = `
+            <h2>Floor ${floorCount}</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_name_${floorCount}">Floor Name</label>
+                    <input class="form-control" type="text" id="floor_name_${floorCount}" name="floor_name_${floorCount}" placeholder="e.g. Main Floor" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="floor_image_${floorCount}">Floor Image ( upload file type must me a .jpg )</label>
+                    <input class="form-control" type="file" id="floor_image_${floorCount}" name="floor_image_${floorCount}" accept="image/*">
+                </div>
+            </div>
+            <div class="rooms-container" id="rooms-container-${floorCount}">
+                <h3>Rooms for Floor ${floorCount}</h3>
+                <div class="room-group" id="room-group-${floorCount}-1">
+                    <input class="form-control" type="text" name="room_name_${floorCount}_1" placeholder="Room Name" required>
+                </div>
+            </div>
+            <button type="button" onclick="addRoom(${floorCount})">Add Room</button>
+        `;
+
+        document.getElementById("floors-container").appendChild(floorSection);
+    }
+
+    function addRoom(floorId) {
+        const roomCount = document.querySelectorAll(`#rooms-container-${floorId} .room-group`).length + 1;
+        const roomGroup = document.createElement("div");
+        roomGroup.className = "room-group";
+        roomGroup.id = `room-group-${floorId}-${roomCount}`;
+
+        roomGroup.innerHTML = `
+            <input class="form-control" type="text" name="room_name_${floorId}_${roomCount}" placeholder="Room Name" required>
+        `;
+
+        document.getElementById(`rooms-container-${floorId}`).appendChild(roomGroup);
+    }
+</script>
+
             <style>
 
 /* Headings */

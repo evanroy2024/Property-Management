@@ -1,0 +1,195 @@
+{% extends 'clientmanager/managerbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.4rem;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 1rem;
+      color: #1e293b;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      cursor: pointer;
+      font-size: 18px;
+      color: #475569;
+    }
+
+    .btn-container {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn {
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+
+    .note-box {
+      margin-top: 10px;
+      padding: 12px 15px;
+      background: #f8fafc;
+      border-left: 4px solid #1e293b;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    body {
+        background-color: #ffffff;
+    }
+
+    .container {
+        margin-top: 25px;
+    }
+</style>
+
+<div class="container">
+
+    <h1 class="page-title">Profile & Security</h1>
+    <p class="page-subtitle">Update your login information.</p>
+
+    {% if messages %}
+    <div class="space-y-3">
+        {% for message in messages %}
+        <div class="alert alert-dismissible fade show p-4 rounded-3 border-start-4
+            {% if message.tags == 'success' %} alert-success border-success
+            {% elif message.tags == 'error' %} alert-danger border-danger
+            {% elif message.tags == 'warning' %} alert-warning border-warning
+            {% else %} alert-info border-info
+            {% endif %}">
+            <p class="mb-0 text-sm font-weight-medium">{{ message }}</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="card">
+
+            <h2 class="section-title" style="margin-bottom: 1rem;">Login Details</h2>
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control"
+                       value="{{ cm.username }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control"
+                       value="{{ cm.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">New Password (optional)</label>
+                <input type="password" id="password_field" name="password" class="form-control">
+                <span class="toggle-eye" onclick="togglePassword()">👁️</span>
+            </div>
+
+            <div class="note-box">
+              <ul style="margin:0; padding-left:18px;">
+                <li>Your username and email can be changed anytime.</li>
+                <li>Password is optional — leave blank to keep your current one.</li>
+                <li>Your password cannot be sent via email for security reasons.</li>
+              </ul>
+            </div>
+
+        </div>
+
+        <div class="btn-container">
+            <a href="{% url 'mainapp:dashboard' %}" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+function togglePassword() {
+    let field = document.getElementById("password_field");
+    field.type = field.type === "password" ? "text" : "password";
+}
+</script>
+
+{% endblock content %}
