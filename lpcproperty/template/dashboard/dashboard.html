@@ -174,7 +174,7 @@ body {
 <div class="full-container">
     <div class="first1">
         <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
-        <p>WELCOME {{ client.first_name }} {{ client.last_name }}</p>
+        <p id="main-heading">WELCOME {{ client.first_name }} {{ client.last_name }}</p>
     </div>
 
     <div class="first2">
@@ -296,5 +296,15 @@ color: rgb(201, 163, 103);
     max-width: 1000px;
     width: 100%;
 }
+</style>
+
+<style>
+    @media (max-width: 600px) {
+    #main-heading {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+}
+
 </style>
 {% endblock %}
