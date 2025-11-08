@@ -151,8 +151,8 @@
     </style>
 
     <div id="titile">
-        <img style="width: 4%;" src="{% static 'img/smalllogo.png' %}" alt="">
-        <h2 class="title">Lotus Property Client Information</h2>
+        <img src="{% static 'img/smalllogo.png' %}" alt="">
+        <h2 class="title" id="main-heading">Lotus Property Client Information</h2>
     </div>
 
     <div class="property-container">
@@ -516,6 +516,34 @@ function printImage(url) {
     border: none;
     border-radius: 8px;
     padding: 10px;
+}
+</style>
+
+<style>
+    @media (min-width: 1200px) {
+    #main-heading {
+        font-size: 2.5rem;
+        font-weight: bold;
+
+    }
+}
+    @media (max-width: 600px) {
+    #main-heading {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+}
+#titile img{
+    width: 4%; 
+
+}
+ @media (max-width: 600px) {
+
+#titile img{
+    width: 10%; 
+
+}
+   
 }
 </style>
 {% endblock content %}

@@ -162,17 +162,17 @@ body {
     <!-- First Row (Logo + Heading in Same Row, Centered) -->
     <div class="first1">
         <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
-        <p style="color: #e5a75f;">Your Docoments and Services</p>
+        <p style="color: #e5a75f;" id="main-heading">Your Docoments and Services</p>
     </div>
 
     <!-- WALK-THRU REPORTS -->
     <div class="container">
         <div class="section-title">WALK-THRU REPORTS</div>
         <div class="button-container">
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:all_reports' %}'">ALL WALK-THRU REPORTS</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:open_reports' %}'">OPEN ITEMS</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:completed_reports' %}'">COMPLETED ITEMS</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:denied_reports' %}'">DENIED ITEMS</button>
+            <button class="button btn1" style="background-color: #f0e6d9!important;" onclick="window.location.href='{% url 'mainapp:all_reports' %}'">ALL WALK-THRU REPORTS</button>
+            <button class="button btn1" style="background-color: #dfc5a0!important;" onclick="window.location.href='{% url 'mainapp:open_reports' %}'">OPEN ITEMS</button>
+            <button class="button btn1" style="background-color: #e8a56c!important;" onclick="window.location.href='{% url 'mainapp:completed_reports' %}'">COMPLETED ITEMS</button>
+            <button class="button btn1" style="background-color: #2f7f96!important;" onclick="window.location.href='{% url 'mainapp:denied_reports' %}'">DENIED ITEMS</button>
         </div>
     </div>
 
@@ -180,9 +180,9 @@ body {
     <div class="container" style="margin-top: -3%;">
         <div class="section-title">SERVICE REQUEST STATUS</div>
         <div class="button-container2">
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:open_services' %}';">Open Requests</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:completed_services' %}';">COMPLETED ITEMS</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:denied_services' %}';">CLIENT DENIED</button>
+            <button class="button btn1" style="background-color: #dfc5a0!important;" onclick="window.location.href='{% url 'mainapp:open_services' %}';">Open Requests</button>
+            <button class="button btn1" style="background-color: #e8a56c!important;" onclick="window.location.href='{% url 'mainapp:completed_services' %}';">COMPLETED ITEMS</button>
+            <button class="button btn1" style="background-color: #2f7f96!important;" onclick="window.location.href='{% url 'mainapp:denied_services' %}';">CLIENT DENIED</button>
         </div>
     </div>
 
@@ -190,9 +190,9 @@ body {
     <div class="container" style="margin-top: -3%;">
         <div class="section-title">CONCIERGE REQUEST STATUS</div>
         <div class="button-container3">
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:open_concierge_services' %}';"> Open Requests</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:completed_concierge_services' %}';">COMPLETED ITEMS</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:denied_concierge_services' %}';">CLIENT DENIED</button>
+            <button class="button btn1" style="background-color: #dfc5a0!important;" onclick="window.location.href='{% url 'mainapp:open_concierge_services' %}';"> Open Requests</button>
+            <button class="button btn1" style="background-color: #e8a56c!important;" onclick="window.location.href='{% url 'mainapp:completed_concierge_services' %}';">COMPLETED ITEMS</button>
+            <button class="button btn1" style="background-color: #2f7f96!important;" onclick="window.location.href='{% url 'mainapp:denied_concierge_services' %}';">CLIENT DENIED</button>
         </div>
     </div>
 
@@ -200,8 +200,8 @@ body {
     <div class="container" style="margin-top: -3%;">
         <div class="section-title">PROPERTY IMPROVEMENTS</div>
         <div class="button-container3">
-            <button class="button btn1" onclick="window.location.href='{% url 'propertydetails:open_property_improvements' %}';">Open Projects</button>
-            <button class="button btn1" onclick="window.location.href='{% url 'propertydetails:completed_property_improvements' %}';"> COMPLETED PROJECTS</button>
+            <button class="button btn1" style="background-color: #bb8fce!important;" onclick="window.location.href='{% url 'propertydetails:open_property_improvements' %}';">Open Projects</button>
+            <button class="button btn1" style="background-color: #8e44ad!important;" onclick="window.location.href='{% url 'propertydetails:completed_property_improvements' %}';"> COMPLETED PROJECTS</button>
         </div>
     </div>
 </div>
@@ -228,5 +228,18 @@ body {
     padding: 20px;
 }
 
+    @media (min-width: 1200px) {
+    #main-heading {
+        font-size: 2.5rem;
+        font-weight: bold;
+
+    }
+}
+    @media (max-width: 600px) {
+    #main-heading {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+}
 </style>
 {% endblock %}

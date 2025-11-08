@@ -115,7 +115,17 @@ class Client(models.Model):
 
         subject = "Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM - Your Login Credentials"
         from_email = settings.DEFAULT_FROM_EMAIL
-        to = [self.email]
+        to = [
+            email for email in [
+                self.email,
+                self.contact1_email,
+                self.contact2_email,
+                self.contact3_email,
+                self.contact4_email,
+                self.contact5_email
+            ] if email
+        ]
+
 
         text_content = f"""
         Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM!

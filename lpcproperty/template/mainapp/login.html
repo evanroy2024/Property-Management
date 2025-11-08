@@ -262,8 +262,13 @@
     <input type="text" id="username" name="username" class="input-field" placeholder="Username" required>
 
     <h2>PASSWORD</h2>
-    <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
-
+    <div style="position: relative;">
+  <input type="password" id="password" name="password" class="input-field" placeholder="Password" required>
+  <span id="togglePassword" 
+        style="position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px; color:#888;">
+        👁️
+  </span>
+</div>
     <button type="submit" class="login-btn">Login</button>
   </form>
 
@@ -375,4 +380,13 @@
 
 
 </style>
+<script>
+  document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordField = document.getElementById('password');
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    this.textContent = type === 'password' ? '👁️' : '🧿';
+});
+
+</script>
 {% endblock %}
