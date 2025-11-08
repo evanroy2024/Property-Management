@@ -228,24 +228,7 @@ p {
     <div class="first2">
         <p>Logged In as: {{ client.username }}</p>
 
-        <div id="store-buttons">
-    <a href="https://play.google.com/store" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
-             alt="Google Play" class="store-logo">
-    </a>
-    <a href="https://www.apple.com/app-store/" target="_blank">
-        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
-             alt="App Store" class="store-logo">
-    </a>
-</div>
-
-<script>
-  // Accurate detection for Expo WebView
-  if (window.ReactNativeWebView) {
-      document.getElementById('store-buttons').style.display = 'none';
-  }
-</script>
-
+        
     </div>
 
     <div class="container">
