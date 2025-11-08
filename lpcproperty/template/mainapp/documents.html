@@ -132,40 +132,24 @@ body {
     padding: 50px 20px 10px 20px;
 }
 
-.btn1 {
-    border: 1px solid #000000;
-}
-.btn2 {
-    border: 1px solid #000000;
-}
-.btn3 {
-    border: 1px solid #000000;
-}
-.btn4 {
-    border: 1px solid #000000;
-}
-.btn5 {
-    border: 1px solid #000000;
-}
-.btn6 {
-    border: 1px solid #000000;
-}
-.btn7 {
-    border: 1px solid #000000;
-}
+.btn1,
+.btn2,
+.btn3,
+.btn4,
+.btn5,
+.btn6,
+.btn7,
 .btn8 {
     border: 1px solid #000000;
 }
 </style>
 
 <div class="full-container">
-    <!-- First Row (Logo + Heading in Same Row, Centered) -->
     <div class="first1">
         <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
         <p style="color: #e5a75f;" id="main-heading">Your Docoments and Services</p>
     </div>
 
-    <!-- WALK-THRU REPORTS -->
     <div class="container">
         <div class="section-title">WALK-THRU REPORTS</div>
         <div class="button-container">
@@ -176,7 +160,6 @@ body {
         </div>
     </div>
 
-    <!-- SERVICE REQUEST STATUS -->
     <div class="container" style="margin-top: -3%;">
         <div class="section-title">SERVICE REQUEST STATUS</div>
         <div class="button-container2">
@@ -186,7 +169,6 @@ body {
         </div>
     </div>
 
-    <!-- CONCIERGE REQUEST STATUS -->
     <div class="container" style="margin-top: -3%;">
         <div class="section-title">CONCIERGE REQUEST STATUS</div>
         <div class="button-container3">
@@ -196,7 +178,6 @@ body {
         </div>
     </div>
 
-    <!-- PROPERTY IMPROVEMENTS -->
     <div class="container" style="margin-top: -3%;">
         <div class="section-title">PROPERTY IMPROVEMENTS</div>
         <div class="button-container3">
@@ -205,40 +186,67 @@ body {
         </div>
     </div>
 </div>
+
 <style>
-    /* Consistent font */
-/* Global font settings */
 * {
   font-family: 'Montserrat', sans-serif !important;
-  
 }
 
-/* Buttons with gold box shadow */
 .btn1 {
   background-color: #ffffff !important;
   color: #0f2a3a !important;
   border: none !important;
-  box-shadow: 0px 1px 2px #d2ad68 !important; /* softer gold shadow */
-  font-weight: 700 !important;         /* Medium - Figma match */
-  font-size: 16px !important;          /* Adjust if Figma uses different base */
+  box-shadow: 0px 1px 2px #d2ad68 !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
 }
+
 .container, .container2 {
     max-width: 80%;
     margin: 20px auto;
     padding: 20px;
 }
 
-    @media (min-width: 1200px) {
-    #main-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
+@media (min-width: 1200px) {
+  #main-heading {
+      font-size: 2.5rem;
+      font-weight: bold;
+  }
+}
 
+/* Make full width on mobile */
+@media (max-width: 700px) {
+  .full-container,
+  .container,
+  .container2,
+  .container3 {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 10px !important;
+  }
+  #main-heading {
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+  }
+  .section-title {
+    margin-left: 1%;
+}
+}
+
+@media (max-width: 600px) {
+    #main-heading {
+        font-size: 1.1rem;
+        font-weight: bold;
+        text-align: center;
     }
 }
-    @media (max-width: 600px) {
+@media (max-width: 500px) {
     #main-heading {
-        font-size: 1.3rem;
+        font-size: 1rem;
         font-weight: bold;
+        text-align: center;
     }
 }
 </style>
