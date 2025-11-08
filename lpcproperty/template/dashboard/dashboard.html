@@ -3,7 +3,14 @@
 
 {% block content %}
 <style>
-/* Full Container */
+* {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+body {
+    background-color: white;
+}
+
 .full-container {
     display: flex;
     flex-direction: column;
@@ -14,10 +21,16 @@
     margin: auto;
     padding: 20px;
     color: #1a1a1a;
-    font-family: 'Segoe UI', sans-serif;
+    max-width: 1000px;
 }
 
-/* First Row */
+@media (max-width: 700px) {
+    .full-container {
+        width: 95% !important;
+        padding: 10px !important;
+    }
+}
+
 .first1 {
     display: flex;
     align-items: center;
@@ -38,11 +51,24 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     margin-bottom: -2px;
-    color: #1a1a1a;
+    color: rgb(24,48,72);
     font-family: 'Impact', sans-serif;
 }
 
-/* Second Row */
+@media (min-width: 1200px) {
+    #main-heading {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+}
+
+@media (max-width: 600px) {
+    #main-heading {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+}
+
 .first2 {
     display: flex;
     justify-content: space-between;
@@ -52,44 +78,61 @@
     font-weight: bold;
 }
 
-/* Store Logos */
 .store-logo {
     height: 50px;
     width: auto;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
 }
+
 .store-logo:hover {
     transform: scale(1.1);
 }
 
-/* Section Title */
 .section-title {
     font-size: 18px;
     font-weight: bold;
     text-transform: uppercase;
-    color: #c08457;
-    border-bottom: 2px solid #c08457;
+    color: rgb(201, 163, 103);
+    border-bottom: 0.5px solid #e8dbd1;
     padding-bottom: 5px;
     margin-bottom: 20px;
     text-align: left;
-    max-width: 1150px;
+    max-width: 1550px;
     width: 105%;
     margin-left: -8%;
 }
 
-/* Containers */
 .container, .container2 {
     max-width: 90%;
     margin: 50px auto;
     padding: 20px;
 }
 
+@media (max-width: 700px) {
+    .container, .container2 {
+        max-width: 100% !important;
+        padding: 5px !important;
+    }
+    
+    .container:nth-of-type(2),
+    .container:nth-of-type(3) {
+        margin-top: 10px !important;
+    }
+}
+
+.container:nth-of-type(2) {
+    margin-top: -3%;
+}
+
+.container:nth-of-type(3) {
+    margin-top: -3%;
+}
+
 .button-container, .button-container2, .button-container3 {
     margin-top: 20px;
 }
 
-/* Buttons - Unified for light theme */
 .button {
     display: block;
     width: 100%;
@@ -101,76 +144,81 @@
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.3s, transform 0.2s ease;
+    transition: transform 0.3s ease;
 }
+
 .button:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
+    transform: translateY(-4px) scale(1.05);
 }
 
-.btn1 { background-color: #fff3e0; color: #2e3a59; }
-.btn2 { background-color: #ffe0b2; color: #2e3a59; }
-.btn3 { background-color: #ffcc80; color: #2e3a59; }
+.btn1 {
+    background-color: #f2e6d8 !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
 
-.btn4 { background-color: #e1f5fe; color: #1a1a1a; }
-.btn5 { background-color: #b3e5fc; color: #1a1a1a; }
-.btn6 { background-color: #81d4fa; color: #1a1a1a; }
+.btn2 {
+    background-color: #4e73df !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
 
-.btn7 { background-color: #ffffff; color: #2e3a59; }
-.btn8 { background-color: #f0f0f0; color: #2e3a59; }
+.btn3 {
+    background-color: #d2ad68 !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
 
-/* Divider */
+.btn4 {
+    background-color: #a8cff4 !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
+
+.btn5 {
+    background-color: #90aac8 !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
+
+.btn6 {
+    background-color: #5d7b9b !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
+
+.btn7 {
+    background-color: #8a998f !important;
+    color: rgb(24,48,72) !important;
+    border: none !important;
+}
+
+.btn8 {
+    background-color: #ffffff !important;
+    color: rgb(24,48,72) !important;
+    border: 1px solid #000000 !important;
+}
+
+p {
+    color: rgb(24,48,72) !important;
+}
+
 .first3 hr {
     width: 100%;
     border: 1px solid #ccc;
     margin-top: 5px;
 }
+@media (max-width: 700px) {
 
-/* Body Background */
-body {
-    background-color: #f5f5f5;
+.section-title {
+    margin-left: 0%;
 }
-.btn1 {
-    border: 1px solid #000000;
-}
-.btn2 {
-    border: 1px solid #000000;
-}
-.btn3 {
-    border: 1px solid #000000;
-}
-.btn4 {
-    border: 1px solid #000000;
-}
-.btn5 {
-    border: 1px solid #000000;
-}
-.btn6 {
-    border: 1px solid #000000;
-}
-.btn7 {
-    border: 1px solid #000000;
-}
-.btn8 {
-    border: 1px solid #000000;
-}
-
-</style>
-<style>
-    .section-title {
-    font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #c08457;
-    border-bottom: 0.5px solid #e8dbd1;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-    text-align: left;
-    max-width: 1550px;
-    width: 105%;
-    margin-left: -8%;
+    .container, .container2 {
+        margin: 10px auto !important;
+    }
 }
 </style>
+
 <div class="full-container">
     <div class="first1">
         <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
@@ -180,16 +228,25 @@ body {
     <div class="first2">
         <p>Logged In as: {{ client.username }}</p>
 
-        <div>
-            <a href="https://play.google.com/store" target="_blank">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
-                     alt="Google Play" class="store-logo">
-            </a>
-            <a href="https://www.apple.com/app-store/" target="_blank">
-                <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
-                     alt="App Store" class="store-logo">
-            </a>
-        </div>
+       <div id="app-store-links">
+  <a href="https://play.google.com/store" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" class="store-logo">
+  </a>
+  <a href="https://www.apple.com/app-store/" target="_blank">
+    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" class="store-logo">
+  </a>
+</div>
+<script>
+    useEffect(() => {
+  const storeDiv = document.getElementById('app-store-links');
+  const isWebView = /wv|Android.*WebView|iPhone.*WebView|iPad.*WebView/i.test(navigator.userAgent);
+  
+  if (isWebView && storeDiv) {
+    storeDiv.style.display = 'none';
+  }
+}, []);
+
+</script>
     </div>
 
     <div class="container">
@@ -218,100 +275,5 @@ body {
         </div>
     </div>
 </div>
-<style>
-    /* Font override */
-* {
-  font-family: 'Montserrat', sans-serif !important;
-}
 
-/* Button color overrides */
-.btn1 {
-  background-color: #f2e6d8 !important; /* light beige */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn2 {
-  background-color: #4e73df !important; /* black */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn3 {
-  background-color: #d2ad68 !important; /* gold */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn4 {
-  background-color: #a8cff4 !important; /* light blue */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn5 {
-  background-color: #90aac8 !important; /* gray-blue */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn6 {
-  background-color: #5d7b9b !important; /* dark steel blue */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn7 {
-  background-color: #8a998f !important; /* muted green-gray */
-  color: rgb(24,48,72) !important;
-  border: none !important;
-}
-
-.btn8 {
-  background-color: #ffffff !important; /* white */
-  color: rgb(24,48,72) !important;
-}
-p{
-  color: rgb(24,48,72) !important;
-
-}
-.section-title {
-color: rgb(201, 163, 103);
-}
-
-</style>
-<style>
-    body{
-        background-color: white;
-    }
-    .first1 p {
-        color: rgb(24,48,72);
-    }
-    .btn1 {
-    color: rgb(24,48,72) !important;
-    border: noe !important;
-}
-
-.full-container {
-    max-width: 1000px;
-    width: 100%;
-}
-</style>
-
-<style>
-    @media (min-width: 1200px) {
-    #main-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
-
-    }
-}
-    @media (max-width: 600px) {
-    #main-heading {
-        font-size: 1.3rem;
-        font-weight: bold;
-    }
-}
-
-</style>
 {% endblock %}
