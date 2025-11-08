@@ -240,7 +240,8 @@ p {
 </div>
 
 <script>
-  if (navigator.userAgent.includes('ReactNativeWebView')) {
+  // Accurate detection for Expo WebView
+  if (window.ReactNativeWebView) {
       document.getElementById('store-buttons').style.display = 'none';
   }
 </script>
