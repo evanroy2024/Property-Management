@@ -89,13 +89,30 @@
         <input type="email" name="email" value="{{ admin_user.email }}">
 
         <label>New Password (leave blank to keep old):</label>
-        <input type="password" name="password">
+<div style="position: relative; display: inline-block; width: 100%;">
+  <input type="password" name="password" id="newPassword" style="width: 100%; padding-right: 40px;">
+  <span id="toggleNewPassword" 
+        style="position:absolute; right:10px; top:36%; transform:translateY(-50%); cursor:pointer; font-size:18px; color:#888;">
+    🧿
+  </span>
+</div>
 
         <button type="submit" class="edit-admin-btn">Save Changes</button>
     </form>
 
     <a href="{% url 'adminmanager:admin_profile' %}" class="back-link">⬅ Back</a>
 </div>
+<script>
+document.querySelectorAll('[id^="toggle"]').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        this.textContent = type === 'password' ? '👁️' : '🫣';
+    });
+});
+</script>
+
 
 {% endblock content %}
 

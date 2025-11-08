@@ -710,10 +710,15 @@
                         <label>Email</label>
                         <input type="email" name="client_email" value="{{ client.email }}" placeholder="Email">
                       </div>
-                     <div class="form-group">
-                          <label>Password</label>
-                          <input type="password" name="client_password" placeholder="New Password">
-                      </div>
+                    <div class="form-group" style="position: relative;">
+  <label>Password</label>
+  <input type="password" name="client_password" id="clientPassword" placeholder="New Password" style="width: 100%; padding-right: 40px;">
+  <span id="toggleClientPassword" 
+        style="position:absolute; right:10px; top: 75%; transform:translateY(-50%); cursor:pointer; font-size:18px; color:#888;">
+    👁️
+  </span>
+</div>
+
 
                     </div>
                      <div class="form-row" style="gap: 10px;">
@@ -1894,4 +1899,16 @@ function clearContactFields(contactNum) {
 
 }
     </style>
+
+    <script>
+document.querySelectorAll('[id^="toggle"]').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        this.textContent = type === 'password' ? '👁️' : '🧿';
+    });
+});
+</script>
+
 {% endblock content %}

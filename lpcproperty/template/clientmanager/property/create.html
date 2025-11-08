@@ -422,7 +422,7 @@
                         <!-- Single Button -->
 
                         <div class="form-row-flex" id="contact-f1" class="contact-form" style="display:none;">
-                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 1</h5>
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Additional Contact 1</h5>
 
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact1_name" placeholder="First Name">
@@ -455,7 +455,7 @@
                         </div>
 
                         <div class="form-row-flex" id="contact-f2" class="contact-form" style="display:none;">
-                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 2</h5>
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Additional Contact 2</h5>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact2_name" placeholder="First Name">
                             </div>
@@ -487,7 +487,7 @@
                         </div>
 
                         <div class="form-row-flex" id="contact-f3" class="contact-form" style="display:none;">
-                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 3</h5>
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Additional Contact 3</h5>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact3_name" placeholder="First Name">
                             </div>
@@ -520,7 +520,7 @@
 
                         <!-- Contact 4 -->
                         <div class="form-row-flex" id="contact-f4" class="contact-form" style="display:none;">
-                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 4</h5>
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Additional Contact 4</h5>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact4_name" placeholder="First Name">
                             </div>
@@ -553,7 +553,7 @@
 
                         <!-- Contact 5 -->
                         <div class="form-row-flex" id="contact-f5" class="contact-form" style="display:none;">
-                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Addition Contact 5</h5>
+                            <h5 style="font-weight: 600; display: block; width: 100%; margin-top: 10px; margin-left: 10px;"> Additional Contact 5</h5>
                             <div class="form-group flex-33">
                                 <input type="text" class="form-control" name="contact5_name" placeholder="First Name">
                             </div>
@@ -598,9 +598,15 @@
                                     }
                                 }
                         </script>
+
                     </div>
               
-     
+<div id="property-label-new" style="display: none; margin-top: 20px; margin-bottom: -20px;">
+    <!-- <h2 style="font-size: 1.3rem; font-weight: 600; color: #333;">Property Information</h2> -->
+    <h2 class="card-title mb-4"></i> Property Information</h2>
+
+</div>
+
 
         <!-- Rest of the fields in 2-column layout -->
         <div class="col-md-6">
@@ -756,7 +762,7 @@
             </div>
            <div class="card">
     <h2 class="card-title"><i class="fas fa-image"></i> Property Picture</h2>
-    <p style="text-align: center; font-weight: 500;">Upload file type must be a .jpg</p>
+    <p style="margin-left: 10px; font-weight: 500;">Upload file type must be a .jpg</p>
 
     <div class="form-group">
         <input type="file" name="property_pic" id="property_pic" class="form-control">
@@ -1001,42 +1007,47 @@ input[type=number] {
                                 });
                             };
                         </script>
-                         <script>
-                            // Toggle New Client
-                            const toggleClientBtn = document.getElementById('toggle-new-client');
-                            const newClientForm = document.getElementById('new-client-form');
-                            const existingClientSelect = document.getElementById('client_id');
+             <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleClientBtn = document.getElementById('toggle-new-client');
+    const newClientForm = document.getElementById('new-client-form');
+    const existingClientSelect = document.getElementById('client_id');
+    const propertyLabelDiv = document.getElementById('property-label-new'); // Updated div ID
 
-                            let showClientForm = false;
+    let showClientForm = false;
 
-                            toggleClientBtn.addEventListener('click', () => {
-                                showClientForm = !showClientForm;
-                                newClientForm.style.display = showClientForm ? 'block' : 'none';
-                                existingClientSelect.classList.toggle('disabled-select', showClientForm);
-                                existingClientSelect.disabled = showClientForm;
+    toggleClientBtn.addEventListener('click', () => {
+        showClientForm = !showClientForm;
 
-                                toggleClientBtn.innerText = showClientForm ? '← Use Existing' : '+ Add New Client';
-                            });
+        newClientForm.style.display = showClientForm ? 'block' : 'none';
+        existingClientSelect.classList.toggle('disabled-select', showClientForm);
+        existingClientSelect.disabled = showClientForm;
 
-                            // Toggle New Client Manager (CM)
-                            const toggleCMBtn = document.getElementById('toggle-new-cm');
-                            const newCMForm = document.getElementById('new-cm-form');
-                            const existingClientManagerSelect = document.getElementById('client_manager_id'); // Existing CM dropdown
+        if (propertyLabelDiv) {
+            propertyLabelDiv.style.display = showClientForm ? 'block' : 'none';
+        }
 
-                            let showCMForm = false;
+        toggleClientBtn.innerText = showClientForm ? '← Use Existing' : '+ Add New Client';
+    });
 
-                            toggleCMBtn.addEventListener('click', () => {
-                                showCMForm = !showCMForm;
-                                
-                                // Show or hide the new CM form
-                                newCMForm.style.display = showCMForm ? 'block' : 'none';
-                                
-                                // Disable the existing client manager dropdown when the "Add CM" button is clicked
-                                existingClientManagerSelect.disabled = showCMForm;
+    const toggleCMBtn = document.getElementById('toggle-new-cm');
+    const newCMForm = document.getElementById('new-cm-form');
+    const existingClientManagerSelect = document.getElementById('client_manager_id');
 
-                                // Change the button text based on form visibility
-                                toggleCMBtn.innerText = showCMForm ? '← Use Existing CM' : '+ Add CM';
-                            });
+    let showCMForm = false;
 
-                         </script>
+    toggleCMBtn.addEventListener('click', () => {
+        showCMForm = !showCMForm;
+
+        newCMForm.style.display = showCMForm ? 'block' : 'none';
+        existingClientManagerSelect.disabled = showCMForm;
+        toggleCMBtn.innerText = showCMForm ? '← Use Existing CM' : '+ Add CM';
+    });
+});
+</script>
+
+<div id="property-label-new" style="display: none;">
+    <h1>Enter info</h1>
+</div>
+
 {% endblock content %}

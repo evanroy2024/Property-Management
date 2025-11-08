@@ -407,7 +407,7 @@
         <div class="content-wrapper">
             <div class="page-header">
                 <h1 class="page-title">Edit Property</h1>
-                <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon">
+                <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon">
                     <i class="fas fa-arrow-left"></i> Back to Properties
                 </a>
             </div>
@@ -710,10 +710,15 @@
                         <label>Email</label>
                         <input type="email" name="client_email" value="{{ client.email }}" placeholder="Email">
                       </div>
-                     <div class="form-group">
-                          <label>Password</label>
-                          <input type="password" name="client_password" placeholder="New Password">
-                      </div>
+                    <div class="form-group" style="position: relative;">
+  <label>Password</label>
+  <input type="password" name="client_password" id="clientPassword" placeholder="New Password" style="width: 100%; padding-right: 40px;">
+  <span id="toggleClientPassword" 
+        style="position:absolute; right:10px; top: 75%; transform:translateY(-50%); cursor:pointer; font-size:18px; color:#888;">
+    👁️
+  </span>
+</div>
+
 
                     </div>
                      <div class="form-row" style="gap: 10px;">
@@ -1337,7 +1342,7 @@ function clearContactFields(contactNum) {
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="{% url 'adminmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
+                    <a href="{% url 'clientmanager:property_list' %}" class="btn btn-secondary btn-icon" id="cancelBtn">
                         <i class="fas fa-times"></i> Cancel
                       </a>
                     <button type="submit" class="btn btn-primary btn-icon" id="updateBtn">
@@ -1882,6 +1887,28 @@ function clearContactFields(contactNum) {
     margin: 0 auto;
     display: block;
 }
+#floors-container button {
+    background: #4e73df;
 
+}
+.add-room-btn {
+    background: #4e73df;
+}
+#nextContactButton{
+    background: #4e73df !important;
+
+}
     </style>
+
+    <script>
+document.querySelectorAll('[id^="toggle"]').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        this.textContent = type === 'password' ? '👁️' : '🧿';
+    });
+});
+</script>
+
 {% endblock content %}
