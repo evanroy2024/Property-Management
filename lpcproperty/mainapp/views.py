@@ -1089,54 +1089,186 @@ def all_reports_view(request):
         }
     )
 
+from walkthroughreport.models import GeneralItemsExterior
 from django.shortcuts import get_object_or_404, render
-
 def report_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
     
-    all_fields = {
-        'gie1', 'gie2', 'gie3', 'gie4', 'gie5', 'gie6', 'gie7', 'gie8', 'gie9', 
-        'gie10', 'gie11', 'gie12', 'gie13', 'gie14', 'gie15',
-        'gii1', 'gii2', 'gii3', 'gii4', 'gii5', 'gii6', 'gii7', 'gii8', 'gii9',
-        'garage1', 'garage2', 'garage3', 'garage4', 'garage5', 'garage6', 
-        'garage7', 'garage8', 'garage9',
-        'laundry1', 'laundry2', 'laundry3', 'laundry4', 'laundry5', 'laundry6',
-        'kitchen1', 'kitchen2', 'kitchen3', 'kitchen4', 'kitchen5', 'kitchen6', 
-        'kitchen7', 'kitchen8', 'kitchen9', 'kitchen10', 'kitchen11', 'kitchen12',
-        'butlers1', 'butlers2', 'butlers3', 'butlers4', 'butlers5', 'butlers6',
-        'butlers7', 'butlers8', 'butlers9', 'butlers10', 'butlers11', 'butlers12',
-        'breakfast1', 'breakfast2', 'breakfast3', 'breakfast4', 'breakfast5', 'breakfast6',
-        'entry1', 'entry2', 'entry3', 'entry4',
-        'greatroom1', 'greatroom2', 'greatroom3', 'greatroom4', 'greatroom5',
-        'dining1', 'dining2', 'dining3', 'dining4', 'dining5',
-        'closets1', 'closets2', 'closets3', 'closets4', 'closets5',
-        'closets_upper1', 'closets_upper2', 'closets_upper3', 'closets_upper4', 'closets_upper5',
-        'hallways_main1', 'hallways_main2', 'hallways_main3', 'hallways_main4', 'hallways_main5',
-        'hallways_upper1', 'hallways_upper2', 'hallways_upper3', 'hallways_upper4', 'hallways_upper5',
-        'bedroom1_1', 'bedroom1_2', 'bedroom1_3', 'bedroom1_4',
-        'bedroom2_1', 'bedroom2_2', 'bedroom2_3', 'bedroom2_4',
-        'bedroom3_1', 'bedroom3_2', 'bedroom3_3', 'bedroom3_4',
-        'bedroom4_1', 'bedroom4_2', 'bedroom4_3', 'bedroom4_4',
-        'bathroom1_1', 'bathroom1_2', 'bathroom1_3', 'bathroom1_4', 'bathroom1_5', 'bathroom1_6', 
-        'bathroom1_7', 'bathroom1_8',
-        'bathroom2_1', 'bathroom2_2', 'bathroom2_3', 'bathroom2_4', 'bathroom2_5', 'bathroom2_6', 
-        'bathroom2_7', 'bathroom2_8',
-        'bathroom3_1', 'bathroom3_2', 'bathroom3_3', 'bathroom3_4', 'bathroom3_5', 'bathroom3_6', 
-        'bathroom3_7', 'bathroom3_8',
-        'bathroom4_1', 'bathroom4_2', 'bathroom4_3', 'bathroom4_4', 'bathroom4_5', 'bathroom4_6', 
-        'bathroom4_7', 'bathroom4_8',
-        'bathroom5_1', 'bathroom5_2', 'bathroom5_3', 'bathroom5_4', 'bathroom5_7', 'bathroom5_8',
-        'gym_1', 'gym_2', 'gym_3', 'gym_4', 'gym_5', 'gym_6', 'gym_7',
-        'theatre_1', 'theatre_2', 'theatre_3', 'theatre_4', 'theatre_5',
-        'guest_house_1', 'guest_house_2', 'guest_house_3', 'guest_house_4', 'guest_house_5',
-        'guest_house_bath_1', 'guest_house_bath_2', 'guest_house_bath_3', 'guest_house_bath_4', 
-        'guest_house_bath_5', 'guest_house_bath_6', 'guest_house_bath_7', 'guest_house_bath_8'
+    # Define all related model mappings
+    related_models = {
+        'general_items_exterior': {
+            'prefix': 'gie',
+            'count': 15
+        },
+        'general_items_interior': {
+            'prefix': 'gii',
+            'count': 10
+        },
+        'garage': {
+            'prefix': 'garage',
+            'count': 9
+        },
+        'laundry': {
+            'prefix': 'laundry',
+            'count': 6
+        },
+        'kitchen': {
+            'prefix': 'kitchen',
+            'count': 14
+        },
+        'butlers': {
+            'prefix': 'butlers',
+            'count': 12
+        },
+        'breakfast_area': {
+            'prefix': 'breakfast',
+            'count': 7
+        },
+        'entry_foyer': {
+            'prefix': 'entry',
+            'count': 6
+        },
+        'great_room': {
+            'prefix': 'greatroom',
+            'count': 7
+        },
+        'dining_room': {
+            'prefix': 'dining',
+            'count': 7
+        },
+        'closets_main_level': {
+            'prefix': 'closets',
+            'count': 5
+        },
+        'closets_upper_level': {
+            'prefix': 'closets_upper',
+            'count': 5
+        },
+        'hallways_main_level': {
+            'prefix': 'hallways_main',
+            'count': 5
+        },
+        'hallways_upper_level': {
+            'prefix': 'hallways_upper',
+            'count': 5
+        },
+        'bedroom1': {
+            'prefix': 'bedroom1_',
+            'count': 4
+        },
+        'bedroom2': {
+            'prefix': 'bedroom2_',
+            'count': 4
+        },
+        'bedroom3': {
+            'prefix': 'bedroom3_',
+            'count': 4
+        },
+        'bedroom4': {
+            'prefix': 'bedroom4_',
+            'count': 4
+        },
+        'bedroom5': {
+            'prefix': 'bedroom5_',
+            'count': 6
+        },
+        'bedroom6': {
+            'prefix': 'bedroom6_',
+            'count': 6
+        },
+        'bedroom7': {
+            'prefix': 'bedroom7_',
+            'count': 6
+        },
+        'bedroom8': {
+            'prefix': 'bedroom8_',
+            'count': 6
+        },
+        'bedroom9': {
+            'prefix': 'bedroom9_',
+            'count': 6
+        },
+        'bedroom10': {
+            'prefix': 'bedroom10_',
+            'count': 6
+        },
+        'bathroom1': {
+            'prefix': 'bathroom1_',
+            'count': 8
+        },
+        'bathroom2': {
+            'prefix': 'bathroom2_',
+            'count': 8
+        },
+        'bathroom3': {
+            'prefix': 'bathroom3_',
+            'count': 8
+        },
+        'bathroom4': {
+            'prefix': 'bathroom4_',
+            'count': 8
+        },
+        'bathroom5': {
+            'prefix': 'bathroom5_',
+            'count': 8
+        },
+        'bathroom6': {
+            'prefix': 'bathroom6_',
+            'count': 10
+        },
+        'bathroom7': {
+            'prefix': 'bathroom7_',
+            'count': 10
+        },
+        'bathroom8': {
+            'prefix': 'bathroom8_',
+            'count': 10
+        },
+        'bathroom9': {
+            'prefix': 'bathroom9_',
+            'count': 10
+        },
+        'bathroom10': {
+            'prefix': 'bathroom10_',
+            'count': 10
+        },
+        'bathroom11': {
+            'prefix': 'bathroom11_',
+            'count': 10
+        },
+        'bathroom12': {
+            'prefix': 'bathroom12_',
+            'count': 10
+        },
+        'gym': {
+            'prefix': 'gym_',
+            'count': 9  # Changed from 7 to 9
+        },
+        'theatre_music_room': {  # Changed from 'theatre' to 'theatre_music_room'
+            'prefix': 'theatre_',
+            'count': 7
+        },
+        'guest_house_sleeping_living': {  # Changed from 'guest_house' to 'guest_house_sleeping_living'
+            'prefix': 'guest_house_',
+            'count': 7  # Changed from 5 to 7
+        },
+        'guest_house_bathroom': {  # Changed from 'guest_house_bath' to 'guest_house_bathroom'
+            'prefix': 'guest_house_bath_',
+            'count': 10  # Changed from 8 to 10
+        }
     }
     
-    for field_name in all_fields:
-        field_value = getattr(report, field_name, None)
-        if field_value is None or field_value == '':
-            setattr(report, field_name, "N/A")
+    # Flatten all fields from related models
+    for related_name, config in related_models.items():
+        if hasattr(report, related_name):
+            related_obj = getattr(report, related_name)
+            prefix = config['prefix']
+            count = config['count']
+            
+            for i in range(1, count + 1):
+                field_name = f'{prefix}{i}'
+                setattr(report, field_name, getattr(related_obj, field_name, None))
+                setattr(report, f'{field_name}_remarks', getattr(related_obj, f'{field_name}_remarks', None))
     
     context = {
         'report': report,
@@ -1148,6 +1280,8 @@ def report_detail_view(request, pk):
     }
     
     return render(request, 'mainapp/walktrug/report_detail.html', context)
+
+
 def open_reports_view(request):
     reports = WalkthroughReport.objects.filter(status='Open').select_related("property").order_by("-datetime")
 

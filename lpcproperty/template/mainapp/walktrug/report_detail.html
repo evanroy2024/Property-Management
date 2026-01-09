@@ -68,7 +68,7 @@
                         <td class="option-cell">{% if report.gie2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     
@@ -84,7 +84,7 @@
                         <td class="option-cell">{% if report.gie3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     
@@ -100,7 +100,7 @@
                         <td class="option-cell">{% if report.gie4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -116,7 +116,7 @@
                         <td class="option-cell">{% if report.gie5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -132,7 +132,7 @@
                         <td class="option-cell">{% if report.gie6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie6_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie6_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -148,7 +148,7 @@
                         <td class="option-cell">{% if report.gie7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie7_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie7_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -164,7 +164,7 @@
                         <td class="option-cell">{% if report.gie8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie8_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie8_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -180,7 +180,7 @@
                         <td class="option-cell">{% if report.gie9 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie9 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie9 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie9_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie9_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -196,7 +196,7 @@
                         <td class="option-cell">{% if report.gie10 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie10 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie10 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie10_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie10_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -212,7 +212,7 @@
                         <td class="option-cell">{% if report.gie11 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie11 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie11 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie11_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie11_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -228,7 +228,7 @@
                         <td class="option-cell">{% if report.gie12 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie12 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie12 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie12_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie12_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -244,7 +244,7 @@
                         <td class="option-cell">{% if report.gie13 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie13 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie13 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie13_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie13_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -260,7 +260,7 @@
                         <td class="option-cell">{% if report.gie14 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie14 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie14 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie14_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie14_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -276,7 +276,7 @@
                         <td class="option-cell">{% if report.gie15 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie15 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gie15 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gie15_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gie15_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -312,7 +312,7 @@
                         <td class="option-cell">{% if report.gii1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     
@@ -328,7 +328,7 @@
                         <td class="option-cell">{% if report.gii2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     
@@ -344,7 +344,7 @@
                         <td class="option-cell">{% if report.gii3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     
@@ -360,7 +360,7 @@
                         <td class="option-cell">{% if report.gii4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -376,7 +376,7 @@
                         <td class="option-cell">{% if report.gii5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -392,7 +392,7 @@
                         <td class="option-cell">{% if report.gii6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii6_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii6_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -408,7 +408,7 @@
                         <td class="option-cell">{% if report.gii7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii7_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii7_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -424,7 +424,7 @@
                         <td class="option-cell">{% if report.gii8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii8_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii8_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -440,7 +440,7 @@
                         <td class="option-cell">{% if report.gii9 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii9 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.gii9 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.gii9_remarks }}</td>
+                        <td class="remarks-cell">{{ report.gii9_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -479,7 +479,7 @@
                         <td class="option-cell">{% if report.garage1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.garage1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.garage1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -495,7 +495,7 @@
                         <td class="option-cell">{% if report.garage2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.garage2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.garage2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -511,7 +511,7 @@
                         <td class="option-cell">{% if report.garage3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.garage3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.garage3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -527,7 +527,7 @@
                         <td class="option-cell">{% if report.garage4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.garage4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.garage4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -543,7 +543,7 @@
                         <td class="option-cell">{% if report.garage5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.garage5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.garage5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.garage5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -579,7 +579,7 @@
                         <td class="option-cell">{% if report.laundry1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.laundry1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.laundry1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -595,7 +595,7 @@
                         <td class="option-cell">{% if report.laundry2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.laundry2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.laundry2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -611,7 +611,7 @@
                         <td class="option-cell">{% if report.laundry3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.laundry3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.laundry3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -627,7 +627,7 @@
                         <td class="option-cell">{% if report.laundry4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.laundry4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.laundry4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -643,7 +643,7 @@
                         <td class="option-cell">{% if report.laundry5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.laundry5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.laundry5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -659,7 +659,7 @@
                         <td class="option-cell">{% if report.laundry6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.laundry6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.laundry6_remarks }}</td>
+                        <td class="remarks-cell">{{ report.laundry6_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -689,7 +689,7 @@
                         <td class="option-cell">{% if report.kitchen1 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen1 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen1 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -702,7 +702,7 @@
                         <td class="option-cell">{% if report.kitchen2 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen2 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen2 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -715,7 +715,7 @@
                         <td class="option-cell">{% if report.kitchen3 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen3 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen3 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -728,7 +728,7 @@
                         <td class="option-cell">{% if report.kitchen4 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen4 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen4 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -741,7 +741,7 @@
                         <td class="option-cell">{% if report.kitchen5 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen5 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen5 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -754,7 +754,7 @@
                         <td class="option-cell">{% if report.kitchen6 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen6 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen6 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen6_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen6_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -767,7 +767,7 @@
                         <td class="option-cell">{% if report.kitchen7 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen7 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen7 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen7_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen7_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -780,7 +780,7 @@
                         <td class="option-cell">{% if report.kitchen8 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen8 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen8 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen8_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen8_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -793,7 +793,7 @@
                         <td class="option-cell">{% if report.kitchen9 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen9 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen9 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen9_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen9_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                       {% if report.kitchen9 is not None %}
@@ -805,7 +805,7 @@
                         <td class="option-cell">{% if report.kitchen9 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen9 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen9 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen9_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen9_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     {% if report.kitchen10 is not None %}
@@ -817,7 +817,7 @@
                         <td class="option-cell">{% if report.kitchen10 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen10 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen10 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen10_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen10_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     {% if report.kitchen11 is not None %}
@@ -829,7 +829,7 @@
                         <td class="option-cell">{% if report.kitchen11 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen11 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen11 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen11_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen11_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                     {% if report.kitchen12 is not None %}
@@ -841,7 +841,7 @@
                         <td class="option-cell">{% if report.kitchen12 == "Compliant" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen12 == "Heads-Up" %}✓{% endif %}</td>
                         <td class="option-cell">{% if report.kitchen12 == "Non-Compliant" %}✓{% endif %}</td>
-                        <td class="remarks-cell">{{ report.kitchen12_remarks }}</td>
+                        <td class="remarks-cell">{{ report.kitchen12_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -874,7 +874,7 @@
                         <td class="option-cell">{% if report.butlers1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -890,7 +890,7 @@
                         <td class="option-cell">{% if report.butlers2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -906,7 +906,7 @@
                         <td class="option-cell">{% if report.butlers3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -922,7 +922,7 @@
                         <td class="option-cell">{% if report.butlers4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -938,7 +938,7 @@
                         <td class="option-cell">{% if report.butlers5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -954,7 +954,7 @@
                         <td class="option-cell">{% if report.butlers6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers6_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers6_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -970,7 +970,7 @@
                         <td class="option-cell">{% if report.butlers7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers7_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers7_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -986,7 +986,7 @@
                         <td class="option-cell">{% if report.butlers8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers8_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers8_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1002,7 +1002,7 @@
                         <td class="option-cell">{% if report.butlers9 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers9 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers9 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers9_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers9_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1018,7 +1018,7 @@
                         <td class="option-cell">{% if report.butlers10 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers10 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers10 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers10_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers10_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1034,7 +1034,7 @@
                         <td class="option-cell">{% if report.butlers11 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers11 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers11 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers11_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers11_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1050,7 +1050,7 @@
                         <td class="option-cell">{% if report.butlers12 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers12 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.butlers12 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.butlers12_remarks }}</td>
+                        <td class="remarks-cell">{{ report.butlers12_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -1080,7 +1080,7 @@
                         <td class="option-cell">{% if report.breakfast1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.breakfast1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.breakfast1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1093,7 +1093,7 @@
                         <td class="option-cell">{% if report.breakfast2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.breakfast2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.breakfast2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1106,7 +1106,7 @@
                         <td class="option-cell">{% if report.breakfast3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.breakfast3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.breakfast3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1119,7 +1119,7 @@
                         <td class="option-cell">{% if report.breakfast4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.breakfast4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.breakfast4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1132,7 +1132,7 @@
                         <td class="option-cell">{% if report.breakfast5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.breakfast5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.breakfast5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.breakfast5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -1162,7 +1162,7 @@
                         <td class="option-cell">{% if report.entry1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.entry1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.entry1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1175,7 +1175,7 @@
                         <td class="option-cell">{% if report.entry2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.entry2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.entry2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1188,7 +1188,7 @@
                         <td class="option-cell">{% if report.entry3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.entry3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.entry3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
             
@@ -1201,7 +1201,7 @@
                         <td class="option-cell">{% if report.entry4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.entry4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.entry4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.entry4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -1232,7 +1232,7 @@
                         <td class="option-cell">{% if report.greatroom1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.greatroom1_remarks }}</td>
+                        <td class="remarks-cell">{{ report.greatroom1_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -1245,7 +1245,7 @@
                         <td class="option-cell">{% if report.greatroom2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.greatroom2_remarks }}</td>
+                        <td class="remarks-cell">{{ report.greatroom2_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -1258,7 +1258,7 @@
                         <td class="option-cell">{% if report.greatroom3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.greatroom3_remarks }}</td>
+                        <td class="remarks-cell">{{ report.greatroom3_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -1271,7 +1271,7 @@
                         <td class="option-cell">{% if report.greatroom4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.greatroom4_remarks }}</td>
+                        <td class="remarks-cell">{{ report.greatroom4_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
 
@@ -1284,7 +1284,7 @@
                         <td class="option-cell">{% if report.greatroom5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
                         <td class="option-cell">{% if report.greatroom5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-                        <td class="remarks-cell">{{ report.greatroom5_remarks }}</td>
+                        <td class="remarks-cell">{{ report.greatroom5_remarks|default_if_none:"-" }}</td>
                     </tr>
                     {% endif %}
                 </tbody>
@@ -1315,7 +1315,7 @@
             <td class="option-cell">{% if report.dining1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.dining1_remarks }}</td>
+            <td class="remarks-cell">{{ report.dining1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1328,7 +1328,7 @@
             <td class="option-cell">{% if report.dining2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.dining2_remarks }}</td>
+            <td class="remarks-cell">{{ report.dining2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1341,7 +1341,7 @@
             <td class="option-cell">{% if report.dining3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.dining3_remarks }}</td>
+            <td class="remarks-cell">{{ report.dining3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1354,7 +1354,7 @@
             <td class="option-cell">{% if report.dining4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.dining4_remarks }}</td>
+            <td class="remarks-cell">{{ report.dining4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1367,7 +1367,7 @@
             <td class="option-cell">{% if report.dining5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.dining5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.dining5_remarks }}</td>
+            <td class="remarks-cell">{{ report.dining5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1397,7 +1397,7 @@
             <td class="option-cell">{% if report.closets1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets1_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1410,7 +1410,7 @@
             <td class="option-cell">{% if report.closets2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets2_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1423,7 +1423,7 @@
             <td class="option-cell">{% if report.closets3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets3_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1436,7 +1436,7 @@
             <td class="option-cell">{% if report.closets4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets4_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1449,7 +1449,7 @@
             <td class="option-cell">{% if report.closets5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets5_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1479,7 +1479,7 @@
             <td class="option-cell">{% if report.closets_upper1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets_upper1_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets_upper1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1492,7 +1492,7 @@
             <td class="option-cell">{% if report.closets_upper2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets_upper2_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets_upper2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1505,7 +1505,7 @@
             <td class="option-cell">{% if report.closets_upper3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets_upper3_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets_upper3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1518,7 +1518,7 @@
             <td class="option-cell">{% if report.closets_upper4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets_upper4_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets_upper4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1531,7 +1531,7 @@
             <td class="option-cell">{% if report.closets_upper5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.closets_upper5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.closets_upper5_remarks }}</td>
+            <td class="remarks-cell">{{ report.closets_upper5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1561,7 +1561,7 @@
             <td class="option-cell">{% if report.hallways_main1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_main1_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_main1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1574,7 +1574,7 @@
             <td class="option-cell">{% if report.hallways_main2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_main2_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_main2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1587,7 +1587,7 @@
             <td class="option-cell">{% if report.hallways_main3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_main3_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_main3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1600,7 +1600,7 @@
             <td class="option-cell">{% if report.hallways_main4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_main4_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_main4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1613,7 +1613,7 @@
             <td class="option-cell">{% if report.hallways_main5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_main5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_main5_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_main5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1643,7 +1643,7 @@
             <td class="option-cell">{% if report.hallways_upper1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_upper1_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_upper1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1656,7 +1656,7 @@
             <td class="option-cell">{% if report.hallways_upper2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_upper2_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_upper2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1669,7 +1669,7 @@
             <td class="option-cell">{% if report.hallways_upper3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_upper3_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_upper3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1682,7 +1682,7 @@
             <td class="option-cell">{% if report.hallways_upper4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_upper4_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_upper4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1695,7 +1695,7 @@
             <td class="option-cell">{% if report.hallways_upper5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.hallways_upper5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.hallways_upper5_remarks }}</td>
+            <td class="remarks-cell">{{ report.hallways_upper5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1725,7 +1725,7 @@
             <td class="option-cell">{% if report.bedroom1_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom1_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom1_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1738,7 +1738,7 @@
             <td class="option-cell">{% if report.bedroom1_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom1_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom1_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1751,7 +1751,7 @@
             <td class="option-cell">{% if report.bedroom1_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom1_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom1_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1764,7 +1764,7 @@
             <td class="option-cell">{% if report.bedroom1_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom1_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom1_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom1_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1794,7 +1794,7 @@
             <td class="option-cell">{% if report.bedroom2_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom2_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom2_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1807,7 +1807,7 @@
             <td class="option-cell">{% if report.bedroom2_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom2_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom2_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1820,7 +1820,7 @@
             <td class="option-cell">{% if report.bedroom2_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom2_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom2_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1833,7 +1833,7 @@
             <td class="option-cell">{% if report.bedroom2_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom2_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom2_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom2_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1863,7 +1863,7 @@
             <td class="option-cell">{% if report.bedroom3_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom3_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom3_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1876,7 +1876,7 @@
             <td class="option-cell">{% if report.bedroom3_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom3_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom3_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1889,7 +1889,7 @@
             <td class="option-cell">{% if report.bedroom3_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom3_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom3_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1902,7 +1902,7 @@
             <td class="option-cell">{% if report.bedroom3_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom3_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom3_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom3_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -1932,7 +1932,7 @@
             <td class="option-cell">{% if report.bedroom4_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom4_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom4_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1945,7 +1945,7 @@
             <td class="option-cell">{% if report.bedroom4_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom4_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom4_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1958,7 +1958,7 @@
             <td class="option-cell">{% if report.bedroom4_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom4_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom4_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -1971,7 +1971,418 @@
             <td class="option-cell">{% if report.bedroom4_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bedroom4_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bedroom4_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bedroom4_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bedroom5_1 or report.bedroom5_2 or report.bedroom5_3 or report.bedroom5_4 %}
+<!-- Bedroom 5 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bedroom 5</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bedroom5_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Furniture: Note any damage
+            </td>
+            <td class="option-cell">{% if report.bedroom5_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom5_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom5_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bedroom5_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom5_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom5_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bedroom5_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom5_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom5_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bedroom5_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom5_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom5_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if report.bedroom6_1 or report.bedroom6_2 or report.bedroom6_3 or report.bedroom6_4 %}
+<!-- Bedroom 6 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bedroom 6</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bedroom6_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Furniture: Note any damage
+            </td>
+            <td class="option-cell">{% if report.bedroom6_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom6_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom6_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bedroom6_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom6_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom6_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bedroom6_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom6_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom6_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bedroom6_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom6_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom6_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bedroom7_1 or report.bedroom7_2 or report.bedroom7_3 or report.bedroom7_4 %}
+<!-- Bedroom 7 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bedroom 7</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bedroom7_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Furniture: Note any damage
+            </td>
+            <td class="option-cell">{% if report.bedroom7_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom7_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom7_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bedroom7_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom7_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom7_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bedroom7_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom7_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom7_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bedroom7_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom7_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom7_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if report.bedroom8_1 or report.bedroom8_2 or report.bedroom8_3 or report.bedroom8_4 %}
+<!-- Bedroom 8 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bedroom 8</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bedroom8_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Furniture: Note any damage
+            </td>
+            <td class="option-cell">{% if report.bedroom8_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom8_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom8_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bedroom8_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom8_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom8_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bedroom8_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom8_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom8_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bedroom8_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom8_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom8_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bedroom9_1 or report.bedroom9_2 or report.bedroom9_3 or report.bedroom9_4 %}
+<!-- Bedroom 9 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bedroom 9</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bedroom9_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Furniture: Note any damage
+            </td>
+            <td class="option-cell">{% if report.bedroom9_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom9_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom9_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bedroom9_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom9_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom9_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bedroom9_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom9_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom9_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bedroom9_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom9_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom9_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if report.bedroom10_1 or report.bedroom10_2 or report.bedroom10_3 or report.bedroom10_4 %}
+<!-- Bedroom 10 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bedroom 10</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bedroom10_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Furniture: Note any damage
+            </td>
+            <td class="option-cell">{% if report.bedroom10_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom10_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom10_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bedroom10_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom10_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom10_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bedroom10_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom10_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bedroom10_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bedroom10_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bedroom10_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bedroom10_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2001,7 +2412,7 @@
             <td class="option-cell">{% if report.bathroom1_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2014,7 +2425,7 @@
             <td class="option-cell">{% if report.bathroom1_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2027,7 +2438,7 @@
             <td class="option-cell">{% if report.bathroom1_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2040,7 +2451,7 @@
             <td class="option-cell">{% if report.bathroom1_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2053,7 +2464,7 @@
             <td class="option-cell">{% if report.bathroom1_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2066,7 +2477,7 @@
             <td class="option-cell">{% if report.bathroom1_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2079,7 +2490,7 @@
             <td class="option-cell">{% if report.bathroom1_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2092,7 +2503,7 @@
             <td class="option-cell">{% if report.bathroom1_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom1_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom1_8_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom1_8_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2122,7 +2533,7 @@
             <td class="option-cell">{% if report.bathroom2_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2135,7 +2546,7 @@
             <td class="option-cell">{% if report.bathroom2_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2148,7 +2559,7 @@
             <td class="option-cell">{% if report.bathroom2_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2161,7 +2572,7 @@
             <td class="option-cell">{% if report.bathroom2_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2174,7 +2585,7 @@
             <td class="option-cell">{% if report.bathroom2_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2187,7 +2598,7 @@
             <td class="option-cell">{% if report.bathroom2_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2200,7 +2611,7 @@
             <td class="option-cell">{% if report.bathroom2_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2213,7 +2624,7 @@
             <td class="option-cell">{% if report.bathroom2_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom2_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom2_8_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom2_8_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2243,7 +2654,7 @@
             <td class="option-cell">{% if report.bathroom3_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2256,7 +2667,7 @@
             <td class="option-cell">{% if report.bathroom3_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2269,7 +2680,7 @@
             <td class="option-cell">{% if report.bathroom3_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2282,7 +2693,7 @@
             <td class="option-cell">{% if report.bathroom3_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2295,7 +2706,7 @@
             <td class="option-cell">{% if report.bathroom3_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2308,7 +2719,7 @@
             <td class="option-cell">{% if report.bathroom3_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2321,7 +2732,7 @@
             <td class="option-cell">{% if report.bathroom3_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2334,7 +2745,7 @@
             <td class="option-cell">{% if report.bathroom3_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom3_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom3_8_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom3_8_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2364,7 +2775,7 @@
             <td class="option-cell">{% if report.bathroom4_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2377,7 +2788,7 @@
             <td class="option-cell">{% if report.bathroom4_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2390,7 +2801,7 @@
             <td class="option-cell">{% if report.bathroom4_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2403,7 +2814,7 @@
             <td class="option-cell">{% if report.bathroom4_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2416,7 +2827,7 @@
             <td class="option-cell">{% if report.bathroom4_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2429,7 +2840,7 @@
             <td class="option-cell">{% if report.bathroom4_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2442,7 +2853,7 @@
             <td class="option-cell">{% if report.bathroom4_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2455,7 +2866,7 @@
             <td class="option-cell">{% if report.bathroom4_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom4_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom4_8_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom4_8_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2485,7 +2896,7 @@
             <td class="option-cell">{% if report.bathroom5_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2498,7 +2909,7 @@
             <td class="option-cell">{% if report.bathroom5_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2511,7 +2922,7 @@
             <td class="option-cell">{% if report.bathroom5_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2524,7 +2935,7 @@
             <td class="option-cell">{% if report.bathroom5_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2537,7 +2948,7 @@
             <td class="option-cell">{% if report.bathroom5_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2550,7 +2961,7 @@
             <td class="option-cell">{% if report.bathroom5_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2563,7 +2974,7 @@
             <td class="option-cell">{% if report.bathroom5_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2576,7 +2987,850 @@
             <td class="option-cell">{% if report.bathroom5_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.bathroom5_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.bathroom5_8_remarks }}</td>
+            <td class="remarks-cell">{{ report.bathroom5_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bathroom6_1 or report.bathroom6_2 or report.bathroom6_3 or report.bathroom6_4 or report.bathroom6_5 or report.bathroom6_6 or report.bathroom6_7 or report.bathroom6_8 %}
+<!-- Bathroom 6 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 6</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom6_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom6_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom6_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom6_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom6_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom6_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom6_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom6_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom6_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom6_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom6_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom6_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if report.bathroom7_1 or report.bathroom7_2 or report.bathroom7_3 or report.bathroom7_4 or report.bathroom7_5 or report.bathroom7_6 or report.bathroom7_7 or report.bathroom7_8 %}
+<!-- Bathroom 7 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 7</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom7_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom7_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom7_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom7_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom7_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom7_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom7_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom7_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom7_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom7_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom7_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom7_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bathroom8_1 or report.bathroom8_2 or report.bathroom8_3 or report.bathroom8_4 or report.bathroom8_5 or report.bathroom8_6 or report.bathroom8_7 or report.bathroom8_8 %}
+<!-- Bathroom 8 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 8</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom8_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom8_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom8_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom8_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom8_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom8_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom8_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom8_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom8_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom8_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom8_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom8_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if report.bathroom9_1 or report.bathroom9_2 or report.bathroom9_3 or report.bathroom9_4 or report.bathroom9_5 or report.bathroom9_6 or report.bathroom9_7 or report.bathroom9_8 %}
+<!-- Bathroom 9 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 9</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom9_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom9_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom9_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom9_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom9_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom9_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom9_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom9_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom9_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom9_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom9_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom9_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bathroom10_1 or report.bathroom10_2 or report.bathroom10_3 or report.bathroom10_4 or report.bathroom10_5 or report.bathroom10_6 or report.bathroom10_7 or report.bathroom10_8 %}
+<!-- Bathroom 10 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 10</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom10_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom10_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom10_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom10_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom10_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom10_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom10_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom10_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom10_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom10_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom10_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom10_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if report.bathroom11_1 or report.bathroom11_2 or report.bathroom11_3 or report.bathroom11_4 or report.bathroom11_5 or report.bathroom11_6 or report.bathroom11_7 or report.bathroom11_8 %}
+<!-- Bathroom 11 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 11</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom11_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom11_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom11_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom11_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom11_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom11_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom11_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom11_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom11_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom11_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom11_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom11_8_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% if report.bathroom12_1 or report.bathroom12_2 or report.bathroom12_3 or report.bathroom12_4 or report.bathroom12_5 or report.bathroom12_6 or report.bathroom12_7 or report.bathroom12_8 %}
+<!-- Bathroom 12 -->
+<table class="questionnaire-table">
+    <thead>
+        <tr>
+            <th>Bathroom 12</th>
+            <th>N/A</th>
+            <th>Compliant</th>
+            <th>Heads-Up</th>
+            <th>Non-Compliant</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if report.bathroom12_1 is not None %}
+        <tr>
+            <td class="question-cell">
+                Sinks: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom12_1 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_1_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_2 is not None %}
+        <tr>
+            <td class="question-cell">
+                Cabinets / Tops: Visual Check of cabinets, countertops
+            </td>
+            <td class="option-cell">{% if report.bathroom12_2 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_2_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_3 is not None %}
+        <tr>
+            <td class="question-cell">
+                Shower: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom12_3 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_3_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_4 is not None %}
+        <tr>
+            <td class="question-cell">
+                Bath/Hot Tub: Faucet leaking, drain acceptable, overall condition
+            </td>
+            <td class="option-cell">{% if report.bathroom12_4 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_4_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_5 is not None %}
+        <tr>
+            <td class="question-cell">
+                Toilet: Tank refills properly, Handle operational
+            </td>
+            <td class="option-cell">{% if report.bathroom12_5 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_5_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_6 is not None %}
+        <tr>
+            <td class="question-cell">
+                Lights: Any burnt out requiring replacement?
+            </td>
+            <td class="option-cell">{% if report.bathroom12_6 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_6_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_7 is not None %}
+        <tr>
+            <td class="question-cell">
+                Flooring / Walls / Ceilings: Visual check of floors/walls/ceilings
+            </td>
+            <td class="option-cell">{% if report.bathroom12_7 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_7_remarks|default_if_none:"-" }}</td>
+        </tr>
+        {% endif %}
+
+        {% if report.bathroom12_8 is not None %}
+        <tr>
+            <td class="question-cell">
+                Doors: Hardware working properly
+            </td>
+            <td class="option-cell">{% if report.bathroom12_8 == "N/A" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="option-cell">{% if report.bathroom12_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
+            <td class="remarks-cell">{{ report.bathroom12_8_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2606,7 +3860,7 @@
             <td class="option-cell">{% if report.gym_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2619,7 +3873,7 @@
             <td class="option-cell">{% if report.gym_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2632,7 +3886,7 @@
             <td class="option-cell">{% if report.gym_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2645,7 +3899,7 @@
             <td class="option-cell">{% if report.gym_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2658,7 +3912,7 @@
             <td class="option-cell">{% if report.gym_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2671,7 +3925,7 @@
             <td class="option-cell">{% if report.gym_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2684,7 +3938,7 @@
             <td class="option-cell">{% if report.gym_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.gym_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.gym_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.gym_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2714,7 +3968,7 @@
             <td class="option-cell">{% if report.theatre_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.theatre_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.theatre_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2727,7 +3981,7 @@
             <td class="option-cell">{% if report.theatre_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.theatre_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.theatre_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2740,7 +3994,7 @@
             <td class="option-cell">{% if report.theatre_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.theatre_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.theatre_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2753,7 +4007,7 @@
             <td class="option-cell">{% if report.theatre_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.theatre_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.theatre_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2766,7 +4020,7 @@
             <td class="option-cell">{% if report.theatre_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.theatre_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.theatre_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.theatre_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2796,7 +4050,7 @@
             <td class="option-cell">{% if report.guest_house_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2809,7 +4063,7 @@
             <td class="option-cell">{% if report.guest_house_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2822,7 +4076,7 @@
             <td class="option-cell">{% if report.guest_house_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2835,7 +4089,7 @@
             <td class="option-cell">{% if report.guest_house_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2848,7 +4102,7 @@
             <td class="option-cell">{% if report.guest_house_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
@@ -2878,7 +4132,7 @@
             <td class="option-cell">{% if report.guest_house_bath_1 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_1 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_1 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_1_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_1_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2891,7 +4145,7 @@
             <td class="option-cell">{% if report.guest_house_bath_2 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_2 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_2 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_2_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_2_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2904,7 +4158,7 @@
             <td class="option-cell">{% if report.guest_house_bath_3 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_3 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_3 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_3_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_3_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2917,7 +4171,7 @@
             <td class="option-cell">{% if report.guest_house_bath_4 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_4 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_4 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_4_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_4_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2930,7 +4184,7 @@
             <td class="option-cell">{% if report.guest_house_bath_5 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_5 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_5 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_5_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_5_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2943,7 +4197,7 @@
             <td class="option-cell">{% if report.guest_house_bath_6 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_6 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_6 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_6_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_6_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2956,7 +4210,7 @@
             <td class="option-cell">{% if report.guest_house_bath_7 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_7 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_7 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_7_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_7_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
 
@@ -2969,7 +4223,7 @@
             <td class="option-cell">{% if report.guest_house_bath_8 == "Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_8 == "Heads-Up" %}<span class="checkmark">✓</span>{% endif %}</td>
             <td class="option-cell">{% if report.guest_house_bath_8 == "Non-Compliant" %}<span class="checkmark">✓</span>{% endif %}</td>
-            <td class="remarks-cell">{{ report.guest_house_bath_8_remarks }}</td>
+            <td class="remarks-cell">{{ report.guest_house_bath_8_remarks|default_if_none:"-" }}</td>
         </tr>
         {% endif %}
     </tbody>
