@@ -1089,59 +1089,34 @@ def all_reports_view(request):
         }
     )
 
-import copy
+from django.shortcuts import get_object_or_404, render
+
 def report_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
     
-    # ✅ COMPLETE FIELD LIST - EXACTLY MATCHES YOUR HTML
     all_fields = {
-        # General Items
         'gie1', 'gie2', 'gie3', 'gie4', 'gie5', 'gie6', 'gie7', 'gie8', 'gie9', 
         'gie10', 'gie11', 'gie12', 'gie13', 'gie14', 'gie15',
         'gii1', 'gii2', 'gii3', 'gii4', 'gii5', 'gii6', 'gii7', 'gii8', 'gii9',
-        
-        # Garage
         'garage1', 'garage2', 'garage3', 'garage4', 'garage5', 'garage6', 
         'garage7', 'garage8', 'garage9',
-        
-        # Laundry
         'laundry1', 'laundry2', 'laundry3', 'laundry4', 'laundry5', 'laundry6',
-        
-        # Kitchen
         'kitchen1', 'kitchen2', 'kitchen3', 'kitchen4', 'kitchen5', 'kitchen6', 
         'kitchen7', 'kitchen8', 'kitchen9', 'kitchen10', 'kitchen11', 'kitchen12',
-        
-        # Butlers
         'butlers1', 'butlers2', 'butlers3', 'butlers4', 'butlers5', 'butlers6',
         'butlers7', 'butlers8', 'butlers9', 'butlers10', 'butlers11', 'butlers12',
-        
-        # Breakfast
         'breakfast1', 'breakfast2', 'breakfast3', 'breakfast4', 'breakfast5', 'breakfast6',
-        
-        # Entry
         'entry1', 'entry2', 'entry3', 'entry4',
-        
-        # Great Room
         'greatroom1', 'greatroom2', 'greatroom3', 'greatroom4', 'greatroom5',
-        
-        # Dining
         'dining1', 'dining2', 'dining3', 'dining4', 'dining5',
-        
-        # Closets
         'closets1', 'closets2', 'closets3', 'closets4', 'closets5',
         'closets_upper1', 'closets_upper2', 'closets_upper3', 'closets_upper4', 'closets_upper5',
-        
-        # Hallways
         'hallways_main1', 'hallways_main2', 'hallways_main3', 'hallways_main4', 'hallways_main5',
         'hallways_upper1', 'hallways_upper2', 'hallways_upper3', 'hallways_upper4', 'hallways_upper5',
-        
-        # Bedrooms
         'bedroom1_1', 'bedroom1_2', 'bedroom1_3', 'bedroom1_4',
         'bedroom2_1', 'bedroom2_2', 'bedroom2_3', 'bedroom2_4',
         'bedroom3_1', 'bedroom3_2', 'bedroom3_3', 'bedroom3_4',
         'bedroom4_1', 'bedroom4_2', 'bedroom4_3', 'bedroom4_4',
-        
-        # Bathrooms
         'bathroom1_1', 'bathroom1_2', 'bathroom1_3', 'bathroom1_4', 'bathroom1_5', 'bathroom1_6', 
         'bathroom1_7', 'bathroom1_8',
         'bathroom2_1', 'bathroom2_2', 'bathroom2_3', 'bathroom2_4', 'bathroom2_5', 'bathroom2_6', 
@@ -1151,28 +1126,18 @@ def report_detail_view(request, pk):
         'bathroom4_1', 'bathroom4_2', 'bathroom4_3', 'bathroom4_4', 'bathroom4_5', 'bathroom4_6', 
         'bathroom4_7', 'bathroom4_8',
         'bathroom5_1', 'bathroom5_2', 'bathroom5_3', 'bathroom5_4', 'bathroom5_7', 'bathroom5_8',
-        
-        # Gym
         'gym_1', 'gym_2', 'gym_3', 'gym_4', 'gym_5', 'gym_6', 'gym_7',
-        
-        # Theatre
         'theatre_1', 'theatre_2', 'theatre_3', 'theatre_4', 'theatre_5',
-        
-        # Guest House
         'guest_house_1', 'guest_house_2', 'guest_house_3', 'guest_house_4', 'guest_house_5',
-        
-        # Guest House Bath
         'guest_house_bath_1', 'guest_house_bath_2', 'guest_house_bath_3', 'guest_house_bath_4', 
         'guest_house_bath_5', 'guest_house_bath_6', 'guest_house_bath_7', 'guest_house_bath_8'
     }
     
-    # ✅ Fix ALL fields: None/empty → "N/A" so your HTML {% if %} conditions PASS
     for field_name in all_fields:
         field_value = getattr(report, field_name, None)
         if field_value is None or field_value == '':
             setattr(report, field_name, "N/A")
     
-    # Context for template (your existing variables)
     context = {
         'report': report,
         'client_first_name': report.user.first_name if report.user else '',
@@ -1183,22 +1148,103 @@ def report_detail_view(request, pk):
     }
     
     return render(request, 'mainapp/walktrug/report_detail.html', context)
+def open_reports_view(request):
+    reports = WalkthroughReport.objects.filter(status='Open').select_related("property").order_by("-datetime")
 
+    # PROPERTY FILTER
+    property_id = request.GET.get("property")
+    if property_id:
+        reports = reports.filter(property_id=property_id)
+
+    # MONTH FILTER
+    month = request.GET.get("month")
+    if month:
+        year, month_num = month.split("-")
+        reports = reports.filter(datetime__year=year, datetime__month=month_num)
+
+    # ALL PROPERTIES
+    properties = PropertyManagement.objects.all()
+
+    # AVAILABLE MONTHS
+    months = (
+        WalkthroughReport.objects.filter(status='Open')
+        .annotate(month=TruncMonth("datetime"))
+        .values_list("month", flat=True)
+        .distinct()
+        .order_by("-month")
+    )
+
+    return render(request, 'mainapp/walktrug/open_reports.html', {
+        'reports': reports,
+        'properties': properties,
+        'months': months,
+    })
 
 
 def completed_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Completed')
-    return render(request, 'mainapp/walktrug/completed_reports.html', {'reports': reports})
+    reports = WalkthroughReport.objects.filter(status='Completed').select_related("property").order_by("-datetime")
+
+    # PROPERTY FILTER
+    property_id = request.GET.get("property")
+    if property_id:
+        reports = reports.filter(property_id=property_id)
+
+    # MONTH FILTER
+    month = request.GET.get("month")
+    if month:
+        year, month_num = month.split("-")
+        reports = reports.filter(datetime__year=year, datetime__month=month_num)
+
+    # ALL PROPERTIES
+    properties = PropertyManagement.objects.all()
+
+    # AVAILABLE MONTHS
+    months = (
+        WalkthroughReport.objects.filter(status='Completed')
+        .annotate(month=TruncMonth("datetime"))
+        .values_list("month", flat=True)
+        .distinct()
+        .order_by("-month")
+    )
+
+    return render(request, 'mainapp/walktrug/completed_reports.html', {
+        'reports': reports,
+        'properties': properties,
+        'months': months,
+    })
+
 
 def denied_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Denied')
-    return render(request, 'mainapp/walktrug/denied_reports.html', {'reports': reports})
+    reports = WalkthroughReport.objects.filter(status='Denied').select_related("property").order_by("-datetime")
 
-def open_reports_view(request):
-    reports = WalkthroughReport.objects.filter(status='Open')
-    return render(request, 'mainapp/walktrug/open_reports.html', {'reports': reports})
+    # PROPERTY FILTER
+    property_id = request.GET.get("property")
+    if property_id:
+        reports = reports.filter(property_id=property_id)
 
+    # MONTH FILTER
+    month = request.GET.get("month")
+    if month:
+        year, month_num = month.split("-")
+        reports = reports.filter(datetime__year=year, datetime__month=month_num)
 
+    # ALL PROPERTIES
+    properties = PropertyManagement.objects.all()
+
+    # AVAILABLE MONTHS
+    months = (
+        WalkthroughReport.objects.filter(status='Denied')
+        .annotate(month=TruncMonth("datetime"))
+        .values_list("month", flat=True)
+        .distinct()
+        .order_by("-month")
+    )
+
+    return render(request, 'mainapp/walktrug/denied_reports.html', {
+        'reports': reports,
+        'properties': properties,
+        'months': months,
+    })
 # Sending emails 
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
