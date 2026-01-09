@@ -5,7 +5,7 @@ from mainapp.models import Vendor  # Import Vendor model from mainapp
 class PropertyManagement(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="properties")
     client_manager = models.ForeignKey(ClientManagers, on_delete=models.CASCADE, related_name="managed_properties")
-
+    secondary_client_manager = models.ForeignKey(ClientManagers, on_delete=models.CASCADE,null=True,blank=True,related_name="secondary_managed_properties")
     address = models.CharField(max_length=255)
     street_line1 = models.CharField(max_length=255, blank=True, null=True)
     street_line2 = models.CharField(max_length=255, blank=True, null=True)

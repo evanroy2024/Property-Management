@@ -2,548 +2,303 @@
 {% load static %}
 
 {% block content %}
-    <style>
-        body {
-            background-color: #ffffff;
-            color: #000000;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+*{font-family:'Roboto',sans-serif!important}
 
-        .property-container {
-            max-width: 80%;
-            margin: 40px auto;
-        }
+body{background:#f4f6f8;color:#111}
 
-        .section-title {
-            font-size: 22px;
-            font-weight: bold;
-            color: #d1aa6b;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #666;
-            padding-bottom: 5px;
-        }
-
-        .info-box {
-            margin-bottom: 15px;
-        }
-
-        .info-box span {
-            font-weight: bold;
-            color: #143049;
-            text-transform: uppercase;
-        }
-
-        .info-value {
-            font-size: 16px;
-            color: #333;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .col-md-4 {
-                width: 50%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .col-md-4 {
-                width: 100%;
-            }
-
-            .property-container {
-                width: 95%;
-                padding: 20px;
-            }
-        }
-
-        .title {
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #d1aa6b;
-            padding: 10px;
-            border-bottom: 3px solid #d1aa6b;
-            display: inline-block;
-            margin: 20px auto;
-        }
-
-        #titile {
-            text-align: center;
-        }
-
-        .property-container {
-            width: 100%;
-        }
-
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .image-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 24%;
-        }
-
-        .gallery-img {
-            width: 100%;
-            height: auto;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-            border-radius: 10px;
-        }
-
-        .gallery-img:hover {
-            transform: scale(1.09);
-        }
-
-        .image-caption {
-            margin-top: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .full-screen-img {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.95); /* Darker background for focus */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Ensure it's on top of everything */
-    padding: 20px; /* Prevent image from sticking to edges */
+/* WRAPPER */
+.page-wrap{
+    max-width:1100px;
+    margin:30px auto;
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 8px 22px rgba(0,0,0,.08);
+    padding:34px;
 }
 
-.full-screen-img img {
-    width: auto;
-    height: auto;
-    max-width: 95vw;  /* Slightly less than 100 to maintain margins */
-    max-height: 95vh;
-    border-radius: 20px; /* More rounding for visual appeal */
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.1); /* Soft glow effect */
-    transform: scale(1.30); /* Slight zoom for emphasis */
-    transition: transform 0.3s ease;
+/* HEADER */
+.page-header{
+    text-align:center;
+    margin-bottom:34px;
+}
+.page-header img{
+    width:60px;
+    margin-bottom:10px;
+}
+.page-header h1{
+    font-size:28px;
+    font-weight:800;
+    color:#d1aa6b;
+    border-bottom:3px solid #d1aa6b;
+    display:inline-block;
+    padding-bottom:8px;
 }
 
+/* PROPERTY SELECT */
+.property-select-wrap{
+    margin-bottom:40px;
+}
+.property-select-wrap label{
+    font-weight:700;
+    display:block;
+    margin-bottom:10px;
+    color:#143049;
+    font-size:15px;
+}
+.property-select{
+    width:100%;
+    padding:16px 18px;
+    font-size:16px;
+    border-radius:10px;
+    border:1px solid #d0d7de;
+    background:#fff;
+    font-weight:600;
+}
 
-        /* Responsive Styles */
-        @media (max-width: 1024px) {
-            .image-item {
-                width: 48%;
-            }
-        }
+/* SECTIONS */
+.section{margin-bottom:50px}
+.section-title{
+    font-size:21px;
+    font-weight:800;
+    color:#d1aa6b;
+    border-bottom:1px solid #d1aa6b;
+    padding-bottom:8px;
+    margin-bottom:26px;
+}
 
-        @media (max-width: 600px) {
-            .image-item {
-                width: 100%;
-            }
-        }
-    </style>
+/* INFO GRID */
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:22px;
+}
+.info-box span{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    color:#143049;
+    margin-bottom:6px;
+}
+.info-value{
+    font-size:16px;
+    font-weight:500;
+    color:#333;
+}
 
-    <div id="titile">
-        <img src="{% static 'img/smalllogo.png' %}" alt="">
-        <h2 class="title" id="main-heading">Lotus Property Client Information</h2>
+/* CARDS */
+.card{
+    background:#fff;
+    border-radius:12px;
+    padding:24px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    margin-bottom:26px;
+}
+
+/* IMAGES */
+.image-gallery{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+.image-item{
+    max-width:360px;
+    text-align:center;
+}
+.gallery-img{
+    width:100%;
+    border-radius:14px;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+}
+
+/* PRINT BUTTON */
+.print-btn{
+    margin-top:14px;
+    padding:11px 20px;
+    border:none;
+    border-radius:10px;
+    background:#4a90e2;
+    color:#fff;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+}
+
+/* ROOMS */
+.room-name{
+    font-size:15px;
+    margin-top:10px;
+    font-weight:500;
+}
+
+/* FULLSCREEN IMAGE */
+.full-screen-img{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+.full-screen-img img{
+    max-width:95vw;
+    max-height:95vh;
+    border-radius:22px;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .page-wrap{padding:22px;margin:15px}
+    .page-header h1{font-size:22px}
+    .section-title{font-size:18px}
+}
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <img src="{% static 'img/smalllogo.png' %}">
+        <h1>Lotus Property Client Information</h1>
     </div>
 
-    <div class="property-container">
-        <p class="section-title">Home Overview</p>
-        {% if properties %}
-            {% for property in properties %}
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Address:</span> <div class="info-value">{{ property.address }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Size of Home:</span> <div class="info-value">{{ property.size_of_home }} SQ FT</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Number of Stories:</span> <div class="info-value">{{ property.number_of_stories }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Construction Type:</span> <div class="info-value">{{ property.construction_type }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Year Built:</span> <div class="info-value">{{ property.year_built }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>HOA:</span> <div class="info-value">{{ property.has_hoa|yesno:"Yes,No" }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Pool:</span> <div class="info-value">{{ property.has_pool|yesno:"Yes,No" }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Impact Windows:</span> <div class="info-value">{{ property.impact_windows }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Gated Community:</span> <div class="info-value">{{ property.gated_community|yesno:"Yes,No" }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Gated Property:</span> <div class="info-value">{{ property.gated_property|yesno:"Yes,No" }}</div></div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No properties found.</p>
+    {% if properties|length > 1 %}
+    <div class="property-select-wrap">
+        <label>Select Property</label>
+        <form method="get">
+            <select name="property" class="property-select" onchange="this.form.submit()">
+                {% for p in properties %}
+                <option value="{{ p.id }}" {% if property and p.id == property.id %}selected{% endif %}>
+                    {{ p.address }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <div class="section-title">Home Overview</div>
+        {% if property %}
+        <div class="info-grid">
+            <div class="info-box"><span>Address</span><div class="info-value">{{ property.address }}</div></div>
+            <div class="info-box"><span>Size</span><div class="info-value">{{ property.size_of_home }} SQ FT</div></div>
+            <div class="info-box"><span>Stories</span><div class="info-value">{{ property.number_of_stories }}</div></div>
+            <div class="info-box"><span>Construction</span><div class="info-value">{{ property.construction_type }}</div></div>
+            <div class="info-box"><span>Year Built</span><div class="info-value">{{ property.year_built }}</div></div>
+            <div class="info-box"><span>Pool</span><div class="info-value">{{ property.has_pool|yesno:"Yes,No" }}</div></div>
+            <div class="info-box"><span>HOA</span><div class="info-value">{{ property.has_hoa|yesno:"Yes,No" }}</div></div>
+        </div>
         {% endif %}
     </div>
 
-    <div class="property-container">
-        <p class="section-title">Contact preferance</p>
-        {% if contacts %}
-            {% for contact in contacts %}
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Contact Name :</span> <div class="info-value">{{ contact.name }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Contact Email :</span> <div class="info-value">{{ contact.email }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Contact Phone :</span> <div class="info-value">{{ contact.phone }}</div></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="info-box"><span>Preffered Contact Type :</span> <div class="info-value">{{ contact.preferred }}</div></div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No additional contacts added.</p>
-        {% endif %}
-    </div>
-    <div class="property-container">
-    <p class="section-title">Property Images Overview</p>
+    <div class="section">
+  <div class="section-title">Contact Preference</div>
 
-    {% for property in properties %}
-    <div class="property-card">
-        <h3 class="property-address">{{ property.address }}</h3>
+  <div class="info-grid">
+    {% for contact in contacts %}
+      <div class="info-box">
+        <strong style="font-weight: 600;">
+          {% if forloop.counter == 1 %}
+            Primary Contact
+          {% elif forloop.counter == 2 %}
+            Secondary Contact
+          {% elif forloop.counter == 3 %}
+            Tertiary Contact
+          {% else %}
+            Contact {{ forloop.counter }}
+          {% endif %}
+        </strong>
 
+        <div style="margin-top:6px;">
+          <span style="font-size: 1rem;">{{ contact.name }}</span>
+          <div class="info-value">
+            {{ contact.email }}<br>
+            {{ contact.phone }}<br>
+            Preferred: {{ contact.preferred }}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No contacts available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+
+    <div class="section">
+        <div class="section-title">Property Image</div>
         {% if property.property_pic %}
         <div class="image-gallery">
             <div class="image-item">
-                <img src="{{ property.property_pic.url }}"
-                     alt="Property Image"
-                     class="gallery-img">
-                <button onclick="printImage('{{ property.property_pic.url }}')"
-                        style="margin-top:10px;
-                               padding:8px 16px;
-                               background:#4a90e2;
-                               color:#fff;
-                               border:none;
-                               border-radius:6px;
-                               font-weight:600;
-                               cursor:pointer;">
-                    Print Property Image
-                </button>
+                <img src="{{ property.property_pic.url }}" class="gallery-img">
             </div>
         </div>
         {% else %}
         <p>No image available.</p>
         {% endif %}
-
-    </div>
-    {% empty %}
-        <p>No properties available.</p>
-    {% endfor %}
-</div>
-
-<script>
-function printImage(url) {
-    const win = window.open("");
-    win.document.write('<img src="' + url + '" style="max-width:100%;"/>');
-    win.document.close();
-    win.focus();
-    setTimeout(() => {
-        win.print();
-        win.close();
-    }, 500);
-}
-</script>
-
-    <div class="property-container">
-        <p class="section-title">Floor Plans Overview</p>
-        {% for property in properties %}
-        <div class="property-card">
-            <h3 class="property-address">{{ property.address }}</h3>
-            
-            {% if property.floors.all %}
-                {% for floor in property.floors.all %}
-                <div class="floor-card">
-                    <h4 class="floor-title">{{ floor.floor_name }}</h4>
-                    
-                    <!-- Display Floor Image -->
-                    <div class="image-gallery">
-                        {% if floor.floor_imgae %}
-<div class="image-item {% if floor.floor_imgae.url|lower|slice:'-4:' == '.pdf' %}pdf-item{% endif %}">
-    {% if floor.floor_imgae %}
-        {% if floor.floor_imgae.url|lower|slice:"-4:" == ".pdf" %}
-            <button onclick="openAndPrint('{{ floor.floor_imgae.url }}')"
-                    style="padding:8px 16px;
-                           background:#4a90e2;
-                           color:#fff;
-                           border:none;
-                           border-radius:6px;
-                           font-weight:600;
-                           cursor:pointer;">
-                Print Floor plan (PDF)
-            </button>
-        {% else %}
-            <img src="{{ floor.floor_imgae.url }}" alt="{{ floor.floor_name }}" class="gallery-img">
-            <button onclick="printImage('{{ floor.floor_imgae.url }}')"
-                    style="margin-top:10px;
-                           padding:8px 16px;
-                           background:#4a90e2;
-                           color:#fff;
-                           border:none;
-                           border-radius:6px;
-                           font-weight:600;
-                           cursor:pointer;">
-                Print Floor plan
-            </button>
-        {% endif %}
-    {% endif %}
-</div>
-
-<script>
-function openAndPrint(url) {
-    const win = window.open(url);
-    win.onload = () => win.print();
-}
-
-function printImage(url) {
-    const win = window.open("");
-    win.document.write('<img src="' + url + '" style="max-width:100%;"/>');
-    win.document.close();
-    win.focus();
-    setTimeout(() => {
-        win.print();
-        win.close();
-    }, 500);
-}
-</script>
-
-
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Display Room Names and Sizes -->
-                    <div class="rooms-info">
-                        {% for room in floor.rooms.all %}
-                        <div class="room-item">
-                            <div class="room-name-size">
-                                <p class="room-name">{{ room.room_name }}</p>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <p class="no-floors-msg">No floor plans available for this property.</p>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No properties available.</p>
-    {% endfor %}
-    
     </div>
 
+    <div class="section">
+        <div class="section-title">Floor Plans</div>
+        {% for floor in property.floors.all %}
+        <div class="card">
+            <strong style="font-size:19px;font-weight:700">{{ floor.floor_name }}</strong>
 
-<!-- //////////////////////// -->
- 
-<div class="property-container">
-    <p class="section-title">Client Manager Details </p>
-    {% if client_manager %}
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="info-box"><span>Client Manager Name :</span> <div class="info-value">{{ client_manager.first_name }} {{ client_manager.last_name }}</div></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-box"><span>Client Manager Email :</span> <div class="info-value">{{ client_manager.email }}</div></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-box"><span>Client Manager Phone :</span> <div class="info-value">{{ client_manager.phone_number }}</div></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-box"><span>Client Manager State :</span> <div class="info-value">{{ client_manager.state }}</div></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-box"><span>Client Manager City :</span> <div class="info-value">{{ client_manager.city }}</div></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-box"><span>Preffered Contact Type Type:</span> <div class="info-value">{{ client_manager.preferred_contact_method }}</div></div>
+            {% if floor.floor_imgae %}
+            <div class="image-gallery" style="margin-top:18px">
+                <div class="image-item">
+                    <img src="{{ floor.floor_imgae.url }}" class="gallery-img">
+                    <button class="print-btn" onclick="printImage('{{ floor.floor_imgae.url }}')">
+                        Print Floor Plan
+                    </button>
                 </div>
             </div>
             {% endif %}
+
+            {% for room in floor.rooms.all %}
+            <div class="room-name">• {{ room.room_name }}</div>
+            {% endfor %}
+        </div>
+        {% empty %}
+        <p>No floor plans available.</p>
+        {% endfor %}
+    </div>
+
+    {% if client_manager %}
+    <div class="section">
+        <div class="section-title">Client Manager</div>
+        <div class="info-grid">
+            <div class="info-box"><span>Name</span><div class="info-value">{{ client_manager.first_name }} {{ client_manager.last_name }}</div></div>
+            <div class="info-box"><span>Email</span><div class="info-value">{{ client_manager.email }}</div></div>
+            <div class="info-box"><span>Phone</span><div class="info-value">{{ client_manager.phone_number }}</div></div>
+            <!-- <div class="info-box"><span>Location</span><div class="info-value">{{ client_manager.city }}, {{ client_manager.state }}</div></div> -->
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
-<style>
-    .property-card {
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    padding: 15px;
+<script>
+function printImage(url){
+    const w=window.open("");
+    w.document.write('<img src="'+url+'" style="max-width:100%">');
+    w.document.close();
+    w.focus();
+    setTimeout(()=>{w.print();w.close();},400);
 }
-
-.floor-card {
-    border: 1px solid #d6dbe1; /* Soft light gray border for floors */
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fafbfc; /* Light background for better contrast */
-}
-
-.floor-title {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #333;
-}
-
-.image-gallery {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.image-item {
-    max-width: 300px;
-    margin: 10px;
-    text-align: center;
-}
-
-.gallery-img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.image-caption {
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 5px;
-}
-
-.rooms-info {
-    margin-top: 20px;
-}
-
-.room-item {
-    margin-bottom: 10px;
-}
-
-.room-name-size {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #d0d7de; /* Soft light border around rooms */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.room-name {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.room-size {
-    font-size: 1rem;
-    color: #666;
-    background-color: #e0e6f1; /* Soft blueish background for room size */
-    padding: 5px 10px;
-    border-radius: 5px;
-    border: 1px solid #b3c1d1; /* Subtle blue border around size */
-}
-
-.no-floors-msg {
-    color: #999;
-    font-style: italic;
-}
-
-.image-gallery .image-item {
-    border: 1px solid #f1f3f5; /* Soft border around image items */
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.image-gallery .image-item:hover {
-    border-color: #c2cbd6; /* Slightly darker border on hover */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.property-card .no-properties-msg {
-    font-size: 1.1rem;
-    color: #666;
-}
-
-</style>
-    <script>
-        document.querySelectorAll('.gallery-img').forEach(img => {
-            img.addEventListener('click', function () {
-                const fullScreenDiv = document.createElement('div');
-                fullScreenDiv.classList.add('full-screen-img');
-                fullScreenDiv.innerHTML = `<img src="${this.src}" alt="Full Screen Image">`;
-                document.body.appendChild(fullScreenDiv);
-                fullScreenDiv.addEventListener('click', () => fullScreenDiv.remove());
-            });
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-    /* Kill hover only on PDF items */
-.image-item.pdf-item:hover,
-.image-item.pdf-item:hover::before,
-.image-item.pdf-item:hover::after {
-    background: none !important;
-    box-shadow: none !important;
-}
-.image-gallery .image-item {
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-}
-</style>
-
-<style>
-    @media (min-width: 1200px) {
-    #main-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
-
+document.querySelectorAll('.gallery-img').forEach(img=>{
+    img.onclick=()=>{
+        const d=document.createElement('div');
+        d.className='full-screen-img';
+        d.innerHTML=`<img src="${img.src}">`;
+        d.onclick=()=>d.remove();
+        document.body.appendChild(d);
     }
-}
-    @media (max-width: 600px) {
-    #main-heading {
-        font-size: 1.3rem;
-        font-weight: bold;
-    }
-}
-#titile img{
-    width: 4%; 
-
-}
- @media (max-width: 600px) {
-
-#titile img{
-    width: 10%; 
-
-}
-   
-}
-</style>
+});
+</script>
 {% endblock content %}

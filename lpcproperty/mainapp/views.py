@@ -262,26 +262,35 @@ def client_properties(request):
     client_id = request.session['client_id']
     client = Client.objects.get(id=client_id)
 
-    properties = PropertyManagement.objects.filter(client=client).prefetch_related('floors__rooms', 'client_manager')
+    properties = PropertyManagement.objects.filter(
+        client=client
+    ).prefetch_related('floors__rooms', 'client_manager')
+
+    if not properties.exists():
+        return render(request, 'property/properties.html', {
+            'properties': [],
+        })
+
+    # selected property
+    selected_property_id = request.GET.get('property')
+    if selected_property_id:
+        selected_property = properties.filter(id=selected_property_id).first()
+    else:
+        selected_property = properties.first()
 
     contacts = [
-        {"name": client.contact1_name, "email": client.contact1_email, "phone": client.contact1_phone, "preferred": client.contact1_preferred},
-        {"name": client.contact2_name, "email": client.contact2_email, "phone": client.contact2_phone, "preferred": client.contact2_preferred},
-        {"name": client.contact3_name, "email": client.contact3_email, "phone": client.contact3_phone, "preferred": client.contact3_preferred},
+        {"name": f"{client.contact1_last_name}, {client.contact1_name}", "email": client.contact1_email, "phone": client.contact1_phone, "preferred": client.contact1_preferred},
+        {"name": f"{client.contact2_last_name}, {client.contact2_name}", "email": client.contact2_email, "phone": client.contact2_phone, "preferred": client.contact2_preferred},
+        {"name": f"{client.contact3_last_name}, {client.contact3_name}", "email": client.contact3_email, "phone": client.contact3_phone, "preferred": client.contact3_preferred},
     ]
     contacts = [c for c in contacts if c["name"]]
 
-    # Get manager from the first property (if exists)
-    client_manager = properties[0].client_manager if properties else None
-
     return render(request, 'property/properties.html', {
-        'properties': properties,
+        'properties': properties,                 # for dropdown
+        'property': selected_property,             # SINGLE property
         'contacts': contacts,
-        'client_manager': client_manager,
+        'client_manager': selected_property.client_manager if selected_property else None,
     })
-
-
-
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -354,6 +363,8 @@ def departure(request):
 
 
 # All services go there Start ----------------------------------------------------------------------------------
+
+from datetime import datetime
 def open_services(request):
     # Get the logged-in client from the session
     client_id = request.session.get("client_id")
@@ -366,10 +377,52 @@ def open_services(request):
     except Client.DoesNotExist:
         return redirect("mainapp:client_login")
 
-    # Fetch only the "open" service requests for the logged-in client
-    service_requests = ServiceRequest.objects.filter(user=client, status='open').order_by('-created_at')
+    # Base queryset - all open service requests for the logged-in client
+    service_requests = ServiceRequest.objects.filter(user=client, status='open')
 
-    return render(request, 'services/allservices/open_services.html', {'service_requests': service_requests})
+    # Get filter parameters
+    month_filter = request.GET.get('month')
+    date_filter = request.GET.get('date')
+
+    # Apply month filter
+    if month_filter:
+        try:
+            # Parse month format like "January 2024"
+            month_date = datetime.strptime(month_filter, '%B %Y')
+            service_requests = service_requests.filter(
+                created_at__year=month_date.year,
+                created_at__month=month_date.month
+            )
+        except ValueError:
+            pass
+
+    # Apply date filter
+    if date_filter:
+        try:
+            # Parse date format like "Jan 15, 2024"
+            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+            service_requests = service_requests.filter(created_at__date=date_obj.date())
+        except ValueError:
+            pass
+
+    # Order by most recent
+    service_requests = service_requests.order_by('-created_at')
+
+    # Get unique months for filter dropdown
+    all_requests = ServiceRequest.objects.filter(user=client, status='open')
+    months = all_requests.dates('created_at', 'month', order='DESC')
+    months_list = [date.strftime('%B %Y') for date in months]
+
+    # Get unique dates for filter dropdown
+    dates = all_requests.dates('created_at', 'day', order='DESC')
+    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+    return render(request, 'services/allservices/open_services.html', {
+        'service_requests': service_requests,
+        'months': months_list,
+        'dates': dates_list,
+    })
+
 
 
 def completed_services(request):
@@ -384,10 +437,52 @@ def completed_services(request):
     except Client.DoesNotExist:
         return redirect("mainapp:client_login")
 
-    # Fetch only the "completed" service requests for the logged-in client
-    service_requests = ServiceRequest.objects.filter(user=client, status='completed').order_by('-created_at')
+    # Base queryset - all completed service requests for the logged-in client
+    service_requests = ServiceRequest.objects.filter(user=client, status='completed')
 
-    return render(request, 'services/allservices/completed_services.html', {'service_requests': service_requests})
+    # Get filter parameters
+    month_filter = request.GET.get('month')
+    date_filter = request.GET.get('date')
+
+    # Apply month filter
+    if month_filter:
+        try:
+            # Parse month format like "January 2024"
+            month_date = datetime.strptime(month_filter, '%B %Y')
+            service_requests = service_requests.filter(
+                created_at__year=month_date.year,
+                created_at__month=month_date.month
+            )
+        except ValueError:
+            pass
+
+    # Apply date filter
+    if date_filter:
+        try:
+            # Parse date format like "Jan 15, 2024"
+            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+            service_requests = service_requests.filter(created_at__date=date_obj.date())
+        except ValueError:
+            pass
+
+    # Order by most recent
+    service_requests = service_requests.order_by('-created_at')
+
+    # Get unique months for filter dropdown
+    all_requests = ServiceRequest.objects.filter(user=client, status='completed')
+    months = all_requests.dates('created_at', 'month', order='DESC')
+    months_list = [date.strftime('%B %Y') for date in months]
+
+    # Get unique dates for filter dropdown
+    dates = all_requests.dates('created_at', 'day', order='DESC')
+    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+    return render(request, 'services/allservices/completed_services.html', {
+        'service_requests': service_requests,
+        'months': months_list,
+        'dates': dates_list,
+    })
+
 
 def denied_services(request):
     # Get the logged-in client from the session
@@ -401,11 +496,51 @@ def denied_services(request):
     except Client.DoesNotExist:
         return redirect("mainapp:client_login")
 
-    # Fetch only the "denied" service requests for the logged-in client
-    service_requests = ServiceRequest.objects.filter(user=client, status='denied').order_by('-created_at')
+    # Base queryset - all denied service requests for the logged-in client
+    service_requests = ServiceRequest.objects.filter(user=client, status='denied')
 
-    return render(request, 'services/allservices/denied_services.html', {'service_requests': service_requests})
+    # Get filter parameters
+    month_filter = request.GET.get('month')
+    date_filter = request.GET.get('date')
 
+    # Apply month filter
+    if month_filter:
+        try:
+            # Parse month format like "January 2024"
+            month_date = datetime.strptime(month_filter, '%B %Y')
+            service_requests = service_requests.filter(
+                created_at__year=month_date.year,
+                created_at__month=month_date.month
+            )
+        except ValueError:
+            pass
+
+    # Apply date filter
+    if date_filter:
+        try:
+            # Parse date format like "Jan 15, 2024"
+            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+            service_requests = service_requests.filter(created_at__date=date_obj.date())
+        except ValueError:
+            pass
+
+    # Order by most recent
+    service_requests = service_requests.order_by('-created_at')
+
+    # Get unique months for filter dropdown
+    all_requests = ServiceRequest.objects.filter(user=client, status='denied')
+    months = all_requests.dates('created_at', 'month', order='DESC')
+    months_list = [date.strftime('%B %Y') for date in months]
+
+    # Get unique dates for filter dropdown
+    dates = all_requests.dates('created_at', 'day', order='DESC')
+    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+    return render(request, 'services/allservices/denied_services.html', {
+        'service_requests': service_requests,
+        'months': months_list,
+        'dates': dates_list,
+    })
 # All services go there End  ----------------------------------------------------------------------------------
 
 # All concierge go there Start  ----------------------------------------------------------------------------------
@@ -422,9 +557,50 @@ def open_concierge_services(request):
     except Client.DoesNotExist:
         return redirect("mainapp:client_login")
 
-    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='open').order_by('-created_at')
+    # Base queryset
+    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='open')
 
-    return render(request, 'services/concierge/open_services.html', {'service_requests': service_requests})
+    # Get filter parameters
+    month_filter = request.GET.get('month')
+    date_filter = request.GET.get('date')
+
+    # Apply month filter
+    if month_filter:
+        try:
+            month_date = datetime.strptime(month_filter, '%B %Y')
+            service_requests = service_requests.filter(
+                created_at__year=month_date.year,
+                created_at__month=month_date.month
+            )
+        except ValueError:
+            pass
+
+    # Apply date filter
+    if date_filter:
+        try:
+            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+            service_requests = service_requests.filter(created_at__date=date_obj.date())
+        except ValueError:
+            pass
+
+    # Order by most recent
+    service_requests = service_requests.order_by('-created_at')
+
+    # Get unique months for filter dropdown
+    all_requests = ConciergeServiceRequest.objects.filter(user=client, status='open')
+    months = all_requests.dates('created_at', 'month', order='DESC')
+    months_list = [date.strftime('%B %Y') for date in months]
+
+    # Get unique dates for filter dropdown
+    dates = all_requests.dates('created_at', 'day', order='DESC')
+    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+    return render(request, 'services/concierge/open_services.html', {
+        'service_requests': service_requests,
+        'months': months_list,
+        'dates': dates_list,
+    })
+
 
 def completed_concierge_services(request):
     client_id = request.session.get("client_id")
@@ -437,9 +613,50 @@ def completed_concierge_services(request):
     except Client.DoesNotExist:
         return redirect("mainapp:client_login")
 
-    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed').order_by('-created_at')
+    # Base queryset
+    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed')
 
-    return render(request, 'services/concierge/completed_services.html', {'service_requests': service_requests})
+    # Get filter parameters
+    month_filter = request.GET.get('month')
+    date_filter = request.GET.get('date')
+
+    # Apply month filter
+    if month_filter:
+        try:
+            month_date = datetime.strptime(month_filter, '%B %Y')
+            service_requests = service_requests.filter(
+                created_at__year=month_date.year,
+                created_at__month=month_date.month
+            )
+        except ValueError:
+            pass
+
+    # Apply date filter
+    if date_filter:
+        try:
+            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+            service_requests = service_requests.filter(created_at__date=date_obj.date())
+        except ValueError:
+            pass
+
+    # Order by most recent
+    service_requests = service_requests.order_by('-created_at')
+
+    # Get unique months for filter dropdown
+    all_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed')
+    months = all_requests.dates('created_at', 'month', order='DESC')
+    months_list = [date.strftime('%B %Y') for date in months]
+
+    # Get unique dates for filter dropdown
+    dates = all_requests.dates('created_at', 'day', order='DESC')
+    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+    return render(request, 'services/concierge/completed_services.html', {
+        'service_requests': service_requests,
+        'months': months_list,
+        'dates': dates_list,
+    })
+
 
 def denied_concierge_services(request):
     client_id = request.session.get("client_id")
@@ -452,10 +669,49 @@ def denied_concierge_services(request):
     except Client.DoesNotExist:
         return redirect("mainapp:client_login")
 
-    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied').order_by('-created_at')
+    # Base queryset
+    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied')
 
-    return render(request, 'services/concierge/denied_services.html', {'service_requests': service_requests})
+    # Get filter parameters
+    month_filter = request.GET.get('month')
+    date_filter = request.GET.get('date')
 
+    # Apply month filter
+    if month_filter:
+        try:
+            month_date = datetime.strptime(month_filter, '%B %Y')
+            service_requests = service_requests.filter(
+                created_at__year=month_date.year,
+                created_at__month=month_date.month
+            )
+        except ValueError:
+            pass
+
+    # Apply date filter
+    if date_filter:
+        try:
+            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+            service_requests = service_requests.filter(created_at__date=date_obj.date())
+        except ValueError:
+            pass
+
+    # Order by most recent
+    service_requests = service_requests.order_by('-created_at')
+
+    # Get unique months for filter dropdown
+    all_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied')
+    months = all_requests.dates('created_at', 'month', order='DESC')
+    months_list = [date.strftime('%B %Y') for date in months]
+
+    # Get unique dates for filter dropdown
+    dates = all_requests.dates('created_at', 'day', order='DESC')
+    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+    return render(request, 'services/concierge/denied_services.html', {
+        'service_requests': service_requests,
+        'months': months_list,
+        'dates': dates_list,
+    })
 # All concierge go there End  ----------------------------------------------------------------------------------
 
 def client_manager_support(request):
@@ -790,47 +1046,144 @@ def export_csv(request, report_id):
     return response
 # Creating Reports 
 from django.shortcuts import render, get_object_or_404
+from django.db.models.functions import TruncMonth
+from django.db.models import DateTimeField
+from django.db.models import F
 
 def all_reports_view(request):
-    reports = WalkthroughReport.objects.all()
-    return render(request, 'mainapp/walktrug/all_reports.html', {'reports': reports})
+    reports = WalkthroughReport.objects.select_related("property").order_by("-datetime")
 
-# def report_detail_view(request, pk):
-#     report = get_object_or_404(WalkthroughReport, pk=pk)
-#     return render(request, 'mainapp/walktrug/report_detail.html', {'report': report})
+    # PROPERTY FILTER
+    property_id = request.GET.get("property")
+    if property_id:
+        reports = reports.filter(property_id=property_id)
+
+    # MONTH FILTER (YYYY-MM)
+    month = request.GET.get("month")
+    if month:
+        year, month_num = month.split("-")
+        reports = reports.filter(
+            datetime__year=year,
+            datetime__month=month_num
+        )
+
+    # ALL USER PROPERTIES (FOR DROPDOWN)
+    properties = PropertyManagement.objects.all()
+
+    # AVAILABLE MONTHS (ONLY MONTHS THAT EXIST IN REPORTS)
+    months = (
+        WalkthroughReport.objects
+        .annotate(month=TruncMonth("datetime"))
+        .values_list("month", flat=True)
+        .distinct()
+        .order_by("-month")
+    )
+
+    return render(
+        request,
+        "mainapp/walktrug/all_reports.html",
+        {
+            "reports": reports,
+            "properties": properties,
+            "months": months,
+        }
+    )
+
 import copy
 def report_detail_view(request, pk):
     report = get_object_or_404(WalkthroughReport, pk=pk)
     
-    # Create a modified version for the template
-    filtered_report = copy.deepcopy(report)
-    
-    # Loop through all fields in the model
-    for field_name in dir(filtered_report):
-        # Skip private/internal attributes and remarks fields
-        if field_name.startswith('_') or field_name.endswith('_remarks'):
-            continue
+    # ✅ COMPLETE FIELD LIST - EXACTLY MATCHES YOUR HTML
+    all_fields = {
+        # General Items
+        'gie1', 'gie2', 'gie3', 'gie4', 'gie5', 'gie6', 'gie7', 'gie8', 'gie9', 
+        'gie10', 'gie11', 'gie12', 'gie13', 'gie14', 'gie15',
+        'gii1', 'gii2', 'gii3', 'gii4', 'gii5', 'gii6', 'gii7', 'gii8', 'gii9',
         
-        field_value = getattr(filtered_report, field_name, None)
-        # Set to None if not "Non-Compliant"
-        if field_value is not None and field_value != "Non-Compliant":
-            setattr(filtered_report, field_name, None)
+        # Garage
+        'garage1', 'garage2', 'garage3', 'garage4', 'garage5', 'garage6', 
+        'garage7', 'garage8', 'garage9',
+        
+        # Laundry
+        'laundry1', 'laundry2', 'laundry3', 'laundry4', 'laundry5', 'laundry6',
+        
+        # Kitchen
+        'kitchen1', 'kitchen2', 'kitchen3', 'kitchen4', 'kitchen5', 'kitchen6', 
+        'kitchen7', 'kitchen8', 'kitchen9', 'kitchen10', 'kitchen11', 'kitchen12',
+        
+        # Butlers
+        'butlers1', 'butlers2', 'butlers3', 'butlers4', 'butlers5', 'butlers6',
+        'butlers7', 'butlers8', 'butlers9', 'butlers10', 'butlers11', 'butlers12',
+        
+        # Breakfast
+        'breakfast1', 'breakfast2', 'breakfast3', 'breakfast4', 'breakfast5', 'breakfast6',
+        
+        # Entry
+        'entry1', 'entry2', 'entry3', 'entry4',
+        
+        # Great Room
+        'greatroom1', 'greatroom2', 'greatroom3', 'greatroom4', 'greatroom5',
+        
+        # Dining
+        'dining1', 'dining2', 'dining3', 'dining4', 'dining5',
+        
+        # Closets
+        'closets1', 'closets2', 'closets3', 'closets4', 'closets5',
+        'closets_upper1', 'closets_upper2', 'closets_upper3', 'closets_upper4', 'closets_upper5',
+        
+        # Hallways
+        'hallways_main1', 'hallways_main2', 'hallways_main3', 'hallways_main4', 'hallways_main5',
+        'hallways_upper1', 'hallways_upper2', 'hallways_upper3', 'hallways_upper4', 'hallways_upper5',
+        
+        # Bedrooms
+        'bedroom1_1', 'bedroom1_2', 'bedroom1_3', 'bedroom1_4',
+        'bedroom2_1', 'bedroom2_2', 'bedroom2_3', 'bedroom2_4',
+        'bedroom3_1', 'bedroom3_2', 'bedroom3_3', 'bedroom3_4',
+        'bedroom4_1', 'bedroom4_2', 'bedroom4_3', 'bedroom4_4',
+        
+        # Bathrooms
+        'bathroom1_1', 'bathroom1_2', 'bathroom1_3', 'bathroom1_4', 'bathroom1_5', 'bathroom1_6', 
+        'bathroom1_7', 'bathroom1_8',
+        'bathroom2_1', 'bathroom2_2', 'bathroom2_3', 'bathroom2_4', 'bathroom2_5', 'bathroom2_6', 
+        'bathroom2_7', 'bathroom2_8',
+        'bathroom3_1', 'bathroom3_2', 'bathroom3_3', 'bathroom3_4', 'bathroom3_5', 'bathroom3_6', 
+        'bathroom3_7', 'bathroom3_8',
+        'bathroom4_1', 'bathroom4_2', 'bathroom4_3', 'bathroom4_4', 'bathroom4_5', 'bathroom4_6', 
+        'bathroom4_7', 'bathroom4_8',
+        'bathroom5_1', 'bathroom5_2', 'bathroom5_3', 'bathroom5_4', 'bathroom5_7', 'bathroom5_8',
+        
+        # Gym
+        'gym_1', 'gym_2', 'gym_3', 'gym_4', 'gym_5', 'gym_6', 'gym_7',
+        
+        # Theatre
+        'theatre_1', 'theatre_2', 'theatre_3', 'theatre_4', 'theatre_5',
+        
+        # Guest House
+        'guest_house_1', 'guest_house_2', 'guest_house_3', 'guest_house_4', 'guest_house_5',
+        
+        # Guest House Bath
+        'guest_house_bath_1', 'guest_house_bath_2', 'guest_house_bath_3', 'guest_house_bath_4', 
+        'guest_house_bath_5', 'guest_house_bath_6', 'guest_house_bath_7', 'guest_house_bath_8'
+    }
     
-    # Ensure the report object still has a valid pk (ID) for URL generation
-    if not filtered_report.pk:
-        filtered_report.pk = report.pk
-     # Access the user's first and last name via the foreign key
-    client_first_name = report.user.first_name if report.user else ''
-    client_last_name = report.user.last_name if report.user else ''
-    report_description = report.description if report.description else 'Walkthrough Report'
-    report_property = report.property if report.property else 'Walkthrough Report'
+    # ✅ Fix ALL fields: None/empty → "N/A" so your HTML {% if %} conditions PASS
+    for field_name in all_fields:
+        field_value = getattr(report, field_name, None)
+        if field_value is None or field_value == '':
+            setattr(report, field_name, "N/A")
+    
+    # Context for template (your existing variables)
+    context = {
+        'report': report,
+        'client_first_name': report.user.first_name if report.user else '',
+        'client_last_name': report.user.last_name if report.user else '',
+        'report_datetime': report.datetime.strftime('%Y-%m-%d') if report.datetime else 'No Datetime Available',
+        'report_description': report.description if report.description else 'Walkthrough Report',
+        'report_property': str(report.property) if report.property else 'Walkthrough Report',
+    }
+    
+    return render(request, 'mainapp/walktrug/report_detail.html', context)
 
-    # Access the datetime field
-   # Modify the datetime format to show only the date (Year-Month-Day)
-    report_datetime = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'No Datetime Available'
-
-    return render(request, 'mainapp/walktrug/report_detail.html', {'report': filtered_report,'client_first_name': client_first_name,
-        'client_last_name': client_last_name,'report_datetime': report_datetime,'report_description':report_description,'report_property':report_property}) 
 
 
 def completed_reports_view(request):

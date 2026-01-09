@@ -2,32 +2,43 @@
 {% load static %}
 
 {% block content %}
+<!-- Font Awesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 <style>
 * {
-  font-family: 'Montserrat', sans-serif !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*:not(i) {
+    font-family: 'Roboto', sans-serif !important;
 }
 
 body {
     background-color: white;
 }
 
+.icon-container i {
+    margin-right: 20px;
+    font-size: 24px;
+    color: #000000;
+}
+
 .full-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: left;
-    width: 80%;
-    margin: auto;
-    padding: 20px;
-    color: #1a1a1a;
-    max-width: 1000px;
+    margin-top: 10px;
+    max-width: 870px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 25px;
+    width: 95%;
 }
 
 @media (max-width: 700px) {
     .full-container {
-        width: 95% !important;
-        padding: 10px !important;
+        width: 95%;
+        padding: 15px;
     }
 }
 
@@ -45,14 +56,12 @@ body {
 }
 
 .first1 p {
-    font-size: 2.55rem;
+    font-size: 2rem;
     line-height: 2.5rem;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: -2px;
-    color: rgb(24,48,72);
-    font-family: 'Impact', sans-serif;
+    margin-bottom: 0;
+    color: #13375b;
 }
 
 @media (min-width: 1200px) {
@@ -74,147 +83,178 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #13375b;
+}
+
+@media (max-width: 600px) {
+    .first2 {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
 }
 
 .store-logo {
-    height: 50px;
+    height: 40px;
     width: auto;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
+    margin-left: 10px;
 }
 
 .store-logo:hover {
     transform: scale(1.1);
 }
 
+.container {
+    background: #ffffff;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
 .section-title {
-    font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: rgb(201, 163, 103);
-    border-bottom: 0.5px solid #e8dbd1;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-    text-align: left;
-    max-width: 1550px;
-    width: 105%;
-    margin-left: -8%;
-}
-
-.container, .container2 {
-    max-width: 90%;
-    margin: 50px auto;
-    padding: 20px;
-}
-
-@media (max-width: 700px) {
-    .container, .container2 {
-        max-width: 100% !important;
-        padding: 5px !important;
-    }
-    
-    .container:nth-of-type(2),
-    .container:nth-of-type(3) {
-        margin-top: 10px !important;
-    }
-}
-
-.container:nth-of-type(2) {
-    margin-top: -3%;
-}
-
-.container:nth-of-type(3) {
-    margin-top: -3%;
-}
-
-.button-container, .button-container2, .button-container3 {
-    margin-top: 20px;
-}
-
-.button {
-    display: block;
-    width: 100%;
-    padding: 20px;
-    margin: 15px 0;
-    border: none;
-    border-radius: 5px;
     font-size: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
+    font-weight: 600;
+    color: #13375b;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e8dbd1;
+}
+
+.section-title:first-of-type {
+    margin-top: 0;
+}
+
+.menu-item {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #13375b;
+    margin-bottom: 10px;
+    padding: 25px 0;
+    border-radius: 4px;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
 
-.button:hover {
+.menu-item:hover {
     transform: translateY(-4px) scale(1.05);
 }
 
-.btn1 {
-    background-color: #f2e6d8 !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+/* Property / Client Information Section - Exact colors from admin */
+.property-info {
+    background-color: #f0e6d9;
 }
 
-.btn2 {
-    background-color: #4e73df !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+.service-request {
+    background-color: #dfc5a0;
 }
 
-.btn3 {
-    background-color: #d2ad68 !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+.documents {
+    background-color: #e8a56c;
 }
 
-.btn4 {
-    background-color: #a8cff4 !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+/* Concierge Services Section - Exact colors from admin */
+.concierge-request {
+    background-color: #83d0e6;
 }
 
-.btn5 {
-    background-color: #90aac8 !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+.pre-arrival {
+    background-color: #5baecc;
 }
 
-.btn6 {
-    background-color: #5d7b9b !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+.departure {
+    background-color: #2f7f96;
 }
 
-.btn7 {
-    background-color: #8a998f !important;
-    color: rgb(24,48,72) !important;
-    border: none !important;
+/* Additional Services Section - Exact colors from admin */
+.profile-security {
+    background-color: #e2d7ea;
 }
 
-.btn8 {
-    background-color: #ffffff !important;
-    color: rgb(24,48,72) !important;
-    border: 1px solid #000000 !important;
+.contact-manager {
+    background-color: #bb8fce;
 }
 
 p {
-    color: rgb(24,48,72) !important;
+    color: #13375b;
 }
 
-.first3 hr {
-    width: 100%;
-    border: 1px solid #ccc;
-    margin-top: 5px;
+/* Sub-menu styling */
+.sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
 }
+
+.sub-menu.active {
+    max-height: 1500px;
+}
+
+.sub-item {
+    margin-left: 20px;
+    background-color: #53b4ff;
+    margin: 5px 0;
+    padding: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 20px;
+    font-weight: 600;
+    color: black;
+}
+
+.sub-item:hover {
+    color: #d1aa6b;
+}
+
+/* Sub-sub-menu styling */
+.sub-sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.sub-sub-menu.active {
+    max-height: 500px;
+}
+
+.sub-sub-item {
+    text-align: center;
+    background-color: #b2b2b2;
+    margin: 5px 0px;
+    padding: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    font-size: 20px;
+    font-weight: 600;
+    color: black;
+}
+
+.sub-sub-item:hover {
+    color: #d1aa6b;
+}
+
 @media (max-width: 700px) {
-
-.section-title {
-    margin-left: 0%;
-}
-    .container, .container2 {
-        margin: 10px auto !important;
+    .container {
+        padding: 15px;
+    }
+    
+    .menu-item {
+        font-size: 18px;
+        padding: 20px 0;
+    }
+    
+    .sub-item, .sub-sub-item {
+        font-size: 18px;
+        padding: 15px;
     }
 }
 </style>
@@ -222,65 +262,85 @@ p {
 <div class="full-container">
     <div class="first1">
         <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
-        <p id="main-heading">WELCOME {{ client.first_name }} {{ client.last_name }}</p>
+        <p id="main-heading">Welcome {{ client.first_name }} {{ client.last_name }}</p>
     </div>
 
     <div class="first2">
         <p>Logged In as: {{ client.username }}</p>
 
-<div id="store-logos">
-    <a href="https://play.google.com/store" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
-             alt="Google Play" class="store-logo">
-    </a>
-    <a href="https://www.apple.com/app-store/" target="_blank">
-        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
-             alt="App Store" class="store-logo">
-    </a>
-</div>
-
-<script>
-(function() {
-  const isWebView =
-    window.ReactNativeWebView ||                          // Expo / RN WebView
-    /(WebView|wv|_wv|FBAN|FBAV|Instagram|Line|Twitter)/i.test(navigator.userAgent) || // Android/iOS webviews
-    (/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent));       // iOS specific
-
-  if (isWebView) {
-    const el = document.getElementById('store-logos');
-    if (el) el.style.display = 'none';
-  }
-})();
-</script>
-
-
+        <div id="store-logos">
+            <a href="https://play.google.com/store" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                     alt="Google Play" class="store-logo">
+            </a>
+            <a href="https://www.apple.com/app-store/" target="_blank">
+                <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
+                     alt="App Store" class="store-logo">
+            </a>
+        </div>
     </div>
 
     <div class="container">
+        <!-- Property / Client Information Section -->
         <div class="section-title">Property / Client Information</div>
-        <div class="button-container">
-            <button class="button btn1" onclick="window.location.href='{% url 'mainapp:client_properties' %}';">Property / Client Information</button>
-            <button class="button btn2" onclick="window.location.href='{% url 'mainapp:service_request' %}';">Service Request</button>
-            <button class="button btn3" onclick="window.location.href='{% url 'mainapp:docoments' %}';">Documents</button>
+        <div class="menu-item property-info" onclick="window.location.href='{% url 'mainapp:client_properties' %}';">
+            Property / Client Information
         </div>
-    </div>
-
-    <div class="container" style="margin-top: -3%;">
-        <div class="section-title">CONCIERGE SERVICES</div>
-        <div class="button-container2">
-            <button class="button btn4" onclick="window.location.href='{% url 'servicesapp:Concierge_request' %}';">Concierge Request</button>
-            <button class="button btn5" onclick="window.location.href='{% url 'servicesapp:prearrival_form' %}';">Pre-Arrival Notification</button>
-            <button class="button btn6" onclick="window.location.href='{% url 'servicesapp:departure_form' %}';">Departure Notification & Refresh</button>
+        <div class="menu-item service-request" onclick="window.location.href='{% url 'mainapp:service_request' %}';">
+            Submit Service Request
         </div>
-    </div>
+        <div class="menu-item documents" onclick="window.location.href='{% url 'mainapp:docoments' %}';">
+            Documents
+        </div>
 
-    <div class="container" style="margin-top: -3%;">
+        <!-- Concierge Services Section -->
+        <div class="section-title">Concierge Services</div>
+        <div class="menu-item concierge-request" onclick="window.location.href='{% url 'servicesapp:Concierge_request' %}';">
+            Concierge Request
+        </div>
+        <div class="menu-item pre-arrival" onclick="window.location.href='{% url 'servicesapp:prearrival_form' %}';">
+            Pre-Arrival Notification
+        </div>
+        <div class="menu-item departure" onclick="window.location.href='{% url 'servicesapp:departure_form' %}';">
+            Departure Notification & Refresh
+        </div>
+
+        <!-- Additional Services Section -->
         <div class="section-title">Additional Services</div>
-        <div class="button-container3">
-            <button class="button btn7" onclick="window.location.href='{% url 'mainapp:client_profile_update' %}';">Profile & Security</button>
-            <button class="button btn8" onclick="window.location.href='{% url 'my_properties' %}';">Contact Your Client Manager</button>
+        <div class="menu-item profile-security" onclick="window.location.href='{% url 'mainapp:client_profile_update' %}';">
+            Profile & Security
+        </div>
+        <div class="menu-item contact-manager" onclick="window.location.href='{% url 'my_properties' %}';">
+            Contact Your Client Manager
         </div>
     </div>
 </div>
+
+<script>
+// Hide store logos in WebView
+(function() {
+    const isWebView =
+        window.ReactNativeWebView ||
+        /(WebView|wv|_wv|FBAN|FBAV|Instagram|Line|Twitter)/i.test(navigator.userAgent) ||
+        (/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent));
+
+    if (isWebView) {
+        const el = document.getElementById('store-logos');
+        if (el) el.style.display = 'none';
+    }
+})();
+
+// Menu toggle functionality (if needed for future expansion)
+document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    menuItems.forEach((item) => {
+        item.addEventListener('click', function(e) {
+            // Menu items will navigate directly via onclick
+            // This can be expanded if sub-menus are needed
+        });
+    });
+});
+</script>
 
 {% endblock %}

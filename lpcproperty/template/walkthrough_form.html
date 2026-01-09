@@ -3406,4 +3406,235 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
+
+<!-- For checking the remarks thing  -->
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Heads-Up & Non-Compliant MANDATORY remarks validation (Normal when filled)
+    function initMandatoryRemarksValidation() {
+        const requiredRemarksFields = new Set();
+        
+        function requiresRemarks(fieldName) {
+            const radioGroup = document.querySelector(`input[name="${fieldName}"]`)?.closest('.radio-group');
+            if (radioGroup) {
+                const selectedRadio = radioGroup.querySelector('input[type="radio"]:checked');
+                return selectedRadio && ['Heads-Up', 'Non-Compliant'].includes(selectedRadio.value);
+            }
+            
+            const selectField = document.querySelector(`select[name="${fieldName}"]`);
+            if (selectField) {
+                return ['Heads-Up', 'Non-Compliant'].includes(selectField.value);
+            }
+            
+            return false;
+        }
+        
+        function getRemarksField(mainFieldName) {
+            const remarksName = `${mainFieldName}_remarks`;
+            return document.querySelector(`[name="${remarksName}"], textarea[name="${remarksName}"], input[name="${remarksName}"]`);
+        }
+        
+        function monitorFieldChanges() {
+            document.addEventListener('change', function(e) {
+                if (e.target.type === 'radio' && e.target.closest('.radio-group')) {
+                    handleRemarksRequirement(e.target.name);
+                }
+            });
+            
+            document.querySelectorAll('select').forEach(select => {
+                select.addEventListener('change', function() {
+                    handleRemarksRequirement(this.name);
+                });
+            });
+            
+            // Monitor remarks fields for content changes
+            document.addEventListener('input', function(e) {
+                if (e.target.matches('[name*="_remarks"], textarea[name*="_remarks"], input[name*="_remarks"]')) {
+                    checkRemarksContent(e.target);
+                }
+            });
+        }
+        
+        function handleRemarksRequirement(fieldName) {
+            const nowRequiresRemarks = requiresRemarks(fieldName);
+            const remarksField = getRemarksField(fieldName);
+            
+            if (!remarksField) return;
+            
+            if (nowRequiresRemarks) {
+                requiredRemarksFields.add(fieldName);
+                remarksField.required = true;
+                checkRemarksContent(remarksField); // Check if already filled
+            } else {
+                if (requiredRemarksFields.has(fieldName)) {
+                    requiredRemarksFields.delete(fieldName);
+                    remarksField.required = false;
+                    remarksField.classList.remove('mandatory-remarks');
+                    hideRemarksWarning(remarksField);
+                }
+            }
+            
+            updateNavigationBlock();
+        }
+        
+        // Check if remarks field has content and update styling
+        function checkRemarksContent(remarksField) {
+            const fieldName = remarksField.name.replace('_remarks', '');
+            if (!requiredRemarksFields.has(fieldName)) return;
+            
+            if (remarksField.value.trim()) {
+                // FILLED: Remove red styling + warning
+                remarksField.classList.remove('mandatory-remarks');
+                hideRemarksWarning(remarksField);
+            } else {
+                // EMPTY: Add red styling + warning
+                remarksField.classList.add('mandatory-remarks');
+                showRemarksWarning(remarksField);
+            }
+            
+            updateNavigationBlock();
+        }
+        
+        function showRemarksWarning(remarksField) {
+            let warning = remarksField.parentElement?.querySelector('.mandatory-warning');
+            if (!warning) {
+                warning = document.createElement('div');
+                warning.className = 'mandatory-warning';
+                warning.innerHTML = '⚠️ REQUIRED: Explain issue';
+                warning.style.cssText = `
+                    color: #c62828; font-weight: 600; font-size: 12px; 
+                    margin-top: 4px; background: #ffebee; padding: 6px 10px;
+                    border-radius: 4px; border-left: 3px solid #d32f2f;
+                `;
+                remarksField.parentElement.appendChild(warning);
+            }
+        }
+        
+        function hideRemarksWarning(remarksField) {
+            const warning = remarksField.parentElement?.querySelector('.mandatory-warning');
+            if (warning) warning.remove();
+        }
+        
+        function updateNavigationBlock() {
+            const hasPendingRemarks = Array.from(requiredRemarksFields).some(fieldName => {
+                const remarksField = getRemarksField(fieldName);
+                return remarksField && !remarksField.value.trim();
+            });
+            
+            const nextBtn = document.getElementById('next-tab');
+            const submitBtns = document.querySelectorAll('button[type="submit"], input[type="submit"]');
+            
+            if (nextBtn) {
+                nextBtn.disabled = hasPendingRemarks;
+                nextBtn.style.opacity = hasPendingRemarks ? '0.7' : '1';
+                nextBtn.title = hasPendingRemarks ? 'Fill all required remarks first' : '';
+            }
+            
+            submitBtns.forEach(btn => {
+                btn.disabled = hasPendingRemarks;
+                btn.title = hasPendingRemarks ? 'Fill all required remarks first' : '';
+            });
+            
+            updateGlobalWarning(hasPendingRemarks);
+        }
+        
+        function updateGlobalWarning(show) {
+            let banner = document.getElementById('mandatory-warning-banner');
+            if (show && !banner) {
+                banner = document.createElement('div');
+                banner.id = 'mandatory-warning-banner';
+                banner.innerHTML = `⚠️ ${requiredRemarksFields.size} remark(s) needed`;
+                banner.style.cssText = `
+                    position: fixed; top: 10px; right: 10px; z-index: 10000;
+                    background: #d32f2f; color: white; padding: 10px 16px;
+                    border-radius: 6px; font-weight: 600; font-size: 13px;
+                    box-shadow: 0 4px 12px rgba(211,47,47,0.4);
+                `;
+                document.body.appendChild(banner);
+            } else if (!show && banner) {
+                banner.remove();
+            } else if (banner && show) {
+                banner.innerHTML = `⚠️ ${requiredRemarksFields.size} remark(s) needed`;
+            }
+        }
+        
+        const form = document.getElementById('walkthrough-form') || document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const hasPendingRemarks = Array.from(requiredRemarksFields).some(fieldName => {
+                    const remarksField = getRemarksField(fieldName);
+                    return remarksField && !remarksField.value.trim();
+                });
+                
+                if (hasPendingRemarks) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert(`${requiredRemarksFields.size} required remarks missing! Please fill all highlighted fields.`);
+                    const firstPending = Array.from(requiredRemarksFields).find(fieldName => {
+                        const remarksField = getRemarksField(fieldName);
+                        return remarksField && !remarksField.value.trim();
+                    });
+                    if (firstPending) {
+                        getRemarksField(firstPending)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        getRemarksField(firstPending)?.focus();
+                    }
+                    return false;
+                }
+            });
+        }
+        
+        function initExistingRequired() {
+            setTimeout(() => {
+                document.querySelectorAll('.radio-group input[type="radio"]:checked, select').forEach(field => {
+                    const fieldName = field.name || field.closest('.radio-group')?.querySelector('input[type="radio"]')?.name;
+                    if (fieldName && requiresRemarks(fieldName)) {
+                        handleRemarksRequirement(fieldName);
+                    }
+                });
+            }, 500);
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            .mandatory-remarks {
+                border: 2px solid #d32f2f !important;
+                background: #fff8f8 !important;
+                box-shadow: 0 0 8px rgba(211, 47, 47, 0.2) !important;
+            }
+            
+            .mandatory-warning {
+                animation: subtleShake 2s infinite;
+            }
+            
+            @keyframes subtleShake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-2px); }
+                75% { transform: translateX(2px); }
+            }
+            
+            #next-tab:disabled, button[type="submit"]:disabled {
+                background: #d32f2f !important;
+                cursor: not-allowed !important;
+                opacity: 0.8;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        monitorFieldChanges();
+        initExistingRequired();
+        setInterval(updateNavigationBlock, 400);
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMandatoryRemarksValidation);
+    } else {
+        initMandatoryRemarksValidation();
+    }
+    
+    setTimeout(initMandatoryRemarksValidation, 1000);
+});
+</script>
+
+
 {% endblock content %}

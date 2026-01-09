@@ -2,690 +2,149 @@
 {% load static %}
 
 {% block content %}
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    }
-    
-    body {
-      background-color: #f5f7fa;
-      color: #ffffff;
-      line-height: 1.6;
-      padding: 0;
-    }
-    
-    header {
-      background-color: #fff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 1.2rem 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #2563eb;
-    }
-    
-    
-    .container {
-      max-width: 1100px;
-      padding: 2rem;
-    }
-    
-    .page-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 0.5rem;
-    }
-    
-    .page-subtitle {
-      font-size: 1.1rem;
-      color: #64748b;
-      margin-bottom: 2.5rem;
-    }
-    
-    .card {
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      min-height: 300px;
-    }
-    
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .section-title svg {
-      width: 20px;
-      height: 20px;
-    }
-    
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-    
-    .form-label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #64748b;
-      margin-bottom: 0.5rem;
-    }
-    
-    .form-control {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      background-color: #fff;
-      font-size: 1rem;
-      color: #1e293b;
-      transition: all 0.2s ease;
-    }
-    
-    .form-control:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    
-    .date-time-container {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .date-picker-container, .time-picker-container {
-      position: relative;
-      flex: 1;
-    }
-    
-    .icon {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-      pointer-events: none;
-    }
-    
-    .btn-container {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: space-between;
-    }
-    
-    .btn {
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .btn-primary {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-    }
-    
-    .btn-secondary {
-      background-color: transparent;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-    }
-    
-    .btn-primary:hover {
-      background-color: #1d4ed8;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    }
-    
-    .btn-secondary:hover {
-      background-color: #f8fafc;
-      color: #1e293b;
-    }
-    
-    .btn-disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
-    .progress-container {
-      /* overflow-x: auto; */
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-    
-    .progress-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      min-width: 900px;
-    }
-    
-    .progress-bar::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      right: 20px;
-      height: 3px;
-      background-color: #e2e8f0;
-      transform: translateY(-50%);
-      z-index: 1;
-    }
-    
-    .progress-bar-fill {
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      height: 3px;
-      background-color: #2563eb;
-      transform: translateY(-50%);
-      transition: width 0.3s ease;
-      z-index: 2;
-    }
-    
-    .step {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: white;
-      border: 3px solid #e2e8f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #64748b;
-      position: relative;
-      z-index: 3;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .step.active, .step.completed {
-      border-color: #2563eb;
-      background-color: #2563eb;
-      color: white;
-    }
-    
-    .step:hover:not(.active) {
-      background-color: #f8fafc;
-      transform: scale(1.05);
-    }
-    
-    .step-label {
-      position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #64748b;
-    }
-    
-    .step.active + .step-label, .step.completed + .step-label {
-      color: #2563eb;
-      font-weight: 600;
-    }
-    
-    .form-step {
-      display: none;
-    }
-    
-    .form-step.active {
-      display: block;
-      animation: fadeIn 0.5s;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @media (max-width: 768px) {
-      .date-time-container {
-        flex-direction: column;
-      }
-      .progress-container {
-      overflow-x: auto;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-      .nav-links {
-        display: none;
-      }
-      
-      .btn-container {
-        flex-direction: column-reverse;
-        gap: 1rem;
-      }
-      
-      .btn {
-        width: 100%;
-      }
-    }
-  </style>
-   <style>
-    .progress-container {
-        width: 100%;
-        margin: auto;
-        position: relative;
-        padding-top: 20px;
-        margin-bottom: 20px;
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
-    /* Thin baseline for reference */
-    .progress-line {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #ddd; /* Light gray baseline */
-        border-radius: 2px;
-        z-index: 0;
-    }
+/* FORCE ROBOTO */
+*,
+*::before,
+*::after {
+  font-family: 'Roboto', sans-serif !important;
+}
 
-    /* Progress bar filling over the baseline */
-    .progress-bar-fill {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        height: 4px;
-        width: 50%; /* Adjust as per progress */
-        background: #007bff;
-        border-radius: 2px;
-        transition: width 0.3s ease-in-out;
-        z-index: 1;
-    }
+body {
+  background:#f5f5f5;
+  color:#222;
+}
 
-    .trial {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: relative;
-        width: 100%;
-    }
+.lotus-container {
+  max-width:1100px;
+  margin:40px auto;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 4px 30px rgba(0,0,0,.1);
+  padding:40px;
+}
 
-    .step {
-        position: relative;
-        text-align: center;
-        font-weight: bold;
-        font-size: 16px;
-        background: #fff;
-        padding: 5px 10px;
-        z-index: 2;
-    }
+.section-title {
+  font-size:1.1rem;
+  font-weight:400;
+  margin:25px 0 12px;
+}
+
+.form-label {
+  font-size:0.9rem;
+  font-weight:500;
+  color:#555;
+  margin-bottom:6px;
+  display:block;
+}
+
+.form-control {
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #e0e0e0;
+  border-radius:8px;
+}
+
+.form-control:focus {
+  outline:none;
+  border-color:#d1aa6b;
+  box-shadow:0 0 0 2px rgba(209,170,107,.25);
+}
+
+.btn-primary {
+  background:#d1aa6b;
+  border:none;
+  padding:12px 28px;
+  border-radius:8px;
+  font-weight:500;
+}
+
+.btn-secondary {
+  border:1px solid #ddd;
+  background:#fff;
+  padding:12px 28px;
+  border-radius:8px;
+}
+
+.btn-container {
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
 </style>
 
+<div class="lotus-container">
 
-  <div class="container">
-    <h1 class="page-title">Departure Notification & Refresh</h1>
-    <p class="page-subtitle">Please complete all required information to submit your travel request.</p>
-    
-   
-    
- 
- 
-   
-{% if messages %}
-<div class="space-y-3">
-  {% for message in messages %}
-    <div class="alert alert-dismissible fade show p-4 rounded-3 border-start-4
-                {% if message.tags == 'success' %}
-                  alert-success border-success
-                {% elif message.tags == 'error' %}
-                  alert-danger border-danger
-                {% elif message.tags == 'warning' %}
-                  alert-warning border-warning
-                {% else %}
-                  alert-info border-info
-                {% endif %}">
-      <p class="mb-0 text-sm font-weight-medium">{{ message }}</p>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding-bottom:20px;margin-bottom:30px;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <img src="{% static 'img/smalllogo.png' %}" style="width:64px">
+      <h1 style="font-size:2rem;">Lotus Property</h1>
     </div>
-  {% endfor %}
-</div>
-{% endif %}
-      
-    
-    <form id="multi-step-form" method="POST">
-      {% csrf_token %}
-      <!-- Step 1: Home - Arrival Details -->
-      <div class="form-step active" data-step="1">
-        <div class="card">
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Departure Details
-          </h2>
-      
-          <div class="form-group">
-            <input type="text" name="name" class="form-control" 
-                   value="{{ client.first_name }} {{ client.last_name }}" required hidden>
-        </div>
-      
-          <div class="form-group">
-            <label class="form-label">Arrival Date & Time</label>
-            <div class="date-time-container">
-              <div class="date-picker-container">
-                <input type="date" id="departure_date" name="departure_date" class="form-control" required>
-              </div>
-              <div class="time-picker-container">
-                <input type="time" id="departure_time" name="departure_time" class="form-control" required>
-              </div>
-            </div>
-          </div>
-      
-        <!-- HOUSEKEEPING SECTION -->
-          <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-            Housekeeping (wash / remake beds, etc.):
-          </h2>
-          <div class="form-group" style="margin-bottom: 8px;">
-            <textarea id="housekeeping" name="housekeeping" class="form-control" placeholder="Enter alcohol details" rows="4" style="padding: 10px; font-size: 16px;"></textarea>
-          </div>
-      
-          <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-            Trash / Recycle Removal:
-          </h2>
-          <div class="form-group" style="margin-bottom: 8px;">
-            <textarea id="trash" name="trash" class="form-control" placeholder="Enter housekeeping details" rows="4" style="padding: 10px; font-size: 16px;"></textarea>
-          </div>
-      
-          <h2 class="section-title" style="margin: 5px 0 8px; font-size: 20px; color: #111;">
-            Wash / Refuel Automobiles:
-          </h2>
-          <div class="form-group" style="margin-bottom: 8px;">
-            <textarea id="automobiles" name="automobiles" class="form-control" placeholder="Enter automobile details" rows="4" style="padding: 10px; font-size: 16px;"></textarea>
-          </div>
-      
-        <!-- ADDITIONAL REQUESTS SECTION -->
-          <h2 class="section-title">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Additional Pre-arrival Requests :
-          </h2>
-      
-          <div class="form-group">
-            <label class="form-label">Write down your additional Prearrival requests here - </label>
-            <textarea id="additional" name="additional" class="form-control" placeholder="Enter meal preferences or requirements" rows="5"></textarea>
-          </div>
-        </div>
-      
-        <!-- SUBMIT BUTTON -->
-        <div class="btn-container">
-          <a href="{% url 'mainapp:dashboard' %}" class="btn btn-secondary back-btn">Back</a>
-          <button type="submit" class="btn btn-primary submit-btn">Submit</button>
-        </div>
-        
-      </div>
-      
-      
-      
-    </form>
+    <p style="color:#666">Client Service Portal</p>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('multi-step-form');
-        const steps = document.querySelectorAll('.form-step');
-        const nextButtons = document.querySelectorAll('.next-btn');
-        const prevButtons = document.querySelectorAll('.prev-btn');
-        const stepIndicators = document.querySelectorAll('.step');
-        const progressFill = document.getElementById('progress-fill');
-        let currentStep = 1;
+  {% if messages %}
+    {% for message in messages %}
+      <div style="padding:14px;border-radius:8px;background:#e6f4ea;color:#146c43;margin-bottom:12px;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
 
-        // Update progress bar
-        function updateProgressBar() {
-            const totalSteps = steps.length;
-            const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
-            progressFill.style.width = `calc(${progressPercentage}% - ${20 * progressPercentage / 100}px)`;
-        }
+  <h2 class="section-title" style="color:#d1aa6b;font-size:1.6rem;">
+    Departure Notification & Refresh
+  </h2>
 
-        // Show specific step
-        function showStep(stepNumber) {
-            if (stepNumber < 1 || stepNumber > steps.length) return;
+  <p style="color:#666;margin-bottom:20px;">
+    Please complete all required information to submit your travel request.
+  </p>
 
-            steps.forEach(step => step.classList.remove('active'));
-            stepIndicators.forEach(indicator => {
-                const indicatorStep = parseInt(indicator.dataset.step);
-                indicator.classList.toggle('active', indicatorStep === stepNumber);
-                indicator.classList.toggle('completed', indicatorStep < stepNumber);
-            });
+  <form method="POST">
+    {% csrf_token %}
 
-            const targetStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
-            if (targetStep) {
-                targetStep.classList.add('active');
-                currentStep = stepNumber;
-                updateProgressBar();
-            }
-        }
+    <input type="text" name="name"
+           value="{{ client.first_name }} {{ client.last_name }}" hidden>
 
-        // Event listeners for next buttons
-        nextButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const nextStepNumber = parseInt(this.closest('.form-step').dataset.step) + 1;
-                showStep(nextStepNumber);
-            });
-        });
+    <h2 class="section-title">Departure Details</h2>
 
-        // Event listeners for previous buttons
-        prevButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const prevStepNumber = parseInt(this.closest('.form-step').dataset.step) - 1;
-                showStep(prevStepNumber);
-            });
-        });
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <label class="form-label">Departure Date</label>
+        <input type="date" name="departure_date" class="form-control" required>
+      </div>
+      <div>
+        <label class="form-label">Departure Time</label>
+        <input type="time" name="departure_time" class="form-control" required>
+      </div>
+    </div>
 
-        // Event listeners for step indicators
-        stepIndicators.forEach(indicator => {
-            indicator.addEventListener('click', function() {
-                showStep(parseInt(this.dataset.step));
-            });
-        });
+    <h2 class="section-title">Housekeeping (wash / remake beds, etc.)</h2>
+    <textarea name="housekeeping" rows="4" class="form-control"
+              placeholder="Enter housekeeping details"></textarea>
 
-        // Allow form submission
-        form.addEventListener('submit', function() {
-            alert('Form submitted successfully!');
-        });
+    <h2 class="section-title">Trash / Recycle Removal</h2>
+    <textarea name="trash" rows="4" class="form-control"
+              placeholder="Enter trash / recycle details"></textarea>
 
-        // Initialize
-        showStep(1);
-        updateProgressBar();
-    });
-</script>
-<style>
-  .btn-container {
-    position: relative;
-    height: 60px; /* or as needed */
-  }
-  
-  .submit-btn {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-  }
-  
-  .back-btn {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-  }
-  </style>
-  
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('multi-step-form');
-  const steps = document.querySelectorAll('.form-step');
-  const nextButtons = document.querySelectorAll('.next-btn');
-  const prevButtons = document.querySelectorAll('.prev-btn');
-  const stepIndicators = document.querySelectorAll('.step');
-  const progressFill = document.getElementById('progress-fill');
-  let currentStep = 1;
-  
-  // Update progress bar
-  function updateProgressBar() {
-    const totalSteps = steps.length;
-    const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
-    progressFill.style.width = `calc(${progressPercentage}% - ${20 * progressPercentage / 100}px)`;
-  }
-  
-  // Show specific step
-  function showStep(stepNumber) {
-    // Ensure the step number is valid
-    if (stepNumber < 1 || stepNumber > steps.length) {
-      console.error('Invalid step number:', stepNumber);
-      return;
-    }
-    
-    // Hide all steps
-    steps.forEach(step => {
-      step.classList.remove('active');
-    });
-    
-    // Update step indicators
-    stepIndicators.forEach(indicator => {
-      const indicatorStep = parseInt(indicator.dataset.step);
-      indicator.classList.remove('active');
-      
-      if (indicatorStep < stepNumber) {
-        indicator.classList.add('completed');
-      } else {
-        indicator.classList.remove('completed');
-      }
-      
-      if (indicatorStep === stepNumber) {
-        indicator.classList.add('active');
-      }
-    });
-    
-    // Show the target step
-    const targetStep = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
-    if (targetStep) {
-      targetStep.classList.add('active');
-      currentStep = stepNumber;
-      updateProgressBar();
-    } else {
-      console.error('Step not found:', stepNumber);
-    }
-  }
-  
-  // Validate current step fields
-  function validateStep(stepElement) {
-    const requiredFields = stepElement.querySelectorAll('[required]');
-    let isValid = true;
-    
-    requiredFields.forEach(field => {
-      if (!field.value.trim()) {
-        isValid = false;
-        field.classList.add('invalid');
-        
-        // Add event listener to remove invalid class when user types
-        field.addEventListener('input', function() {
-          if (this.value.trim()) {
-            this.classList.remove('invalid');
-          }
-        }, { once: true });
-      } else {
-        field.classList.remove('invalid');
-      }
-    });
-    
-    return isValid;
-  }
-  
-  // Event listeners for next buttons
-  nextButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const currentStepElement = this.closest('.form-step');
-      const nextStepNumber = parseInt(currentStepElement.dataset.step) + 1;
-      
-      // Validate current step
-      if (validateStep(currentStepElement)) {
-        showStep(nextStepNumber);
-      } else {
-        // Show validation message
-        alert('Please fill in all required fields before proceeding.');
-      }
-    });
-  });
-  
-  // Event listeners for previous buttons
-  prevButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const currentStepElement = this.closest('.form-step');
-      const prevStepNumber = parseInt(currentStepElement.dataset.step) - 1;
-      showStep(prevStepNumber);
-    });
-  });
-  
-  // Event listeners for step indicators
-  stepIndicators.forEach(indicator => {
-    indicator.addEventListener('click', function() {
-      const clickedStepNumber = parseInt(this.dataset.step);
-      
-      // Only allow clicking on completed steps or the next available step
-      if (clickedStepNumber <= currentStep || clickedStepNumber === currentStep + 1) {
-        showStep(clickedStepNumber);
-      }
-    });
-  });
-  
-  // Form submission
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Validate all steps before submission
-    let allValid = true;
-    steps.forEach(step => {
-      if (!validateStep(step)) {
-        allValid = false;
-        const stepNumber = parseInt(step.dataset.step);
-        showStep(stepNumber);
-        return;
-      }
-    });
-    
-    if (allValid) {
-      alert('Form submitted successfully!');
-      // Here you would typically send the form data to your server
-    }
-  });
-  
-  // Initialize
-  showStep(1);  // Make sure we start at step 1
-  updateProgressBar();
-});
-</script> -->
+    <h2 class="section-title">Wash / Refuel Automobiles</h2>
+    <textarea name="automobiles" rows="4" class="form-control"
+              placeholder="Enter automobile details"></textarea>
+
+    <h2 class="section-title">Additional Departure Requests</h2>
+    <label class="form-label">Write additional requests</label>
+    <textarea name="additional" rows="5" class="form-control"
+              placeholder="Enter additional requests"></textarea>
+
+    <div class="btn-container">
+      <a href="{% url 'mainapp:dashboard' %}" class="btn-secondary">Back</a>
+      <button type="submit" class="btn-primary">Submit</button>
+    </div>
+
+  </form>
+</div>
+
+
 {% endblock content %}

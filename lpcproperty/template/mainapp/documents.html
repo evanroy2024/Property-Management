@@ -3,251 +3,154 @@
 
 {% block content %}
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* FORCE ROBOTO */
+*,
+*::before,
+*::after {
+  font-family: 'Roboto', sans-serif !important;
+  box-sizing: border-box;
+}
+
 body {
-    background-color: #f9f9f9; /* light grey background */
-    color: #1a1a1a;
+  background-color: #ffffff;
 }
 
-/* Full Container (80% Width, Centered) */
-.full-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: left;
-    width: 80%;
-    margin: auto;
-    padding: 20px;
+/* MAIN CONTAINER — SAME AS ADMIN */
+.client-container {
+  max-width: 800px;
+  margin: 10px auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-/* First Row (Logo + Heading in the Same Line, Centered) */
-.first1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
+/* PAGE TITLE */
+.client-title {
+  text-align: center;
+  font-size: 25px;
+  font-weight: 600;
+  color: #13375b;
+  margin-bottom: 30px;
 }
 
-.first1 img {
-    height: 50px;
-    width: auto;
-}
-
-.first1 p {
-    font-size: 2.55rem;
-    line-height: 2.5rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: -2px;
-    color: #1a1a1a;
-    font-family: 'Impact', sans-serif;
-}
-
-/* Second Row (User Info + Store Buttons in a Single Line) */
-.first2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-/* Store Logos */
-.store-logo {
-    height: 50px;
-    width: auto;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-}
-
-.store-logo:hover {
-    transform: scale(1.1);
-}
-
-/* Section Title */
+/* SECTION TITLE */
 .section-title {
+  font-size: 21px;
+  font-weight: 600;
+  color: #13375b;
+  margin: 25px 0 10px;
+}
+
+/* MENU BLOCK — MATCH ADMIN .menu-item */
+.client-item {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+  padding: 25px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.client-item:hover {
+  transform: translateY(-4px) scale(1.03);
+}
+
+/* COLORS — EXACT ADMIN PALETTE */
+.bg-1 { background-color: #f0e6d9; }
+.bg-2 { background-color: #dfc5a0; }
+.bg-3 { background-color: #e8a56c; }
+.bg-4 { background-color: #83d0e6; }
+.bg-5 { background-color: #5baecc; }
+.bg-6 { background-color: #2f7f96; color: #ffffff; }
+.bg-7 { background-color: #bb8fce; }
+.bg-8 { background-color: #8e44ad; color: #ffffff; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .client-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .client-item {
     font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #e0a96d;
-    border-bottom: 1px solid #e0a96d;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-    text-align: left;
-    max-width: 1150px;
-    width: 105%;
-    margin-left: -8%;
-}
+    padding: 22px 0;
+  }
 
-/* Containers */
-.container,
-.container2 {
-    max-width: 90%;
-    margin: 50px auto;
-    padding: 20px;
-}
-
-/* Buttons */
-.button {
-    display: block;
-    width: 100%;
-    padding: 20px;
-    margin: 15px 0;
-    border: none;
-    border-radius: 8px;
-    font-size: 17px;
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.3s, box-shadow 0.3s;
-    font-family: "Arial Black", Arial, sans-serif;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* subtle shadow */
-}
-
-/* Button Colors with Contrast */
-.btn1 { background-color: #f0d7b6; color: #1a1a1a; }
-.btn2 { background-color: #dbb98a; color: #1a1a1a; }
-.btn3 { background-color: #e0a96d; color: #1a1a1a; }
-.btn4 { background-color: #b2e4f2; color: #003344; }
-.btn5 { background-color: #6ec6e9; color: #002233; }
-.btn6 { background-color: #4ea2c3; color: #ffffff; }
-.btn7 { background-color: #ffffff; color: #333; }
-.btn8 { background-color: #eaeaea; color: #333; }
-
-.button:hover {
-    opacity: 0.9;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-.button-container,
-.button-container2,
-.button-container3 {
-    margin-top: 20px;
-}
-
-.container {
-    padding: 50px 20px 10px 20px;
-}
-
-.btn1,
-.btn2,
-.btn3,
-.btn4,
-.btn5,
-.btn6,
-.btn7,
-.btn8 {
-    border: 1px solid #000000;
+  .client-title {
+    font-size: 20px;
+  }
 }
 </style>
 
-<div class="full-container">
-    <div class="first1">
-        <img src="{% static 'img/smalllogo.png'%}" alt="Logo">
-        <p style="color: #e5a75f;" id="main-heading">Your Docoments and Services</p>
-    </div>
+<div class="client-container">
 
-    <div class="container">
-        <div class="section-title">WALK-THRU REPORTS</div>
-        <div class="button-container">
-            <button class="button btn1" style="background-color: #f0e6d9!important;" onclick="window.location.href='{% url 'mainapp:all_reports' %}'">ALL WALK-THRU REPORTS</button>
-            <button class="button btn1" style="background-color: #dfc5a0!important;" onclick="window.location.href='{% url 'mainapp:open_reports' %}'">OPEN ITEMS</button>
-            <button class="button btn1" style="background-color: #e8a56c!important;" onclick="window.location.href='{% url 'mainapp:completed_reports' %}'">COMPLETED ITEMS</button>
-            <button class="button btn1" style="background-color: #2f7f96!important;" onclick="window.location.href='{% url 'mainapp:denied_reports' %}'">DENIED ITEMS</button>
-        </div>
-    </div>
 
-    <div class="container" style="margin-top: -3%;">
-        <div class="section-title">SERVICE REQUEST STATUS</div>
-        <div class="button-container2">
-            <button class="button btn1" style="background-color: #dfc5a0!important;" onclick="window.location.href='{% url 'mainapp:open_services' %}';">Open Requests</button>
-            <button class="button btn1" style="background-color: #e8a56c!important;" onclick="window.location.href='{% url 'mainapp:completed_services' %}';">COMPLETED ITEMS</button>
-            <button class="button btn1" style="background-color: #2f7f96!important;" onclick="window.location.href='{% url 'mainapp:denied_services' %}';">CLIENT DENIED</button>
-        </div>
-    </div>
+  <!-- WALKTHRU -->
+  <div class="section-title">Walk-Thru Reports</div>
 
-    <div class="container" style="margin-top: -3%;">
-        <div class="section-title">CONCIERGE REQUEST STATUS</div>
-        <div class="button-container3">
-            <button class="button btn1" style="background-color: #dfc5a0!important;" onclick="window.location.href='{% url 'mainapp:open_concierge_services' %}';"> Open Requests</button>
-            <button class="button btn1" style="background-color: #e8a56c!important;" onclick="window.location.href='{% url 'mainapp:completed_concierge_services' %}';">COMPLETED ITEMS</button>
-            <button class="button btn1" style="background-color: #2f7f96!important;" onclick="window.location.href='{% url 'mainapp:denied_concierge_services' %}';">CLIENT DENIED</button>
-        </div>
-    </div>
+  <div class="client-item bg-1" onclick="window.location.href='{% url 'mainapp:all_reports' %}'">
+    All Walk-Thru Reports
+  </div>
 
-    <div class="container" style="margin-top: -3%;">
-        <div class="section-title">PROPERTY IMPROVEMENTS</div>
-        <div class="button-container3">
-            <button class="button btn1" style="background-color: #bb8fce!important;" onclick="window.location.href='{% url 'propertydetails:open_property_improvements' %}';">Open Projects</button>
-            <button class="button btn1" style="background-color: #8e44ad!important;" onclick="window.location.href='{% url 'propertydetails:completed_property_improvements' %}';"> COMPLETED PROJECTS</button>
-        </div>
-    </div>
+  <div class="client-item bg-2" onclick="window.location.href='{% url 'mainapp:open_reports' %}'">
+    Open Items
+  </div>
+
+  <div class="client-item bg-3" onclick="window.location.href='{% url 'mainapp:completed_reports' %}'">
+    Completed Items
+  </div>
+
+  <div class="client-item bg-6" onclick="window.location.href='{% url 'mainapp:denied_reports' %}'">
+    Denied Items
+  </div>
+
+  <!-- SERVICE REQUESTS -->
+  <div class="section-title">Service Requests</div>
+
+  <div class="client-item bg-2" onclick="window.location.href='{% url 'mainapp:open_services' %}'">
+    Open Requests
+  </div>
+
+  <div class="client-item bg-3" onclick="window.location.href='{% url 'mainapp:completed_services' %}'">
+    Completed Requests
+  </div>
+
+  <div class="client-item bg-6" onclick="window.location.href='{% url 'mainapp:denied_services' %}'">
+    Client Denied
+  </div>
+
+  <!-- CONCIERGE -->
+  <div class="section-title">Concierge Requests</div>
+
+  <div class="client-item bg-2" onclick="window.location.href='{% url 'mainapp:open_concierge_services' %}'">
+    Open Requests
+  </div>
+
+  <div class="client-item bg-3" onclick="window.location.href='{% url 'mainapp:completed_concierge_services' %}'">
+    Completed Requests
+  </div>
+
+  <div class="client-item bg-6" onclick="window.location.href='{% url 'mainapp:denied_concierge_services' %}'">
+    Client Denied
+  </div>
+
+  <!-- PROPERTY IMPROVEMENTS -->
+  <!-- <div class="section-title">Property Improvements</div>
+
+  <div class="client-item bg-7" onclick="window.location.href='{% url 'propertydetails:open_property_improvements' %}'">
+    Open Projects
+  </div>
+
+  <div class="client-item bg-8" onclick="window.location.href='{% url 'propertydetails:completed_property_improvements' %}'">
+    Completed Projects
+  </div> -->
+
 </div>
-
-<style>
-* {
-  font-family: 'Montserrat', sans-serif !important;
-}
-
-.btn1 {
-  background-color: #ffffff !important;
-  color: #0f2a3a !important;
-  border: none !important;
-  box-shadow: 0px 1px 2px #d2ad68 !important;
-  font-weight: 700 !important;
-  font-size: 16px !important;
-}
-
-.container, .container2 {
-    max-width: 80%;
-    margin: 20px auto;
-    padding: 20px;
-}
-
-@media (min-width: 1200px) {
-  #main-heading {
-      font-size: 2.5rem;
-      font-weight: bold;
-  }
-}
-
-/* Make full width on mobile */
-@media (max-width: 700px) {
-  .full-container,
-  .container,
-  .container2,
-  .container3 {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin: 0 !important;
-      padding: 10px !important;
-  }
-  #main-heading {
-      font-size: 1.3rem;
-      font-weight: bold;
-      text-align: center;
-  }
-  .section-title {
-    margin-left: 1%;
-}
-}
-
-@media (max-width: 600px) {
-    #main-heading {
-        font-size: 1.1rem;
-        font-weight: bold;
-        text-align: center;
-    }
-}
-@media (max-width: 500px) {
-    #main-heading {
-        font-size: 1rem;
-        font-weight: bold;
-        text-align: center;
-    }
-}
-</style>
-{% endblock %}
+{% endblock content %}

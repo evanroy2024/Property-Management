@@ -109,7 +109,7 @@
     <nav class="navbar">
         <div class="nav-links">
             <a href="{% url 'mainapp:client_properties' %}">Properties </a>
-            <a href="{% url 'mainapp:service_request' %}">Services</a>
+            <a href="{% url 'mainapp:docoments' %}">Documents</a>
         </div>
         <div class="logo">
             <img onclick="window.location.href='{% url 'mainapp:dashboard' %}'" src="{% static 'logo.png' %}" alt="Lotus Logo">
@@ -259,6 +259,11 @@
 <style>
 body, p, h1, h2, h3, h4, h5, h6, a, span, div, li, button, input, textarea, label {
     font-family: "Roboto", sans-serif !important;
+}
+
+
+.navbar .nav-links a {
+  font-weight: 400 !important;
 }
 </style>
 </body>

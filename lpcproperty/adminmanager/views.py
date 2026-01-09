@@ -469,6 +469,7 @@ def property_create_view(request):
                 
                 # Handle client manager - either get existing or create new
                 client_manager_id = request.POST.get('client_manager_id')
+                secondary_client_manager_id = request.POST.get('secondary_client_manager_id')
                 
                 # Check if new client manager info was provided
                 new_cm_first_name = request.POST.get('new_cm_first_name', '')
@@ -516,11 +517,14 @@ def property_create_view(request):
                     error_message = "Please select or create a client manager"
                     context['error_message'] = error_message
                     return render(request, 'adminmanager/property/create.html', context)
-
+                if secondary_client_manager_id and secondary_client_manager_id == client_manager_id:
+                    context['error_message'] = "Primary and secondary client managers cannot be the same"
+                    return render(request, 'adminmanager/property/create.html', context)
                 # Create the Property
                 prop = PropertyManagement.objects.create(
                     client_id=client_id,
                     client_manager_id=client_manager_id,
+                    secondary_client_manager_id=secondary_client_manager_id or None,
                     address=address,
                     street_line1 = request.POST.get('street_line1', ''),
                     street_line2 = request.POST.get('street_line2', ''),

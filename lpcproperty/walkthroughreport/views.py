@@ -1104,27 +1104,21 @@ def denied_reports_view(request):
 # Add download thing for data of open report detail view --------------------------------------------------------------------- 
 def open_export_pdf(request, report_id):
     import re
-    
-    report = WalkthroughReport.objects.get(pk=report_id)
-    
-    # Get all data but we'll filter for only non-compliant items later
-    all_data = get_verbose_data(report)
 
-    # Filter for only non-compliant items
+    report = WalkthroughReport.objects.get(pk=report_id)
+
+    all_data = get_verbose_data_from_models(report)
+
     non_compliant_data = [item for item in all_data if item[1] == "Non-Compliant"]
-    
-    # Get client name details
+
     client_first_name = report.user.first_name if report.user else ''
     client_last_name = report.user.last_name if report.user else ''
     client_name = f"{client_first_name} {client_last_name}".strip() or "N/A"
-    
-    # Format report date
+
     report_date = report.datetime.strftime('%Y-%m-%d') if report.datetime else 'N/A'
-    
-    # Get property information if available
+
     property_info = report.property.name if report.property.address and hasattr(report.property, 'name') else getattr(report.property.address, '__str__', lambda: 'N/A')()
-    
-    # Get report description (inspection note)
+
     inspection_note = getattr(report, 'description', '')
 
     response = HttpResponse(content_type='application/pdf')
@@ -1142,7 +1136,6 @@ def open_export_pdf(request, report_id):
     elements = []
     styles = getSampleStyleSheet()
 
-    # Styles for different elements
     styles.add(ParagraphStyle(
         name='GreenTitle',
         fontSize=16,
@@ -1160,12 +1153,8 @@ def open_export_pdf(request, report_id):
         spaceAfter=10,
         textColor=colors.HexColor("#003366"),
         fontName="Helvetica-Bold",
-        borderPadding=(0, 0, 0, 4),
-        borderWidth=0,
-        borderColor=colors.HexColor("#003366"),
-        borderRadius=None
     ))
-    
+
     styles.add(ParagraphStyle(
         name='ReportInfo',
         fontSize=10,
@@ -1182,106 +1171,72 @@ def open_export_pdf(request, report_id):
         wordWrap='CJK',
     )
 
-    # Main heading with property name
     elements.append(Paragraph(f"🏠 {property_info}", styles['GreenTitle']))
 
-    # Underline
     elements.append(Table([[""]], colWidths=[6.3 * inch], style=[
-        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor("#2e7d32"))],
-    ))
+        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor("#2e7d32"))
+    ]))
+
     elements.append(Spacer(1, 12))
-    
-    # Report details section
+
     elements.append(Paragraph("Report Details:", styles['SectionTitle']))
     elements.append(Paragraph(f"<b>Client:</b> {client_name}", styles['ReportInfo']))
     elements.append(Paragraph(f"<b>Date:</b> {report_date}", styles['ReportInfo']))
     elements.append(Paragraph(f"<b>Inspection Note:</b> {inspection_note}", styles['ReportInfo']))
-    
+
     elements.append(Spacer(1, 20))
-    
-    # Add non-compliant items section title
+
     elements.append(Paragraph("⚠️ Non-Compliant Items", styles['SectionTitle']))
     elements.append(Spacer(1, 10))
 
     if not non_compliant_data:
         elements.append(Paragraph("No non-compliant items found in this report.", styles['ReportInfo']))
     else:
-        # Grouping data by exact category name while preserving order
         grouped = {}
-        category_order = []
-        
-        for question, answer, remark, category in non_compliant_data:
-            if category not in grouped:
-                grouped[category] = []
-                category_order.append(category)
-            grouped[category].append((question, answer, remark))
-        
-        for category in category_order:
+        order = []
+
+        for q, a, r, c in non_compliant_data:
+            if c not in grouped:
+                grouped[c] = []
+                order.append(c)
+            grouped[c].append((q, a, r))
+
+        for category in order:
             rows = grouped[category]
 
             elements.append(Spacer(1, 14))
-            
-            # Create section header with appropriate icon for each category
-            if "Bedroom" in category:
-                icon = "🛏️"
-            elif "Bathroom" in category:
-                icon = "🚿"
-            elif "Kitchen" in category:
-                icon = "🍳"
-            elif "Living" in category:
-                icon = "🛋️"
-            elif "Dining" in category:
-                icon = "🍽️"
-            else:
-                icon = "📌"
-            
-            elements.append(Paragraph(f"{icon} {category}", styles['SectionTitle']))
+            elements.append(Paragraph(category, styles['SectionTitle']))
             elements.append(Spacer(1, 4))
 
             table_data = [["Issue", "Status", "Remarks"]]
 
-            for question, answer, remark in rows:
+            for q, a, r in rows:
                 table_data.append([
-                    Paragraph(question, wrap_style),
+                    Paragraph(q, wrap_style),
                     "Non-Compliant",
-                    Paragraph(remark or "-", wrap_style)
+                    Paragraph(r or "-", wrap_style)
                 ])
 
-            # Adjusted column widths
             table = Table(table_data, colWidths=[3.0 * inch, 1.0 * inch, 3.4 * inch])
 
             style = TableStyle([
                 ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 0), (-1, 0), 10),
                 ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#e8f0f8")),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor("#003366")),
-                ('ALIGN', (1, 1), (1, -1), 'CENTER'),  # Center the "Status" column
+                ('ALIGN', (1, 1), (1, -1), 'CENTER'),
                 ('FONTSIZE', (0, 1), (-1, -1), 9),
-                ('LEFTPADDING', (0, 0), (-1, -1), 6),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-                ('TOPPADDING', (0, 0), (-1, -1), 4),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                ('BOX', (0, 0), (-1, -1), 1, colors.HexColor("#003366")),
             ])
 
-            # Add red background to all non-compliant status cells
             for i in range(1, len(table_data)):
-                style.add('BACKGROUND', (1, i), (1, i), colors.HexColor("#ffebee"))  # Light red background
-                style.add('TEXTCOLOR', (1, i), (1, i), colors.HexColor("#b71c1c"))   # Dark red text
-
-            for i in range(1, len(table_data)):
-                bg = colors.whitesmoke if i % 2 == 0 else colors.white
-                style.add('BACKGROUND', (0, i), (0, i), bg)
-                style.add('BACKGROUND', (2, i), (2, i), bg)
+                style.add('BACKGROUND', (1, i), (1, i), colors.HexColor("#ffebee"))
+                style.add('TEXTCOLOR', (1, i), (1, i), colors.HexColor("#b71c1c"))
 
             table.setStyle(style)
             elements.append(table)
 
     doc.build(elements)
     return response
-    
+
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q

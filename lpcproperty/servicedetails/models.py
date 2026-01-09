@@ -64,16 +64,9 @@ class PrearrivalInformation(models.Model):
     temperature = models.FloatField(null=True, blank=True)
     pool_temperature = models.FloatField(null=True, blank=True)
     hot_bath_temperature = models.FloatField(null=True, blank=True)
-    
-    INDOOR_LIGHTS_CHOICES = [('all_on', 'All On'), ('all_off', 'All Off')]
-    indoor_lights = models.CharField(max_length=10, choices=INDOOR_LIGHTS_CHOICES, null=True, blank=True)
-    
-    OUTDOOR_LIGHTS_CHOICES = [('all_on', 'All On'), ('all_off', 'All Off')]
-    outdoor_lights = models.CharField(max_length=10, choices=OUTDOOR_LIGHTS_CHOICES, null=True, blank=True)
-    
-    WINDOW_POSITION_CHOICES = [('up', 'Up'), ('down', 'Down'), ('sideway', 'Sideway')]
-    window_position = models.CharField(max_length=10, choices=WINDOW_POSITION_CHOICES, null=True, blank=True)
-    
+    indoor_lights = models.CharField(max_length=50, null=True, blank=True)
+    outdoor_lights = models.CharField(max_length=50, null=True, blank=True)
+    window_position = models.CharField(max_length=50, null=True, blank=True)
     music_genre = models.CharField(max_length=255, null=True, blank=True)
     flower_type = models.CharField(max_length=255, null=True, blank=True)
     flower_location = models.CharField(max_length=255, null=True, blank=True)

@@ -1,398 +1,107 @@
-
 {% extends "outbase.html" %}
 {% load static %}
 
 {% block content %}
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1e3a8a;
-            --primary-light: #3b82f6;
-            --accent: #f59e0b;
-            --light: #f8f9fa;
-            --dark: #111827;
-            --text: #374151;
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'lotus-gold': '#d1aa6b',
+          'lotus-light': '#ffffff',
+          'lotus-gray-light': '#f5f5f5',
+          'lotus-border': '#e0e0e0',
         }
-        
-        body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background-color: white;
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(37, 99, 235, 0.85)), url('/api/placeholder/1200/600');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 4rem 0;
-            position: relative;
-            border-radius: 0 0 2rem 2rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .services-container {
-            margin: 3rem 0;
-        }
-        
-        .service-card {
-            border: none;
-            border-radius: 1rem;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            height: 100%;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .service-card .card-body {
-            display: flex;
-            align-items: center;
-            padding: 1.5rem;
-        }
-        
-        .service-icon {
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(59, 130, 246, 0.1);
-            border-radius: 50%;
-            margin-right: 1.25rem;
-            color: var(--primary);
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .service-card:hover .service-icon {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .service-title {
-            margin: 0;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .request-form-container {
-            background-color: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
-            padding: 2.5rem;
-            margin-top: -5rem;
-            position: relative;
-            z-index: 10;
-            margin-bottom: 1rem;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .form-control {
-            border: 2px solid #e5e7eb;
-            padding: 1.25rem 1.5rem;
-            font-size: 1.1rem;
-            border-radius: 1rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            min-height: 120px;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
-        }
-        
-        .submit-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .submit-btn:hover {
-            background-color: #1e40af;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .section-title {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 2rem;
-        }
-        
-        .section-title:after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 50px;
-            height: 4px;
-            background-color: var(--accent);
-            border-radius: 2px;
-        }
-        
-        @media (max-width: 767.98px) {
-            .hero-section {
-                padding: 3rem 0;
-                border-radius: 0 0 1.5rem 1.5rem;
-            }
-            
-            .request-form-container {
-                padding: 1.5rem;
-                margin-top: -3rem;
-                border-radius: 1rem;
-            }
-            
-            .form-control {
-                padding: 1rem;
-                font-size: 1rem;
-            }
-            
-            .submit-btn {
-                width: 100%;
-                padding: 0.875rem 1.5rem;
-            }
-            
-            .service-card .card-body {
-                padding: 1.25rem;
-            }
-            
-            .service-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 1.25rem;
-                margin-right: 1rem;
-            }
-        }
-    </style>
+      }
+    }
+  }
+</script>
 
-    <!-- Hero Section -->
-    <section class="hero-section text-center">
-        <div class="container">
-            <h1 class="display-4 fw-bold mb-3" id="main-heading">Concierge Service Request</h1>
-        </div>
-    </section>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;500;600&display=swap');
 
-    <!-- Request Form -->
-    <div class="container">
-        <div class="request-form-container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <h2 class="text-center mb-4">How May We Assist You?</h2>
-                    {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-            
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="mb-4">
-                            <label for="requestInput" class="form-label">Please describe your request in detail</label>
-                            <textarea class="form-control" name="description" rows="4" placeholder="I would like to arrange a private yacht for next weekend..." required></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-paper-plane"></i>
-                                <span>Submit Request</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+body {
+  background-color: #ffffff;
+  font-family: 'Raleway', sans-serif;
+  color: #222222;
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif;
+}
+
+.lotus-container {
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+}
+</style>
+
+<div class="bg-lotus-gray-light min-h-screen py-10 px-4">
+  <div class="lotus-container max-w-4xl mx-auto bg-white rounded-lg overflow-hidden border border-lotus-border">
+
+    <!-- Header -->
+    <div class="py-6 px-6 sm:px-10 border-b border-lotus-border">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <img class="w-16 sm:w-20" src="{% static 'img/smalllogo.png' %}">
+          <h1 class="text-2xl sm:text-3xl font-bold">Lotus Property</h1>
         </div>
+        <p class="text-sm text-gray-600">Concierge Service Portal</p>
+      </div>
     </div>
 
-    <!-- Services Section -->
-    <section class="services-container">
-        <div class="container">
-            <h2 class="section-title ms-3">Our Elite Services</h2>
-            <div class="row g-4">
-                <!-- Service 1 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-running"></i>
-                            </div>
-                            <h5 class="service-title">Errand Running</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 2 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-car"></i>
-                            </div>
-                            <h5 class="service-title">Automobile Cleaning</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 3 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-taxi"></i>
-                            </div>
-                            <h5 class="service-title">Transportation Service</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 4 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <h5 class="service-title">Floral Delivery</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 5 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-plane"></i>
-                            </div>
-                            <h5 class="service-title">Travel Arrangements</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 6 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-utensils"></i>
-                            </div>
-                            <h5 class="service-title">Home Chef Services</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 7 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-spa"></i>
-                            </div>
-                            <h5 class="service-title">Massage & Beauty</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 8 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <h5 class="service-title">Reservation Bookings</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 9 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-ship"></i>
-                            </div>
-                            <h5 class="service-title">Boat & Plane Booking</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 10 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-glass-cheers"></i>
-                            </div>
-                            <h5 class="service-title">Event Planning</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 11 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-laptop"></i>
-                            </div>
-                            <h5 class="service-title">IT Support</h5>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Service 12 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="card-body">
-                            <div class="service-icon">
-                                <i class="fas fa-fish"></i>
-                            </div>
-                            <h5 class="service-title">Fishing Chart</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Messages -->
+    {% if messages %}
+    <div class="space-y-3 p-6">
+      {% for message in messages %}
+      <div class="flex justify-between p-4 rounded-lg border bg-green-100 text-green-800">
+        <p class="text-sm font-medium">{{ message }}</p>
+        <button onclick="this.parentElement.remove()">×</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Content -->
+    <div class="p-6 sm:p-10">
+      <div class="mb-8 border-b border-lotus-border pb-6">
+        <h2 class="text-xl sm:text-2xl font-semibold text-lotus-gold mb-3">
+          Concierge Service Request
+        </h2>
+        <p class="text-gray-700">
+          Please describe your request in detail and our team will assist you.
+        </p>
+      </div>
+
+      <!-- FORM (UNCHANGED FUNCTIONALITY) -->
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="mb-8">
+          <label class="block text-gray-800 font-medium mb-2">
+            Request Details
+          </label>
+          <div class="rounded-md shadow-md border border-lotus-border focus-within:border-lotus-gold focus-within:ring-1 focus-within:ring-lotus-gold">
+            <textarea
+              name="description"
+              rows="5"
+              required
+              class="block w-full rounded-md border-0 py-3 px-4 bg-white text-gray-900 focus:ring-0 sm:text-sm placeholder-gray-500"
+              placeholder="I would like to arrange a private yacht for next weekend..."
+            ></textarea>
+          </div>
         </div>
-    </section>
 
-    <!-- Bootstrap JS -->
-     <style>
-            @media (min-width: 1200px) {
-    #main-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
-
-    }
-}
-    @media (max-width: 600px) {
-    #main-heading {
-        font-size: 1.3rem;
-        font-weight: bold;
-    }
-}
-     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <div class="flex justify-center sm:justify-end">
+          <button
+            type="submit"
+            class="bg-lotus-gold text-black rounded-md px-6 py-3 font-medium shadow-md transform transition hover:-translate-y-1"
+          >
+            Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock content %}
