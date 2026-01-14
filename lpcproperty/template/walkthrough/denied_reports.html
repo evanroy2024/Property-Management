@@ -392,9 +392,28 @@
                 </td>  
                 <td>   
                     <div id="approval-cell-{{ report.id }}-{{ item.field_name }}" onclick="openUpdateApprovalModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.client_approval }}', '{{ item.category }}')" style="cursor: pointer;">     
-                        <span id="approval-span-{{ report.id }}-{{ item.field_name }}" class="status-badge {% if item.client_approval == 'Approved' %}status-approved{% elif item.client_approval == 'Denied' %}status-denied{% else %}status-pending{% endif %}">       
-                            {{ item.client_approval }}     
-                        </span>   
+                                        <span id="approval-span-{{ report.id }}-{{ item.field_name }}"
+  class="status-badge
+  {% if item.client_approval == 'Approved' %}
+    status-approved
+  {% elif item.client_approval == 'Denied' %}
+    status-denied
+  {% elif item.client_approval == 'Cost' %}
+    status-cost
+  {% else %}
+    status-pending
+  {% endif %}
+">
+  {% if item.client_approval %}
+    {{ item.client_approval }}
+  {% else %}
+    Pending
+  {% endif %}
+</span>
+<style>
+  .status-cost{background:#2f5f9e;color:#fff;}
+
+</style> 
                     </div> 
                 </td>  
                <td onclick="openUpdateFieldStatusModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.category }}', '{{ item.client_approval }}')" 

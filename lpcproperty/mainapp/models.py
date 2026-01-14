@@ -128,60 +128,131 @@ class Client(models.Model):
 
 
         text_content = f"""
-        Welcome to LOTUS PROPERTY MANAGEMENT SYSTEM!
+        Welcome to Lotus Property Management!
 
-        You can login here: https://backend.lotuspmc.com/login
+        Welcome to the Lotus family — we’re truly glad to have you with us. Our team is fully committed to caring for your property with the attention, dedication, and support you deserve.
 
-        Your credentials are:
+        To Get Started:
+
+        1. You have been assigned a temporary Username and Password. These are below.
         Username: {self.username}
         Password: {self._raw_password}
 
-        Please keep this information confidential.
+        Please use these temporary credentials to log in to your Lotus dashboard. You may copy and paste them into the entry fields.
 
-        How to Change Your Username and Password:
-        1. Go to https://backend.lotuspmc.com/login and log in using your temporary credentials.
-        2. Once logged in, open 'Profile & Security'.
-        3. Update your Username, Email, and/or Password.
-        4. Save the changes.
-        5. Use your updated credentials for future logins.
+        Login Page: https://backend.lotuspmc.com/login
 
-        If you encounter any issues, please contact support at (561) 766-7828 or visit https://lotuspmc.com
+        2. After logging in, you’ll be redirected to the dashboard.
+
+        3. Navigate to "Profile & Security" (lavender colored box near the bottom of the page) and select it.
+
+        4. The Update Profile page will appear. Please update your Username and Password.
+
+        5. Click Update on the bottom left of the page to apply the changes.
+
+        6. After selecting Update, a new screen will appear confirming your credentials have been successfully updated.
+        PLEASE REMEMBER TO SAVE YOUR LOG-IN CREDENTIALS.
+
+        7. Use your new credentials for all future logins.
+
+        Well, there you have it — you are all set to go! If you have any questions regarding setup or need assistance with the site, please do not hesitate to let us know. We thank you for your business and look forward to taking care of your property.
+
+        Sincerely,
+
+        Sean Couch, Co-Founder
+        sean@lotuspmc.com
+        336.918.3632
+
+        Neal Jones, Co-Founder
+        neal@lotuspmc.com
+        415.524.3120
 
         This is an automated message. Replies to this email are not monitored.
         """
-
         html_content = f"""
-        <html><body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-            <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h2 style="color: #2b4b80; text-align: center;">Welcome to Lotus Property Management</h2>
-                <p style="font-size: 15px; color: #333;">You can login here: <a href="https://backend.lotuspmc.com/login" style="color: #2b4b80; text-decoration: none;">Login Page</a></p>
+<html>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f6; padding: 20px;">
 
-                <p><strong>Below are your temporary username and password:</strong></p>
-                <ul style="background: #f8f9fb; padding: 15px; border-radius: 8px; list-style: none;">
-                    <li><strong>Username:</strong> {self.username}</li>
-                    <li><strong>Password:</strong> {self._raw_password}</li>
-                </ul>
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden;">
 
-                <p>Please keep this information confidential.</p>
+    <!-- Top Header -->
+    <div style="background:#1f3c88; padding:22px 28px;">
+      <img src="https://backend.lotuspmc.com/static/logo.png"
+           alt="Lotus Property Management"
+           style="height:54px; display:block;">
+    </div>
 
-                <h3 style="color: #2b4b80;">How to Change Your Username and Password</h3>
-                <ol style="padding-left: 20px; color: #333;">
-                    <li>Go to the <a href="https://backend.lotuspmc.com/login" style="color: #2b4b80;">Login Page</a> and enter your temporary credentials.</li>
-                    <li>After logging in, you’ll be redirected to the dashboard.</li>
-                    <li>Navigate to <strong>Profile & Security</strong>.</li>
-                    <li>Update your <strong>Username</strong>, <strong>Email</strong>, and/or <strong>Password</strong>.</li>
-                    <li>Click <strong>Save</strong> to apply the changes.</li>
-                    <li>Use your new credentials for all future logins.</li>
-                </ol>
+    <!-- Content -->
+    <div style="padding:28px;">
 
-                <p>If you encounter any issues, please contact our support team immediately.</p>
+      <h2 style="color:#2b4b80; margin-top:0;">
+        Welcome to Lotus Property Management!
+      </h2>
 
-                <p style="font-size: 13px; color: #666;"><strong>This is an automated message. Replies to this email are not monitored.</strong></p>
-                <p style="font-size: 14px; color: #333;">For assistance, call us at <strong>(561) 766-7828</strong> or visit 
-                <a href="https://lotuspmc.com" style="color: #2b4b80;">https://lotuspmc.com</a></p>
-            </div>
-        </body></html>
-        """
+      <p style="font-size:15px; color:#333;">
+        Welcome to the Lotus family — we’re truly glad to have you with us. Our team is fully committed to caring for your property with the attention, dedication, and support you deserve.
+      </p>
+
+      <h3 style="color:#2b4b80;">To Get Started</h3>
+
+      <p style="font-size:14px; color:#333;">
+        You have been assigned a temporary Username and Password:
+      </p>
+
+      <div style="background:#f8f9fb; padding:16px; border-radius:8px; margin-bottom:16px;">
+        <p style="margin:6px 0;"><strong>Username:</strong> {self.username}</p>
+        <p style="margin:6px 0;"><strong>Password:</strong> {self._raw_password}</p>
+      </div>
+
+      <p style="font-size:14px; color:#333;">
+        Please use these temporary credentials to log in to your Lotus dashboard. You may copy and paste them into the entry fields.
+      </p>
+
+      <p style="text-align:center; margin:22px 0;">
+        <a href="https://backend.lotuspmc.com/login"
+           style="background:#2b4b80; color:#ffffff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">
+          Go to Login Page
+        </a>
+      </p>
+
+      <ol style="padding-left:20px; font-size:14px; color:#333;">
+        <li>After logging in, you’ll be redirected to the dashboard.</li>
+        <li>Navigate to <strong>Profile & Security</strong> (lavender colored box near the bottom of the page).</li>
+        <li>The Update Profile page will appear. Update your <strong>Username</strong> and <strong>Password</strong>.</li>
+        <li>Click <strong>Update</strong> on the bottom left to apply the changes.</li>
+        <li>A confirmation screen will appear once your credentials are updated.</li>
+        <li><strong>Please remember to save your log-in credentials.</strong></li>
+        <li>Use your new credentials for all future logins.</li>
+      </ol>
+
+      <p style="font-size:14px; color:#333; margin-top:18px;">
+        You are all set to go! If you have any questions regarding setup or need assistance with the site, please do not hesitate to let us know. We thank you for your business and look forward to taking care of your property.
+      </p>
+
+      <hr style="margin:26px 0; border:none; border-top:1px solid #e6e6e6;">
+
+      <p style="font-size:14px; color:#333;">
+        <strong>Sean Couch</strong>, Co-Founder<br>
+        <a href="mailto:sean@lotuspmc.com" style="color:#2b4b80; text-decoration:none;">sean@lotuspmc.com</a><br>
+        336.918.3632
+      </p>
+
+      <p style="font-size:14px; color:#333;">
+        <strong>Neal Jones</strong>, Co-Founder<br>
+        <a href="mailto:neal@lotuspmc.com" style="color:#2b4b80; text-decoration:none;">neal@lotuspmc.com</a><br>
+        415.524.3120
+      </p>
+
+      <p style="font-size:12px; color:#777; margin-top:22px;">
+        This is an automated message. Replies to this email are not monitored.
+      </p>
+
+    </div>
+  </div>
+
+</body>
+</html>
+"""
 
         msg = EmailMultiAlternatives(subject, text_content, from_email, to)
         msg.attach_alternative(html_content, "text/html")

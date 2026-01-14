@@ -1,4 +1,5 @@
-{% extends 'adminmanager/adminbase.html' %}
+{% extends 'outbase.html' %}
+
 {% load static %}
 {% block title %}Open Walk-Through Reports{% endblock %}
 
@@ -301,7 +302,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <img src="{% static 'img/smalllogo.png' %}" alt="Logo" style="height: 50px; width: auto;">
-        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Completed Walk-Thru Items</h1>
+        <h1 class="h3 text-gray-800" style="margin: 0; font-size: 1.8rem; font-weight: 600;">Walk-Thru Denied Items</h1>
     </div>
 
     <!-- Reports Table Card -->
@@ -338,7 +339,7 @@
                 <table class="table table-hover" id="sortable-table">
                     <thead>
                         <tr>
-                           <th class="sortable" data-index="1" style="cursor: pointer; position: relative;">
+                          <th class="sortable" data-index="1" style="cursor: pointer; position: relative; display: none;">
                             <span>CLIENT</span>
                             <i class="fas fa-sort sort-icon"></i>
                             <span class="filter-btn" id="clientFilterBtn" title="Filter Client" style="display: none;">
@@ -350,33 +351,33 @@
                                 <option value="all">All Clients</option>
                             </select>
                         </th>
-                        <th>WALK-THRU REPORT</th>
-                        <th>ITEMS</th>
+                        <th>WALK-THRU ITEMS</th>
                         <th>REMARKS</th>
+                        <th style="display: none;">REMARKS</th>
                         <th class="sortable" data-index="0" style="cursor: pointer;">
                             REPORT DATE <i class="fas fa-sort sort-icon"></i>
                         </th>
-                       
-                        <th>EST'D COST</th>
-                        <th>CLIENT STATUS</th>
-                        <th>ITEM STATUS</th>
-                        <th>COMPLETION DATE</th>
+                        
+                        <th>TOTAL COST</th>
+                        <th>APPROVAL</th>
+                        <th style="display: none;">ITEM STATUS</th>
+                        <th>View Full Report</th>
                     </tr>
 
                     </thead>
                   <tbody id="report-table">     
     {% for report in reports %}         
         {% for item in report.inspection_items %}         
-       {% if item.update_status == 'Completed' and item.client_approval == 'Approved' %}                    
+        {% if item.update_status == 'Open' or item.client_approval == 'Pending' or item.client_approval == 'Approved' and item.update_status == 'Denied' or item.client_approval == 'Denied' and item.update_status == 'Approved' or item.client_approval == 'Denied' and item.update_status == 'Completed' %}                 
             <tr class="report-row"                 
                 data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
                 data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"                 
-                data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">  
-                <td><strong>{{ report.user.last_name|title }}, {{ report.user.first_name|title }}</strong></td>                 
+                data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">                                  
+                <td style="display: none;"><strong>{{ report.user.last_name|title }}, {{ report.user.first_name|title }}</strong></td>                 
 
-                <td><strong>{{ item.category }}</strong></td>                 
+                <td style="display: none;"><strong>{{ item.category }}</strong></td>                 
                 <td style="word-wrap: break-word; white-space: normal; max-width: 250px;" > {{ item.question }}</td>                 
-                <td style="word-wrap: break-word; white-space: normal; max-width: 250px;">{{ item.remarks|default:"-" }}</td>                                   
+                <td  style="word-wrap: break-word; white-space: normal; max-width: 250px;">{{ item.remarks|default:"-" }}</td>                                   
                 <td>                     
                     <strong>{{ report.datetime|date:'M d, Y' }}</strong><br>                     
                     <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>                 
@@ -387,36 +388,33 @@
                         onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"   
                         class="edit-btn"   
                         title="Edit Cost">   
-                        <i class="fas fa-pen-to-square"></i> 
+                        <!-- <i class="fas fa-pen-to-square"></i>  -->
                     </button> 
                 </td>  
                 <td>   
-                    <div id="approval-cell-{{ report.id }}-{{ item.field_name }}" onclick="openUpdateApprovalModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.client_approval }}', '{{ item.category }}')" style="cursor: pointer;">     
-                                       <span id="approval-span-{{ report.id }}-{{ item.field_name }}"
-  class="status-badge
-  {% if item.client_approval == 'Approved' %}
-    status-approved
-  {% elif item.client_approval == 'Denied' %}
-    status-denied
-  {% elif item.client_approval == 'Cost' %}
-    status-cost
-  {% else %}
-    status-pending
-  {% endif %}
+                    <div id="approval-cell-{{ report.id }}-{{ item.field_name }}" >     
+                       <span id="approval-span-{{ report.id }}-{{ item.field_name }}" class="status-badge
+{% if item.client_approval == 'Approved' %}
+status-approved
+{% elif item.client_approval == 'Denied' %}
+status-denied
+{% elif item.client_approval == 'Cost' %}
+status-cost
+{% else %}
+status-pending
+{% endif %}
 ">
-  {% if item.client_approval %}
-    {{ item.client_approval }}
-  {% else %}
-    Pending
-  {% endif %}
+{% if item.client_approval %}
+  {{ item.client_approval }}
+{% else %}
+  Pending
+{% endif %}
 </span>
-<style>
-  .status-cost{background:#2f5f9e;color:#fff;}
 
-</style>
+
                     </div> 
                 </td>  
-               <td onclick="openUpdateFieldStatusModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.category }}', '{{ item.client_approval }}')" 
+               <td style="display: none;" onclick="openUpdateFieldStatusModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.category }}', '{{ item.client_approval }}')" 
     style="cursor: pointer;" 
     id="status-cell-{{ report.id }}-{{ item.field_name }}"
     data-date="{{ item.update_date|date:'Y-m-d'|default:'' }}" 
@@ -425,20 +423,21 @@
         {% if item.update_status == 'Open' %}
             <span class="status-badge status-open">Open</span>
         {% elif item.update_status == 'Completed' %}
-            <span style="padding: 4px 10px; border-radius: 3.5px; color: white; font-weight: bold; font-size: 11.5px; background-color: #28a745;">COMPLETED</span>
+            <span style="padding: 4px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 13px; background-color: #28a745;">Completed</span>
         {% elif item.update_status == 'Denied' %}
-            <span style="padding: 4px 10px; border-radius: 6px; color: white; font-weight: bold; font-size: 11px; background-color: #dc3545;">DENIED</span>
+            <span style="padding: 4px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 13px; background-color: #dc3545;">Denied</span>
         {% endif %}
     </span>
-</td>               
-<td 
-    style="cursor: pointer;">
-    {% if item.update_date %}
-        {{ item.update_date|date:'M d, Y' }}
-    {% else %}
-        -
-    {% endif %}
-</td>         
+</td>           
+ <td>
+                           <a href="{% url 'mainapp:report_detail' report.pk %}"
+   class="view-link"
+   style="text-decoration:none;color:#1e3a8a;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;">
+   <i class="fas fa-eye"></i>
+   View
+</a>
+
+                        </td>             
             </tr>         
         {% endif %}          
         {% endfor %}     
@@ -967,20 +966,35 @@ function slugify(text) {
 <!-- Client Approval Update Modal -->
 <div id="updateApprovalModal" class="modal">
   <div class="modal-content">
-    <div class="modal-header" style="align-items: center; justify-content: center;">
-      <h3>Client Approval</h3>
+    <div class="modal-header" style="align-items:center;justify-content:center;">
+      <h3>Approval</h3>
     </div>
-    
+
     <input type="hidden" id="approvalReportId">
     <input type="hidden" id="approvalFieldName">
     <input type="hidden" id="approvalCategory">
-    
-    <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px;">
-      <button onclick="setApprovalStatus('Approved')" class="btn-primary">Approved</button>
-      <button onclick="setApprovalStatus('Denied')" class="btn-danger">Denied</button>
+
+    <p style="text-align:center;margin:5px 0;color:#555; margin-top: -20px;">
+      Choose an action for this item.
+    </p>
+
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:25px;">
+      <button onclick="setApprovalStatus('Approved')" class="btn-primary">
+        Approve
+      </button>
+      <button onclick="setApprovalStatus('Denied')" class="btn-danger">
+        Reject
+      </button>
+      <button onclick="setApprovalStatus('Cost')" class="btn-cost">
+        Request Cost
+      </button>
     </div>
-    
-    <div style="text-align: center;">
+
+    <p style="text-align:center;font-size:13px;color:#777;margin-bottom:15px;">
+      Request Cost: our team will review and get back to you.
+    </p>
+
+    <div style="text-align:center;">
       <button onclick="closeUpdateApprovalModal()" class="btn-secondary">Cancel</button>
     </div>
   </div>
@@ -1010,11 +1024,8 @@ function submitUpdateApproval() {
   const reportId = document.getElementById('approvalReportId').value;
   const fieldName = document.getElementById('approvalFieldName').value;
   const category = document.getElementById('approvalCategory').value;
-  const newValue = selectedApprovalStatus;
 
-  console.log('Updating approval:', { reportId, fieldName, category, newValue });
-
-  fetch("{% url 'walkthroughreport:update-client-approval' 0 %}".replace('/0/', `/${reportId}/`), {
+  fetch("{% url 'mainapp:update-client-approval' 0 %}".replace('/0/', `/${reportId}/`), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -1022,43 +1033,30 @@ function submitUpdateApproval() {
     },
     body: JSON.stringify({
       field_name: fieldName,
-      client_approval: newValue,
+      client_approval: selectedApprovalStatus,
       category: category
     })
   })
-  .then(response => response.json())
+  .then(res => res.json())
   .then(data => {
     if (data.status === 'success') {
       const span = document.getElementById(`approval-span-${reportId}-${fieldName}`);
-      
       if (span) {
-        let newClass = 'status-badge ';
-
-        if (newValue === 'Approved') {
-          newClass += 'status-approved';
-        } else if (newValue === 'Denied') {
-          newClass += 'status-denied';
-        } else {
-          newClass += 'status-pending';
-        }
-
-        span.className = newClass;
-        span.textContent = newValue;
-        console.log('Updated approval span successfully');
-      } else {
-        console.log('Approval span not found:', `approval-span-${reportId}-${fieldName}`);
+        span.textContent = selectedApprovalStatus;
+        span.className =
+          'status-badge ' +
+          (selectedApprovalStatus === 'Approved'
+            ? 'status-approved'
+            : selectedApprovalStatus === 'Denied'
+            ? 'status-denied'
+            : 'status-cost');
       }
-      
       closeUpdateApprovalModal();
     } else {
-      console.error('Update failed:', data);
-      alert("Failed to update: " + (data.message || "Unknown error"));
+      alert('Update failed');
     }
   })
-  .catch(error => {
-    console.error('Error:', error);
-    alert("Failed to update.");
-  });
+  .catch(() => alert('Update failed'));
 }
 </script>
 
@@ -1096,9 +1094,8 @@ function submitUpdateApproval() {
     </div>
   </div>
 </div>
-
 <script>
-function openUpdateFieldStatusModal(reportId, fieldName, category) {
+  function openUpdateFieldStatusModal(reportId, fieldName, category) {
   document.getElementById('statusReportId').value = reportId;
   document.getElementById('statusFieldName').value = fieldName;
   document.getElementById('statusCategory').value = category;
@@ -1109,6 +1106,7 @@ function openUpdateFieldStatusModal(reportId, fieldName, category) {
   
   document.getElementById('updateFieldStatusModal').style.display = 'block';
 }
+
 function closeUpdateFieldStatusModal() {
   document.getElementById('updateFieldStatusModal').style.display = 'none';
 }
@@ -1119,6 +1117,12 @@ function submitUpdateFieldStatus() {
   const category = document.getElementById('statusCategory').value;
   const datetime = document.getElementById('statusDatetime').value;
   const remarks = document.getElementById('updateStatusRemarks').value;
+  
+  // Check if date is present
+  if (!datetime) {
+    alert('Please choose a date');
+    return;
+  }
   
   // Get status value from dropdown
   const statusSelect = document.getElementById('newStatus');
@@ -1158,6 +1162,17 @@ function submitUpdateFieldStatus() {
 
         statusSpan.innerHTML = statusHtml;
         console.log('Updated status span successfully');
+        fetch("{% url 'walkthroughreport:send-last-email' 0 %}".replace("0", reportId), {
+  method: 'POST',
+  headers: {
+    'X-CSRFToken': '{{ csrf_token }}',
+  },
+})
+.catch(error => {
+  console.error('Error sending last item email:', error);
+});
+
+        
       } else {
         console.log('Status span not found:', `status-span-${reportId}-${fieldName}`);
       }
@@ -1168,7 +1183,9 @@ function submitUpdateFieldStatus() {
       console.error('Update failed:', data);
       alert('Failed to update status: ' + (data.error || 'Unknown error'));
     }
+    
   })
+  
   .catch(error => {
     console.error('Error:', error);
     alert('Failed to update status.');
@@ -1316,7 +1333,7 @@ function generatePDF(clientName, reports, totalCost) {
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(20);
     doc.setFont(undefined, 'bold');
-    doc.text('Completed Walk-Thru Cost Summary Report', 20, 60);
+    doc.text('Cost Summary Report', 20, 60);
     doc.setFontSize(16);
     doc.setFont(undefined, 'normal');
     doc.text(`Client: ${clientName}`, 20, 75);
@@ -1657,7 +1674,7 @@ document.getElementById('printBtn').addEventListener('click', function() {
             ${headerHtml}
             <div class="report-container">
               <div class="header-section">
-                <div class="report-title">Completed Walk-Thru Cost Summary Report</div>
+                <div class="report-title">Walk-Thru Cost Summary Report</div>
                 <div class="report-sub">Client: ${displayName}</div>
               </div>
               ${clientTables}
@@ -1733,7 +1750,7 @@ document.getElementById('printBtn').addEventListener('click', function() {
             ${headerHtml}
             <div class="report-container">
               <div class="header-section">
-                <div class="report-title" style="font-size:1.8rem" >Completed Walk-Thru Cost Summary Report</div>
+                <div class="report-title" style="font-size:1.8rem" >Walk-Thru Cost Summary Report</div>
                 <hr style="border: 1.2px solid blue; margin-top: 15px; margin-bottom: 20px;">
 
                 
@@ -1838,7 +1855,6 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
   this.style.color = '#6c757d';
 });
 </script>
-
 <!-- read only cost thing  -->
  <script>
   // Unique total cost display function
@@ -1873,15 +1889,6 @@ document.getElementById('closeCostModal').addEventListener('mouseleave', functio
   }
 })();
  </script>
- <style>
-  .status-approved {
-    background-color: #28a745!important;
-    color: white;
-}
- </style>
-
-
-
 
 
 <!-- Cost checking before status update ---------------------------------------------------------- -->
@@ -1920,4 +1927,25 @@ function openUpdateFieldStatusModal(reportId, fieldName, category) {
   document.getElementById('updateFieldStatusModal').style.display = 'block';
 }
 </script>
+
+<style>
+  .btn-cost{
+  background:#2f5f9e;
+  color:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:6px;
+  font-weight:500;
+  cursor:pointer;
+}
+
+.btn-cost:hover{
+  background:#244b7d;
+}
+.status-cost{
+  background:#2f5f9e;
+  color:#fff;
+}
+
+</style>
 {% endblock content %}

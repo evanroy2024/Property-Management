@@ -4,6 +4,7 @@ APPROVAL_CHOICES = [
     ('Pending', 'Pending'),
     ('Approved', 'Approved'),
     ('Denied', 'Denied'),
+    ('Cost', 'Cost'),
 ]
 
 class ServiceRequest(models.Model):

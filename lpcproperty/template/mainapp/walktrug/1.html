@@ -1,0 +1,29 @@
+def report_detail_view(request, pk):
+    report = get_object_or_404(WalkthroughReport, pk=pk)
+    
+    # Flatten all the fields from related models to the report object
+    # General Items Exterior
+    if hasattr(report, 'general_items_exterior'):
+        for i in range(1, 16):
+            field_name = f'gie{i}'
+            setattr(report, field_name, getattr(report.general_items_exterior, field_name, None))
+            setattr(report, f'{field_name}_remarks', getattr(report.general_items_exterior, f'{field_name}_remarks', None))
+    
+    # General Items Interior
+    if hasattr(report, 'general_items_interior'):
+        for i in range(1, 11):
+            field_name = f'gii{i}'
+            setattr(report, field_name, getattr(report.general_items_interior, field_name, None))
+            setattr(report, f'{field_name}_remarks', getattr(report.general_items_interior, f'{field_name}_remarks', None))
+    
+    context = {
+        'report': report,
+        'client_first_name': report.user.first_name if report.user else '',
+        'client_last_name': report.user.last_name if report.user else '',
+        'report_datetime': report.datetime.strftime('%Y-%m-%d') if report.datetime else 'No Datetime Available',
+        'report_description': report.description if report.description else 'Walkthrough Report',
+        'report_property': str(report.property) if report.property else 'Walkthrough Report',
+    }
+    
+    return render(request, 'mainapp/walktrug/report_detail.html', context)
+

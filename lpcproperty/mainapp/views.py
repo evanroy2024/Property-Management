@@ -32,6 +32,7 @@ def process(request):
 def get_contact(request):
     return render(request, 'mainapp/contact.html')
 
+
 # Ending of login signing here ------------------------------------------------------------------------------------------
 
 from django.shortcuts import render, redirect
@@ -110,6 +111,20 @@ def client_profile_update(request):
         return redirect("mainapp:client_profile_update")
 
     return render(request, "mainapp/client_profile_update.html", {"client": client})
+
+
+def profile_update(request):
+    client_id = request.session.get("client_id")
+    if not client_id:
+        return redirect("mainapp:login")
+
+    client = Client.objects.get(id=client_id)
+
+    return render(
+        request,
+        "mainapp/client_profile_confirm.html",
+        {"client": client}
+    )
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -258,6 +273,129 @@ from .utils import client_login_required  # Import the decorator
 
 from propertydetails.models import PropertyManagement   
 
+# def client_properties(request):
+#     client_id = request.session['client_id']
+#     client = Client.objects.get(id=client_id)
+
+#     properties = PropertyManagement.objects.filter(
+#         client=client
+#     ).prefetch_related('floors__rooms', 'client_manager')
+
+#     if not properties.exists():
+#         return render(request, 'property/properties.html', {
+#             'properties': [],
+#         })
+
+#     # selected property
+#     selected_property_id = request.GET.get('property')
+#     if selected_property_id:
+#         selected_property = properties.filter(id=selected_property_id).first()
+#     else:
+#         selected_property = properties.first()
+
+#     contacts = [
+#         {"name": f"{client.contact1_last_name}, {client.contact1_name}", "email": client.contact1_email, "phone": client.contact1_phone, "preferred": client.contact1_preferred},
+#         {"name": f"{client.contact2_last_name}, {client.contact2_name}", "email": client.contact2_email, "phone": client.contact2_phone, "preferred": client.contact2_preferred},
+#         {"name": f"{client.contact3_last_name}, {client.contact3_name}", "email": client.contact3_email, "phone": client.contact3_phone, "preferred": client.contact3_preferred},
+#     ]
+#     contacts = [c for c in contacts if c["name"]]
+
+#     return render(request, 'property/properties.html', {
+#         'properties': properties,                 # for dropdown
+#         'property': selected_property,             # SINGLE property
+#         'contacts': contacts,
+#         'client_manager': selected_property.client_manager if selected_property else None,
+#     })
+
+
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+def build_email(title, rows_html, button_text):
+    return f"""
+    <div style="background:#eef2f7;padding:40px 0;font-family:Roboto,Arial,Helvetica,sans-serif;">
+      <div style="
+          max-width:640px;
+          margin:0 auto;
+          background:#ffffff;
+          border-radius:14px;
+          box-shadow:0 10px 25px rgba(0,0,0,0.08);
+          overflow:hidden;
+      ">
+
+        <!-- HEADER -->
+        <div style="
+            background:#1e3a8a;
+            padding:30px 40px;
+            color:#ffffff;
+            display:flex;
+            align-items:flex-start;
+        ">
+          <img src="https://backend.lotuspmc.com/static/logo.png"
+               alt="Logo"
+               style="height:60px;">
+
+          <div style="
+              font-size:16px;
+              font-weight:500;
+              margin-top:17px;
+              margin-left:85px;
+          ">
+            Thank you for contacting us
+          </div>
+        </div>
+
+        <!-- TITLE -->
+        <div style="padding:28px 40px 10px 40px;">
+          <div style="
+              background:#1e3a8a;
+              color:#ffffff;
+              padding:20px 26px;
+              border-radius:8px;
+              font-size:18px;
+              font-weight:600;
+          ">
+            Property Edit Requst 
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div style="padding:24px 40px;color:#1f2937;">
+          <table style="width:100%;border-collapse:collapse;">
+            {rows_html}
+          </table>
+
+          <div style="text-align:center;margin-top:36px;">
+            <a href="https://backend.lotuspmc.com/login/"
+               style="
+                 display:inline-block;
+                 background:#cfe9f6;
+                 color:#000000;
+                 text-decoration:none;
+                 padding:16px 38px;
+                 border-radius:8px;
+                 font-weight:600;
+                 font-size:14px;
+               ">
+              {button_text}
+            </a>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="background:#f1f5f9;padding:18px 40px;font-size:12px;color:#64748b;">
+          Our team will review this request and take action as required.
+          <br>
+          This is an automated notification. Please do not reply.
+        </div>
+
+      </div>
+    </div>
+    """
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
 def client_properties(request):
     client_id = request.session['client_id']
     client = Client.objects.get(id=client_id)
@@ -271,13 +409,56 @@ def client_properties(request):
             'properties': [],
         })
 
-    # selected property
     selected_property_id = request.GET.get('property')
     if selected_property_id:
         selected_property = properties.filter(id=selected_property_id).first()
     else:
         selected_property = properties.first()
 
+    # ==============================
+    # HANDLE REQUEST EDIT EMAIL
+    # ==============================
+    if request.method == "POST" and request.POST.get("edit_message"):
+        message = request.POST.get("edit_message")
+        manager = selected_property.client_manager
+
+        # Build table rows
+        rows_html = f"""
+        <tr>
+          <td style="padding:10px 0;font-weight:600;">Client Name</td>
+          <td style="padding:10px 0;">{client.last_name}, {client.first_name}</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 0;font-weight:600;">Property</td>
+          <td style="padding:10px 0;">{selected_property.address}</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 0;font-weight:600;">Request</td>
+          <td style="padding:10px 0;">{message}</td>
+        </tr>
+        """
+
+        html_content = build_email(
+            title="Property / Client Requested Edit",
+            rows_html=rows_html,
+            button_text="View Property"
+        )
+
+        email = EmailMultiAlternatives(
+            subject="Property / Client Requested Edit",
+            body=message,  # fallback plain text
+            from_email=None,  # DEFAULT_FROM_EMAIL
+            to=[manager.email],
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send()
+
+        messages.success(request, "Edit request sent successfully.")
+        return redirect(request.path)
+
+    # ==============================
+    # CONTACTS
+    # ==============================
     contacts = [
         {"name": f"{client.contact1_last_name}, {client.contact1_name}", "email": client.contact1_email, "phone": client.contact1_phone, "preferred": client.contact1_preferred},
         {"name": f"{client.contact2_last_name}, {client.contact2_name}", "email": client.contact2_email, "phone": client.contact2_phone, "preferred": client.contact2_preferred},
@@ -286,11 +467,12 @@ def client_properties(request):
     contacts = [c for c in contacts if c["name"]]
 
     return render(request, 'property/properties.html', {
-        'properties': properties,                 # for dropdown
-        'property': selected_property,             # SINGLE property
+        'properties': properties,
+        'property': selected_property,
         'contacts': contacts,
-        'client_manager': selected_property.client_manager if selected_property else None,
+        'client_manager': selected_property.client_manager,
     })
+
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -364,354 +546,282 @@ def departure(request):
 
 # All services go there Start ----------------------------------------------------------------------------------
 
-from datetime import datetime
+
+
 def open_services(request):
-    # Get the logged-in client from the session
-    client_id = request.session.get("client_id")
-
+    client_id = request.session.get('client_id')
     if not client_id:
-        return redirect("mainapp:client_login")  # Redirect if not logged in
+        return redirect('mainapp:client_login')
 
-    try:
-        client = Client.objects.get(id=client_id)  # Fetch the client instance
-    except Client.DoesNotExist:
-        return redirect("mainapp:client_login")
-
-    # Base queryset - all open service requests for the logged-in client
-    service_requests = ServiceRequest.objects.filter(user=client, status='open')
-
-    # Get filter parameters
-    month_filter = request.GET.get('month')
-    date_filter = request.GET.get('date')
-
-    # Apply month filter
-    if month_filter:
-        try:
-            # Parse month format like "January 2024"
-            month_date = datetime.strptime(month_filter, '%B %Y')
-            service_requests = service_requests.filter(
-                created_at__year=month_date.year,
-                created_at__month=month_date.month
-            )
-        except ValueError:
-            pass
-
-    # Apply date filter
-    if date_filter:
-        try:
-            # Parse date format like "Jan 15, 2024"
-            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
-            service_requests = service_requests.filter(created_at__date=date_obj.date())
-        except ValueError:
-            pass
-
-    # Order by most recent
-    service_requests = service_requests.order_by('-created_at')
-
-    # Get unique months for filter dropdown
-    all_requests = ServiceRequest.objects.filter(user=client, status='open')
-    months = all_requests.dates('created_at', 'month', order='DESC')
-    months_list = [date.strftime('%B %Y') for date in months]
-
-    # Get unique dates for filter dropdown
-    dates = all_requests.dates('created_at', 'day', order='DESC')
-    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+    requests = ServiceRequest.objects.filter(
+        user_id=client_id
+    ).exclude(
+        Q(status='completed', client_approval='Approved') |
+        Q(status='denied', client_approval='Denied')
+    )
 
     return render(request, 'services/allservices/open_services.html', {
-        'service_requests': service_requests,
-        'months': months_list,
-        'dates': dates_list,
+        'requests': requests
     })
-
-
-
 def completed_services(request):
-    # Get the logged-in client from the session
-    client_id = request.session.get("client_id")
-
+    client_id = request.session.get('client_id')
     if not client_id:
-        return redirect("mainapp:client_login")  # Redirect if not logged in
+        return redirect('mainapp:client_login')
 
-    try:
-        client = Client.objects.get(id=client_id)  # Fetch the client instance
-    except Client.DoesNotExist:
-        return redirect("mainapp:client_login")
-
-    # Base queryset - all completed service requests for the logged-in client
-    service_requests = ServiceRequest.objects.filter(user=client, status='completed')
-
-    # Get filter parameters
-    month_filter = request.GET.get('month')
-    date_filter = request.GET.get('date')
-
-    # Apply month filter
-    if month_filter:
-        try:
-            # Parse month format like "January 2024"
-            month_date = datetime.strptime(month_filter, '%B %Y')
-            service_requests = service_requests.filter(
-                created_at__year=month_date.year,
-                created_at__month=month_date.month
-            )
-        except ValueError:
-            pass
-
-    # Apply date filter
-    if date_filter:
-        try:
-            # Parse date format like "Jan 15, 2024"
-            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
-            service_requests = service_requests.filter(created_at__date=date_obj.date())
-        except ValueError:
-            pass
-
-    # Order by most recent
-    service_requests = service_requests.order_by('-created_at')
-
-    # Get unique months for filter dropdown
-    all_requests = ServiceRequest.objects.filter(user=client, status='completed')
-    months = all_requests.dates('created_at', 'month', order='DESC')
-    months_list = [date.strftime('%B %Y') for date in months]
-
-    # Get unique dates for filter dropdown
-    dates = all_requests.dates('created_at', 'day', order='DESC')
-    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+    requests = ServiceRequest.objects.filter(
+        user_id=client_id,
+        status='completed',
+        client_approval='Approved'
+    )
 
     return render(request, 'services/allservices/completed_services.html', {
-        'service_requests': service_requests,
-        'months': months_list,
-        'dates': dates_list,
+        'requests': requests
     })
 
 
 def denied_services(request):
-    # Get the logged-in client from the session
-    client_id = request.session.get("client_id")
-
+    client_id = request.session.get('client_id')
     if not client_id:
-        return redirect("mainapp:client_login")  # Redirect if not logged in
+        return redirect('mainapp:client_login')
 
-    try:
-        client = Client.objects.get(id=client_id)  # Fetch the client instance
-    except Client.DoesNotExist:
-        return redirect("mainapp:client_login")
-
-    # Base queryset - all denied service requests for the logged-in client
-    service_requests = ServiceRequest.objects.filter(user=client, status='denied')
-
-    # Get filter parameters
-    month_filter = request.GET.get('month')
-    date_filter = request.GET.get('date')
-
-    # Apply month filter
-    if month_filter:
-        try:
-            # Parse month format like "January 2024"
-            month_date = datetime.strptime(month_filter, '%B %Y')
-            service_requests = service_requests.filter(
-                created_at__year=month_date.year,
-                created_at__month=month_date.month
-            )
-        except ValueError:
-            pass
-
-    # Apply date filter
-    if date_filter:
-        try:
-            # Parse date format like "Jan 15, 2024"
-            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
-            service_requests = service_requests.filter(created_at__date=date_obj.date())
-        except ValueError:
-            pass
-
-    # Order by most recent
-    service_requests = service_requests.order_by('-created_at')
-
-    # Get unique months for filter dropdown
-    all_requests = ServiceRequest.objects.filter(user=client, status='denied')
-    months = all_requests.dates('created_at', 'month', order='DESC')
-    months_list = [date.strftime('%B %Y') for date in months]
-
-    # Get unique dates for filter dropdown
-    dates = all_requests.dates('created_at', 'day', order='DESC')
-    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+    requests = ServiceRequest.objects.filter(
+        user_id=client_id,
+        status='denied',
+        client_approval='Denied'
+    )
 
     return render(request, 'services/allservices/denied_services.html', {
-        'service_requests': service_requests,
-        'months': months_list,
-        'dates': dates_list,
+        'requests': requests
     })
+
+
 # All services go there End  ----------------------------------------------------------------------------------
 
 # All concierge go there Start  ----------------------------------------------------------------------------------
 from servicedetails.models import ConciergeServiceRequest
 
+# def open_concierge_services(request):
+#     client_id = request.session.get("client_id")
+
+#     if not client_id:
+#         return redirect("mainapp:client_login")
+
+#     try:
+#         client = Client.objects.get(id=client_id)
+#     except Client.DoesNotExist:
+#         return redirect("mainapp:client_login")
+
+#     # Base queryset
+#     service_requests = ConciergeServiceRequest.objects.filter(user=client, status='open')
+
+#     # Get filter parameters
+#     month_filter = request.GET.get('month')
+#     date_filter = request.GET.get('date')
+
+#     # Apply month filter
+#     if month_filter:
+#         try:
+#             month_date = datetime.strptime(month_filter, '%B %Y')
+#             service_requests = service_requests.filter(
+#                 created_at__year=month_date.year,
+#                 created_at__month=month_date.month
+#             )
+#         except ValueError:
+#             pass
+
+#     # Apply date filter
+#     if date_filter:
+#         try:
+#             date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+#             service_requests = service_requests.filter(created_at__date=date_obj.date())
+#         except ValueError:
+#             pass
+
+#     # Order by most recent
+#     service_requests = service_requests.order_by('-created_at')
+
+#     # Get unique months for filter dropdown
+#     all_requests = ConciergeServiceRequest.objects.filter(user=client, status='open')
+#     months = all_requests.dates('created_at', 'month', order='DESC')
+#     months_list = [date.strftime('%B %Y') for date in months]
+
+#     # Get unique dates for filter dropdown
+#     dates = all_requests.dates('created_at', 'day', order='DESC')
+#     dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+#     return render(request, 'services/concierge/open_services.html', {
+#         'service_requests': service_requests,
+#         'months': months_list,
+#         'dates': dates_list,
+#     })
+
+
+# def completed_concierge_services(request):
+#     client_id = request.session.get("client_id")
+
+#     if not client_id:
+#         return redirect("mainapp:client_login")
+
+#     try:
+#         client = Client.objects.get(id=client_id)
+#     except Client.DoesNotExist:
+#         return redirect("mainapp:client_login")
+
+#     # Base queryset
+#     service_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed')
+
+#     # Get filter parameters
+#     month_filter = request.GET.get('month')
+#     date_filter = request.GET.get('date')
+
+#     # Apply month filter
+#     if month_filter:
+#         try:
+#             month_date = datetime.strptime(month_filter, '%B %Y')
+#             service_requests = service_requests.filter(
+#                 created_at__year=month_date.year,
+#                 created_at__month=month_date.month
+#             )
+#         except ValueError:
+#             pass
+
+#     # Apply date filter
+#     if date_filter:
+#         try:
+#             date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+#             service_requests = service_requests.filter(created_at__date=date_obj.date())
+#         except ValueError:
+#             pass
+
+#     # Order by most recent
+#     service_requests = service_requests.order_by('-created_at')
+
+#     # Get unique months for filter dropdown
+#     all_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed')
+#     months = all_requests.dates('created_at', 'month', order='DESC')
+#     months_list = [date.strftime('%B %Y') for date in months]
+
+#     # Get unique dates for filter dropdown
+#     dates = all_requests.dates('created_at', 'day', order='DESC')
+#     dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+#     return render(request, 'services/concierge/completed_services.html', {
+#         'service_requests': service_requests,
+#         'months': months_list,
+#         'dates': dates_list,
+#     })
+
+
+# def denied_concierge_services(request):
+#     client_id = request.session.get("client_id")
+
+#     if not client_id:
+#         return redirect("mainapp:client_login")
+
+#     try:
+#         client = Client.objects.get(id=client_id)
+#     except Client.DoesNotExist:
+#         return redirect("mainapp:client_login")
+
+#     # Base queryset
+#     service_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied')
+
+#     # Get filter parameters
+#     month_filter = request.GET.get('month')
+#     date_filter = request.GET.get('date')
+
+#     # Apply month filter
+#     if month_filter:
+#         try:
+#             month_date = datetime.strptime(month_filter, '%B %Y')
+#             service_requests = service_requests.filter(
+#                 created_at__year=month_date.year,
+#                 created_at__month=month_date.month
+#             )
+#         except ValueError:
+#             pass
+
+#     # Apply date filter
+#     if date_filter:
+#         try:
+#             date_obj = datetime.strptime(date_filter, '%b %d, %Y')
+#             service_requests = service_requests.filter(created_at__date=date_obj.date())
+#         except ValueError:
+#             pass
+
+#     # Order by most recent
+#     service_requests = service_requests.order_by('-created_at')
+
+#     # Get unique months for filter dropdown
+#     all_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied')
+#     months = all_requests.dates('created_at', 'month', order='DESC')
+#     months_list = [date.strftime('%B %Y') for date in months]
+
+#     # Get unique dates for filter dropdown
+#     dates = all_requests.dates('created_at', 'day', order='DESC')
+#     dates_list = [date.strftime('%b %d, %Y') for date in dates]
+
+#     return render(request, 'services/concierge/denied_services.html', {
+#         'service_requests': service_requests,
+#         'months': months_list,
+#         'dates': dates_list,
+#     })
+
 def open_concierge_services(request):
-    client_id = request.session.get("client_id")
-
+    client_id = request.session.get('client_id')
     if not client_id:
-        return redirect("mainapp:client_login")
+        return redirect('mainapp:client_login')
 
-    try:
-        client = Client.objects.get(id=client_id)
-    except Client.DoesNotExist:
-        return redirect("mainapp:client_login")
-
-    # Base queryset
-    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='open')
-
-    # Get filter parameters
-    month_filter = request.GET.get('month')
-    date_filter = request.GET.get('date')
-
-    # Apply month filter
-    if month_filter:
-        try:
-            month_date = datetime.strptime(month_filter, '%B %Y')
-            service_requests = service_requests.filter(
-                created_at__year=month_date.year,
-                created_at__month=month_date.month
-            )
-        except ValueError:
-            pass
-
-    # Apply date filter
-    if date_filter:
-        try:
-            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
-            service_requests = service_requests.filter(created_at__date=date_obj.date())
-        except ValueError:
-            pass
-
-    # Order by most recent
-    service_requests = service_requests.order_by('-created_at')
-
-    # Get unique months for filter dropdown
-    all_requests = ConciergeServiceRequest.objects.filter(user=client, status='open')
-    months = all_requests.dates('created_at', 'month', order='DESC')
-    months_list = [date.strftime('%B %Y') for date in months]
-
-    # Get unique dates for filter dropdown
-    dates = all_requests.dates('created_at', 'day', order='DESC')
-    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+    requests = ConciergeServiceRequest.objects.filter(
+        user_id=client_id
+    ).exclude(
+        Q(status='completed', client_approval='Approved') |
+        Q(status='denied', client_approval='Denied')
+    )
 
     return render(request, 'services/concierge/open_services.html', {
-        'service_requests': service_requests,
-        'months': months_list,
-        'dates': dates_list,
+        'requests': requests
     })
 
 
 def completed_concierge_services(request):
-    client_id = request.session.get("client_id")
-
+    client_id = request.session.get('client_id')
     if not client_id:
-        return redirect("mainapp:client_login")
+        return redirect('mainapp:client_login')
 
-    try:
-        client = Client.objects.get(id=client_id)
-    except Client.DoesNotExist:
-        return redirect("mainapp:client_login")
-
-    # Base queryset
-    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed')
-
-    # Get filter parameters
-    month_filter = request.GET.get('month')
-    date_filter = request.GET.get('date')
-
-    # Apply month filter
-    if month_filter:
-        try:
-            month_date = datetime.strptime(month_filter, '%B %Y')
-            service_requests = service_requests.filter(
-                created_at__year=month_date.year,
-                created_at__month=month_date.month
-            )
-        except ValueError:
-            pass
-
-    # Apply date filter
-    if date_filter:
-        try:
-            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
-            service_requests = service_requests.filter(created_at__date=date_obj.date())
-        except ValueError:
-            pass
-
-    # Order by most recent
-    service_requests = service_requests.order_by('-created_at')
-
-    # Get unique months for filter dropdown
-    all_requests = ConciergeServiceRequest.objects.filter(user=client, status='completed')
-    months = all_requests.dates('created_at', 'month', order='DESC')
-    months_list = [date.strftime('%B %Y') for date in months]
-
-    # Get unique dates for filter dropdown
-    dates = all_requests.dates('created_at', 'day', order='DESC')
-    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+    requests = ConciergeServiceRequest.objects.filter(
+        user_id=client_id,
+        status='completed',
+        client_approval='Approved'
+    )
 
     return render(request, 'services/concierge/completed_services.html', {
-        'service_requests': service_requests,
-        'months': months_list,
-        'dates': dates_list,
+        'requests': requests
     })
 
 
 def denied_concierge_services(request):
-    client_id = request.session.get("client_id")
-
+    client_id = request.session.get('client_id')
     if not client_id:
-        return redirect("mainapp:client_login")
+        return redirect('mainapp:client_login')
 
-    try:
-        client = Client.objects.get(id=client_id)
-    except Client.DoesNotExist:
-        return redirect("mainapp:client_login")
-
-    # Base queryset
-    service_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied')
-
-    # Get filter parameters
-    month_filter = request.GET.get('month')
-    date_filter = request.GET.get('date')
-
-    # Apply month filter
-    if month_filter:
-        try:
-            month_date = datetime.strptime(month_filter, '%B %Y')
-            service_requests = service_requests.filter(
-                created_at__year=month_date.year,
-                created_at__month=month_date.month
-            )
-        except ValueError:
-            pass
-
-    # Apply date filter
-    if date_filter:
-        try:
-            date_obj = datetime.strptime(date_filter, '%b %d, %Y')
-            service_requests = service_requests.filter(created_at__date=date_obj.date())
-        except ValueError:
-            pass
-
-    # Order by most recent
-    service_requests = service_requests.order_by('-created_at')
-
-    # Get unique months for filter dropdown
-    all_requests = ConciergeServiceRequest.objects.filter(user=client, status='denied')
-    months = all_requests.dates('created_at', 'month', order='DESC')
-    months_list = [date.strftime('%B %Y') for date in months]
-
-    # Get unique dates for filter dropdown
-    dates = all_requests.dates('created_at', 'day', order='DESC')
-    dates_list = [date.strftime('%b %d, %Y') for date in dates]
+    requests = ConciergeServiceRequest.objects.filter(
+        user_id=client_id,
+        status='denied',
+        client_approval='Denied'
+    )
 
     return render(request, 'services/concierge/denied_services.html', {
-        'service_requests': service_requests,
-        'months': months_list,
-        'dates': dates_list,
+        'requests': requests
     })
+
+
+
+
+
+
+
+
 # All concierge go there End  ----------------------------------------------------------------------------------
 
 def client_manager_support(request):
@@ -1403,3 +1513,483 @@ def update_report_status(request, report_id, status):
 
 def privacy_view(request):
     return render(request, 'privacy.html')
+
+
+
+
+# Walkthrough-Report SETUP ----------------------------------------------------------------------------------- CLIENT SIDE START --
+
+
+CATEGORY_MAP = {
+    'gie': "General Items - Exterior",
+    'gii': "General Items - Interior", 
+    'garage': "Garage",
+    'laundry': "Laundry / Mudroom",
+    'kitchen': "Kitchen",
+    'butlers': "Butlers",
+    'breakfast': "Breakfast Area",
+    'entry': "Entry / Foyer",
+    'great': "Great Room / Family Room",
+    'dining': "Dining Room / Area",
+    'closets_main': "Closets - Main Level",
+    'closets_upper': "Closets - Upper Level",
+    'hallways_main': "Hallways - Main Level",
+    'hallways_upper': "Hallways - Upper Level",
+    'bedroom1': "Bedroom 1 (Master Bedroom)",
+    'bedroom2': "Bedroom 2",
+    'bedroom3': "Bedroom 3",
+    'bedroom4': "Bedroom 4",
+    'bedroom5': "Bedroom 5",
+    'bedroom6': "Bedroom 6",
+    'bedroom7': "Bedroom 7",
+    'bedroom8': "Bedroom 8",
+    'bedroom9': "Bedroom 9",
+    'bedroom10': "Bedroom 10",
+    'bathroom1': "Bathroom 1 (Master Bath)",
+    'bathroom2': "Bathroom 2",
+    'bathroom3': "Bathroom 3",
+    'bathroom4': "Bathroom 4",
+    'bathroom5': "Bathroom 5",
+    'bathroom6': "Bathroom 6",
+    'bathroom7': "Bathroom 7",
+    'bathroom8': "Bathroom 8",
+    'bathroom9': "Bathroom 9",
+    'bathroom10': "Bathroom 10",
+    'bathroom11': "Bathroom 11",
+    'bathroom12': "Bathroom 12",
+    'gym': "Gym",
+    'theatre': "Theatre / Music Room",
+    'music': "Theatre / Music Room",
+    'guest_house_sleeping': "Guest House - Sleeping / Living",
+    'guest_house_living': "Guest House - Sleeping / Living",
+    'guest_house_bathroom': "Guest House - Bathroom",
+}
+
+from django.db.models import Q
+from walkthroughreport.models import (
+    WalkthroughReport, GeneralItemsExterior, GeneralItemsInterior,
+    Garage, Laundry, Kitchen, Butlers, BreakfastArea, EntryFoyer,
+    GreatRoom, DiningRoom, ClosetsMainLevel, ClosetsUpperLevel,
+    HallwaysMainLevel, HallwaysUpperLevel, Bedroom1, Bedroom2, Bedroom3,
+    Bedroom4, Bedroom5, Bedroom6, Bedroom7, Bedroom8, Bedroom9, Bedroom10,
+    Bathroom1, Bathroom2, Bathroom3, Bathroom4, Bathroom5, Bathroom6,
+    Bathroom7, Bathroom8, Bathroom9, Bathroom10, Bathroom11, Bathroom12,
+    Gym, TheatreMusicRoom, GuestHouseSleepingLiving, GuestHouseBathroom
+)
+
+def get_category_from_model_name(model_name):
+    """Get category name from model name"""
+    model_to_category = {
+        'GeneralItemsExterior': 'gie',
+        'GeneralItemsInterior': 'gii',
+        'Garage': 'garage',
+        'Laundry': 'laundry',
+        'Kitchen': 'kitchen',
+        'Butlers': 'butlers',
+        'BreakfastArea': 'breakfast',
+        'EntryFoyer': 'entry',
+        'GreatRoom': 'great',
+        'DiningRoom': 'dining',
+        'ClosetsMainLevel': 'closets_main',
+        'ClosetsUpperLevel': 'closets_upper',
+        'HallwaysMainLevel': 'hallways_main',
+        'HallwaysUpperLevel': 'hallways_upper',
+        'Bedroom1': 'bedroom1',
+        'Bedroom2': 'bedroom2',
+        'Bedroom3': 'bedroom3',
+        'Bedroom4': 'bedroom4',
+        'Bedroom5': 'bedroom5',
+        'Bedroom6': 'bedroom6',  
+        'Bedroom7': 'bedroom7',
+        'Bedroom8': 'bedroom8',
+        'Bedroom9': 'bedroom9',
+        'Bedroom10': 'bedroom10',
+        'Bathroom1': 'bathroom1',
+        'Bathroom2': 'bathroom2',
+        'Bathroom3': 'bathroom3',
+        'Bathroom4': 'bathroom4',
+        'Bathroom5': 'bathroom5',
+        'Bathroom6': 'bathroom6',
+        'Bathroom7': 'bathroom7',
+        'Bathroom8': 'bathroom8',
+        'Bathroom9': 'bathroom9',
+        'Bathroom10': 'bathroom10',
+        'Bathroom11': 'bathroom11',
+        'Bathroom12': 'bathroom12',
+        'Gym': 'gym',
+        'TheatreMusicRoom': 'theatre',
+        'GuestHouseSleepingLiving': 'guest_house_sleeping',
+        'GuestHouseBathroom': 'guest_house_bathroom',
+    }
+    return model_to_category.get(model_name, model_name.lower())
+
+def process_model_fields(model_instance, report, model_name):
+    """Process fields from a specific model and return inspection items"""
+    inspection_items = []
+    category_key = get_category_from_model_name(model_name)
+    category = CATEGORY_MAP.get(category_key, model_name)
+    
+    for field in model_instance._meta.get_fields():
+        field_name = field.name
+        
+        # Skip non-relevant fields
+        if (
+            field_name in ['id', 'walkthrough_report'] or
+            field_name.endswith('_remarks') or
+            field_name.endswith('_amount') or
+            field_name.endswith('_calculation_note') or
+            field_name.endswith('_client_approval') or
+            field_name.endswith('_udpate_status') or
+            field_name.endswith('_update_date') or
+            field_name.endswith('_update_remarks')
+        ):
+            continue
+        
+        field_value = getattr(model_instance, field_name, None)
+        if field_value != "Non-Compliant":
+            continue
+        
+        # Get related fields
+        base = field_name
+        remarks = getattr(model_instance, f"{base}_remarks", '')
+        amount = getattr(model_instance, f"{base}_amount", None)
+        calculation_note = getattr(model_instance, f"{base}_calculation_note", '')
+        client_approval = getattr(model_instance, f"{base}_client_approval", '')
+        update_status = getattr(model_instance, f"{base}_udpate_status", '')
+        update_date = getattr(model_instance, f"{base}_update_date", None)
+        update_remarks = getattr(model_instance, f"{base}_update_remarks", '')
+        
+        # Human-readable question
+        verbose_name = field.verbose_name if hasattr(field, 'verbose_name') else base.replace('_', ' ').title()
+        
+        inspection_items.append({
+            'category': category,
+            'question': verbose_name,
+            'remarks': remarks,
+            'amount': amount,
+            'calculation_note': calculation_note,
+            'client_approval': client_approval,
+            'update_status': update_status,
+            'update_date': update_date,
+            'update_remarks': update_remarks,
+            'value': field_value,
+            'field_name': base,
+            'model_name': model_name,
+            'model_id': model_instance.id,
+            'completion_date': update_date,  # Add this
+        })
+    
+    return inspection_items
+
+def walktrug_open_reports_view(request):
+    reports = WalkthroughReport.objects.filter(user_id=request.session.get('client_id')).filter(
+        Q(status__in=['Open', 'Completed']) | 
+        Q(item_status_check=False)
+    ).select_related('user', 'property')
+    
+    processed_reports = []
+    
+    # All related models to check
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    for report in reports:
+        all_inspection_items = []
+        
+        # Process each related model
+        for model_class, relation_name in related_models:
+            try:
+                # Get the related model instance
+                model_instance = getattr(report, relation_name, None)
+                if model_instance:
+                    items = process_model_fields(model_instance, report, model_class.__name__)
+                    all_inspection_items.extend(items)
+            except Exception as e:
+                # Handle cases where relation doesn't exist
+                continue
+        
+        # Only add reports that have inspection items
+        if all_inspection_items:
+            report.inspection_items = all_inspection_items
+            processed_reports.append(report)
+    
+    return render(request, 'mainapp/walktrug/open_items.html', {'reports': processed_reports})
+
+def walktrug_completed_reports_view(request):
+    reports = WalkthroughReport.objects.filter(user_id=request.session.get('client_id')).filter(
+        Q(status__in=['Open', 'Completed']) | 
+        Q(item_status_check=False)
+    ).select_related('user', 'property')
+    
+    processed_reports = []
+    
+    # All related models to check
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    for report in reports:
+        all_inspection_items = []
+        
+        # Process each related model
+        for model_class, relation_name in related_models:
+            try:
+                # Get the related model instance
+                model_instance = getattr(report, relation_name, None)
+                if model_instance:
+                    items = process_model_fields(model_instance, report, model_class.__name__)
+                    all_inspection_items.extend(items)
+            except Exception as e:
+                # Handle cases where relation doesn't exist
+                continue
+        
+        # Only add reports that have inspection items
+        if all_inspection_items:
+            report.inspection_items = all_inspection_items
+            processed_reports.append(report)
+    
+    return render(request, 'mainapp/walktrug/completed_items.html', {'reports': processed_reports})
+
+def walktrug_denied_reports_view(request):
+    reports = WalkthroughReport.objects.filter(user_id=request.session.get('client_id')).filter(
+        Q(status__in=['Open', 'Completed']) | 
+        Q(item_status_check=False)
+    ).select_related('user', 'property')
+    
+    processed_reports = []
+    
+    # All related models to check
+    related_models = [
+        (GeneralItemsExterior, 'general_items_exterior'),
+        (GeneralItemsInterior, 'general_items_interior'),
+        (Garage, 'garage'),
+        (Laundry, 'laundry'),
+        (Kitchen, 'kitchen'),
+        (Butlers, 'butlers'),
+        (BreakfastArea, 'breakfast_area'),
+        (EntryFoyer, 'entry_foyer'),
+        (GreatRoom, 'great_room'),
+        (DiningRoom, 'dining_room'),
+        (ClosetsMainLevel, 'closets_main_level'),
+        (ClosetsUpperLevel, 'closets_upper_level'),
+        (HallwaysMainLevel, 'hallways_main_level'),
+        (HallwaysUpperLevel, 'hallways_upper_level'),
+        (Bedroom1, 'bedroom1'),
+        (Bedroom2, 'bedroom2'),
+        (Bedroom3, 'bedroom3'),
+        (Bedroom4, 'bedroom4'),
+        (Bedroom5, 'bedroom5'),
+        (Bedroom6, 'bedroom6'),
+        (Bedroom7, 'bedroom7'),
+        (Bedroom8, 'bedroom8'),
+        (Bedroom9, 'bedroom9'),
+        (Bedroom10, 'bedroom10'),
+        (Bathroom1, 'bathroom1'),
+        (Bathroom2, 'bathroom2'),
+        (Bathroom3, 'bathroom3'),
+        (Bathroom4, 'bathroom4'),
+        (Bathroom5, 'bathroom5'),
+        (Bathroom6, 'bathroom6'),
+        (Bathroom7, 'bathroom7'),
+        (Bathroom8, 'bathroom8'),
+        (Bathroom9, 'bathroom9'),
+        (Bathroom10, 'bathroom10'),
+        (Bathroom11, 'bathroom11'),
+        (Bathroom12, 'bathroom12'),
+        (Gym, 'gym'),
+        (TheatreMusicRoom, 'theatre_music_room'),
+        (GuestHouseSleepingLiving, 'guest_house_sleeping_living'),
+        (GuestHouseBathroom, 'guest_house_bathroom'),
+    ]
+    
+    for report in reports:
+        all_inspection_items = []
+        
+        # Process each related model
+        for model_class, relation_name in related_models:
+            try:
+                # Get the related model instance
+                model_instance = getattr(report, relation_name, None)
+                if model_instance:
+                    items = process_model_fields(model_instance, report, model_class.__name__)
+                    all_inspection_items.extend(items)
+            except Exception as e:
+                # Handle cases where relation doesn't exist
+                continue
+        
+        # Only add reports that have inspection items
+        if all_inspection_items:
+            report.inspection_items = all_inspection_items
+            processed_reports.append(report)
+    
+    return render(request, 'mainapp/walktrug/denied_items.html', {'reports': processed_reports})
+
+
+
+from django.http import JsonResponse
+import json
+
+
+@csrf_exempt
+def update_client_approval(request, report_id):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+    try:
+        data = json.loads(request.body)
+        field_name = data.get('field_name')
+        client_approval = data.get('client_approval')
+        category = data.get('category')
+
+        if client_approval not in ['Approved', 'Denied', 'Cost']:
+            return JsonResponse({'status': 'error', 'message': 'Invalid approval'}, status=400)
+
+        report = WalkthroughReport.objects.get(id=report_id)
+
+        def normalize_category(cat):
+            if 'Voyer' in cat:
+                cat = cat.replace('Voyer', 'Foyer')
+            return cat
+
+        category = normalize_category(category)
+
+        model_mapping = {
+            'General Items - Exterior': GeneralItemsExterior,
+            'General Items - Interior': GeneralItemsInterior,
+            'Garage': Garage,
+            'Laundry / Mudroom': Laundry,
+            'Kitchen': Kitchen,
+            'Butlers': Butlers,
+            'Breakfast Area': BreakfastArea,
+            'Entry / Foyer': EntryFoyer,
+            'Great Room / Family Room': GreatRoom,
+            'Dining Room / Area': DiningRoom,
+            'Closets - Main Level': ClosetsMainLevel,
+            'Closets - Upper Level': ClosetsUpperLevel,
+            'Hallways - Main Level': HallwaysMainLevel,
+            'Hallways - Upper Level': HallwaysUpperLevel,
+            'Bedroom 1 (Master Bedroom)': Bedroom1,
+            'Bedroom 2': Bedroom2,
+            'Bedroom 3': Bedroom3,
+            'Bedroom 4': Bedroom4,
+            'Bedroom 5': Bedroom5,
+            'Bedroom 6': Bedroom6,
+            'Bedroom 7': Bedroom7,
+            'Bedroom 8': Bedroom8,
+            'Bedroom 9': Bedroom9,
+            'Bedroom 10': Bedroom10,
+            'Bathroom 1 (Master Bath)': Bathroom1,
+            'Bathroom 2': Bathroom2,
+            'Bathroom 3': Bathroom3,
+            'Bathroom 4': Bathroom4,
+            'Bathroom 5': Bathroom5,
+            'Bathroom 6': Bathroom6,
+            'Bathroom 7': Bathroom7,
+            'Bathroom 8': Bathroom8,
+            'Bathroom 9': Bathroom9,
+            'Bathroom 10': Bathroom10,
+            'Bathroom 11': Bathroom11,
+            'Bathroom 12': Bathroom12,
+            'Gym': Gym,
+            'Theatre / Music Room': TheatreMusicRoom,
+            'Guest House - Sleeping / Living': GuestHouseSleepingLiving,
+            'Guest House - Bathroom': GuestHouseBathroom,
+        }
+
+        if category not in model_mapping:
+            return JsonResponse({'status': 'error', 'message': 'Invalid category'}, status=400)
+
+        model_class = model_mapping[category]
+        instance, _ = model_class.objects.get_or_create(walkthrough_report=report)
+
+        approval_field = f"{field_name}_client_approval"
+        if not hasattr(instance, approval_field):
+            return JsonResponse({'status': 'error', 'message': 'Invalid field'}, status=400)
+
+        setattr(instance, approval_field, client_approval)
+        instance.save()
+
+        return JsonResponse({'status': 'success'})
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+# Walkthrough-Report SETUP ----------------------------------------------------------------------------------- CLIENT SIDE END --

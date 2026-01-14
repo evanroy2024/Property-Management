@@ -59,6 +59,8 @@ urlpatterns = [
     path('reports/open/', views.open_reports_view, name='open_reports'),
     path('report/<int:report_id>/status/<str:status>/', views.update_report_status, name='update_report_status'),
 
+
+
     # path('', views.home, name='home'),
     # path('dashboard/', views.dashboard, name='dashboard'),
     # path('login/', login_view, name='login'),
@@ -71,5 +73,15 @@ urlpatterns = [
 
     # path('testui',testui,name='testui')
     path('privacy/', views.privacy_view, name='privacy'),
+
+    path('update-conformation', views.profile_update , name='profile_update'),
+
+
+    # walktrug report url 
+    path('walktrug/open/', views.walktrug_open_reports_view, name='item_open_reports'),
+    path('walktrug/completed/', views.walktrug_completed_reports_view, name='item_completed_reports'),   
+    path('walktrug/denied/', views.walktrug_denied_reports_view, name='item_denied_reports'),   
+    path('update-client-approval/<int:report_id>/', views.update_client_approval, name='update-client-approval'),
+    
 
 ]

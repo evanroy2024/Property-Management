@@ -62,6 +62,7 @@ APPROVAL_CHOICES = [
     ('Pending', 'Pending'),
     ('Approved', 'Approved'),
     ('Denied', 'Denied'),
+    ('Cost', 'Cost'),
 ]
 
 # Dummy custom field if needed

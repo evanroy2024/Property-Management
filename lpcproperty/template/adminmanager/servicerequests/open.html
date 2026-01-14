@@ -364,10 +364,28 @@
                                     <div id="approval-cell-{{ req.id }}" 
                                          onclick="openUpdateApprovalModal('{{ req.id }}', '{{ req.client_approval }}')" 
                                          style="cursor: pointer;">
-                                        <span id="approval-span-{{ req.id }}" 
-                                              class="status-badge {% if req.client_approval == 'Approved' %}status-approved{% elif req.client_approval == 'Denied' %}status-denied{% else %}status-pending{% endif %}">
-                                            {{ req.client_approval }}
-                                        </span>
+                                       <span id="approval-span-{{ req.id }}"
+  class="status-badge
+  {% if req.client_approval == 'Approved' %}
+    status-approved
+  {% elif req.client_approval == 'Denied' %}
+    status-denied
+  {% elif req.client_approval == 'Cost' %}
+    status-cost
+  {% else %}
+    status-pending
+  {% endif %}
+">
+  {% if req.client_approval %}
+    {{ req.client_approval }}
+  {% else %}
+    Pending
+  {% endif %}
+</span>
+<style>
+    .status-cost{background:#2f5f9e;color:#fff;}
+
+</style>
                                     </div>
                                 </td>
 

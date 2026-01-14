@@ -5,7 +5,9 @@ from mainapp.models import Client
 
 
 def service_request(request):
-    return render(request, "services/service_request.html")
+    return render(request, "services/service_rquest.html")
+
+
 
 def prearrival_form_view(request):
     # Check if the user is authenticated as a Client
@@ -53,13 +55,10 @@ def prearrival_form_view(request):
             additional=request.POST.get("additional") or None,
         )
         # messages.success(request, "Prearrival information submitted successfully!")
-        return redirect("servicesapp:request_form_success")
+        return redirect("servicesapp:prearrival_form_success")
 
     return render(request, "services/prearrival_form.html",{"client": client})
 
-def prearrival_form_success(request):
-    messages.success(request, "Your request has been submitted successfully!")
-    return render(request, "services/prearrival-success.html")
 
 from django.shortcuts import render, redirect
 from .models import DepartureInformation, Client  
@@ -104,7 +103,7 @@ def departure_form_view(request):
                 trash=trash,
                 additional=additional,
             )
-            return redirect("servicesapp:request_form_success")  # Redirect to success page
+            return redirect("servicesapp:departure_form_success")  # Redirect to success page
 
     return render(request, "services/departure_form.html" ,{"client": client})
 
@@ -136,6 +135,25 @@ def Concierge_request(request):
         )
 
         # messages.success(request, "Your request has been submitted successfully!")
-        return redirect("servicesapp:request_form_success")
+        return redirect("servicesapp:concierge_form_success")
     return render(request, "services/concierge_request_page.html")
 
+
+
+
+
+def service_form_success(request):
+    messages.success(request, "Your request has been submitted successfully!")
+    return render(request, "services/success/service-success.html")
+
+def concierge_form_success(request):
+    messages.success(request, "Your request has been submitted successfully!")
+    return render(request, "services/success/conceirge-success.html")
+
+def prearrival_form_success(request):
+    messages.success(request, "Your request has been submitted successfully!")
+    return render(request, "services/success/prearrival-success.html")
+
+def departure_form_success(request):
+    messages.success(request, "Your request has been submitted successfully!")
+    return render(request, "services/success/departure-success.html")

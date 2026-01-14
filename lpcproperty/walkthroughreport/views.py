@@ -1626,6 +1626,7 @@ def update_client_approval(request, report_id):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
 from datetime import datetime
 from django.utils.dateparse import parse_datetime
 

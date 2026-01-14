@@ -17,7 +17,7 @@ body {
   background-color: #ffffff;
 }
 
-/* MAIN CONTAINER — SAME AS ADMIN */
+/* MAIN CONTAINER */
 .client-container {
   max-width: 800px;
   margin: 10px auto;
@@ -25,15 +25,6 @@ body {
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-/* PAGE TITLE */
-.client-title {
-  text-align: center;
-  font-size: 25px;
-  font-weight: 600;
-  color: #13375b;
-  margin-bottom: 30px;
 }
 
 /* SECTION TITLE */
@@ -44,12 +35,12 @@ body {
   margin: 25px 0 10px;
 }
 
-/* MENU BLOCK — MATCH ADMIN .menu-item */
+/* MENU ITEM */
 .client-item {
   text-align: center;
   font-size: 20px;
   font-weight: 500;
-  color: #000000;
+  color: #000000; /* BLACK TEXT AS REQUESTED */
   padding: 25px 0;
   border-radius: 4px;
   cursor: pointer;
@@ -61,15 +52,21 @@ body {
   transform: translateY(-4px) scale(1.03);
 }
 
-/* COLORS — EXACT ADMIN PALETTE */
-.bg-1 { background-color: #f0e6d9; }
-.bg-2 { background-color: #dfc5a0; }
-.bg-3 { background-color: #e8a56c; }
-.bg-4 { background-color: #83d0e6; }
-.bg-5 { background-color: #5baecc; }
-.bg-6 { background-color: #2f7f96; color: #ffffff; }
-.bg-7 { background-color: #bb8fce; }
-.bg-8 { background-color: #8e44ad; color: #ffffff; }
+/* BRAND COLORS — EXACT PER INSTRUCTION */
+/* Walk-Thru Reports — Light Blue */
+.walkthru {
+  background-color: #A7D3F2;
+}
+
+/* Service Requests — Greyish */
+.service {
+  background-color: #C9CEC6;
+}
+
+/* Concierge Requests — Cream */
+.concierge {
+  background-color: #F3E8D8;
+}
 
 /* MOBILE */
 @media (max-width: 768px) {
@@ -82,75 +79,59 @@ body {
     font-size: 18px;
     padding: 22px 0;
   }
-
-  .client-title {
-    font-size: 20px;
-  }
 }
 </style>
 
 <div class="client-container">
 
-
-  <!-- WALKTHRU -->
+  <!-- WALK-THRU REPORTS -->
   <div class="section-title">Walk-Thru Reports</div>
 
-  <div class="client-item bg-1" onclick="window.location.href='{% url 'mainapp:all_reports' %}'">
+  <div class="client-item walkthru" onclick="window.location.href='{% url 'mainapp:all_reports' %}'">
     All Walk-Thru Reports
   </div>
 
-  <div class="client-item bg-2" onclick="window.location.href='{% url 'mainapp:open_reports' %}'">
+  <div class="client-item walkthru" onclick="window.location.href='{% url 'mainapp:item_open_reports' %}'">
     Open Items
   </div>
 
-  <div class="client-item bg-3" onclick="window.location.href='{% url 'mainapp:completed_reports' %}'">
+  <div class="client-item walkthru" onclick="window.location.href='{% url 'mainapp:item_completed_reports' %}'">
     Completed Items
   </div>
 
-  <div class="client-item bg-6" onclick="window.location.href='{% url 'mainapp:denied_reports' %}'">
+  <div class="client-item walkthru" onclick="window.location.href='{% url 'mainapp:item_denied_reports' %}'">
     Denied Items
   </div>
 
   <!-- SERVICE REQUESTS -->
   <div class="section-title">Service Requests</div>
 
-  <div class="client-item bg-2" onclick="window.location.href='{% url 'mainapp:open_services' %}'">
+  <div class="client-item service" onclick="window.location.href='{% url 'mainapp:open_services' %}'">
     Open Requests
   </div>
 
-  <div class="client-item bg-3" onclick="window.location.href='{% url 'mainapp:completed_services' %}'">
+  <div class="client-item service" onclick="window.location.href='{% url 'mainapp:completed_services' %}'">
     Completed Requests
   </div>
 
-  <div class="client-item bg-6" onclick="window.location.href='{% url 'mainapp:denied_services' %}'">
+  <div class="client-item service" onclick="window.location.href='{% url 'mainapp:denied_services' %}'">
     Client Denied
   </div>
 
-  <!-- CONCIERGE -->
+  <!-- CONCIERGE REQUESTS -->
   <div class="section-title">Concierge Requests</div>
 
-  <div class="client-item bg-2" onclick="window.location.href='{% url 'mainapp:open_concierge_services' %}'">
+  <div class="client-item concierge" onclick="window.location.href='{% url 'mainapp:open_concierge_services' %}'">
     Open Requests
   </div>
 
-  <div class="client-item bg-3" onclick="window.location.href='{% url 'mainapp:completed_concierge_services' %}'">
+  <div class="client-item concierge" onclick="window.location.href='{% url 'mainapp:completed_concierge_services' %}'">
     Completed Requests
   </div>
 
-  <div class="client-item bg-6" onclick="window.location.href='{% url 'mainapp:denied_concierge_services' %}'">
+  <div class="client-item concierge" onclick="window.location.href='{% url 'mainapp:denied_concierge_services' %}'">
     Client Denied
   </div>
-
-  <!-- PROPERTY IMPROVEMENTS -->
-  <!-- <div class="section-title">Property Improvements</div>
-
-  <div class="client-item bg-7" onclick="window.location.href='{% url 'propertydetails:open_property_improvements' %}'">
-    Open Projects
-  </div>
-
-  <div class="client-item bg-8" onclick="window.location.href='{% url 'propertydetails:completed_property_improvements' %}'">
-    Completed Projects
-  </div> -->
 
 </div>
 {% endblock content %}

@@ -2,6 +2,22 @@
 {% load static %}
 
 {% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'lotus-gold': '#d1aa6b',
+          'lotus-light': '#ffffff',
+          'lotus-gray-light': '#f5f5f5',
+          'lotus-border': '#e0e0e0',
+        }
+      }
+    }
+  }
+</script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 *{font-family:'Roboto',sans-serif!important}
@@ -9,7 +25,7 @@
 body{background:#f5f5f5;color:#222}
 
 .full-contact-page{display:flex;justify-content:center;padding:40px 20px}
-.lotus-container{max-width:1100px;width:100%;background:#fff;border-radius:14px;box-shadow:0 4px 30px rgba(0,0,0,.1);padding:40px}
+.lotus-container{max-width:1100px;width:100%;background:#fff;border-radius:14px;box-shadow:0 4px 30px rgba(0,0,0,.1)}
 
 .page-title{font-size:1.6rem;font-weight:500;color:#d1aa6b}
 .page-subtitle{font-size:.95rem;color:#666;margin-bottom:30px}
@@ -70,57 +86,72 @@ body{background:#f5f5f5;color:#222}
   border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+
+.content-section{padding:40px}
 </style>
 
-<div class="full-contact-page">
-<div class="lotus-container">
-
-<h2 class="page-title">Contact Managers</h2>
-<p class="page-subtitle">Send an email or text message.</p>
-
-<div class="property-grid">
-{% for property in properties %}
-{% ifchanged property.client_manager.id %}
-<div class="property-card">
-
-  <div class="card-header">
-    <p>{{ property.client_manager.first_name }} {{ property.client_manager.last_name }}</p>
-    <span style="color:#10b981;font-size:.75rem;">Active</span>
-  </div>
-
-  <div class="property-info">
-    <div class="info-item">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 4h16v16H4z" stroke-width="1.5"/>
-        <path d="M4 4l8 8 8-8" stroke-width="1.5"/>
-      </svg>
-      {{ property.client_manager.email }}
+<div class="bg-lotus-gray-light min-h-screen py-10 px-4">
+  <div class="lotus-container max-w-4xl mx-auto bg-white rounded-lg overflow-hidden border border-lotus-border">
+    
+    <!-- Header -->
+    <div class="py-6 px-6 sm:px-10 border-b border-lotus-border">
+      <div class="flex flex-col sm:flex-row items-center justify-between">
+        <div class="flex items-center gap-4 mb-4 sm:mb-0">
+          <img class="w-16 sm:w-20" src="{% static 'img/smalllogo.png' %}" alt="Lotus Property Logo">
+          <h1 class="text-2xl sm:text-3xl font-bold">Lotus Property</h1>
+        </div>
+        
+      </div>
     </div>
 
-    <div class="info-item">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M5 4h4l2 5-2 2a16 16 0 008 8l2-2 5 2v4c0 1-1 2-2 2C10 25 1 16 3 6c0-1 1-2 2-2z" stroke-width="1.5"/>
-      </svg>
-      {{ property.client_manager.phone_number }}
+    <!-- Main Content -->
+    <div class="content-section">
+      <h2 class="page-title">Contact your Client Manager</h2>
+      <p class="page-subtitle">Send an email or text message.</p>
+
+      <div class="property-grid">
+      {% for property in properties %}
+      {% ifchanged property.client_manager.id %}
+      <div class="property-card">
+
+        <div class="card-header">
+          <p>{{ property.client_manager.first_name }} {{ property.client_manager.last_name }}</p>
+        </div>
+
+        <div class="property-info">
+          <div class="info-item">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 4h16v16H4z" stroke-width="1.5"/>
+              <path d="M4 4l8 8 8-8" stroke-width="1.5"/>
+            </svg>
+            {{ property.client_manager.email }}
+          </div>
+
+          <div class="info-item">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 4h4l2 5-2 2a16 16 0 008 8l2-2 5 2v4c0 1-1 2-2 2C10 25 1 16 3 6c0-1 1-2 2-2z" stroke-width="1.5"/>
+            </svg>
+            {{ property.client_manager.phone_number }}
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button class="btn-email" onclick="openEmail('{{ property.client_manager.email }}')">
+            Email
+          </button>
+
+          <button class="btn-text" onclick="openText('{{ property.client_manager.phone_number }}')">
+            Text
+          </button>
+        </div>
+
+      </div>
+      {% endifchanged %}
+      {% endfor %}
+      </div>
     </div>
+
   </div>
-
-  <div class="card-footer">
-    <button class="btn-email" onclick="openEmail('{{ property.client_manager.email }}')">
-      Email
-    </button>
-
-    <button class="btn-text" onclick="openText('{{ property.client_manager.phone_number }}')">
-      Text
-    </button>
-  </div>
-
-</div>
-{% endifchanged %}
-{% endfor %}
-</div>
-
-</div>
 </div>
 
 <!-- EMAIL MODAL -->

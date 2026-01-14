@@ -119,6 +119,11 @@ body {
   font-weight:500;
 }
 
+.btn-primary[disabled] {
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
 .btn-secondary {
   border:1px solid #ddd;
   background:#fff;
@@ -140,11 +145,10 @@ body {
       <img src="{% static 'img/smalllogo.png' %}" style="width:64px">
       <h1 style="font-size:2rem;">Lotus Property</h1>
     </div>
-    <p style="color:#666">Client Service Portal</p>
   </div>
 
   <h2 class="page-title">Update Profile</h2>
-  <p class="page-subtitle">Change your username, email or password.</p>
+  <p class="page-subtitle">Change your username or password.</p>
 
   {% if messages %}
     {% for message in messages %}
@@ -154,40 +158,59 @@ body {
     {% endfor %}
   {% endif %}
 
-  <form method="POST">
+  <!-- IMPORTANT: ACTION UPDATED -->
+  <form method="POST" action="{% url 'mainapp:profile_update' %}">
     {% csrf_token %}
+
+    <!-- KEEP EMAIL (HIDDEN) -->
+    <input type="hidden" name="email" value="{{ client.email }}">
 
     <h2 class="section-title">Profile Information</h2>
 
+    <!-- USERNAME -->
     <div class="form-group">
       <label class="form-label">Username</label>
-      <input type="text" name="username" class="form-control"
-             value="{{ client.username }}" required>
+      <input
+        type="text"
+        id="username_field"
+        name="username"
+        class="form-control"
+        value="{{ client.username }}"
+        required
+      >
+
+      <small style="display:block;margin-top:6px;color:#666;font-size:0.8rem;">
+        • 6–20 characters<br>
+        • Must include at least one number
+      </small>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-control"
-             value="{{ client.email }}" required>
-    </div>
-
+    <!-- PASSWORD -->
     <div class="form-group">
       <label class="form-label">New Password (optional)</label>
       <input type="password" id="password_field" name="password" class="form-control">
       <span class="toggle-eye" onclick="togglePassword()">👁️</span>
+
+      <small style="display:block;margin-top:6px;color:#666;font-size:0.8rem;">
+        • 6–20 characters<br>
+        • Must include uppercase & lowercase letters<br>
+        • Must include at least one number<br>
+        • Must include at least one special character
+      </small>
     </div>
 
     <div class="note-box">
       <ul style="margin:0;padding-left:18px;">
-        <li>Your username will be sent to your email after updating.</li>
-        <li>Your password cannot be sent via email for security reasons.</li>
-        <li>Please remember your new password after updating it.</li>
+        <li>Email cannot be changed from this page.</li>
+        <li>Password cannot be sent by email.</li>
       </ul>
     </div>
 
     <div class="btn-container">
       <a href="{% url 'mainapp:dashboard' %}" class="btn-secondary">Back</a>
-      <button type="submit" class="btn-primary">Update</button>
+      <button type="submit" id="updateBtn" class="btn-primary" disabled>
+        Update 🔒
+      </button>
     </div>
 
   </form>
@@ -198,6 +221,44 @@ function togglePassword() {
   const field = document.getElementById("password_field");
   field.type = field.type === "password" ? "text" : "password";
 }
+
+const usernameField = document.getElementById("username_field");
+const passwordField = document.getElementById("password_field");
+const updateBtn = document.getElementById("updateBtn");
+
+function isUsernameValid(val) {
+  return (
+    val.length >= 6 &&
+    val.length <= 20 &&
+    /[0-9]/.test(val)
+  );
+}
+
+function isPasswordValid(val) {
+  if (val.length === 0) return true;
+  return (
+    val.length >= 6 &&
+    val.length <= 20 &&
+    /[A-Z]/.test(val) &&
+    /[a-z]/.test(val) &&
+    /[0-9]/.test(val) &&
+    /[^A-Za-z0-9]/.test(val)
+  );
+}
+
+function validateForm() {
+  if (isUsernameValid(usernameField.value) && isPasswordValid(passwordField.value)) {
+    updateBtn.disabled = false;
+    updateBtn.innerText = "Update";
+  } else {
+    updateBtn.disabled = true;
+    updateBtn.innerText = "Update 🔒";
+  }
+}
+
+usernameField.addEventListener("input", validateForm);
+passwordField.addEventListener("input", validateForm);
+validateForm();
 </script>
 
 {% endblock content %}
