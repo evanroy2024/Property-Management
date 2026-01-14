@@ -202,11 +202,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <h2 class="text-center mb-4">How May We Assist You?</h2>
-                    {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
+                   
             
                     <form method="POST">
                         {% csrf_token %}
