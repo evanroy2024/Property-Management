@@ -108,7 +108,7 @@ def client_profile_update(request):
 
         client.save()
         messages.success(request, "Updated successfully.")
-        return redirect("mainapp:client_profile_update")
+        return redirect("mainapp:profile_conformation_update")
 
     return render(request, "mainapp/client_profile_update.html", {"client": client})
 
