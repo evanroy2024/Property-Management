@@ -159,7 +159,7 @@ body {
   {% endif %}
 
   <!-- IMPORTANT: ACTION UPDATED -->
-  <form method="POST" action="{% url 'mainapp:profile_update' %}">
+  <form method="POST" action="{% url 'mainapp:client_profile_update' %}">
     {% csrf_token %}
 
     <!-- KEEP EMAIL (HIDDEN) -->
