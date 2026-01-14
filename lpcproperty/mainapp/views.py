@@ -1646,7 +1646,7 @@ def process_model_fields(model_instance, report, model_name):
             continue
         
         field_value = getattr(model_instance, field_name, None)
-        if field_value != "Non-Compliant":
+        if field_value not in ["Non-Compliant", "Heads-Up"]:
             continue
         
         # Get related fields
