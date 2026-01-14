@@ -74,7 +74,7 @@ urlpatterns = [
     # path('testui',testui,name='testui')
     path('privacy/', views.privacy_view, name='privacy'),
 
-    path('update-conformation', views.profile_update , name='profile_update'),
+    path('update-conformation', views.profile_update , name='profile_conformation_update'),
 
 
     # walktrug report url 
