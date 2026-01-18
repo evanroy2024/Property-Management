@@ -424,7 +424,7 @@
                 class="edit-btn" 
                 title="Set Cost A"
                 id="btnCostA-{{ report.id }}-{{ item.question|slugify }}">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle" style="display: none;"></i>
         </button>
         {% endif %}
     {% endif %}
@@ -444,7 +444,7 @@
                 class="edit-btn" 
                 title="Set Cost B"
                 id="btnCostB-{{ report.id }}-{{ item.question|slugify }}">
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus-circle"  style="display: none;"></i>
         </button>
         {% endif %}
     {% endif %}
@@ -1087,7 +1087,7 @@ function slugify(text) {
       <button onclick="setApprovalStatus('Denied')" class="btn-danger">
         Reject
       </button>
-      <button style="display: none;" onclick="setApprovalStatus('Cost')" class="btn-cost">
+      <button  onclick="setApprovalStatus('Cost')" class="btn-cost">
         Request Cost
       </button>
     </div>
@@ -1119,43 +1119,62 @@ function closeUpdateApprovalModal() {
 
 function setApprovalStatus(status) {
   selectedApprovalStatus = status;
-  
-  // If approved, automatically set cost to 66666
-  if (status === 'Approved') {
-    const reportId = document.getElementById('approvalReportId').value;
-    const category = document.getElementById('approvalCategory').value;
-    const fieldName = document.getElementById('approvalFieldName').value;
-    
-    // Get the question from the row
-    const approvalCell = document.getElementById(`approval-cell-${reportId}-${fieldName}`);
-    const row = approvalCell.closest('tr');
-    const questionCell = row.querySelector('td:nth-child(3)');
-    const question = questionCell ? questionCell.textContent.trim() : '';
-    
-    // Set cost to 66666
-    const url = "{% url 'walkthroughreport:update-report-field-cost' 0 %}".replace("0", reportId);
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token }}'
-      },
-      body: JSON.stringify({ 
-        category: category, 
-        question: question, 
-        amount: 66666,
-        calculation_note: 'Auto-set on approval'
-      })
-    }).then(() => {
-      submitUpdateApproval();
-    }).catch(() => {
-      submitUpdateApproval();
-    });
-  } else {
-    submitUpdateApproval();
-  }
-}
 
+  const reportId = document.getElementById('approvalReportId').value;
+  const category = document.getElementById('approvalCategory').value;
+  const fieldName = document.getElementById('approvalFieldName').value;
+
+  // Get question text
+  const approvalCell = document.getElementById(`approval-cell-${reportId}-${fieldName}`);
+  const row = approvalCell.closest('tr');
+  const questionCell = row.querySelector('td:nth-child(3)');
+  const question = questionCell ? questionCell.textContent.trim() : '';
+
+  // APPROVED → 66666
+  if (status === 'Approved') {
+    fetch(
+      "{% url 'walkthroughreport:update-report-field-cost' 0 %}".replace("0", reportId),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          category: category,
+          question: question,
+          amount: 66666,
+          calculation_note: 'Auto-set on approval'
+        })
+      }
+    ).finally(() => submitUpdateApproval());
+    return;
+  }
+
+  // REQUEST COST → 55555
+  if (status === 'Cost') {
+    fetch(
+      "{% url 'walkthroughreport:update-report-field-cost' 0 %}".replace("0", reportId),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          category: category,
+          question: question,
+          amount: 55555,
+          calculation_note: 'Auto-set on cost request'
+        })
+      }
+    ).finally(() => submitUpdateApproval());
+    return;
+  }
+
+  // DENIED or others
+  submitUpdateApproval();
+}
 function submitUpdateApproval() {
   const reportId = document.getElementById('approvalReportId').value;
   const fieldName = document.getElementById('approvalFieldName').value;
