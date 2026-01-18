@@ -142,9 +142,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {% for key, value in request_types %}
               <label class="relative flex items-center p-3 rounded-md border border-lotus-border bg-white cursor-pointer hover:border-lotus-gold transition-all
-{% if key == 'site' %} order-1 {% endif %}
-{% if key == 'landscaping' %} order-2 {% endif %}
-{% if key == 'other' %} order-3 col-span-3 sm:col-span-1 sm:col-start-2 {% endif %}
+
 ">
   <input type="radio" name="request_type" class="form-radio h-5 w-5 text-lotus-gold focus:ring-lotus-gold" value="{{ key }}">
   <span class="ml-2 text-sm text-gray-800">{{ value }}</span>
@@ -199,14 +197,39 @@
           </div>
 
           <!-- Submit -->
-          <div class="flex justify-center sm:justify-end">
-            <button 
-              type="submit" 
-              class="bg-lotus-gold hover:bg-opacity-90 text-black rounded-md px-6 py-3 font-medium shadow-md transform transition hover:-translate-y-1 duration-300"
-            >
-              Submit Request
-            </button>
-          </div>
+         <div class="flex items-center justify-between mt-6">
+  
+  <!-- Cost Selection (LEFT) -->
+  <div class="flex gap-4">
+    <label class="cursor-pointer">
+      <input type="radio" name="cost_choice" value="55555" class="hidden peer">
+      <div class="px-6 py-3 border border-lotus-border rounded-md font-medium
+                  peer-checked:bg-lotus-gold peer-checked:text-black
+                  hover:border-lotus-gold transition">
+        Provide Cost
+      </div>
+    </label>
+
+    <label class="cursor-pointer">
+      <input type="radio" name="cost_choice" value="66666"  class="hidden peer">
+      <div class="px-6 py-3 border border-lotus-border rounded-md font-medium
+                  peer-checked:bg-lotus-gold peer-checked:text-black
+                  hover:border-lotus-gold transition">
+        Proceed w/out Cost
+      </div>
+    </label>
+  </div>
+
+  <!-- Submit (RIGHT) -->
+  <button 
+    type="submit" 
+    class="bg-lotus-gold hover:bg-opacity-90 text-black rounded-md px-6 py-3 font-medium shadow-md transform transition hover:-translate-y-1 duration-300"
+  >
+    Submit Request
+  </button>
+
+</div>
+
         </form>
       </div>
     </div>
@@ -248,5 +271,15 @@
   });
 </script>
 
-
+<script>
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const costSelected = document.querySelector('input[name="cost_choice"]:checked');
+    
+    if (!costSelected) {
+      e.preventDefault();
+      alert('Please select a cost type ( Provide Cost or Proceed w/out Cost )');
+      return false;
+    }
+  });
+</script>
 {% endblock content %}

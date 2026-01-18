@@ -357,7 +357,7 @@
                             REPORT DATE <i class="fas fa-sort sort-icon"></i>
                         </th>
                        
-                        <th>EST'D COST</th>
+                        <th>COST</th>
                         <th>CLIENT STATUS</th>
                         <th>ITEM STATUS</th>
                         <th>DENIED DATE</th>
@@ -382,12 +382,16 @@
                     <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>                 
                 </td>                                  
                 <td>   
-                    <span id="cost-{{ report.id }}-{{ item.question|slugify }}">${{ item.amount|default:"-" }}</span> 
+                     {% if item.amount == 55555 or item.amount == 66666 %}
+            -
+        {% else %}
+            ${{ item.amount|default:"-" }}
+        {% endif %} 
                     <button    
                         onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"   
                         class="edit-btn"   
                         title="Edit Cost">   
-                        <i class="fas fa-pen-to-square"></i> 
+                        <i class="fas fa-pen-to-square" style="display: none;"></i> 
                     </button> 
                 </td>  
                 <td>   

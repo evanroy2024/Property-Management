@@ -1401,21 +1401,32 @@ from django.db.models import Q
 def open_requests(request):
     # Show all except if both are approved and completed OR both are denied
     requests = ServiceRequest.objects.exclude(
-        Q(status='completed', client_approval='Approved') |
-        Q(status='denied', client_approval='Denied')
+        Q(status='denied') |
+        Q(client_approval='Denied') |
+        Q(status='completed', client_approval='Approved')
     )
     return render(request, 'adminmanager/servicerequests/open.html', {'requests': requests})
 
 def completed_requests(request):
-    # Only if both are completed and approved
-    requests = ServiceRequest.objects.filter(status='completed', client_approval='Approved')
-    return render(request, 'adminmanager/servicerequests/completed.html', {'requests': requests})
+    requests = ServiceRequest.objects.filter(
+        status='completed',
+        client_approval='Approved'
+    )
+    return render(
+        request,
+        'adminmanager/servicerequests/completed.html',
+        {'requests': requests}
+    )
 
 def denied_requests(request):
-    # Only if both are denied
-    requests = ServiceRequest.objects.filter(status='denied', client_approval='Denied')
-    return render(request, 'adminmanager/servicerequests/denied.html', {'requests': requests})
-
+    requests = ServiceRequest.objects.filter(
+        client_approval='Denied'
+    )
+    return render(
+        request,
+        'adminmanager/servicerequests/denied.html',
+        {'requests': requests}
+    )
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.dateparse import parse_date
 from django.contrib import messages
@@ -1467,32 +1478,31 @@ def service_request_detail(request, request_id):
 # Congiure Request ----------------------------------------------------------------------------------------------------------------------
 from servicedetails.models import ConciergeServiceRequest
 
-# Pending
 def concierge_pending_requests(request):
     requests = ConciergeServiceRequest.objects.filter(status='pending')
     return render(request, 'adminmanager/conciergerequests/pending.html', {'requests': requests})
 
-from django.db.models import Q
 
-# Open
 def concierge_open_requests(request):
-    # Show all except if both are approved and completed OR both are denied
     requests = ConciergeServiceRequest.objects.exclude(
-        Q(status='completed', client_approval='Approved') |
-        Q(status='denied', client_approval='Denied')
+        Q(client_approval='Denied') |
+        Q(status='completed', client_approval='Approved')
     )
     return render(request, 'adminmanager/conciergerequests/open.html', {'requests': requests})
 
-# Completed
+
 def concierge_completed_requests(request):
-    # Only if both are completed and approved
-    requests = ConciergeServiceRequest.objects.filter(status='completed', client_approval='Approved')
+    requests = ConciergeServiceRequest.objects.filter(
+        status='completed',
+        client_approval='Approved'
+    )
     return render(request, 'adminmanager/conciergerequests/completed.html', {'requests': requests})
 
-# Denied
+
 def concierge_denied_requests(request):
-    # Only if both are denied
-    requests = ConciergeServiceRequest.objects.filter(status='denied', client_approval='Denied')
+    requests = ConciergeServiceRequest.objects.filter(
+        client_approval='Denied'
+    )
     return render(request, 'adminmanager/conciergerequests/denied.html', {'requests': requests})
 
 from django.utils.dateparse import parse_date

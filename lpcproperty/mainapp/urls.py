@@ -72,6 +72,8 @@ urlpatterns = [
     # path("reset-password/<uidb64>/<token>/", reset_password, name="reset_password"),
 
     # path('testui',testui,name='testui')
+    path('property_edit_request/', views.property_edit_request, name='property_edit_request'),
+
     path('privacy/', views.privacy_view, name='privacy'),
 
     path('update-conformation', views.profile_update , name='profile_conformation_update'),

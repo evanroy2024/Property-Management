@@ -454,7 +454,7 @@ def client_properties(request):
         email.send()
 
         messages.success(request, "Edit request sent successfully.")
-        return redirect(request.path)
+        return redirect('mainapp:property_edit_request')
 
     # ==============================
     # CONTACTS
@@ -473,6 +473,9 @@ def client_properties(request):
         'client_manager': selected_property.client_manager,
     })
 
+def property_edit_request(request):
+    return render(request, 'property/success.html')
+
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -486,6 +489,7 @@ from mainapp.models import Client
 from servicedetails.models import ServiceRequest
 
 def service_request(request):
+    cost_choice = request.POST.get("cost_choice")
     if request.method == "POST":
         client_id = request.session.get("client_id")
         if not client_id:
@@ -511,7 +515,8 @@ def service_request(request):
             user=client,
             request_type=request_type,
             description=description,
-            floor_plan_name=floor_plan_name  # Save it if present
+            floor_plan_name=floor_plan_name,  # Save it if present
+            cost=cost_choice
         )
 
         messages.success(request, "Service request submitted successfully!" ,)
@@ -556,13 +561,16 @@ def open_services(request):
     requests = ServiceRequest.objects.filter(
         user_id=client_id
     ).exclude(
-        Q(status='completed', client_approval='Approved') |
-        Q(status='denied', client_approval='Denied')
+        client_approval='Denied'
+    ).exclude(
+        status='completed',
+        client_approval='Approved'
     )
 
     return render(request, 'services/allservices/open_services.html', {
         'requests': requests
     })
+
 def completed_services(request):
     client_id = request.session.get('client_id')
     if not client_id:
@@ -775,8 +783,7 @@ def open_concierge_services(request):
     requests = ConciergeServiceRequest.objects.filter(
         user_id=client_id
     ).exclude(
-        Q(status='completed', client_approval='Approved') |
-        Q(status='denied', client_approval='Denied')
+        client_approval='Denied'
     )
 
     return render(request, 'services/concierge/open_services.html', {

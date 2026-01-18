@@ -447,16 +447,20 @@
   {% elif item.client_approval == 'Denied' %}
     status-denied
   {% elif item.client_approval == 'Cost' %}
-    status-cost
+    status-pending
   {% else %}
     status-pending
   {% endif %}
 ">
-  {% if item.client_approval %}
-    {{ item.client_approval }}
-  {% else %}
-    Pending
-  {% endif %}
+{% if item.client_approval %}
+{% if item.client_approval == "Cost" %}
+  Pending
+{% else %}
+  {{ item.client_approval }}
+{% endif %}
+{% else %}
+  Pending
+{% endif %}
 </span>
 <style>
   .status-cost{background:#2f5f9e;color:#fff;}
@@ -1134,6 +1138,7 @@ function submitUpdateApproval() {
       }
       
       closeUpdateApprovalModal();
+      location.reload();
     } else {
       console.error('Update failed:', data);
       alert("Failed to update: " + (data.message || "Unknown error"));

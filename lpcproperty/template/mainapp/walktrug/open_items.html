@@ -367,7 +367,7 @@
                             REPORT DATE <i class="fas fa-sort sort-icon"></i>
                         </th>
                         
-                        <th>TOTAL COST</th>
+                        <th> COST</th>
                         <th>Provide Cost</th>
                         <th>Proceed w/out Cost</th>
                         <th>APPROVAL</th>
@@ -406,7 +406,7 @@
         onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"   
         class="edit-btn"   
         title="Edit Cost">   
-        <i class="fas fa-pen-to-square"></i> 
+        <i class="fas fa-pen-to-square" style="display: none;"></i> 
     </button> 
 </td> 
 <!-- THE COST AUTO FILL OPTIONS START  -->
@@ -456,14 +456,18 @@
 status-approved
 {% elif item.client_approval == 'Denied' %}
 status-denied
-{% elif item.client_approval == 'Cost' %}
+{% elif item.client_approval == 'C3ost' %}
 status-cost
 {% else %}
 status-pending
 {% endif %}
 ">
 {% if item.client_approval %}
+{% if item.client_approval == "Cost" %}
+  Pending
+{% else %}
   {{ item.client_approval }}
+{% endif %}
 {% else %}
   Pending
 {% endif %}

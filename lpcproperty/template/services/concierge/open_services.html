@@ -309,16 +309,19 @@
                 <table class="table table-hover" id="sortable-table">
                     <thead>
                         <tr>
-                            <th>TOTAL COST</th>
+                            <th class="sortable" data-index="0" style="cursor: pointer;">
+                                REQUEST DATE <i class="fas fa-sort sort-icon"></i>
+                            </th>
+                            
+                            <th >REQUEST DETAILS</th>
+                            <th>COST</th>
 
                           <th class="sortable" data-index="1" style="cursor: pointer; display: none;">
                                 CLIENT  <i class="fas fa-sort sort-icon"></i>
                             </th>
-                            <th class="sortable" data-index="0" style="cursor: pointer; display: none;">
-                                REQUEST DATE <i class="fas fa-sort sort-icon"></i>
-                            </th>
                             
-                            <th style="display: none;">REQUEST</th>
+                            <th>Provide Cost</th>
+                            <th>Proceed w/out Cost</th>
                             <th>ACTION</th>
                             <th>APPROVAL</th>
                             <th style="display: none;">ITEM STATUS</th>
@@ -332,18 +335,20 @@
                                 data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }}">
                                 <td style="display: none;"><strong>{{ req.user.last_name|title }}, {{ req.user.first_name|title }}</strong></td>
                                 
-                                <td style="cursor: pointer; display: none;">
+                                <td style="cursor: pointer; ">
                                     <strong>{{ req.created_at|date:'M d, Y' }}</strong><br>
                                     <small class="text-muted">{{ req.created_at|time:'g:i A' }}</small>
                                 </td>
                                 
                                 
-                                <td style="word-wrap: break-word; white-space: normal; max-width: 250px; display: none;">
+                                <td style="word-wrap: break-word; white-space: normal; max-width: 250px; ">
                                     {{ req.description|truncatechars:300 }}
                                 </td>
                                 <td style="display: none;">cost setup thing</td>
                                 <td>
-                                    <span id="cost-{{ req.id }}">${{ req.cost|default:"0" }}</span>
+                                        <span id="cost-{{ req.id }}">
+  {% if req.cost == 55555 or req.cost == 66666 %}-{% else %}${{ req.cost|default:"0" }}{% endif %}
+</span>
                                     <button  style="display: none;"
                                         onclick="openEditCostModal('{{ req.id }}', '{{ req.cost|default:0 }}', '{{ req.cost_remarks|default:"" }}')"
                                         class="edit-btn"
@@ -351,6 +356,50 @@
                                         <i class="fas fa-pen-to-square"></i>
                                     </button>
                                 </td>
+
+                                <!-- Provide Cost Column -->
+<td style="text-align: left; padding-left: 20px;">
+    <span id="costA-{{ req.id }}">
+        {% if req.cost == 55555 %}
+            <i class="fas fa-times" style="color: #28a745; font-size: 18px;"></i>
+        {% else %}
+            -
+        {% endif %}
+    </span>
+    {% if not req.cost or req.cost == 0 %}
+        {% if req.client_approval != 'Approved' %}
+        <button onclick="setConciergeCostA('{{ req.id }}')" 
+                class="edit-btn" 
+                title="Set Cost A"
+                id="btnCostA-{{ req.id }}"
+                style="display: none;">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        {% endif %}
+    {% endif %}
+</td>
+
+<!-- Proceed w/out Cost Column -->
+<td style="text-align: left; padding-left: 20px;">
+    <span id="costB-{{ req.id }}">
+        {% if req.cost == 66666 %}
+            <i class="fas fa-times" style="color: #28a745; font-size: 18px;"></i>
+        {% else %}
+            -
+        {% endif %}
+    </span>
+    {% if not req.cost or req.cost == 0 %}
+        {% if req.client_approval != 'Approved' %}
+        <button onclick="setConciergeCostB('{{ req.id }}')" 
+                class="edit-btn" 
+                title="Set Cost B"
+                id="btnCostB-{{ req.id }}"
+                style="display: none;">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        {% endif %}
+    {% endif %}
+</td>
                                 <td>
 <button
   onclick="openViewRequestModal(
@@ -377,16 +426,18 @@
   {% elif req.client_approval == 'Denied' %}
     status-denied
   {% elif req.client_approval == 'Cost' %}
-    status-cost
+    status-pending
   {% else %}
     status-pending
   {% endif %}
   ">
-  {% if req.client_approval %}
-    {{ req.client_approval }}
-  {% else %}
-    Pending
-  {% endif %}
+{% if req.client_approval == "Cost" %}
+  Pending
+{% elif req.client_approval %}
+  {{ req.client_approval }}
+{% else %}
+  Pending
+{% endif %}
 </span>
 
                                     </div>
@@ -721,8 +772,43 @@ function closeUpdateApprovalModal() {
 }
 
 function setApprovalStatus(status) {
-  selectedApprovalStatus = status;
-  submitUpdateApproval();
+    selectedApprovalStatus = status;
+    const requestId = document.getElementById('approvalRequestId').value;
+
+    // APPROVED → 66666
+    if (status === 'Approved') {
+        fetch("{% url 'adminmanager:update_concierge_cost' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                request_id: requestId,
+                amount: 66666,
+                remarks: 'Auto-set on approval'
+            })
+        }).finally(() => submitUpdateApproval());
+        return;
+    }
+
+    // REQUEST COST → 55555
+    if (status === 'Cost') {
+        fetch("{% url 'adminmanager:update_concierge_cost' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                request_id: requestId,
+                amount: 55555,
+                remarks: 'Auto-set on cost request'
+            })
+        }).finally(() => submitUpdateApproval());
+        return;
+    }
+
+    // DENIED or others
+    submitUpdateApproval();
 }
 
 function submitUpdateApproval() {
@@ -755,6 +841,8 @@ function submitUpdateApproval() {
         span.textContent = newValue;
       }
       closeUpdateApprovalModal();
+      location.reload();
+
     } else {
       alert('Error updating approval');
     }
@@ -848,6 +936,59 @@ document.getElementById('updateStatusForm').addEventListener('submit', function(
         alert('Error updating status');
     });
 });
+
+function setConciergeCostA(requestId) {
+    fetch("{% url 'adminmanager:update_concierge_cost' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            request_id: requestId,
+            amount: 55555,
+            remarks: 'Cost A - Quick Entry'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Update failed.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Update failed.');
+    });
+}
+
+function setConciergeCostB(requestId) {
+    fetch("{% url 'adminmanager:update_concierge_cost' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            request_id: requestId,
+            amount: 66666,
+            remarks: 'Cost B - Quick Entry'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Update failed.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Update failed.');
+    });
+}
+
 </script>
 
 <script>

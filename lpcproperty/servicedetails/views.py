@@ -128,10 +128,11 @@ def Concierge_request(request):
 
     if request.method == "POST":
         description = request.POST.get("description")
-
+        cost_choice = request.POST.get("cost_choice")
         ConciergeServiceRequest.objects.create(
             user=client,  # Use Client instance as the user
-            description=description
+            description=description,
+            cost=55555 if cost_choice == "55555" else 66666
         )
 
         # messages.success(request, "Your request has been submitted successfully!")

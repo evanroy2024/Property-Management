@@ -51,16 +51,7 @@ h1, h2, h3 {
     </div>
 
     <!-- Messages -->
-    {% if messages %}
-    <div class="space-y-3 p-6">
-      {% for message in messages %}
-      <div class="flex justify-between p-4 rounded-lg border bg-green-100 text-green-800">
-        <p class="text-sm font-medium">{{ message }}</p>
-        <button onclick="this.parentElement.remove()">×</button>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
+ 
 
     <!-- Content -->
     <div class="p-6 sm:p-10">
@@ -92,16 +83,53 @@ h1, h2, h3 {
           </div>
         </div>
 
-        <div class="flex justify-center sm:justify-end">
-          <button
-            type="submit"
-            class="bg-lotus-gold text-black rounded-md px-6 py-3 font-medium shadow-md transform transition hover:-translate-y-1"
-          >
-            Submit Request
-          </button>
-        </div>
+        <div class="flex items-center justify-between mt-6">
+
+  <!-- Cost buttons (LEFT) -->
+  <div class="flex gap-4">
+    <label class="cursor-pointer">
+      <input type="radio" name="cost_choice" value="55555" class="hidden peer">
+      <div class="px-6 py-3 border border-lotus-border rounded-md font-medium
+                  peer-checked:bg-lotus-gold peer-checked:text-black
+                  hover:border-lotus-gold transition">
+        Provide Cost
+      </div>
+    </label>
+
+    <label class="cursor-pointer">
+      <input type="radio" name="cost_choice" value="66666" class="hidden peer">
+      <div class="px-6 py-3 border border-lotus-border rounded-md font-medium
+                  peer-checked:bg-lotus-gold peer-checked:text-black
+                  hover:border-lotus-gold transition">
+        Proceed w/out Cost
+      </div>
+    </label>
+  </div>
+
+  <!-- Submit (RIGHT) -->
+  <button
+    type="submit"
+    class="bg-lotus-gold text-black rounded-md px-6 py-3 font-medium shadow-md transform transition hover:-translate-y-1"
+  >
+    Submit Request
+  </button>
+
+</div>
+
       </form>
     </div>
   </div>
 </div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const costSelected = document.querySelector('input[name="cost_choice"]:checked');
+  
+  if (!costSelected) {
+    e.preventDefault();
+    alert('Please select a cost type ( Provide Cost or Proceed w/out Cost )');
+  }
+});
+</script>
+
 {% endblock content %}

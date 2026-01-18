@@ -21,6 +21,8 @@ class ServiceRequest(models.Model):
         ('housekeeping', 'HOUSEKEEPING'),
         ('water_features', 'WATER FEATURES'),
         ('storm_preparedness', 'STORM PREPAREDNESS'),
+        ('landscaping', 'LANDSCAPING'),
+        ('site', 'SITE'),
         ('other', 'OTHER'),
     ]
     

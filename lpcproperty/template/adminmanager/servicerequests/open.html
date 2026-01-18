@@ -286,26 +286,43 @@
     <div class="card shadow mb-4">
         <div class="p-3">
             <div class="row g-2">
-                <div class="col-md-4">
+                <div class="col">
                     <select id="filter-date" class="form-select">
                         <option value="">All Dates</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col">
                     <select id="filter-client" class="form-select">
                         <option value="">All Clients</option>
                     </select>
                 </div>
-                <div class="col-md-4" style="display: none;">
+                <div class="col" style="display: none;">
                     <select id="filter-type" class="form-select">
                         <option value="">All Request Types</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col">
                 <select id="filter-month" class="form-select">
                     <option value="">All Months</option>
                 </select>
             </div>
+            <div class="col">
+    <select id="filter-approval" class="form-select">
+        <option value="">All Approvals</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="denied">Denied</option>
+    </select>
+</div>
+
+<div class="col">
+    <select id="filter-status" class="form-select">
+        <option value="">All Status</option>
+        <option value="open">Open</option>
+        <option value="completed">Completed</option>
+        <option value="denied">Denied</option>
+    </select>
+</div>
             </div>
         </div>
 
@@ -322,8 +339,10 @@
                             </th>
                             
                             <th>REQUEST TYPE</th>
-                            <th>REQUEST</th>
-                            <th>EST'D COST</th>
+                            <th>REQUEST DETAILS</th>
+                            <th>COST</th>
+                            <th>Provide Cost</th>
+                            <th>Proceed w/out Cost</th>
                             <th>CLIENT APPROVAL</th>
                             <th>ITEM STATUS</th>
                         </tr>
@@ -351,7 +370,10 @@
                                 </td>
                                 
                                 <td>
-                                    <span id="cost-{{ req.id }}">${{ req.cost|default:"0" }}</span>
+                                    <span id="cost-{{ req.id }}">
+  {% if req.cost == 55555 or req.cost == 66666 %}-{% else %}${{ req.cost|default:"0" }}{% endif %}
+</span>
+
                                     <button 
                                         onclick="openEditCostModal('{{ req.id }}', '{{ req.cost|default:0 }}', '{{ req.cost_remarks|default:"" }}')"
                                         class="edit-btn"
@@ -359,6 +381,49 @@
                                         <i class="fas fa-pen-to-square"></i>
                                     </button>
                                 </td>
+                                <!-- Provide Cost Column -->
+<td style="text-align: left; padding-left: 20px;">
+    <span id="costA-{{ req.id }}">
+        {% if req.cost == 55555 %}
+            <i class="fas fa-times" style="color: #28a745; font-size: 18px;"></i>
+        {% else %}
+            -
+        {% endif %}
+    </span>
+    {% if not req.cost or req.cost == 0 %}
+        {% if req.client_approval != 'Approved' %}
+        <button onclick="setServiceCostA('{{ req.id }}')" 
+                class="edit-btn" 
+                title="Set Cost A"
+                id="btnCostA-{{ req.id }}"
+                style="display: none;">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        {% endif %}
+    {% endif %}
+</td>
+
+<!-- Proceed w/out Cost Column -->
+<td style="text-align: left; padding-left: 20px;">
+    <span id="costB-{{ req.id }}">
+        {% if req.cost == 66666 %}
+            <i class="fas fa-times" style="color: #28a745; font-size: 18px;"></i>
+        {% else %}
+            -
+        {% endif %}
+    </span>
+    {% if not req.cost or req.cost == 0 %}
+        {% if req.client_approval != 'Approved' %}
+        <button onclick="setServiceCostB('{{ req.id }}')" 
+                class="edit-btn" 
+                title="Set Cost B"
+                id="btnCostB-{{ req.id }}"
+                style="display: none;">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        {% endif %}
+    {% endif %}
+</td>
 
                                 <td>
                                     <div id="approval-cell-{{ req.id }}" 
@@ -371,16 +436,18 @@
   {% elif req.client_approval == 'Denied' %}
     status-denied
   {% elif req.client_approval == 'Cost' %}
-    status-cost
+    status-pending
   {% else %}
     status-pending
   {% endif %}
 ">
-  {% if req.client_approval %}
-    {{ req.client_approval }}
-  {% else %}
-    Pending
-  {% endif %}
+{% if req.client_approval == "Cost" %}
+  Pending
+{% elif req.client_approval %}
+  {{ req.client_approval }}
+{% else %}
+  Pending
+{% endif %}
 </span>
 <style>
     .status-cost{background:#2f5f9e;color:#fff;}
@@ -533,7 +600,9 @@ document.addEventListener("DOMContentLoaded", function () {
         date: document.getElementById("filter-date"),
         month: document.getElementById("filter-month"),
         client: document.getElementById("filter-client"),
-        type: document.getElementById("filter-type")
+        type: document.getElementById("filter-type"),
+        approval: document.getElementById("filter-approval"),
+        status: document.getElementById("filter-status")
     };
     
     const rows = document.querySelectorAll(".request-row");
@@ -596,36 +665,47 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Filter function
     function filterTable() {
-        const selected = {
-            date: filters.date.value,
-            month: filters.month.value,
-            client: filters.client.value,
-            type: filters.type.value
-        };
-        
-        rows.forEach(row => {
-            const rowDate = row.getAttribute("data-date");
-            let monthMatch = true;
-            
-            if (selected.month && rowDate) {
-                const dateObj = new Date(rowDate);
-                const rowMonth = dateObj.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long' 
-                });
-                monthMatch = rowMonth === selected.month;
-            }
-            
-            const matches = 
-                (!selected.date || row.getAttribute("data-date") === selected.date) &&
-                monthMatch &&
-                (!selected.client || row.getAttribute("data-client") === selected.client) &&
-                (!selected.type || row.getAttribute("data-type") === selected.type);
-            
-            row.style.display = matches ? "" : "none";
-        });
-    }
+    const selected = {
+        date: filters.date.value,
+        month: filters.month.value,
+        client: filters.client.value,
+        type: filters.type.value,
+        approval: filters.approval.value.toLowerCase(),
+        status: filters.status.value.toLowerCase()
+    };
     
+    rows.forEach(row => {
+        const rowDate = row.getAttribute("data-date");
+        let monthMatch = true;
+        
+        if (selected.month && rowDate) {
+            const dateObj = new Date(rowDate);
+            const rowMonth = dateObj.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+            });
+            monthMatch = rowMonth === selected.month;
+        }
+        
+        // Get approval status from row
+        const approvalSpan = row.querySelector('[id^="approval-span-"]');
+        const rowApproval = approvalSpan ? approvalSpan.textContent.trim().toLowerCase() : '';
+        
+        // Get status from row
+        const statusSpan = row.querySelector('[id^="status-"]');
+        const rowStatus = statusSpan ? statusSpan.textContent.trim().toLowerCase() : '';
+        
+        const matches = 
+            (!selected.date || row.getAttribute("data-date") === selected.date) &&
+            monthMatch &&
+            (!selected.client || row.getAttribute("data-client") === selected.client) &&
+            (!selected.type || row.getAttribute("data-type") === selected.type) &&
+            (!selected.approval || rowApproval === selected.approval) &&
+            (!selected.status || rowStatus === selected.status);
+        
+        row.style.display = matches ? "" : "none";
+    });
+}
     // Event listeners for filters
     Object.values(filters).forEach(filter => {
         filter.addEventListener("change", filterTable);
@@ -678,7 +758,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Cost Modal Functions
 function openEditCostModal(requestId, currentCost, currentRemarks) {
     document.getElementById('editModalRequestId').value = requestId;
-    document.getElementById('editModalAmount').value = currentCost || '';
+    document.getElementById('editModalAmount').value =(currentCost === '55555' || currentCost === '66666') ? '' : currentCost;
     document.getElementById('editModalRemarks').value = currentRemarks || '';
     document.getElementById('editCostModal').style.display = 'block';
 }
@@ -771,6 +851,8 @@ function submitUpdateApproval() {
             }
             
             closeUpdateApprovalModal();
+            location.reload();
+
         } else {
             alert('Error updating approval: ' + data.error);
         }

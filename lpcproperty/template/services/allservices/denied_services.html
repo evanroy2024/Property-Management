@@ -316,17 +316,18 @@
                 <table class="table table-hover" id="sortable-table">
                     <thead>
                         <tr>
-                            <th>TOTAL COST</th>
+                            <th  class="sortable" data-index="0" style="cursor: pointer;">
+                                REQUEST DATE <i class="fas fa-sort sort-icon"></i>
+                            </th>
+
+                            <th >REQUEST TYPE</th>
+                            <th >REQUEST DETAILS</th>
+                            <th>COST</th>
                             <th>ACTION</th>
                             <th style="display: none;" class="sortable" data-index="1" style="cursor: pointer;">
                                 CLIENT <i class="fas fa-sort sort-icon"></i>
                             </th>
-                            <th style="display: none;" class="sortable" data-index="0" style="cursor: pointer;">
-                                REQUEST DATE <i class="fas fa-sort sort-icon"></i>
-                            </th>
-
-                            <th style="display: none;">REQUEST TYPE</th>
-                            <th style="display: none;">REQUEST</th>
+                            
                             <th>APPROVAL</th>
                             <th style="display: none;">ITEM STATUS</th>
                         </tr>
@@ -337,10 +338,25 @@
                             data-client="{{ req.user.last_name|lower }}, {{ req.user.first_name|lower }}"
                             data-date="{{ req.created_at|date:'Y-m-d' }}" data-type="{{ req.request_type|lower }}"
                             data-search="{{ req.user.last_name|lower }} {{ req.user.first_name|lower }} {{ req.request_type|lower }}">
+                            <td style="cursor: pointer;">
+                                <strong>{{ req.created_at|date:'M d, Y' }}</strong><br>
+                                <small class="text-muted">{{ req.created_at|time:'g:i A' }}</small>
+                            </td>
+
+
+                            <td ><strong>{{ req.get_request_type_display }}</strong></td>
+
+
+                            <td  style="word-wrap: break-word; white-space: normal; max-width: 250px;">
+                                {{ req.description|truncatechars:300 }}
+                            </td>
+                            
                             <td style="display: none;"><strong>{{ req.user.last_name|title }}, {{
                                     req.user.first_name|title }}</strong></td>
                             <td>
-                                <span id="cost-{{ req.id }}">${{ req.cost|default:"0" }}</span>
+                                 <span id="cost-{{ req.id }}">
+  {% if req.cost == 55555 or req.cost == 66666 %}-{% else %}${{ req.cost|default:"0" }}{% endif %}
+</span>
                                 <button style="display: none;"
                                     onclick="openEditCostModal('{{ req.id }}', '{{ req.cost|default:0 }}', '{{ req.cost_remarks|default:"" }}')"
                                     class="edit-btn" title="Edit Cost">
@@ -357,18 +373,7 @@
 </button>
 
 </td>
-                            <td style="cursor: pointer; display: none;">
-                                <strong>{{ req.created_at|date:'M d, Y' }}</strong><br>
-                                <small class="text-muted">{{ req.created_at|time:'g:i A' }}</small>
-                            </td>
-
-
-                            <td style="display: none;"><strong>{{ req.get_request_type_display }}</strong></td>
-
-
-                            <td style="display: none;" style="word-wrap: break-word; white-space: normal; max-width: 250px;">
-                                {{ req.description|truncatechars:300 }}
-                            </td>
+                            
 
 
 
