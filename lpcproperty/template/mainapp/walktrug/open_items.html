@@ -310,7 +310,8 @@
         <!-- Live Filters -->
         <div class="p-3">
             <div class="row g-2">
-                <div class="col-md-3">
+             
+                <div class="col-md-3" style="display: none;">
                 <select id="filter-client" class="form-select">
                     <option value="">All Clients</option>
                 </select>
@@ -330,6 +331,14 @@
                     <option value="">All Months</option>
                 </select>
             </div>
+             <div class="col-md-3">
+                  <select id="filter-approval" class="form-select">
+                      <option value="">All Approvals</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Approved">Approved</option>
+                  </select>
+              </div>
+            
             </div>
             </div>
 
@@ -359,6 +368,8 @@
                         </th>
                         
                         <th>TOTAL COST</th>
+                        <th>Provide Cost</th>
+                        <th>Proceed w/out Cost</th>
                         <th>APPROVAL</th>
                         <th style="display: none;">ITEM STATUS</th>
                         <th>View Full Report</th>
@@ -367,7 +378,8 @@
                     </thead>
                   <tbody id="report-table">     
     {% for report in reports %}         
-        {% for item in report.inspection_items %}         
+        {% for item in report.inspection_items %}    
+        {% if item.client_approval != 'Denied' %}     
         {% if item.update_status == 'Open' or item.client_approval == 'Pending' or item.client_approval == 'Approved' and item.update_status == 'Denied' or item.client_approval == 'Denied' and item.update_status == 'Approved' or item.client_approval == 'Denied' and item.update_status == 'Completed' %}                 
             <tr class="report-row"                 
                 data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
@@ -382,15 +394,61 @@
                     <strong>{{ report.datetime|date:'M d, Y' }}</strong><br>                     
                     <small class="text-muted">{{ report.datetime|time:'g:i A' }}</small>                 
                 </td>                                  
-                <td>   
-                    <span id="cost-{{ report.id }}-{{ item.question|slugify }}">${{ item.amount|default:"-" }}</span> 
-                    <button    
-                        onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"   
-                        class="edit-btn"   
-                        title="Edit Cost">   
-                        <!-- <i class="fas fa-pen-to-square"></i>  -->
-                    </button> 
-                </td>  
+<td style="text-align: center;">   
+    <span id="cost-{{ report.id }}-{{ item.question|slugify }}">
+        {% if item.amount == 55555 or item.amount == 66666 %}
+            -
+        {% else %}
+            ${{ item.amount|default:"-" }}
+        {% endif %}
+    </span> 
+    <button    
+        onclick="openEditCostModal('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.amount|default:'' }}', `{{ item.calculation_note|default:'' }}`, '{{ item.question|slugify }}')"   
+        class="edit-btn"   
+        title="Edit Cost">   
+        <i class="fas fa-pen-to-square"></i> 
+    </button> 
+</td> 
+<!-- THE COST AUTO FILL OPTIONS START  -->
+<td style="text-align: center;">
+    <span id="costA-{{ report.id }}-{{ item.question|slugify }}">
+        {% if item.amount == 55555  %}
+            <i class="fas fa-times" style="color: #28a745; font-size: 18px;"></i>
+        {% else %}
+            -
+        {% endif %}
+    </span>
+    {% if not item.amount or item.amount == 0 %}
+        {% if item.client_approval != 'Approved' %}
+        <button onclick="setCostA('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.question|slugify }}')" 
+                class="edit-btn" 
+                title="Set Cost A"
+                id="btnCostA-{{ report.id }}-{{ item.question|slugify }}">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        {% endif %}
+    {% endif %}
+     {% endif %}
+</td>
+<td style="text-align: center;">
+    <span id="costB-{{ report.id }}-{{ item.question|slugify }}">
+        {% if item.amount == 66666 %}
+            <i class="fas fa-times" style="color: #28a745; font-size: 18px;"></i>
+        {% else %}
+            -
+        {% endif %}
+    </span>
+    {% if not item.amount or item.amount == 0 %}
+        {% if item.client_approval != 'Approved' %}
+        <button onclick="setCostB('{{ report.id }}', '{{ item.category }}', `{{ item.question }}`, '{{ item.question|slugify }}')" 
+                class="edit-btn" 
+                title="Set Cost B"
+                id="btnCostB-{{ report.id }}-{{ item.question|slugify }}">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        {% endif %}
+    {% endif %}
+</td>
                 <td>   
                     <div id="approval-cell-{{ report.id }}-{{ item.field_name }}" onclick="openUpdateApprovalModal('{{ report.id }}', '{{ item.field_name }}', '{{ item.client_approval }}', '{{ item.category }}')" style="cursor: pointer;">     
                        <span id="approval-span-{{ report.id }}-{{ item.field_name }}" class="status-badge
@@ -443,7 +501,7 @@ status-pending
         {% endfor %}     
     {% empty %}         
         <tr>             
-            <td colspan="8">                 
+            <td colspan="10">                 
                 <div class="empty-state">                     
                     <i class="fas fa-clipboard-list fa-4x mb-3 icon-gray"></i>                     
                     <h4 class="text-gray-800 mb-2">No open walk-through reports found</h4>                     
@@ -808,7 +866,51 @@ document.addEventListener("DOMContentLoaded", function () {
             clientDropdown.appendChild(option);
         });
     }
+     // Add approval filter
+    filters.approval = document.getElementById("filter-approval");
+    filters.approval.addEventListener("change", filterTable);
+    function filterTable() {
+        const selected = {
+            client: filters.client.value,
+            date: filters.date.value,
+            address: filters.address.value,
+            month: filters.month.value,
+            approval: filters.approval ? filters.approval.value : ''
+        };
+        
+        rows.forEach(row => {
+            const client = row.getAttribute("data-client");
+            const date = row.getAttribute("data-date");
+            const address = row.getAttribute("data-address");
+            
+            const approvalSpan = row.querySelector('[id^="approval-span-"]');
+            const approvalStatus = approvalSpan ? approvalSpan.textContent.trim() : '';
+            
+            let monthMatch = true;
+            if (selected.month && date) {
+                const dateObj = new Date(date);
+                const monthYear = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long' 
+                });
+                monthMatch = monthYear === selected.month;
+            }
+            
+            const matches = 
+                (!selected.client || client === selected.client) &&
+                (!selected.date || date === selected.date) &&
+                (!selected.address || address === selected.address) &&
+                (!selected.approval || approvalStatus === selected.approval) &&
+                monthMatch;
+            
+            row.style.display = matches ? "" : "none";
+        });
+    }
 });
+
+
+// For status filter 
+
 </script>
 <script>
     // Add this JavaScript to handle the Submit Updates button
@@ -985,7 +1087,7 @@ function slugify(text) {
       <button onclick="setApprovalStatus('Denied')" class="btn-danger">
         Reject
       </button>
-      <button onclick="setApprovalStatus('Cost')" class="btn-cost">
+      <button style="display: none;" onclick="setApprovalStatus('Cost')" class="btn-cost">
         Request Cost
       </button>
     </div>
@@ -1017,7 +1119,41 @@ function closeUpdateApprovalModal() {
 
 function setApprovalStatus(status) {
   selectedApprovalStatus = status;
-  submitUpdateApproval();
+  
+  // If approved, automatically set cost to 66666
+  if (status === 'Approved') {
+    const reportId = document.getElementById('approvalReportId').value;
+    const category = document.getElementById('approvalCategory').value;
+    const fieldName = document.getElementById('approvalFieldName').value;
+    
+    // Get the question from the row
+    const approvalCell = document.getElementById(`approval-cell-${reportId}-${fieldName}`);
+    const row = approvalCell.closest('tr');
+    const questionCell = row.querySelector('td:nth-child(3)');
+    const question = questionCell ? questionCell.textContent.trim() : '';
+    
+    // Set cost to 66666
+    const url = "{% url 'walkthroughreport:update-report-field-cost' 0 %}".replace("0", reportId);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ 
+        category: category, 
+        question: question, 
+        amount: 66666,
+        calculation_note: 'Auto-set on approval'
+      })
+    }).then(() => {
+      submitUpdateApproval();
+    }).catch(() => {
+      submitUpdateApproval();
+    });
+  } else {
+    submitUpdateApproval();
+  }
 }
 
 function submitUpdateApproval() {
@@ -1052,6 +1188,8 @@ function submitUpdateApproval() {
             : 'status-cost');
       }
       closeUpdateApprovalModal();
+      location.reload();
+      
     } else {
       alert('Update failed');
     }
@@ -1948,4 +2086,68 @@ function openUpdateFieldStatusModal(reportId, fieldName, category) {
 }
 
 </style>
+
+
+<!-- Cost A and Cost B functionality -->
+<script>
+function setCostA(reportId, category, question, questionSlug) {
+  const url = "{% url 'walkthroughreport:update-report-field-cost' 0 %}".replace("0", reportId);
+  
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ 
+      category: category, 
+      question: question, 
+      amount: 55555,
+      calculation_note: 'Cost A - Quick Entry'
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      location.reload();
+    } else {
+      alert('Update failed.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Update failed.');
+  });
+}
+
+function setCostB(reportId, category, question, questionSlug) {
+  const url = "{% url 'walkthroughreport:update-report-field-cost' 0 %}".replace("0", reportId);
+  
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ 
+      category: category, 
+      question: question, 
+      amount: 66666,
+      calculation_note: 'Cost B - Quick Entry'
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      location.reload();
+    } else {
+      alert('Update failed.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Update failed.');
+  });
+}
+</script>
 {% endblock content %}

@@ -368,8 +368,10 @@
                   <tbody id="report-table">     
     {% for report in reports %}         
         {% for item in report.inspection_items %}         
-        {% if item.update_status == 'Open' or item.client_approval == 'Pending' or item.client_approval == 'Approved' and item.update_status == 'Denied' or item.client_approval == 'Denied' and item.update_status == 'Approved' or item.client_approval == 'Denied' and item.update_status == 'Completed' %}                 
-            <tr class="report-row"                 
+        {% if item.update_status == 'Completed' or item.client_approval == 'Approved' %}
+ 
+        
+        <tr class="report-row"                 
                 data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
                 data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"                 
                 data-search="{{ report.user.last_name|lower }} {{ report.user.first_name|lower }} {{ report.property_address|lower }}">                                  

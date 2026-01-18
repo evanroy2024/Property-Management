@@ -367,7 +367,7 @@
                   <tbody id="report-table">     
     {% for report in reports %}         
         {% for item in report.inspection_items %}         
-        {% if item.update_status == 'Denied' and item.client_approval == 'Denied' %}                    
+        {% if item.client_approval == 'Denied' %}                    
             <tr class="report-row"                 
                 data-client="{{ report.user.last_name|lower }}, {{ report.user.first_name|lower }}"                 
                 data-date="{{ report.datetime|date:'Y-m-d' }}" data-address="{{ report.property.address|lower }}"                 
